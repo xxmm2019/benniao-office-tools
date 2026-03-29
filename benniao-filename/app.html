@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>免费在线屏幕录制工具- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-recorder/">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #059669;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        select, button {
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            font-size: 1rem;
+        }
+        select:focus, button:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        button {
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        #startBtn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+        }
+        #startBtn:hover {
+            background-color: #059669;
+        }
+        #stopBtn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            display: none;
+        }
+        #stopBtn:hover {
+            background-color: #dc2626;
+        }
+        #downloadBtn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            display: none;
+        }
+        #downloadBtn:hover {
+            background-color: #2563eb;
+        }
+        .status {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+        .recording {
+            background-color: #fee2e2;
+            color: #dc2626;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>免费在线屏幕录制工具</h1>
+        
+        <div class="options">
+            <div class="option-group">
+                <label for="recordSource">录制源</label>
+                <select id="recordSource">
+                    <option value="screen">整个屏幕</option>
+                    <option value="window">单个窗口</option>
+                    <option value="tab">浏览器标签页</option>
+                </select>
+            </div>
+            
+            <div class="option-group">
+                <label for="audioSource">音频来源</label>
+                <select id="audioSource">
+                    <option value="none">无音频</option>
+                    <option value="system">仅系统声音</option>
+                    <option value="mic">仅麦克风</option>
+                    <option value="both" selected>系统声音+麦克风</option>
+                </select>
+            </div>
+            
+            <div class="option-group">
+                <label for="fileFormat">输出格式</label>
+                <select id="fileFormat">
+                    <option value="webm" selected>WebM (兼容性好)</option>
+                    <option value="mp4">MP4 (通用格式)</option>
+                </select>
+            </div>
+            
+            <div class="option-group">
+                <label for="videoQuality">视频质量</label>
+                <select id="videoQuality">
+                    <option value="high">高画质</option>
+                    <option value="medium" selected>中等画质</option>
+                    <option value="low">低画质</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn">开始录制</button>
+            <button id="stopBtn">停止录制</button>
+            <button id="downloadBtn">下载录制文件</button>
+        </div>
+        
+        <div id="status" class="status">准备就绪，点击"开始录制"按钮开始</div>
+    </div>
+
+    <script>
+        // 核心变量
+        let mediaRecorder;
+        let stream;
+        let recordedChunks = [];
+        let audioContext;
+        let mixedAudioStream;
+
+        // DOM元素
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const status = document.getElementById('status');
+        const recordSource = document.getElementById('recordSource');
+        const audioSource = document.getElementById('audioSource');
+        const fileFormat = document.getElementById('fileFormat');
+        const videoQuality = document.getElementById('videoQuality');
+
+        // 检查浏览器支持
+        function checkSupport() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                status.textContent = ' 您的浏览器不支持屏幕录制功能，请使用Chrome、Firefox、Edge等现代浏览器';
+                status.style.backgroundColor = '#fee2e2';
+                startBtn.disabled = true;
+                return false;
+            }
+            if (!window.MediaRecorder) {
+                status.textContent = ' 您的浏览器不支持MediaRecorder API，无法录制视频';
+                status.style.backgroundColor = '#fee2e2';
+                startBtn.disabled = true;
+                return false;
+            }
+            return true;
+        }
+
+        // 获取视频质量配置
+        function getQualityConstraints() {
+            switch(videoQuality.value) {
+                case 'high':
+                    return { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } };
+                case 'medium':
+                    return { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 24 } };
+                case 'low':
+                    return { width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 15 } };
+                default:
+                    return { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 24 } };
+            }
+        }
+
+        // 获取媒体流（屏幕+音频）
+        async function getMediaStream() {
+            try {
+                // 1. 获取屏幕流
+                const displayOptions = {
+                    video: getQualityConstraints(),
+                    audio: audioSource.value === 'system' || audioSource.value === 'both'
+                };
+                
+                const displayStream = await navigator.mediaDevices.getDisplayMedia(displayOptions);
+                
+                // 2. 处理音频
+                let audioTracks = [];
+                
+                // 如果需要麦克风音频
+                if (audioSource.value === 'mic' || audioSource.value === 'both') {
+                    const micStream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: { echoCancellation: true, noiseSuppression: true } 
+                    });
+                    audioTracks.push(...micStream.getAudioTracks());
+                }
+                
+                // 如果需要系统音频且屏幕流中没有（部分浏览器需要单独处理）
+                if ((audioSource.value === 'system' || audioSource.value === 'both') && displayStream.getAudioTracks().length === 0) {
+                    status.textContent = ' 无法捕获系统声音，仅录制麦克风音频（部分浏览器限制）';
+                } else if (audioSource.value !== 'none') {
+                    audioTracks.push(...displayStream.getAudioTracks());
+                }
+                
+                // 3. 混合音频流（如果有多个音频轨道）
+                if (audioTracks.length > 0) {
+                    if (audioTracks.length > 1) {
+                        audioContext = new AudioContext();
+                        const destination = audioContext.createMediaStreamDestination();
+                        
+                        audioTracks.forEach(track => {
+                            const source = audioContext.createMediaStreamSource(new MediaStream([track]));
+                            source.connect(destination);
+                        });
+                        
+                        mixedAudioStream = destination.stream;
+                        // 将混合后的音频轨道添加到显示流
+                        displayStream.addTrack(mixedAudioStream.getAudioTracks()[0]);
+                    } else {
+                        // 单个音频轨道直接添加
+                        displayStream.addTrack(audioTracks[0]);
+                    }
+                }
+                
+                return displayStream;
+            } catch (error) {
+                if (error.name === 'NotAllowedError') {
+                    status.textContent = ' 您拒绝了屏幕录制权限，请允许权限后重试';
+                } else if (error.name === 'NotFoundError') {
+                    status.textContent = ' 没有可用的屏幕录制源';
+                } else {
+                    status.textContent = ` 录制出错: ${error.message}`;
+                }
+                console.error('获取媒体流失败:', error);
+                throw error;
+            }
+        }
+
+        // 开始录制
+        startBtn.addEventListener('click', async () => {
+            if (!checkSupport()) return;
+            
+            try {
+                // 重置状态
+                recordedChunks = [];
+                status.textContent = ' 正在准备录制...';
+                
+                // 获取媒体流
+                stream = await getMediaStream();
+                
+                // 设置录制格式
+                const mimeType = fileFormat.value === 'mp4' 
+                    ? 'video/mp4; codecs=avc1.42E01E,mp4a.40.2' 
+                    : 'video/webm; codecs=vp9,opus';
+                
+                // 检查格式支持
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    const fallbackMimeType = fileFormat.value === 'mp4' ? 'video/mp4' : 'video/webm';
+                    status.textContent = ` 不支持${mimeType}格式，使用兼容格式: ${fallbackMimeType}`;
+                }
+                
+                // 创建MediaRecorder
+                mediaRecorder = new MediaRecorder(stream, { 
+                    mimeType: MediaRecorder.isTypeSupported(mimeType) ? mimeType : (fileFormat.value === 'mp4' ? 'video/mp4' : 'video/webm'),
+                    videoBitsPerSecond: videoQuality.value === 'high' ? 5000000 : (videoQuality.value === 'medium' ? 2500000 : 1000000)
+                });
+                
+                // 监听数据可用事件
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) {
+                        recordedChunks.push(e.data);
+                    }
+                };
+                
+                // 监听录制停止事件
+                mediaRecorder.onstop = () => {
+                    // 停止所有媒体轨道
+                    stream.getTracks().forEach(track => track.stop());
+                    if (mixedAudioStream) {
+                        mixedAudioStream.getTracks().forEach(track => track.stop());
+                    }
+                    if (audioContext) {
+                        audioContext.close();
+                    }
+                    
+                    // 启用下载按钮
+                    downloadBtn.style.display = 'inline-block';
+                    status.textContent = ' 录制完成，点击"下载录制文件"保存';
+                    status.classList.remove('recording');
+                };
+                
+                // 开始录制
+                mediaRecorder.start(1000); // 每1秒收集一次数据
+                
+                // 更新UI
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-block';
+                downloadBtn.style.display = 'none';
+                status.textContent = ' 正在录制中... 点击"停止录制"结束';
+                status.classList.add('recording');
+                
+            } catch (error) {
+                // 恢复UI
+                startBtn.style.display = 'inline-block';
+                stopBtn.style.display = 'none';
+                downloadBtn.style.display = 'none';
+                status.classList.remove('recording');
+            }
+        });
+
+        // 停止录制
+        stopBtn.addEventListener('click', () => {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                stopBtn.style.display = 'none';
+                startBtn.style.display = 'inline-block';
+            }
+        });
+
+        // 下载录制文件
+        downloadBtn.addEventListener('click', () => {
+            if (recordedChunks.length === 0) {
+                status.textContent = ' 没有可下载的录制文件';
+                return;
+            }
+            
+            // 创建Blob文件
+            const blob = new Blob(recordedChunks, {
+                type: fileFormat.value === 'mp4' ? 'video/mp4' : 'video/webm'
+            });
+            
+            // 创建下载链接
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `屏幕录制_${new Date().toLocaleString().replace(/[/:\s]/g, '_')}.${fileFormat.value}`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // 清理
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 1000);
+            
+            status.textContent = ' 文件已下载，您可以再次点击"开始录制"进行新的录制';
+        });
+
+        // 页面加载时检查支持
+        window.addEventListener('load', checkSupport);
+
+        // 监听页面关闭，停止所有流
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            if (mixedAudioStream) {
+                mixedAudioStream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+        });
+    </script>
+</body>
+</html>

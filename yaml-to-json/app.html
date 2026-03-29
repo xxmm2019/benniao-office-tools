@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML 转 JSON - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/yaml-to-json/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(20, 184, 166, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+        }
+
+        .btn-warning:hover {
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e9ecef;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 350px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.3s;
+            white-space: pre;
+            overflow-x: auto;
+            background-color: #fff;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #14b8a6;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        }
+
+        .editor-textarea.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .editor-textarea.success {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .status-box.error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+
+        .status-box.warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+
+        .status-box.info {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+
+        .status-box.active {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .status-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            flex: 1;
+            margin: 0;
+        }
+
+        .status-box.error p {
+            color: #dc2626;
+        }
+
+        .status-box.warning p {
+            color: #d97706;
+        }
+
+        .status-box.info p {
+            color: #1e40af;
+        }
+
+        .status-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .error-details {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Consolas', monospace;
+            line-height: 1.4;
+        }
+
+        .error-line {
+            background-color: #fee;
+            color: #c00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .error-position {
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stat i {
+            color: #14b8a6;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .control {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .control input,
+        .control select,
+        .control textarea {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d0d7de;
+            font-size: 14px;
+        }
+
+        .help-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #14b8a6;
+        }
+
+        .help-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .help-item {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .help-item h4 {
+            color: #14b8a6;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .help-item p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 5px 0;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .highlight {
+            background-color: #ffecb3;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .highlight-error {
+            background-color: #fee;
+            color: #c00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .format-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .format-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+        }
+
+        .format-control input[type="number"] {
+            width: 60px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #d0d7de;
+        }
+
+        .format-control input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 250px;
+            }
+
+            .help-content {
+                grid-template-columns: 1fr;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .stats {
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>YAML 转 JSON</h1>
+            <p>智能转换工具 - 详细错误提示与语法检查</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <div class="status-icon" id="status-icon"></div>
+                <div>
+                    <p id="status-message">准备好转换YAML到JSON</p>
+                    <div id="error-details" class="error-details" style="display: none;"></div>
+                    <div id="error-position" class="error-position" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" onclick="convert()">
+                        <i class="fas fa-sync-alt"></i> 立即转换
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSample()">
+                        <i class="fas fa-code"></i> 示例
+                    </button>
+                    <button class="btn btn-warning" onclick="validateYAML()">
+                        <i class="fas fa-check-circle"></i> 语法检查
+                    </button>
+                    <button class="btn btn-danger" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> 清空
+                    </button>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <i class="fas fa-file-alt"></i>
+                        <span>行数: <span id="line-count">0</span></span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-font"></i>
+                        <span>字符: <span id="char-count">0</span></span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-layer-group"></i>
+                        <span>深度: <span id="depth-level">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="format-controls">
+                <div class="format-control">
+                    <label for="indent-size">缩进:</label>
+                    <input type="number" id="indent-size" min="1" max="8" value="2">
+                    <span>空格</span>
+                </div>
+                <div class="format-control">
+                    <input type="checkbox" id="sort-keys" checked>
+                    <label for="sort-keys">按键名排序</label>
+                </div>
+                <div class="format-control">
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 13px;" onclick="formatYAML()">
+                        <i class="fas fa-indent"></i> 格式化YAML
+                    </button>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <i class="fab fa-yaml"></i> YAML 输入
+                        </span>
+                        <div class="btn-group" style="gap: 5px;">
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="toggleYAMLComments()">
+                                <i class="fas fa-comment"></i> 注释
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="editor-textarea" id="input" placeholder="粘贴 YAML 内容...&#10;&#10;示例:&#10;name: BenniaoOffice&#10;version: 1.0&#10;tags:&#10;  - web&#10;  - tools&#10;  - development" 
+                              oninput="updateStats()" 
+                              onkeydown="handleTabKey(event)"></textarea>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <i class="fab fa-js-square"></i> JSON 输出
+                        </span>
+                        <div class="btn-group" style="gap: 5px;">
+                            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="copyOutput()">
+                                <i class="fas fa-copy"></i> 复制
+                            </button>
+                            <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="downloadJSON()">
+                                <i class="fas fa-download"></i> 下载
+                            </button>
+                            <button class="btn btn-warning" style="padding: 6px 12px; font-size: 12px;" onclick="formatJSON()">
+                                <i class="fas fa-broom"></i> 格式化
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="editor-textarea" id="output" placeholder="转换后的 JSON 将显示在这里..." readonly></textarea>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <div class="help-title">
+                    <i class="fas fa-info-circle"></i> 使用提示与常见错误
+                </div>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4>YAML 语法规则</h4>
+                        <p>YAML 使用缩进表示层级关系，冒号表示键值对。</p>
+                        <div class="code-block">name: BenniaoOffice<br>version: 1.0<br>services:<br>&nbsp;&nbsp;web:<br>&nbsp;&nbsp;&nbsp;&nbsp;port: 8080</div>
+                    </div>
+                    <div class="help-item">
+                        <h4>常见错误</h4>
+                        <p><span class="highlight-error">缩进错误</span>：YAML对缩进敏感，必须使用空格，不能使用Tab。</p>
+                        <p><span class="highlight-error">缺少冒号</span>：键值对必须用冒号分隔。</p>
+                        <p><span class="highlight-error">引号不匹配</span>：字符串引号必须成对出现。</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>转换说明</h4>
+                        <p>YAML注释（#）在转换到JSON时会被忽略。</p>
+                        <p>YAML的锚点（&amp;）和别名（*）将被解析为相应的JSON结构。</p>
+                        <p>多行字符串（| 或 &gt;）将转换为JSON字符串。</p>
+                    </div>
+                    <div class="help-item">
+                        <h4>使用技巧</h4>
+                        <p>点击<strong>语法检查</strong>按钮可验证YAML格式。</p>
+                        <p>点击<strong>格式化YAML</strong>按钮可自动整理缩进。</p>
+                        <p>JSON输出框支持<strong>复制</strong>和<strong>下载</strong>功能。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入js-yaml库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    
+    <script>
+        // DOM元素
+        const inputElement = document.getElementById('input');
+        const outputElement = document.getElementById('output');
+        const statusBox = document.getElementById('status-box');
+        const statusMessage = document.getElementById('status-message');
+        const statusIcon = document.getElementById('status-icon');
+        const errorDetails = document.getElementById('error-details');
+        const errorPosition = document.getElementById('error-position');
+        const lineCountElement = document.getElementById('line-count');
+        const charCountElement = document.getElementById('char-count');
+        const depthLevelElement = document.getElementById('depth-level');
+        const indentSizeElement = document.getElementById('indent-size');
+        const sortKeysElement = document.getElementById('sort-keys');
+        
+        // 示例YAML数据
+        const sampleYAML = `# BenniaoOffice 配置文件示例
+name: "笨鸟办公工具集箱"
+version: "1.0.0"
+description: "一站式办公工具集合平台"
+author: "BenniaoOffice Team"
+
+# 服务配置
+services:
+  web:
+    port: 8080
+    host: "0.0.0.0"
+    ssl: true
+    domains:
+      - "www.benniaooffice.com"
+      - "benniaooffice.com"
+  
+  database:
+    type: "postgresql"
+    host: "localhost"
+    port: 5432
+    name: "benniaooffice_db"
+    user: "admin"
+
+# 功能模块
+features:
+  - name: "文档转换"
+    enabled: true
+    priority: 1
+    
+  - name: "图像处理"
+    enabled: true
+    priority: 2
+    
+  - name: "数据解析"
+    enabled: false
+    priority: 3
+
+# 元数据
+metadata:
+  created: "2023-10-01"
+  updated: "2023-11-15"
+  license: "MIT"
+  tags: ["工具", "办公", "生产力", "在线服务"]
+
+# 多行字符串示例
+welcome_message: |
+  欢迎使用笨鸟办公工具集箱！
+  我们提供各种实用的在线办公工具，
+  帮助您提高工作效率。
+
+  如有问题，请联系我们。`;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            showStatus('准备好转换YAML到JSON', 'success');
+        });
+
+        // 主要转换函数
+        function convert() {
+            const yamlText = inputElement.value.trim();
+            
+            if (!yamlText) {
+                showStatus('请输入YAML内容', 'warning');
+                outputElement.value = '';
+                outputElement.classList.remove('success', 'error');
+                return;
+            }
+            
+            try {
+                // 解析YAML
+                const parsedObj = jsyaml.load(yamlText);
+                
+                // 计算对象深度
+                const depth = calculateDepth(parsedObj);
+                depthLevelElement.textContent = depth;
+                
+                // 准备转换选项
+                const indent = parseInt(indentSizeElement.value) || 2;
+                const sortKeys = sortKeysElement.checked;
+                
+                // 转换选项
+                const jsonOptions = {
+                    spaces: indent
+                };
+                
+                // 如果需要按键名排序
+                let jsonString;
+                if (sortKeys) {
+                    jsonString = JSON.stringify(sortObjectKeys(parsedObj), null, indent);
+                } else {
+                    jsonString = JSON.stringify(parsedObj, null, indent);
+                }
+                
+                // 显示结果
+                outputElement.value = jsonString;
+                outputElement.classList.remove('error');
+                outputElement.classList.add('success');
+                inputElement.classList.remove('error');
+                inputElement.classList.add('success');
+                
+                showStatus(`转换成功！对象深度: ${depth}`, 'success');
+                
+                // 更新统计
+                updateStats();
+                
+            } catch (error) {
+                // 处理错误
+                handleConversionError(error, yamlText);
+            }
+        }
+
+        // 处理转换错误
+        function handleConversionError(error, yamlText) {
+            outputElement.value = '';
+            outputElement.classList.remove('success');
+            inputElement.classList.remove('success');
+            inputElement.classList.add('error');
+            
+            let errorLine = '未知行';
+            let errorColumn = '未知列';
+            let errorContext = '';
+            
+            // 解析错误信息提取行号和列号
+            if (error.message) {
+                const lineMatch = error.message.match(/line (\d+)/);
+                const columnMatch = error.message.match(/column (\d+)/);
+                
+                if (lineMatch) {
+                    errorLine = lineMatch[1];
+                    // 获取错误行内容
+                    const lines = yamlText.split('\n');
+                    if (lines.length >= errorLine) {
+                        errorContext = lines[errorLine - 1];
+                    }
+                }
+                
+                if (columnMatch) {
+                    errorColumn = columnMatch[1];
+                }
+            }
+            
+            // 显示错误详情
+            errorDetails.innerHTML = `<strong>错误信息:</strong> ${error.message || '未知错误'}`;
+            errorDetails.style.display = 'block';
+            
+            errorPosition.innerHTML = `<strong>位置:</strong> 第 ${errorLine} 行, 第 ${errorColumn} 列`;
+            errorPosition.style.display = 'block';
+            
+            if (errorContext) {
+                errorDetails.innerHTML += `<div style="margin-top: 8px;"><strong>错误行:</strong> <span class="error-line">${escapeHtml(errorContext)}</span></div>`;
+            }
+            
+            showStatus('YAML解析错误', 'error');
+        }
+
+        // 语法检查
+        function validateYAML() {
+            const yamlText = inputElement.value.trim();
+            
+            if (!yamlText) {
+                showStatus('请输入YAML内容', 'warning');
+                return;
+            }
+            
+            try {
+                jsyaml.load(yamlText);
+                inputElement.classList.remove('error');
+                inputElement.classList.add('success');
+                showStatus('YAML语法正确', 'success');
+            } catch (error) {
+                handleConversionError(error, yamlText);
+            }
+        }
+
+        // 加载示例
+        function loadSample() {
+            inputElement.value = sampleYAML;
+            inputElement.classList.remove('error', 'success');
+            convert();
+            showStatus('示例YAML已加载', 'info');
+        }
+
+        // 清空所有
+        function clearAll() {
+            inputElement.value = '';
+            outputElement.value = '';
+            inputElement.classList.remove('error', 'success');
+            outputElement.classList.remove('error', 'success');
+            errorDetails.style.display = 'none';
+            errorPosition.style.display = 'none';
+            showStatus('已清空所有内容', 'info');
+            updateStats();
+        }
+
+        // 复制输出
+        function copyOutput() {
+            if (!outputElement.value) {
+                showStatus('没有可复制的内容', 'warning');
+                return;
+            }
+            
+            outputElement.select();
+            outputElement.setSelectionRange(0, 99999); // 对于移动设备
+            
+            try {
+                document.execCommand('copy');
+                showStatus('JSON已复制到剪贴板', 'success');
+                
+                // 添加视觉反馈
+                const copyBtn = document.querySelector('button[onclick="copyOutput()"]');
+                copyBtn.classList.add('pulse');
+                setTimeout(() => copyBtn.classList.remove('pulse'), 500);
+            } catch (err) {
+                showStatus('复制失败，请手动复制', 'error');
+            }
+        }
+
+        // 下载JSON
+        function downloadJSON() {
+            const jsonText = outputElement.value;
+            
+            if (!jsonText) {
+                showStatus('没有可下载的内容', 'warning');
+                return;
+            }
+            
+            try {
+                const blob = new Blob([jsonText], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `converted-${new Date().getTime()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showStatus('JSON文件已下载', 'success');
+            } catch (err) {
+                showStatus('下载失败', 'error');
+            }
+        }
+
+        // 格式化JSON
+        function formatJSON() {
+            const jsonText = outputElement.value;
+            
+            if (!jsonText) {
+                showStatus('没有可格式化的JSON内容', 'warning');
+                return;
+            }
+            
+            try {
+                const parsed = JSON.parse(jsonText);
+                const indent = parseInt(indentSizeElement.value) || 2;
+                const sortKeys = sortKeysElement.checked;
+                
+                let formatted;
+                if (sortKeys) {
+                    formatted = JSON.stringify(sortObjectKeys(parsed), null, indent);
+                } else {
+                    formatted = JSON.stringify(parsed, null, indent);
+                }
+                
+                outputElement.value = formatted;
+                showStatus('JSON已格式化', 'success');
+            } catch (err) {
+                showStatus('JSON格式化失败: ' + err.message, 'error');
+            }
+        }
+
+        // 格式化YAML
+        function formatYAML() {
+            const yamlText = inputElement.value.trim();
+            
+            if (!yamlText) {
+                showStatus('请输入YAML内容', 'warning');
+                return;
+            }
+            
+            try {
+                const parsed = jsyaml.load(yamlText);
+                const formatted = jsyaml.dump(parsed, {
+                    indent: parseInt(indentSizeElement.value) || 2,
+                    lineWidth: -1 // 不换行
+                });
+                
+                inputElement.value = formatted;
+                inputElement.classList.remove('error');
+                inputElement.classList.add('success');
+                showStatus('YAML已格式化', 'success');
+                updateStats();
+            } catch (error) {
+                handleConversionError(error, yamlText);
+            }
+        }
+
+        // 切换YAML注释（演示功能）
+        function toggleYAMLComments() {
+            showStatus('注释功能为演示功能，实际转换时会忽略注释', 'info');
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            const text = inputElement.value;
+            const lines = text.split('\n').length;
+            const chars = text.length;
+            
+            lineCountElement.textContent = lines;
+            charCountElement.textContent = chars;
+            
+            // 尝试计算深度
+            try {
+                if (text.trim()) {
+                    const parsed = jsyaml.load(text);
+                    const depth = calculateDepth(parsed);
+                    depthLevelElement.textContent = depth;
+                } else {
+                    depthLevelElement.textContent = 0;
+                }
+            } catch (e) {
+                depthLevelElement.textContent = 0;
+            }
+        }
+
+        // 计算对象深度
+        function calculateDepth(obj, currentDepth = 0) {
+            if (!obj || typeof obj !== 'object') {
+                return currentDepth;
+            }
+            
+            let maxDepth = currentDepth;
+            
+            if (Array.isArray(obj)) {
+                for (const item of obj) {
+                    const depth = calculateDepth(item, currentDepth + 1);
+                    maxDepth = Math.max(maxDepth, depth);
+                }
+            } else {
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        const depth = calculateDepth(obj[key], currentDepth + 1);
+                        maxDepth = Math.max(maxDepth, depth);
+                    }
+                }
+            }
+            
+            return maxDepth;
+        }
+
+        // 按键名排序对象
+        function sortObjectKeys(obj) {
+            if (!obj || typeof obj !== 'object') {
+                return obj;
+            }
+            
+            if (Array.isArray(obj)) {
+                return obj.map(item => sortObjectKeys(item));
+            }
+            
+            const sorted = {};
+            Object.keys(obj).sort().forEach(key => {
+                sorted[key] = sortObjectKeys(obj[key]);
+            });
+            
+            return sorted;
+        }
+
+        // 显示状态消息
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusBox.className = 'status-box active ' + type;
+            
+            // 设置图标
+            let iconClass;
+            switch(type) {
+                case 'success':
+                    iconClass = 'fas fa-check-circle';
+                    break;
+                case 'error':
+                    iconClass = 'fas fa-exclamation-circle';
+                    break;
+                case 'warning':
+                    iconClass = 'fas fa-exclamation-triangle';
+                    break;
+                default:
+                    iconClass = 'fas fa-info-circle';
+            }
+            
+            statusIcon.className = 'status-icon ' + iconClass;
+            
+            // 自动隐藏信息
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusBox.classList.remove('active');
+                }, 3000);
+            }
+        }
+
+        // 处理Tab键
+        function handleTabKey(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                
+                const start = e.target.selectionStart;
+                const end = e.target.selectionEnd;
+                const value = e.target.value;
+                
+                // 插入两个空格
+                e.target.value = value.substring(0, start) + '  ' + value.substring(end);
+                
+                // 移动光标位置
+                e.target.selectionStart = e.target.selectionEnd = start + 2;
+                
+                // 触发输入事件更新统计
+                updateStats();
+            }
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 添加键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter 转换
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                convert();
+            }
+            
+            // Ctrl/Cmd + S 格式化
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                formatYAML();
+            }
+            
+            // Ctrl/Cmd + Shift + F 格式化JSON
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F') {
+                e.preventDefault();
+                formatJSON();
+            }
+        });
+    </script>
+</body>
+</html>

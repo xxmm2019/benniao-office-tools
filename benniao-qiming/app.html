@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>取名字工具 - 免费智能取名助手- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-qiming/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .tool-intro {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+            background-color: #f8faff;
+            border-right: 1px solid #eaeaea;
+        }
+        
+        .tool-intro h2 {
+            color: #182848;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4b6cb7;
+        }
+        
+        .intro-item {
+            margin-bottom: 25px;
+        }
+        
+        .intro-item i {
+            color: #4b6cb7;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .tool-usage {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+        }
+        
+        .tool-usage h2 {
+            color: #182848;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4b6cb7;
+        }
+        
+        .usage-step {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background-color: #4b6cb7;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .name-generator {
+            padding: 0 30px 30px;
+            width: 100%;
+            border-top: 1px solid #eaeaea;
+            background-color: #f8faff;
+        }
+        
+        .generator-title {
+            text-align: center;
+            margin: 25px 0;
+            color: #182848;
+        }
+        
+        .generator-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: #4b6cb7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: #4b6cb7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5795;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .names-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .names-title {
+            margin-bottom: 20px;
+            color: #182848;
+            text-align: center;
+        }
+        
+        .names-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .name-item {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+            transition: all 0.3s;
+        }
+        
+        .name-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            border-color: #4b6cb7;
+        }
+        
+        .name-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #182848;
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .name-explanation {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .placeholder {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+            grid-column: 1 / -1;
+        }
+        
+        .explanation-tag {
+            display: inline-block;
+            background-color: #e8edff;
+            color: #4b6cb7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            border-top: 1px solid #eaeaea;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .tool-intro {
+                border-right: none;
+                border-bottom: 1px solid #eaeaea;
+            }
+            
+            .generator-form {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .names-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .name-item {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-signature"></i> 取名字工具</h1>
+            <p>一款免费、操作简单、功能丰富的个性化名字选取工具，可以为您的朋友和家人选取理想的名字</p>
+        </header>
+        
+　
+        
+        <div class="name-generator">
+            <h2 class="generator-title">开始取名</h2>
+            
+            <div class="generator-form">
+                <div class="form-group">
+                    <label for="surname"><i class="fas fa-user-tag"></i> 请输入姓氏</label>
+                    <input type="text" id="surname" placeholder="例如: 任" maxlength="4">
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender"><i class="fas fa-venus-mars"></i> 选择性别</label>
+                    <select id="gender">
+                        <option value="male">男孩名字</option>
+                        <option value="female">女孩名字</option>
+                        <option value="neutral">中性名字</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="length"><i class="fas fa-text-height"></i> 名字字数</label>
+                    <select id="length">
+                        <option value="2">两个字</option>
+                        <option value="3" selected>三个字</option>
+                        <option value="4">四个字</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button id="generate-btn" class="btn btn-primary">
+                    <i class="fas fa-magic"></i> 开始取名
+                </button>
+                <button id="reset-btn" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> 重置
+                </button>
+            </div>
+            
+            <div class="names-container">
+                <h3 class="names-title">为您推荐的名字</h3>
+                <div id="names-list" class="placeholder">
+                    输入姓氏并选择性别和名字字数后，点击"开始取名"按钮生成名字
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+           　
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 定义名字库及解释
+            const nameDatabase = {
+                male: {
+                    // 两字名 (名只有一个字)
+                    "2": [
+                        { name: "浩", explanation: "浩表示广大、浩瀚，寓意胸怀广阔，气度不凡。" },
+                        { name: "睿", explanation: "睿表示聪明、智慧，寓意聪慧过人，明智通达。" },
+                        { name: "轩", explanation: "轩表示气度、高雅，寓意气宇轩昂，风度翩翩。" },
+                        { name: "宇", explanation: "宇表示宇宙、空间，寓意胸怀天下，志向远大。" },
+                        { name: "泽", explanation: "泽表示恩泽、仁慈，寓意仁爱宽厚，福泽绵长。" },
+                        { name: "辰", explanation: "辰表示时光、星辰，寓意珍惜时光，如星辰般闪耀。" },
+                        { name: "博", explanation: "博表示博学、广博，寓意学识渊博，见多识广。" },
+                        { name: "哲", explanation: "哲表示哲理、智慧，寓意思想深邃，富有哲理。" }
+                    ],
+                    // 三字名 (名有两个字)
+                    "3": [
+                        { name: "子轩", explanation: "子表示有学问、有德行，轩表示气度不凡，整体寓意文雅高尚，气宇轩昂。" },
+                        { name: "浩然", explanation: "浩表示广阔，然表示自然，寓意胸怀广阔，正气凛然。" },
+                        { name: "博文", explanation: "博表示博学，文表示文采，寓意学识渊博，文采斐然。" },
+                        { name: "俊熙", explanation: "俊表示英俊，熙表示光明，寓意英俊潇洒，前途光明。" },
+                        { name: "天宇", explanation: "天表示天空，宇表示宇宙，寓意志向高远，胸怀广阔。" },
+                        { name: "明轩", explanation: "明表示明亮、聪明，轩表示高雅，寓意聪明睿智，气度不凡。" },
+                        { name: "梓豪", explanation: "梓表示故乡、根基，豪表示豪迈，寓意不忘根本，豪迈大气。" },
+                        { name: "文博", explanation: "文表示文雅，博表示博学，寓意文雅博学，才华出众。" }
+                    ],
+                    // 四字名 (名有三个字)
+                    "4": [
+                        { name: "子涵睿", explanation: "子表示有学问，涵表示包容，睿表示智慧，寓意博学多才，包容睿智。" },
+                        { name: "浩然宇", explanation: "浩表示广阔，然表示自然，宇表示宇宙，寓意胸怀天地，浩然正气。" },
+                        { name: "文轩博", explanation: "文表示文雅，轩表示高雅，博表示博学，寓意文雅高尚，学识渊博。" },
+                        { name: "天佑辰", explanation: "天表示天空，佑表示保佑，辰表示时光，寓意天赐福佑，珍惜时光。" },
+                        { name: "明哲轩", explanation: "明表示明亮，哲表示智慧，轩表示高雅，寓意聪明睿智，气度不凡。" },
+                        { name: "博文浩", explanation: "博表示博学，文表示文采，浩表示广阔，寓意学识渊博，胸怀广阔。" },
+                        { name: "睿泽宇", explanation: "睿表示智慧，泽表示恩泽，宇表示宇宙，寓意智慧仁爱，胸怀天下。" },
+                        { name: "俊熙然", explanation: "俊表示英俊，熙表示光明，然表示自然，寓意英俊潇洒，光明磊落。" }
+                    ]
+                },
+                female: {
+                    "2": [
+                        { name: "婷", explanation: "婷表示美好、优雅，寓意姿态优美，气质高雅。" },
+                        { name: "妍", explanation: "妍表示美丽、美好，寓意容貌秀丽，心灵美好。" },
+                        { name: "雯", explanation: "雯表示彩云，寓意如云彩般美丽，生活多姿多彩。" },
+                        { name: "雅", explanation: "雅表示高雅、文雅，寓意品味高雅，举止文雅。" },
+                        { name: "静", explanation: "静表示安静、宁静，寓意性情温和，内心平静。" },
+                        { name: "琳", explanation: "琳表示美玉，寓意如美玉般纯洁，珍贵美好。" },
+                        { name: "洁", explanation: "洁表示纯洁、清白，寓意心灵纯洁，品行高洁。" },
+                        { name: "莹", explanation: "莹表示晶莹、透明，寓意心灵纯净，光彩照人。" }
+                    ],
+                    "3": [
+                        { name: "梓萱", explanation: "梓表示故乡，萱表示忘忧草，寓意不忘根本，快乐无忧。" },
+                        { name: "诗涵", explanation: "诗表示诗意，涵表示包容，寓意富有诗意，包容大度。" },
+                        { name: "欣怡", explanation: "欣表示喜悦，怡表示愉快，寓意心情愉快，生活幸福。" },
+                        { name: "雨涵", explanation: "雨表示雨水，涵表示包容，寓意如雨滋润，包容万物。" },
+                        { name: "梦琪", explanation: "梦表示梦想，琪表示美玉，寓意梦想成真，珍贵美好。" },
+                        { name: "思雨", explanation: "思表示思念、思考，雨表示雨水，寓意心思细腻，如雨滋润。" },
+                        { name: "雅雯", explanation: "雅表示高雅，雯表示彩云，寓意高雅美丽，如云彩般绚丽。" },
+                        { name: "梦瑶", explanation: "梦表示梦想，瑶表示美玉，寓意梦想珍贵，如美玉般纯洁。" }
+                    ],
+                    "4": [
+                        { name: "诗雨涵", explanation: "诗表示诗意，雨表示滋润，涵表示包容，寓意富有诗意，滋润包容。" },
+                        { name: "雅静雯", explanation: "雅表示高雅，静表示安静，雯表示彩云，寓意高雅文静，如彩云般美丽。" },
+                        { name: "梦琪萱", explanation: "梦表示梦想，琪表示美玉，萱表示忘忧草，寓意梦想珍贵，快乐无忧。" },
+                        { name: "欣怡然", explanation: "欣表示喜悦，怡表示愉快，然表示自然，寓意自然喜悦，心情愉快。" },
+                        { name: "思雨婷", explanation: "思表示思考，雨表示滋润，婷表示美好，寓意心思细腻，生活美好。" },
+                        { name: "梓萱雅", explanation: "梓表示故乡，萱表示忘忧草，雅表示高雅，寓意不忘根本，高雅快乐。" },
+                        { name: "雨涵琳", explanation: "雨表示滋润，涵表示包容，琳表示美玉，寓意滋润包容，如美玉般珍贵。" },
+                        { name: "梦瑶静", explanation: "梦表示梦想，瑶表示美玉，静表示安静，寓意梦想珍贵，内心平静。" }
+                    ]
+                },
+                neutral: {
+                    "2": [
+                        { name: "晨", explanation: "晨表示清晨、开始，寓意新的开始，充满希望。" },
+                        { name: "逸", explanation: "逸表示超脱、安逸，寓意生活安逸，超然脱俗。" },
+                        { name: "睿", explanation: "睿表示聪明、智慧，寓意聪慧过人，明智通达。" },
+                        { name: "悦", explanation: "悦表示喜悦、愉快，寓意心情愉快，生活幸福。" },
+                        { name: "轩", explanation: "轩表示气度、高雅，寓意气宇轩昂，风度翩翩。" },
+                        { name: "欣", explanation: "欣表示喜悦、欣赏，寓意积极向上，受人欣赏。" },
+                        { name: "博", explanation: "博表示博学、广博，寓意学识渊博，见多识广。" },
+                        { name: "哲", explanation: "哲表示哲理、智慧，寓意思想深邃，富有哲理。" }
+                    ],
+                    "3": [
+                        { name: "子涵", explanation: "子表示有学问，涵表示包容，寓意博学多才，包容大度。" },
+                        { name: "文博", explanation: "文表示文雅，博表示博学，寓意文雅博学，才华出众。" },
+                        { name: "思源", explanation: "思表示思考，源表示源头，寓意不忘根本，思源感恩。" },
+                        { name: "雨晨", explanation: "雨表示雨水，晨表示清晨，寓意如雨滋润，如晨清新。" },
+                        { name: "浩然", explanation: "浩表示广阔，然表示自然，寓意胸怀广阔，正气凛然。" },
+                        { name: "晨曦", explanation: "晨表示清晨，曦表示阳光，寓意如清晨阳光，充满希望。" },
+                        { name: "文轩", explanation: "文表示文雅，轩表示高雅，寓意文雅高尚，气度不凡。" },
+                        { name: "明哲", explanation: "明表示明亮，哲表示智慧，寓意聪明睿智，明智通达。" }
+                    ],
+                    "4": [
+                        { name: "子涵睿", explanation: "子表示有学问，涵表示包容，睿表示智慧，寓意博学多才，包容睿智。" },
+                        { name: "文博浩", explanation: "文表示文雅，博表示博学，浩表示广阔，寓意文雅博学，胸怀广阔。" },
+                        { name: "思源然", explanation: "思表示思考，源表示源头，然表示自然，寓意思源感恩，自然真挚。" },
+                        { name: "雨晨轩", explanation: "雨表示滋润，晨表示清晨，轩表示高雅，寓意滋润清新，气质高雅。" },
+                        { name: "浩然宇", explanation: "浩表示广阔，然表示自然，宇表示宇宙，寓意胸怀天地，浩然正气。" },
+                        { name: "晨曦悦", explanation: "晨表示清晨，曦表示阳光，悦表示喜悦，寓意如晨光般带来喜悦。" },
+                        { name: "文轩博", explanation: "文表示文雅，轩表示高雅，博表示博学，寓意文雅高尚，学识渊博。" },
+                        { name: "明哲逸", explanation: "明表示明亮，哲表示智慧，逸表示超脱，寓意聪明睿智，超然脱俗。" }
+                    ]
+                }
+            };
+            
+            // 获取DOM元素
+            const surnameInput = document.getElementById('surname');
+            const genderSelect = document.getElementById('gender');
+            const lengthSelect = document.getElementById('length');
+            const generateBtn = document.getElementById('generate-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const namesList = document.getElementById('names-list');
+            
+            // 生成名字的函数
+            function generateNames() {
+                const surname = surnameInput.value.trim();
+                const gender = genderSelect.value;
+                const length = lengthSelect.value;
+                
+                // 验证输入
+                if (!surname) {
+                    alert('请输入姓氏！');
+                    surnameInput.focus();
+                    return;
+                }
+                
+                // 验证名字字数与姓氏的关系
+                if (surname.length > 1 && length === "2") {
+                    alert('复姓不适合选择"两个字"的名字，请选择三个字或四个字的名字。');
+                    lengthSelect.value = "3";
+                    return;
+                }
+                
+                // 获取对应性别和字数的名字库
+                const namePool = nameDatabase[gender][length];
+                
+                // 清空现有名字
+                namesList.innerHTML = '';
+                namesList.classList.remove('placeholder');
+                
+                // 生成6个名字
+                const usedIndices = new Set();
+                const namesToShow = 6;
+                
+                for (let i = 0; i < namesToShow; i++) {
+                    // 如果名字库不够用，重置已用索引
+                    if (usedIndices.size >= namePool.length) {
+                        usedIndices.clear();
+                    }
+                    
+                    // 随机选择一个名字，确保不重复
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * namePool.length);
+                    } while (usedIndices.has(randomIndex));
+                    
+                    usedIndices.add(randomIndex);
+                    
+                    const nameData = namePool[randomIndex];
+                    const fullName = surname + nameData.name;
+                    
+                    // 创建名字元素
+                    const nameItem = document.createElement('div');
+                    nameItem.className = 'name-item';
+                    
+                    // 添加名字
+                    const nameText = document.createElement('div');
+                    nameText.className = 'name-text';
+                    nameText.textContent = fullName;
+                    nameItem.appendChild(nameText);
+                    
+                    // 添加解释
+                    const explanation = document.createElement('div');
+                    explanation.className = 'name-explanation';
+                    
+                    // 添加解释标签
+                    const tags = document.createElement('div');
+                    tags.style.marginBottom = '8px';
+                    
+                    // 根据性别添加标签
+                    if (gender === 'male') {
+                        tags.innerHTML += '<span class="explanation-tag">男孩名</span>';
+                    } else if (gender === 'female') {
+                        tags.innerHTML += '<span class="explanation-tag">女孩名</span>';
+                    } else {
+                        tags.innerHTML += '<span class="explanation-tag">中性名</span>';
+                    }
+                    
+                    // 根据字数添加标签
+                    if (length === "2") {
+                        tags.innerHTML += '<span class="explanation-tag">两字名</span>';
+                    } else if (length === "3") {
+                        tags.innerHTML += '<span class="explanation-tag">三字名</span>';
+                    } else {
+                        tags.innerHTML += '<span class="explanation-tag">四字名</span>';
+                    }
+                    
+                    explanation.appendChild(tags);
+                    
+                    // 添加解释文本
+                    const explanationText = document.createElement('p');
+                    explanationText.textContent = nameData.explanation;
+                    explanation.appendChild(explanationText);
+                    
+                    nameItem.appendChild(explanation);
+                    
+                    // 添加到列表
+                    namesList.appendChild(nameItem);
+                }
+                
+                // 更新按钮文本
+                generateBtn.innerHTML = '<i class="fas fa-sync-alt"></i> 换一批名字';
+            }
+            
+            // 重置函数
+            function resetForm() {
+                surnameInput.value = '';
+                genderSelect.value = 'male';
+                lengthSelect.value = '3';
+                namesList.innerHTML = '输入姓氏并选择性别和名字字数后，点击"开始取名"按钮生成名字';
+                namesList.className = 'placeholder';
+                generateBtn.innerHTML = '<i class="fas fa-magic"></i> 开始取名';
+            }
+            
+            // 添加事件监听
+            generateBtn.addEventListener('click', generateNames);
+            resetBtn.addEventListener('click', resetForm);
+            
+            // 初始示例数据
+            surnameInput.value = '任';
+            
+            // 键盘支持：按Enter键生成名字
+            surnameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    generateNames();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

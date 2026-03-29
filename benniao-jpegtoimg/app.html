@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线JPEG图片转换工具 - 支持多种格式与缩放 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-jpegtoimg/">
+     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-app {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            padding: 25px;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .upload-area {
+            border: 3px dashed #3498db;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f8fafc;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+        
+        .upload-area:hover {
+            background-color: #e8f4fc;
+            border-color: #2980b9;
+        }
+        
+        .upload-area i {
+            font-size: 4rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .upload-area p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        
+        .upload-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .file-info.active {
+            display: block;
+        }
+        
+        .options-section {
+            margin-top: 30px;
+        }
+        
+        .option-group {
+            margin-bottom: 25px;
+        }
+        
+        .option-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .format-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .format-option {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .format-option input[type="radio"] {
+            display: none;
+        }
+        
+        .format-option label {
+            display: block;
+            padding: 12px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .format-option input[type="radio"]:checked + label {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: #dfe6e9;
+            outline: none;
+        }
+        
+        .size-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 350px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 15px;
+            background-color: #f8fafc;
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .preview-placeholder {
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .preview-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        .image-stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .convert-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .convert-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .download-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .download-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .download-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            display: none;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .main-app {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-exchange-alt"></i> 在线JPEG图片转换工具</h1>
+            <p class="subtitle">上传JPEG格式图片，转换为多种格式（PNG、WebP、BMP、GIF等），支持自定义尺寸调整，一键下载转换后的图片</p>
+        </header>
+        
+        <div class="main-app">
+            <!-- 上传和设置区域 -->
+            <div class="upload-section">
+                <h2 class="section-title">1. 上传JPEG图片</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>点击或拖放JPEG图片到此处</h3>
+                    <p>支持.jpg、.jpeg格式，最大文件大小：5MB</p>
+                    <button class="upload-btn" id="uploadBtn">
+                        <i class="fas fa-folder-open"></i> 选择图片文件
+                    </button>
+                    <input type="file" id="fileInput" accept=".jpg,.jpeg,.jpe,.jfif" style="display: none;">
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <div><strong>文件名称:</strong> <span id="fileName">-</span></div>
+                    <div><strong>文件大小:</strong> <span id="fileSize">-</span></div>
+                    <div><strong>图片尺寸:</strong> <span id="fileDimensions">-</span></div>
+                </div>
+                
+                <div class="options-section">
+                    <h2 class="section-title">2. 设置转换选项</h2>
+                    
+                    <div class="option-group">
+                        <label class="option-label">输出格式</label>
+                        <div class="format-options">
+                            <div class="format-option">
+                                <input type="radio" id="format-png" name="format" value="png" checked>
+                                <label for="format-png">PNG</label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-webp" name="format" value="webp">
+                                <label for="format-webp">WebP</label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-bmp" name="format" value="bmp">
+                                <label for="format-bmp">BMP</label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-gif" name="format" value="gif">
+                                <label for="format-gif">GIF</label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-tiff" name="format" value="tiff">
+                                <label for="format-tiff">TIFF</label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-ico" name="format" value="ico">
+                                <label for="format-ico">ICO</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">图片质量: <span id="qualityValue">85</span>%</label>
+                        <div class="slider-container">
+                            <input type="range" id="qualitySlider" min="10" max="100" value="85">
+                            <span class="size-value" id="qualityDisplay">85%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">缩放尺寸: <span id="scaleValue">100</span>%</label>
+                        <div class="slider-container">
+                            <input type="range" id="scaleSlider" min="10" max="200" value="100">
+                            <span class="size-value" id="scaleDisplay">100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">自定义宽度 (像素)</label>
+                        <div class="slider-container">
+                            <input type="range" id="widthSlider" min="50" max="2000" value="800">
+                            <span class="size-value" id="widthDisplay">800px</span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">自定义高度 (像素)</label>
+                        <div class="slider-container">
+                            <input type="range" id="heightSlider" min="50" max="2000" value="600">
+                            <span class="size-value" id="heightDisplay">600px</span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">保持宽高比</label>
+                        <div class="slider-container">
+                            <input type="checkbox" id="keepAspectRatio" checked>
+                            <span class="size-value" id="aspectRatioDisplay">开启</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 预览和操作区域 -->
+            <div class="preview-section">
+                <h2 class="section-title">3. 预览与下载</h2>
+                
+                <div class="preview-container">
+                    <div class="preview-placeholder" id="previewPlaceholder">
+                        <i class="fas fa-image"></i>
+                        <p>转换后的图片将在此处显示</p>
+                    </div>
+                    <canvas id="previewCanvas" style="display: none;"></canvas>
+                    <img id="previewImage" class="preview-image" alt="转换后的图片预览">
+                    
+                    <div class="loading" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        <p>正在处理图片...</p>
+                    </div>
+                </div>
+                
+                <div class="image-stats">
+                    <div class="stat">
+                        <div class="stat-label">原始尺寸</div>
+                        <div class="stat-value" id="originalSize">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">新尺寸</div>
+                        <div class="stat-value" id="newSize">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">文件格式</div>
+                        <div class="stat-value" id="outputFormat">-</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn convert-btn" id="convertBtn">
+                        <i class="fas fa-sync-alt"></i> 转换图片
+                    </button>
+                    <button class="action-btn download-btn" id="downloadBtn" disabled>
+                        <i class="fas fa-download"></i> 下载图片
+                    </button>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 10px;"><i class="fas fa-info-circle"></i> 使用说明</h3>
+                    <ol style="padding-left: 20px; color: #555;">
+                        <li>上传JPEG格式图片（支持拖放）</li>
+                        <li>选择输出格式（PNG、WebP、BMP、GIF、TIFF、ICO）</li>
+                        <li>调整图片质量、缩放比例或自定义尺寸</li>
+                        <li>点击"转换图片"按钮生成新图片</li>
+                        <li>点击"下载图片"保存到您的设备</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+             
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const fileDimensions = document.getElementById('fileDimensions');
+        const previewImage = document.getElementById('previewImage');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityDisplay = document.getElementById('qualityDisplay');
+        const scaleSlider = document.getElementById('scaleSlider');
+        const scaleDisplay = document.getElementById('scaleDisplay');
+        const widthSlider = document.getElementById('widthSlider');
+        const widthDisplay = document.getElementById('widthDisplay');
+        const heightSlider = document.getElementById('heightSlider');
+        const heightDisplay = document.getElementById('heightDisplay');
+        const keepAspectRatio = document.getElementById('keepAspectRatio');
+        const originalSize = document.getElementById('originalSize');
+        const newSize = document.getElementById('newSize');
+        const outputFormat = document.getElementById('outputFormat');
+        
+        // 全局变量
+        let originalImage = null;
+        let convertedImageUrl = null;
+        let originalImageData = {
+            width: 0,
+            height: 0,
+            size: 0,
+            aspectRatio: 1
+        };
+        
+        // 事件监听器
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#e8f4fc';
+            uploadArea.style.borderColor = '#2980b9';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '#f8fafc';
+            uploadArea.style.borderColor = '#3498db';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#f8fafc';
+            uploadArea.style.borderColor = '#3498db';
+            
+            if (e.dataTransfer.files.length) {
+                const file = e.dataTransfer.files[0];
+                if (file.type.startsWith('image/') && (file.name.toLowerCase().endsWith('.jpg') || 
+                    file.name.toLowerCase().endsWith('.jpeg') || file.name.toLowerCase().endsWith('.jpe') || 
+                    file.name.toLowerCase().endsWith('.jfif'))) {
+                    handleImageUpload(file);
+                } else {
+                    alert('请上传JPEG格式的图片文件（.jpg, .jpeg, .jpe, .jfif）');
+                }
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                const file = e.target.files[0];
+                handleImageUpload(file);
+            }
+        });
+        
+        // 滑块事件监听
+        qualitySlider.addEventListener('input', () => {
+            qualityDisplay.textContent = `${qualitySlider.value}%`;
+        });
+        
+        scaleSlider.addEventListener('input', () => {
+            const scale = parseInt(scaleSlider.value);
+            scaleDisplay.textContent = `${scale}%`;
+            
+            // 如果保持宽高比，同时更新宽度和高度滑块
+            if (keepAspectRatio.checked && originalImageData.width && originalImageData.height) {
+                const newWidth = Math.round(originalImageData.width * scale / 100);
+                const newHeight = Math.round(originalImageData.height * scale / 100);
+                
+                widthSlider.value = newWidth;
+                widthDisplay.textContent = `${newWidth}px`;
+                
+                heightSlider.value = newHeight;
+                heightDisplay.textContent = `${newHeight}px`;
+            }
+        });
+        
+        widthSlider.addEventListener('input', () => {
+            widthDisplay.textContent = `${widthSlider.value}px`;
+            
+            // 如果保持宽高比，更新高度滑块
+            if (keepAspectRatio.checked && originalImageData.aspectRatio) {
+                const newHeight = Math.round(widthSlider.value / originalImageData.aspectRatio);
+                heightSlider.value = newHeight;
+                heightDisplay.textContent = `${newHeight}px`;
+                
+                // 更新缩放滑块
+                const scale = Math.round((widthSlider.value / originalImageData.width) * 100);
+                scaleSlider.value = scale;
+                scaleDisplay.textContent = `${scale}%`;
+            }
+        });
+        
+        heightSlider.addEventListener('input', () => {
+            heightDisplay.textContent = `${heightSlider.value}px`;
+            
+            // 如果保持宽高比，更新宽度滑块
+            if (keepAspectRatio.checked && originalImageData.aspectRatio) {
+                const newWidth = Math.round(heightSlider.value * originalImageData.aspectRatio);
+                widthSlider.value = newWidth;
+                widthDisplay.textContent = `${newWidth}px`;
+                
+                // 更新缩放滑块
+                const scale = Math.round((heightSlider.value / originalImageData.height) * 100);
+                scaleSlider.value = scale;
+                scaleDisplay.textContent = `${scale}%`;
+            }
+        });
+        
+        keepAspectRatio.addEventListener('change', () => {
+            const aspectRatioDisplay = document.getElementById('aspectRatioDisplay');
+            aspectRatioDisplay.textContent = keepAspectRatio.checked ? '开启' : '关闭';
+        });
+        
+        // 转换按钮事件
+        convertBtn.addEventListener('click', convertImage);
+        
+        // 下载按钮事件
+        downloadBtn.addEventListener('click', downloadImage);
+        
+        // 处理图片上传
+        function handleImageUpload(file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('文件大小超过5MB限制，请选择较小的图片');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                originalImage = new Image();
+                originalImage.onload = function() {
+                    // 显示文件信息
+                    fileInfo.classList.add('active');
+                    fileName.textContent = file.name;
+                    fileSize.textContent = formatFileSize(file.size);
+                    fileDimensions.textContent = `${originalImage.width} × ${originalImage.height} 像素`;
+                    
+                    // 保存原始图片数据
+                    originalImageData.width = originalImage.width;
+                    originalImageData.height = originalImage.height;
+                    originalImageData.size = file.size;
+                    originalImageData.aspectRatio = originalImage.width / originalImage.height;
+                    
+                    // 更新滑块范围
+                    widthSlider.max = originalImage.width * 2;
+                    heightSlider.max = originalImage.height * 2;
+                    
+                    // 设置滑块初始值
+                    widthSlider.value = originalImage.width;
+                    heightSlider.value = originalImage.height;
+                    widthDisplay.textContent = `${originalImage.width}px`;
+                    heightDisplay.textContent = `${originalImage.height}px`;
+                    
+                    // 更新图片统计信息
+                    originalSize.textContent = `${originalImage.width}×${originalImage.height}`;
+                    
+                    // 显示预览占位符
+                    previewPlaceholder.style.display = 'block';
+                    previewImage.style.display = 'none';
+                    
+                    // 启用转换按钮
+                    convertBtn.disabled = false;
+                    downloadBtn.disabled = true;
+                };
+                originalImage.src = e.target.result;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // 转换图片函数
+        function convertImage() {
+            if (!originalImage) {
+                alert('请先上传图片');
+                return;
+            }
+            
+            // 显示加载指示器
+            loadingIndicator.style.display = 'flex';
+            
+            // 获取选择的格式
+            const format = document.querySelector('input[name="format"]:checked').value;
+            
+            // 获取质量参数
+            const quality = parseInt(qualitySlider.value) / 100;
+            
+            // 获取目标尺寸
+            let targetWidth = parseInt(widthSlider.value);
+            let targetHeight = parseInt(heightSlider.value);
+            
+            // 确保尺寸有效
+            targetWidth = Math.max(10, Math.min(5000, targetWidth));
+            targetHeight = Math.max(10, Math.min(5000, targetHeight));
+            
+            // 设置canvas尺寸
+            const ctx = previewCanvas.getContext('2d');
+            previewCanvas.width = targetWidth;
+            previewCanvas.height = targetHeight;
+            
+            // 清除canvas
+            ctx.clearRect(0, 0, targetWidth, targetHeight);
+            
+            // 延迟执行以显示加载动画
+            setTimeout(() => {
+                // 绘制调整大小后的图片
+                ctx.drawImage(originalImage, 0, 0, targetWidth, targetHeight);
+                
+                // 根据格式转换图片
+                let mimeType;
+                let fileExtension;
+                
+                switch(format) {
+                    case 'png':
+                        mimeType = 'image/png';
+                        fileExtension = 'png';
+                        break;
+                    case 'webp':
+                        mimeType = 'image/webp';
+                        fileExtension = 'webp';
+                        break;
+                    case 'bmp':
+                        mimeType = 'image/bmp';
+                        fileExtension = 'bmp';
+                        break;
+                    case 'gif':
+                        mimeType = 'image/gif';
+                        fileExtension = 'gif';
+                        break;
+                    case 'tiff':
+                        mimeType = 'image/tiff';
+                        fileExtension = 'tiff';
+                        break;
+                    case 'ico':
+                        mimeType = 'image/x-icon';
+                        fileExtension = 'ico';
+                        break;
+                    default:
+                        mimeType = 'image/png';
+                        fileExtension = 'png';
+                }
+                
+                // 获取dataURL
+                let dataURL;
+                try {
+                    // 对于某些格式，浏览器可能不支持，我们回退到PNG
+                    if ((format === 'tiff' || format === 'ico') && !previewCanvas.toDataURL(mimeType).startsWith('data:' + mimeType)) {
+                        // 如果浏览器不支持TIFF或ICO格式，使用PNG代替
+                        mimeType = 'image/png';
+                        fileExtension = 'png';
+                        alert(`注意：您的浏览器不支持直接生成${format.toUpperCase()}格式，已自动转换为PNG格式。`);
+                    }
+                    
+                    dataURL = previewCanvas.toDataURL(mimeType, quality);
+                    
+                    // 更新预览图片
+                    previewImage.src = dataURL;
+                    previewImage.style.display = 'block';
+                    previewPlaceholder.style.display = 'none';
+                    
+                    // 保存转换后的图片URL
+                    convertedImageUrl = dataURL;
+                    
+                    // 更新图片统计信息
+                    newSize.textContent = `${targetWidth}×${targetHeight}`;
+                    outputFormat.textContent = format.toUpperCase();
+                    
+                    // 启用下载按钮
+                    downloadBtn.disabled = false;
+                    
+                    // 隐藏加载指示器
+                    loadingIndicator.style.display = 'none';
+                    
+                } catch (error) {
+                    console.error('转换图片时出错:', error);
+                    alert(`转换图片时出错: ${error.message}`);
+                    
+                    // 隐藏加载指示器
+                    loadingIndicator.style.display = 'none';
+                }
+            }, 500);
+        }
+        
+        // 下载图片函数
+        function downloadImage() {
+            if (!convertedImageUrl) {
+                alert('请先转换图片');
+                return;
+            }
+            
+            const format = document.querySelector('input[name="format"]:checked').value;
+            const fileExtension = format === 'jpg' ? 'jpg' : format;
+            const timestamp = new Date().getTime();
+            const filename = `converted_image_${timestamp}.${fileExtension}`;
+            
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.href = convertedImageUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 设置初始值
+            qualityDisplay.textContent = `${qualitySlider.value}%`;
+            scaleDisplay.textContent = `${scaleSlider.value}%`;
+            widthDisplay.textContent = `${widthSlider.value}px`;
+            heightDisplay.textContent = `${heightSlider.value}px`;
+        });
+    </script>
+</body>
+</html>

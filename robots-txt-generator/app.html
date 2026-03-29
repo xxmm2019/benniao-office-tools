@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robots.txt 生成器 - 笨鸟办公工具箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/robots-txt-generator/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-field label {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .form-field input,
+        .form-field textarea,
+        .form-field select {
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+        }
+
+        .output-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .output-box label {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .output-box textarea {
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            background: #f8fafc;
+            resize: none;
+        }
+
+        .output-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: #10b981;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(150%);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .field-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 25px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Robots.txt 生成器</h1>
+            <p>快速创建专业的 robots.txt 文件，优化搜索引擎爬虫访问</p>
+        </div>
+
+        <div class="card">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="robots-agent">User-agent</label>
+                    <input id="robots-agent" type="text" value="*" placeholder="例如: Googlebot, * (所有爬虫)">
+                    <div class="field-note">* 表示适用于所有搜索引擎爬虫</div>
+                </div>
+                <div class="form-field">
+                    <label for="robots-allow">允许访问的路径 (Allow)</label>
+                    <textarea id="robots-allow" rows="3" placeholder="/public
+/images
+/css"></textarea>
+                    <div class="field-note">每行一个路径，以斜杠开头</div>
+                </div>
+                <div class="form-field">
+                    <label for="robots-disallow">禁止访问的路径 (Disallow)</label>
+                    <textarea id="robots-disallow" rows="3" placeholder="/admin
+/private
+/temp"></textarea>
+                    <div class="field-note">每行一个路径，以斜杠开头</div>
+                </div>
+                <div class="form-field">
+                    <label for="robots-sitemap">网站地图地址 (Sitemap)</label>
+                    <input id="robots-sitemap" type="text" placeholder="https://example.com/sitemap.xml">
+                    <div class="field-note">可选，建议添加 XML 站点地图地址</div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn" onclick="generateRobots()">
+                    <span>生成 robots.txt</span>
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <span>清空所有</span>
+                </button>
+            </div>
+            
+            <div class="output-box">
+                <label>生成的 robots.txt 内容</label>
+                <textarea id="robots-output" rows="8" readonly></textarea>
+                <div class="output-actions">
+                    <button class="btn copy-btn" onclick="copyToClipboard()">
+                        <span>复制到剪贴板</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">已复制到剪贴板！</div>
+
+    <script>
+        function generateRobots() {
+            const agent = document.getElementById('robots-agent').value.trim() || '*';
+            const allowText = document.getElementById('robots-allow').value.trim();
+            const disallowText = document.getElementById('robots-disallow').value.trim();
+            const sitemap = document.getElementById('robots-sitemap').value.trim();
+            
+            // 正确分割多行文本
+            const allowLines = allowText ? allowText.split('\n').map(line => line.trim()).filter(line => line) : [];
+            const disallowLines = disallowText ? disallowText.split('\n').map(line => line.trim()).filter(line => line) : [];
+            
+            let output = `User-agent: ${agent}\n\n`;
+            
+            if (allowLines.length > 0) {
+                allowLines.forEach(line => {
+                    output += `Allow: ${line}\n`;
+                });
+                output += '\n';
+            }
+            
+            if (disallowLines.length > 0) {
+                disallowLines.forEach(line => {
+                    output += `Disallow: ${line}\n`;
+                });
+                output += '\n';
+            }
+            
+            if (sitemap) {
+                output += `Sitemap: ${sitemap}\n`;
+            }
+            
+            document.getElementById('robots-output').value = output.trim();
+            
+            // 自动滚动到输出区域
+            document.getElementById('robots-output').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+
+        function clearAll() {
+            document.getElementById('robots-agent').value = '*';
+            document.getElementById('robots-allow').value = '';
+            document.getElementById('robots-disallow').value = '';
+            document.getElementById('robots-sitemap').value = '';
+            document.getElementById('robots-output').value = '';
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('robots-output');
+            if (!output.value.trim()) {
+                showNotification('请先生成内容', 'warning');
+                return;
+            }
+            
+            navigator.clipboard.writeText(output.value).then(() => {
+                showNotification('已复制到剪贴板！');
+            }).catch(err => {
+                // 降级方案
+                output.select();
+                document.execCommand('copy');
+                showNotification('已复制到剪贴板！');
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            
+            if (type === 'warning') {
+                notification.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 为文本框添加示例内容
+        document.addEventListener('DOMContentLoaded', function() {
+            const allowTextarea = document.getElementById('robots-allow');
+            const disallowTextarea = document.getElementById('robots-disallow');
+            
+            allowTextarea.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = '/public\n/images\n/css';
+                }
+            });
+            
+            disallowTextarea.addEventListener('focus', function() {
+                if (!this.value) {
+                    this.value = '/admin\n/private\n/temp';
+                }
+            });
+            
+            // 初始示例
+            if (!allowTextarea.value) {
+                allowTextarea.value = '/public';
+            }
+            if (!disallowTextarea.value) {
+                disallowTextarea.value = '/admin';
+            }
+        });
+    </script>
+</body>
+</html>

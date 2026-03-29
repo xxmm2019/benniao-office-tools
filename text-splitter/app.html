@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本分割器 - 在线文本拆分工具</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <meta name="description" content="免费在线文本分割器，支持按换行、逗号、空格、制表符等多种分隔符拆分文本，提供统计和清理功能。">
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/text-splitter/app.html">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --primary-light: #38bdf8;
+            --primary-bg: rgba(14, 165, 233, 0.1);
+            --secondary: #64748b;
+            --secondary-dark: #475569;
+            --bg-dark: #0f172a;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--bg-dark) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 0 15px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title h3 {
+            font-size: 1.2rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .label {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: white;
+            resize: vertical;
+            transition: var(--transition);
+            min-height: 180px;
+            line-height: 1.5;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-bg);
+        }
+
+        textarea#output {
+            background-color: #f8fafc;
+            color: var(--text);
+            min-height: 200px;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            background: white;
+            transition: var(--transition);
+        }
+
+        select:focus, input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-bg);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .options-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-container span {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .stat-card {
+            background: var(--primary-bg);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-bg);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--text);
+            color: white;
+            padding: 15px 25px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-success {
+            background: var(--success);
+        }
+
+        .toast-error {
+            background: var(--danger);
+        }
+
+        .toast-warning {
+            background: var(--warning);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 25px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .custom-delimiter-container {
+            margin-top: 15px;
+            display: none;
+        }
+
+        .custom-delimiter-container.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .grid-2col {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .main-card {
+                padding: 20px;
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cut"></i> 文本分割器</h1>
+            <p>按分隔符拆分文本，支持多种分隔符，去除空白，忽略空项，提供详细的统计信息</p>
+        </div>
+        
+        <div class="main-card">
+            <div class="grid-2col">
+                <div class="input-section">
+                    <div class="section-title">
+                        <h3>输入文本</h3>
+                        <div class="text-muted" id="input-count">0 字符</div>
+                    </div>
+                    <div class="input-group">
+                        <textarea id="input" placeholder="请输入或粘贴需要拆分的文本，例如：苹果, 香蕉, 梨, 西瓜"></textarea>
+                    </div>
+                    
+                    <div class="controls">
+                        <div>
+                            <label class="label">分隔符类型</label>
+                            <select id="delimiter">
+                                <option value="newline" selected>换行符</option>
+                                <option value="comma">逗号 (,)</option>
+                                <option value="space">空格</option>
+                                <option value="tab">制表符</option>
+                                <option value="semicolon">分号 (;)</option>
+                                <option value="pipe">竖线 (|)</option>
+                                <option value="custom">自定义</option>
+                            </select>
+                        </div>
+                        
+                        <div id="custom-delimiter-container" class="custom-delimiter-container">
+                            <label class="label">自定义分隔符</label>
+                            <input id="custom-delimiter" type="text" placeholder="输入自定义分隔符，如 | 或 ; 或 @ 等" />
+                        </div>
+                    </div>
+                    
+                    <div class="options-row">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="trim" checked>
+                            <span>去除首尾空白字符</span>
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="skip-empty" checked>
+                            <span>忽略空项</span>
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="unique">
+                            <span>去重（只保留唯一项）</span>
+                        </label>
+                    </div>
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" id="split">
+                            <i class="fas fa-cut"></i> 开始拆分
+                        </button>
+                        <button class="btn btn-secondary" id="sample">
+                            <i class="fas fa-vial"></i> 加载示例
+                        </button>
+                        <button class="btn btn-outline" id="clear">
+                            <i class="fas fa-trash-alt"></i> 清空
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="output-section">
+                    <div class="section-title">
+                        <h3>拆分结果</h3>
+                        <div class="text-muted" id="output-count">0 项</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <textarea id="output" readonly placeholder="拆分结果将显示在这里，每行一项"></textarea>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="item-count">0</div>
+                            <div class="stat-label">总项数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="char-count">0</div>
+                            <div class="stat-label">字符数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="line-count">0</div>
+                            <div class="stat-label">行数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="unique-count">0</div>
+                            <div class="stat-label">唯一项</div>
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" id="copy">
+                            <i class="fas fa-copy"></i> 复制结果
+                        </button>
+                        <button class="btn btn-outline" id="download">
+                            <i class="fas fa-download"></i> 下载为TXT
+                        </button>
+                        <button class="btn btn-outline" id="reverse">
+                            <i class="fas fa-exchange-alt"></i> 反转结果
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="advanced-section">
+                <h3>使用示例</h3>
+                <div class="examples" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <button class="btn btn-outline example-btn" data-example="comma">
+                        <i class="fas fa-apple-alt"></i> 水果列表
+                    </button>
+                    <button class="btn btn-outline example-btn" data-example="newline">
+                        <i class="fas fa-users"></i> 姓名列表
+                    </button>
+                    <button class="btn btn-outline example-btn" data-example="pipe">
+                        <i class="fas fa-tags"></i> 标签列表
+                    </button>
+                    <button class="btn btn-outline example-btn" data-example="semicolon">
+                        <i class="fas fa-globe"></i> 网址列表
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>文本分割器 &copy; 2023 - 一款简单实用的在线文本处理工具</p>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">操作成功！</span>
+    </div>
+
+    <script>
+        // DOM 元素
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        const delimiterSelect = document.getElementById('delimiter');
+        const customDelimiterContainer = document.getElementById('custom-delimiter-container');
+        const customDelimiter = document.getElementById('custom-delimiter');
+        const trimToggle = document.getElementById('trim');
+        const skipEmptyToggle = document.getElementById('skip-empty');
+        const uniqueToggle = document.getElementById('unique');
+        const itemCount = document.getElementById('item-count');
+        const charCount = document.getElementById('char-count');
+        const lineCount = document.getElementById('line-count');
+        const uniqueCount = document.getElementById('unique-count');
+        const inputCount = document.getElementById('input-count');
+        const outputCount = document.getElementById('output-count');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // 分隔符映射
+        const delimiterMap = {
+            'newline': /\r?\n/,
+            'comma': ',',
+            'space': /\s+/,
+            'tab': '\t',
+            'semicolon': ';',
+            'pipe': '|'
+        };
+        
+        // 示例数据
+        const examples = {
+            'comma': '苹果, 香蕉, 梨, 西瓜, 葡萄, 橙子, 草莓, 芒果, 菠萝, 猕猴桃',
+            'newline': `张三
+李四
+王五
+赵六
+钱七
+孙八
+周九
+吴十`,
+            'pipe': '科技|生活|教育|娱乐|体育|健康|旅游|美食|财经|时尚',
+            'semicolon': 'https://www.example.com;https://www.google.com;https://www.github.com;https://www.stackoverflow.com'
+        };
+        
+        // 初始化
+        function init() {
+            updateInputStats();
+            updateOutputStats();
+            setupEventListeners();
+            showToast('欢迎使用文本分割器！', 'success');
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 输入框事件
+            input.addEventListener('input', updateInputStats);
+            
+            // 分隔符选择事件
+            delimiterSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customDelimiterContainer.classList.add('show');
+                } else {
+                    customDelimiterContainer.classList.remove('show');
+                }
+                splitText();
+            });
+            
+            // 自定义分隔符事件
+            customDelimiter.addEventListener('input', splitText);
+            
+            // 选项切换事件
+            trimToggle.addEventListener('change', splitText);
+            skipEmptyToggle.addEventListener('change', splitText);
+            uniqueToggle.addEventListener('change', splitText);
+            
+            // 按钮事件
+            document.getElementById('split').addEventListener('click', splitText);
+            document.getElementById('copy').addEventListener('click', copyOutput);
+            document.getElementById('clear').addEventListener('click', clearAll);
+            document.getElementById('sample').addEventListener('click', loadSample);
+            document.getElementById('download').addEventListener('click', downloadOutput);
+            document.getElementById('reverse').addEventListener('click', reverseOutput);
+            
+            // 示例按钮事件
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const exampleType = this.getAttribute('data-example');
+                    loadExample(exampleType);
+                });
+            });
+            
+            // 初始分割
+            splitText();
+        }
+        
+        // 获取当前分隔符
+        function getDelimiter() {
+            const mode = delimiterSelect.value;
+            if (mode === 'custom') {
+                return customDelimiter.value || /\r?\n/;
+            }
+            return delimiterMap[mode] || /\r?\n/;
+        }
+        
+        // 分割文本
+        function splitText() {
+            const value = input.value.trim();
+            if (!value) {
+                output.value = '';
+                updateOutputStats();
+                return;
+            }
+            
+            const delimiter = getDelimiter();
+            let parts = value.split(delimiter);
+            
+            // 去除首尾空白
+            if (trimToggle.checked) {
+                parts = parts.map(item => item.trim());
+            }
+            
+            // 忽略空项
+            if (skipEmptyToggle.checked) {
+                parts = parts.filter(item => item !== '');
+            }
+            
+            // 去重
+            if (uniqueToggle.checked) {
+                const uniqueSet = new Set(parts);
+                parts = Array.from(uniqueSet);
+            }
+            
+            // 更新输出
+            output.value = parts.join('\n');
+            updateOutputStats();
+        }
+        
+        // 更新输入统计
+        function updateInputStats() {
+            const value = input.value;
+            inputCount.textContent = `${value.length} 字符`;
+        }
+        
+        // 更新输出统计
+        function updateOutputStats() {
+            const value = output.value;
+            const lines = value ? value.split('\n') : [];
+            const items = lines.filter(line => line.trim() !== '');
+            const uniqueItems = new Set(items);
+            
+            itemCount.textContent = items.length;
+            charCount.textContent = value.length;
+            lineCount.textContent = lines.length;
+            uniqueCount.textContent = uniqueItems.size;
+            outputCount.textContent = `${items.length} 项`;
+        }
+        
+        // 复制输出到剪贴板
+        async function copyOutput() {
+            if (!output.value) {
+                showToast('没有内容可复制', 'warning');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(output.value);
+                showToast('结果已复制到剪贴板！', 'success');
+            } catch (err) {
+                // 降级方案
+                output.select();
+                document.execCommand('copy');
+                showToast('结果已复制到剪贴板！', 'success');
+            }
+        }
+        
+        // 清空所有
+        function clearAll() {
+            input.value = '';
+            output.value = '';
+            customDelimiter.value = '';
+            updateInputStats();
+            updateOutputStats();
+            showToast('已清空所有内容', 'info');
+        }
+        
+        // 加载示例
+        function loadSample() {
+            input.value = examples.comma;
+            delimiterSelect.value = 'comma';
+            customDelimiterContainer.classList.remove('show');
+            trimToggle.checked = true;
+            skipEmptyToggle.checked = true;
+            splitText();
+            showToast('示例已加载', 'success');
+        }
+        
+        // 加载特定示例
+        function loadExample(type) {
+            if (!examples[type]) return;
+            
+            input.value = examples[type];
+            delimiterSelect.value = type;
+            customDelimiterContainer.classList.remove('show');
+            splitText();
+            showToast(`已加载${getExampleName(type)}示例`, 'success');
+        }
+        
+        // 获取示例名称
+        function getExampleName(type) {
+            const names = {
+                'comma': '水果列表',
+                'newline': '姓名列表',
+                'pipe': '标签列表',
+                'semicolon': '网址列表'
+            };
+            return names[type] || '示例';
+        }
+        
+        // 下载输出为TXT文件
+        function downloadOutput() {
+            if (!output.value) {
+                showToast('没有内容可下载', 'warning');
+                return;
+            }
+            
+            const blob = new Blob([output.value], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `文本分割结果_${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('文件下载开始', 'success');
+        }
+        
+        // 反转结果
+        function reverseOutput() {
+            if (!output.value) {
+                showToast('没有内容可反转', 'warning');
+                return;
+            }
+            
+            const lines = output.value.split('\n');
+            const reversed = lines.reverse();
+            output.value = reversed.join('\n');
+            updateOutputStats();
+            showToast('结果已反转', 'success');
+        }
+        
+        // 显示提示消息
+        function showToast(message, type = 'success') {
+            toastMessage.textContent = message;
+            toast.className = 'toast';
+            toast.classList.add(`toast-${type}`);
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

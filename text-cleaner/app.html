@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本清理器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/text-cleaner/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 15px;
+            background: #f0fdfa;
+            border-radius: 12px;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #134e4a;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .options label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .options input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #14b8a6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 240px;
+            border: 2px solid #99f6e4;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: white;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #14b8a6;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: white;
+            background: #14b8a6;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #0d9488;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.secondary {
+            background: #6b7280;
+        }
+
+        .btn.secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stats {
+            margin-top: 15px;
+            display: flex;
+            gap: 20px;
+            color: #64748b;
+            font-size: 14px;
+            padding: 0 5px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .text-area-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .text-area-header h3 {
+            color: #111827;
+            margin: 0;
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .options {
+                flex-direction: column;
+            }
+            
+            .actions {
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>文本清理器</h1>
+            <p>一键清理空格、空行和格式噪音</p>
+        </div>
+
+        <div class="card">
+            <div class="options">
+                <label><input type="checkbox" id="trim" checked> 去掉首尾空格</label>
+                <label><input type="checkbox" id="collapse-spaces" checked> 合并多余空格</label>
+                <label><input type="checkbox" id="remove-empty"> 删除空行</label>
+                <label><input type="checkbox" id="collapse-empty" checked> 连续空行合并</label>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <div class="text-area-header">
+                        <h3>原始文本</h3>
+                        <span class="char-count" id="input-count">0 字符</span>
+                    </div>
+                    <textarea id="input" placeholder="粘贴需要清理的文本"></textarea>
+                </div>
+                <div>
+                    <div class="text-area-header">
+                        <h3>清理结果</h3>
+                        <span class="char-count" id="output-count">0 字符</span>
+                    </div>
+                    <textarea id="output" readonly placeholder="结果会显示在这里"></textarea>
+                </div>
+            </div>
+
+            <div class="stats">
+                <span>原始字符数: <span id="original-chars">0</span></span>
+                <span>清理后字符数: <span id="cleaned-chars">0</span></span>
+                <span>减少: <span id="reduction">0</span> 字符</span>
+            </div>
+
+            <div class="actions">
+                <button class="btn" id="clean-btn">
+                    <span>开始清理</span>
+                </button>
+                <button class="btn secondary" id="copy-btn" disabled>
+                    <span>复制结果</span>
+                </button>
+                <button class="btn secondary" id="clear-btn">
+                    <span>清空全部</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 获取DOM元素
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        const trim = document.getElementById('trim');
+        const collapseSpaces = document.getElementById('collapse-spaces');
+        const removeEmpty = document.getElementById('remove-empty');
+        const collapseEmpty = document.getElementById('collapse-empty');
+        const cleanBtn = document.getElementById('clean-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const inputCount = document.getElementById('input-count');
+        const outputCount = document.getElementById('output-count');
+        const originalChars = document.getElementById('original-chars');
+        const cleanedChars = document.getElementById('cleaned-chars');
+        const reduction = document.getElementById('reduction');
+        const toast = document.getElementById('toast');
+
+        // 显示提示信息
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.background = type === 'success' ? '#10b981' : '#ef4444';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // 更新字符统计
+        function updateStats() {
+            const inputText = input.value;
+            const outputText = output.value;
+            
+            const inputLength = inputText.length;
+            const outputLength = outputText.length;
+            
+            inputCount.textContent = `${inputLength} 字符`;
+            outputCount.textContent = `${outputLength} 字符`;
+            originalChars.textContent = inputLength;
+            cleanedChars.textContent = outputLength;
+            reduction.textContent = inputLength - outputLength;
+            
+            // 根据是否有内容启用/禁用复制按钮
+            copyBtn.disabled = outputLength === 0;
+        }
+
+        // 清理文本函数
+        function cleanText() {
+            const lines = input.value.replace(/\r\n/g, '\n').split('\n');
+            const cleaned = [];
+            let previousEmpty = false;
+
+            lines.forEach((line) => {
+                let current = line;
+                
+                if (collapseSpaces.checked) {
+                    current = current.replace(/\s+/g, ' ');
+                }
+                
+                if (trim.checked) {
+                    current = current.trim();
+                }
+
+                if (current === '') {
+                    if (removeEmpty.checked) {
+                        return;
+                    }
+                    if (collapseEmpty.checked) {
+                        if (previousEmpty) {
+                            return;
+                        }
+                        previousEmpty = true;
+                    }
+                } else {
+                    previousEmpty = false;
+                }
+
+                cleaned.push(current);
+            });
+
+            // 如果最后是空行且启用了删除空行，则移除
+            if (removeEmpty.checked && cleaned[cleaned.length - 1] === '') {
+                cleaned.pop();
+            }
+
+            output.value = cleaned.join('\n');
+            updateStats();
+        }
+
+        // 复制结果函数
+        async function copyResult() {
+            if (!output.value) {
+                showToast('没有可复制的内容', 'error');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(output.value);
+                showToast('已成功复制到剪贴板！');
+            } catch (err) {
+                // 降级方案
+                output.select();
+                output.setSelectionRange(0, output.value.length);
+                try {
+                    document.execCommand('copy');
+                    showToast('已成功复制到剪贴板！');
+                } catch (err2) {
+                    showToast('复制失败，请手动复制', 'error');
+                }
+            }
+        }
+
+        // 清空函数
+        function clearAll() {
+            input.value = '';
+            output.value = '';
+            updateStats();
+            input.focus();
+            showToast('已清空所有内容');
+        }
+
+        // 事件监听器
+        cleanBtn.addEventListener('click', cleanText);
+        
+        copyBtn.addEventListener('click', copyResult);
+        
+        clearBtn.addEventListener('click', clearAll);
+        
+        input.addEventListener('input', () => {
+            updateStats();
+            cleanText();
+        });
+        
+        // 为所有复选框添加事件监听
+        [trim, collapseSpaces, removeEmpty, collapseEmpty].forEach((checkbox) => {
+            checkbox.addEventListener('change', cleanText);
+        });
+
+        // 初始更新统计
+        updateStats();
+
+        // 示例文本（可选）
+        input.addEventListener('focus', function() {
+            if (this.value === '') {
+                this.placeholder = '例如：\n\n  这段文本  有很多  \n\n  多余的  空格  \n\n  和空行。';
+            }
+        });
+
+        input.addEventListener('blur', function() {
+            this.placeholder = '粘贴需要清理的文本';
+        });
+
+        // 自动调整文本区域高度
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+
+        input.addEventListener('input', function() {
+            autoResize(this);
+        });
+
+        output.addEventListener('input', function() {
+            autoResize(this);
+        });
+    </script>
+</body>
+</html>

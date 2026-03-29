@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开放式图形元生成器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-graph/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .form-section, .preview-section, .code-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .form-section:hover, .preview-section:hover, .code-section:hover {
+            transform: translateY(-5px);
+        }
+        
+        .section-title {
+            color: #3498db;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 1.4rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .char-count {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to right, #2980b9, #1c2833);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eaeaea;
+        }
+        
+        .preview-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .preview-content {
+            padding: 20px;
+        }
+        
+        .preview-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .preview-description {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .preview-url {
+            color: #3498db;
+            font-size: 0.9rem;
+            text-transform: lowercase;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .facebook {
+            background: #3b5998;
+        }
+        
+        .twitter {
+            background: #1da1f2;
+        }
+        
+        .linkedin {
+            background: #0077b5;
+        }
+        
+        .whatsapp {
+            background: #25d366;
+        }
+        
+        .code-container {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        .code-container code {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: block;
+        }
+        
+        .meta-tag {
+            color: #3498db;
+        }
+        
+        .meta-content {
+            color: #e74c3c;
+        }
+        
+        .meta-property {
+            color: #2ecc71;
+        }
+        
+        .meta-comment {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .instructions {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 30px;
+        }
+        
+        .instructions h3 {
+            color: #ff9800;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> 开放式图形元生成器</h1>
+            <p class="subtitle">为您的网站生成开放式图形(Open Graph)和社交媒体HTML元标记。优化您的网站在Facebook、Twitter、LinkedIn等平台上的分享效果。</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-edit"></i> 输入网站信息</h2>
+                
+                <div class="form-group">
+                    <label for="pageTitle">页面标题</label>
+                    <input type="text" id="pageTitle" placeholder="例如：我的精彩文章" value="我的精彩文章">
+                    <div class="char-count"><span id="titleCount">5</span>/60 字符</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pageDescription">页面描述</label>
+                    <textarea id="pageDescription" placeholder="例如：这篇文章将向您展示如何创建开放式图形元标记...">这篇文章将向您展示如何创建开放式图形元标记，以优化您的网站在社交媒体平台上的分享效果。学习如何提高点击率和参与度。</textarea>
+                    <div class="char-count"><span id="descCount">58</span>/160 字符</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pageUrl">页面网址 (URL)</label>
+                    <input type="text" id="pageUrl" placeholder="例如：https://example.com/my-article" value="https://example.com/my-article">
+                </div>
+                
+                <div class="form-group">
+                    <label for="imageUrl">图片网址 (URL)</label>
+                    <input type="text" id="imageUrl" placeholder="例如：https://example.com/image.jpg" value="https://images.unsplash.com/photo-1555066931-4365d14bab8c">
+                </div>
+                
+                <div class="form-group">
+                    <label for="siteName">网站名称</label>
+                    <input type="text" id="siteName" placeholder="例如：我的网站" value="我的网站">
+                </div>
+                
+                <div class="form-group">
+                    <label for="ogType">开放式图形类型</label>
+                    <select id="ogType">
+                        <option value="website">网站 (website)</option>
+                        <option value="article">文章 (article)</option>
+                        <option value="blog">博客 (blog)</option>
+                        <option value="product">产品 (product)</option>
+                        <option value="video.movie">视频 (video.movie)</option>
+                    </select>
+                </div>
+                
+                <button id="generateBtn" class="btn">
+                    <i class="fas fa-magic"></i> 生成元标记
+                </button>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-eye"></i> 社交媒体预览</h2>
+                <p style="margin-bottom: 15px; color: #7f8c8d;">预览您的网站在社交媒体上的显示效果：</p>
+                
+                <div class="preview-card">
+                    <div class="preview-image" id="previewImage">
+                        <!-- 图片预览将在此显示 -->
+                    </div>
+                    <div class="preview-content">
+                        <div class="preview-title" id="previewTitle">我的精彩文章</div>
+                        <div class="preview-description" id="previewDescription">这篇文章将向您展示如何创建开放式图形元标记，以优化您的网站在社交媒体平台上的分享效果。学习如何提高点击率和参与度。</div>
+                        <div class="preview-url" id="previewUrl">example.com</div>
+                        
+                        <div class="social-icons">
+                            <div class="social-icon facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </div>
+                            <div class="social-icon twitter">
+                                <i class="fab fa-twitter"></i>
+                            </div>
+                            <div class="social-icon linkedin">
+                                <i class="fab fa-linkedin-in"></i>
+                            </div>
+                            <div class="social-icon whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 10px;">支持的平台</h3>
+                    <p style="color: #7f8c8d; font-size: 0.95rem;">此工具生成的元标记支持以下平台：</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                        <span style="background: #3b5998; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">Facebook</span>
+                        <span style="background: #1da1f2; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">Twitter</span>
+                        <span style="background: #0077b5; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">LinkedIn</span>
+                        <span style="background: #25d366; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">WhatsApp</span>
+                        <span style="background: #e4405f; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">Pinterest</span>
+                        <span style="background: #333; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem;">Slack</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="code-section">
+                <h2 class="section-title"><i class="fas fa-code"></i> 生成的元标记</h2>
+                <p style="margin-bottom: 15px; color: #7f8c8d;">将以下代码复制到您网页的 &lt;head&gt; 部分：</p>
+                
+                <div class="code-container">
+                    <pre><code id="generatedCode">
+<!-- 开放式图形和社交媒体元标记 -->
+<!-- 由开放式图形元生成器生成 -->
+&lt;meta property="og:title" content="我的精彩文章"&gt;
+&lt;meta property="og:description" content="这篇文章将向您展示如何创建开放式图形元标记，以优化您的网站在社交媒体平台上的分享效果。学习如何提高点击率和参与度。"&gt;
+&lt;meta property="og:url" content="https://example.com/my-article"&gt;
+&lt;meta property="og:image" content="https://images.unsplash.com/photo-1555066931-4365d14bab8c"&gt;
+&lt;meta property="og:type" content="website"&gt;
+&lt;meta property="og:site_name" content="我的网站"&gt;
+&lt;meta property="og:locale" content="zh_CN"&gt;
+
+&lt;!-- Twitter卡片元标记 --&gt;
+&lt;meta name="twitter:card" content="summary_large_image"&gt;
+&lt;meta name="twitter:site" content="@yourtwitterhandle"&gt;
+&lt;meta name="twitter:title" content="我的精彩文章"&gt;
+&lt;meta name="twitter:description" content="这篇文章将向您展示如何创建开放式图形元标记，以优化您的网站在社交媒体平台上的分享效果。学习如何提高点击率和参与度。"&gt;
+&lt;meta name="twitter:image" content="https://images.unsplash.com/photo-1555066931-4365d14bab8c"&gt;
+
+&lt;!-- 其他重要的元标记 --&gt;
+&lt;meta name="description" content="这篇文章将向您展示如何创建开放式图形元标记，以优化您的网站在社交媒体平台上的分享效果。学习如何提高点击率和参与度。"&gt;
+&lt;meta name="author" content="我的网站"&gt;
+
+&lt;!-- 用于WhatsApp的额外标记 --&gt;
+&lt;meta property="og:image:type" content="image/jpeg"&gt;
+&lt;meta property="og:image:width" content="1200"&gt;
+&lt;meta property="og:image:height" content="630"&gt;
+                    </code></pre>
+                </div>
+                
+                <button id="copyBtn" class="btn" style="margin-top: 20px; background: linear-gradient(to right, #27ae60, #2c3e50);">
+                    <i class="fas fa-copy"></i> 复制代码到剪贴板
+                </button>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> 如何使用开放式图形元标记</h3>
+            <ol>
+                <li>填写表单中的所有字段，确保信息准确</li>
+                <li>点击"生成元标记"按钮以生成代码</li>
+                <li>复制生成的代码并粘贴到您网页的&lt;head&gt;部分</li>
+                <li>在社交媒体上测试分享您的链接以查看效果</li>
+                <li>使用Facebook的<a href="https://developers.facebook.com/tools/debug/" target="_blank" style="color: #3498db;">分享调试器</a>或Twitter的<a href="https://cards-dev.twitter.com/validator" target="_blank" style="color: #3498db;">卡片验证器</a>来验证您的标记</li>
+            </ol>
+        </div>
+        
+        <footer>
+             
+        </footer>
+    </div>
+
+    <script>
+        // DOM元素
+        const pageTitleInput = document.getElementById('pageTitle');
+        const pageDescriptionInput = document.getElementById('pageDescription');
+        const pageUrlInput = document.getElementById('pageUrl');
+        const imageUrlInput = document.getElementById('imageUrl');
+        const siteNameInput = document.getElementById('siteName');
+        const ogTypeInput = document.getElementById('ogType');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const generatedCode = document.getElementById('generatedCode');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewDescription = document.getElementById('previewDescription');
+        const previewUrl = document.getElementById('previewUrl');
+        const previewImage = document.getElementById('previewImage');
+        const titleCount = document.getElementById('titleCount');
+        const descCount = document.getElementById('descCount');
+        
+        // 初始化字符计数
+        updateCharCount();
+        
+        // 更新字符计数
+        function updateCharCount() {
+            titleCount.textContent = pageTitleInput.value.length;
+            descCount.textContent = pageDescriptionInput.value.length;
+        }
+        
+        // 监听输入变化
+        pageTitleInput.addEventListener('input', updateCharCount);
+        pageDescriptionInput.addEventListener('input', updateCharCount);
+        
+        // 更新预览
+        function updatePreview() {
+            const title = pageTitleInput.value || '页面标题将在此显示';
+            const description = pageDescriptionInput.value || '页面描述将在此显示。当用户在社交媒体上分享您的链接时，会显示此描述。';
+            const url = pageUrlInput.value || 'example.com';
+            const imageUrl = imageUrlInput.value || '';
+            
+            previewTitle.textContent = title.substring(0, 60);
+            previewDescription.textContent = description.substring(0, 160);
+            previewUrl.textContent = extractDomain(url);
+            
+            if (imageUrl) {
+                previewImage.style.backgroundImage = `url('${imageUrl}')`;
+                previewImage.textContent = '';
+            } else {
+                previewImage.style.backgroundImage = 'linear-gradient(to right, #3498db, #2c3e50)';
+                previewImage.textContent = '图片预览';
+            }
+        }
+        
+        // 从URL提取域名
+        function extractDomain(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.hostname;
+            } catch (e) {
+                // 如果不是有效的URL，尝试提取域名部分
+                if (url.includes('://')) {
+                    const parts = url.split('://')[1].split('/')[0];
+                    return parts;
+                }
+                return url || 'example.com';
+            }
+        }
+        
+        // 生成开放式图形元标记代码
+        function generateOpenGraphMeta() {
+            const title = pageTitleInput.value || '我的网站';
+            const description = pageDescriptionInput.value || '这是一个关于我的网站的精彩描述';
+            const url = pageUrlInput.value || 'https://example.com';
+            const imageUrl = imageUrlInput.value || 'https://example.com/image.jpg';
+            const siteName = siteNameInput.value || '我的网站';
+            const ogType = ogTypeInput.value || 'website';
+            
+            // Twitter卡类型基于OG类型
+            let twitterCardType = 'summary';
+            if (ogType === 'video.movie') {
+                twitterCardType = 'player';
+            } else if (imageUrl) {
+                twitterCardType = 'summary_large_image';
+            }
+            
+            const code = `<!-- 开放式图形和社交媒体元标记 -->
+<!-- 由开放式图形元生成器生成 -->
+<meta property="og:title" content="${escapeHtml(title.substring(0, 60))}">
+<meta property="og:description" content="${escapeHtml(description.substring(0, 160))}">
+<meta property="og:url" content="${escapeHtml(url)}">
+<meta property="og:image" content="${escapeHtml(imageUrl)}">
+<meta property="og:type" content="${ogType}">
+<meta property="og:site_name" content="${escapeHtml(siteName)}">
+<meta property="og:locale" content="zh_CN">
+
+<!-- Twitter卡片元标记 -->
+<meta name="twitter:card" content="${twitterCardType}">
+<meta name="twitter:site" content="@yourtwitterhandle">
+<meta name="twitter:title" content="${escapeHtml(title.substring(0, 60))}">
+<meta name="twitter:description" content="${escapeHtml(description.substring(0, 160))}">
+<meta name="twitter:image" content="${escapeHtml(imageUrl)}">
+
+<!-- 其他重要的元标记 -->
+<meta name="description" content="${escapeHtml(description.substring(0, 160))}">
+<meta name="author" content="${escapeHtml(siteName)}">
+
+<!-- 用于WhatsApp的额外标记 -->
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">`;
+            
+            return code;
+        }
+        
+        // 转义HTML特殊字符
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+        
+        // 生成并显示代码
+        function generateAndDisplayCode() {
+            updatePreview();
+            const code = generateOpenGraphMeta();
+            
+            // 直接显示原始代码（已经转义）
+            generatedCode.textContent = code;
+            
+            // 如果需要语法高亮，可以在这里处理
+            applySyntaxHighlighting();
+        }
+        
+        // 应用语法高亮
+        function applySyntaxHighlighting() {
+            let code = generatedCode.textContent;
+            
+            // 替换注释
+            code = code.replace(/&lt;!--(.*?)--&gt;/g, '<span class="meta-comment">&lt;!--$1--&gt;</span>');
+            
+            // 替换属性
+            code = code.replace(/(property|name)=("|')([^"']+)("|')/g, '$1=$2<span class="meta-property">$3</span>$4');
+            
+            // 替换内容
+            code = code.replace(/(content)=("|')([^"']+)("|')/g, '$1=$2<span class="meta-content">$3</span>$4');
+            
+            // 替换标签
+            code = code.replace(/&lt;(\/?\w+)/g, '<span class="meta-tag">&lt;$1</span>');
+            code = code.replace(/&gt;/g, '<span class="meta-tag">&gt;</span>');
+            
+            generatedCode.innerHTML = code;
+        }
+        
+        // 复制代码到剪贴板
+        async function copyCodeToClipboard() {
+            const textToCopy = generatedCode.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                
+                // 更改按钮文本和样式以提供反馈
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制到剪贴板！';
+                copyBtn.style.background = 'linear-gradient(to right, #27ae60, #16a085)';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = 'linear-gradient(to right, #27ae60, #2c3e50)';
+                }, 2000);
+            } catch (err) {
+                console.error('复制失败: ', err);
+                // 降级方案：使用document.execCommand
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // 仍然提供反馈
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制到剪贴板！';
+                copyBtn.style.background = 'linear-gradient(to right, #27ae60, #16a085)';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = 'linear-gradient(to right, #27ae60, #2c3e50)';
+                }, 2000);
+            }
+        }
+        
+        // 事件监听器
+        generateBtn.addEventListener('click', generateAndDisplayCode);
+        copyBtn.addEventListener('click', copyCodeToClipboard);
+        
+        // 当输入变化时更新预览
+        pageTitleInput.addEventListener('input', updatePreview);
+        pageDescriptionInput.addEventListener('input', updatePreview);
+        pageUrlInput.addEventListener('input', updatePreview);
+        imageUrlInput.addEventListener('input', updatePreview);
+        siteNameInput.addEventListener('input', updatePreview);
+        ogTypeInput.addEventListener('change', updatePreview);
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePreview();
+            generateAndDisplayCode();
+            
+            // 初始字符计数
+            titleCount.textContent = pageTitleInput.value.length;
+            descCount.textContent = pageDescriptionInput.value.length;
+        });
+    </script>
+</body>
+</html>

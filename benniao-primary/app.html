@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户代理分析器  - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-primary/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+        
+        .subtitle {
+            color: #b8c1ec;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .result-section {
+            flex: 2;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4cc9f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 1.3rem;
+        }
+        
+        .user-agent-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #4361ee;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .user-agent-input:focus {
+            outline: none;
+            border-color: #4cc9f0;
+            box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.3);
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #4361ee, #3a0ca3);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #b8c1ec;
+            border: 1px solid #4361ee;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(67, 97, 238, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .preset-agents {
+            margin-top: 25px;
+        }
+        
+        .preset-title {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #b8c1ec;
+        }
+        
+        .preset-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .preset-item {
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border-left: 4px solid #4361ee;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .preset-item:hover {
+            background: rgba(67, 97, 238, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .preset-item-title {
+            font-weight: 600;
+            color: #4cc9f0;
+            margin-bottom: 5px;
+        }
+        
+        .preset-item-ua {
+            font-size: 0.85rem;
+            color: #b8c1ec;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .result-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            border-top: 5px solid #4361ee;
+            transition: transform 0.3s;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .result-card.browser {
+            border-top-color: #4cc9f0;
+        }
+        
+        .result-card.engine {
+            border-top-color: #f72585;
+        }
+        
+        .result-card.os {
+            border-top-color: #7209b7;
+        }
+        
+        .result-card.cpu {
+            border-top-color: #3a0ca3;
+        }
+        
+        .result-card.device {
+            border-top-color: #4361ee;
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .card-title h3 {
+            font-size: 1.2rem;
+            color: #b8c1ec;
+        }
+        
+        .card-title i {
+            font-size: 1.5rem;
+        }
+        
+        .card-content {
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .card-details {
+            font-size: 0.9rem;
+            color: #b8c1ec;
+        }
+        
+        .raw-data {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+        
+        .raw-data h3 {
+            margin-bottom: 15px;
+            color: #b8c1ec;
+        }
+        
+        .raw-ua {
+            font-family: monospace;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #f8f9fa;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #b8c1ec;
+            font-size: 0.9rem;
+        }
+        
+        .current-ua {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .current-ua strong {
+            color: #4cc9f0;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #4cc9f0;
+            font-size: 1.2rem;
+        }
+        
+        .loading i {
+            margin-right: 10px;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-search"></i> 用户代理分析器</h1>
+            <p class="subtitle">分析和检测浏览器、渲染引擎、操作系统、CPU架构和设备类型/型号。输入用户代理字符串或使用当前浏览器信息进行分析。</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <div class="section-title">
+                   
+                    <h2>用户代理字符串</h2>
+                </div>
+                
+                <textarea id="userAgentInput" class="user-agent-input" placeholder="在此粘贴您的用户代理字符串..."></textarea>
+                
+                <div class="button-group">
+                    <button id="analyzeBtn" class="btn btn-primary">
+                        <i class="fas fa-search"></i> 用户代理
+                    </button>
+                    <button id="currentBtn" class="btn btn-secondary">
+                        <i class="fas fa-desktop"></i> 当前浏览器
+                    </button>
+                    <button id="clearBtn" class="btn btn-secondary">
+                        <i class="fas fa-broom"></i> 清除
+                    </button>
+                </div>
+                
+                <div class="preset-agents">
+                    <div class="preset-title">预设用户代理示例：</div>
+                    <div class="preset-list">
+                        <div class="preset-item" data-ua="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36">
+                            <div class="preset-item-title">Windows 11 - Chrome</div>
+                            <div class="preset-item-ua">Chrome 120 on Windows 10 x64</div>
+                        </div>
+                        <div class="preset-item" data-ua="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15">
+                            <div class="preset-item-title">macOS - Safari</div>
+                            <div class="preset-item-ua">Safari 16.1 on macOS Catalina</div>
+                        </div>
+                        <div class="preset-item" data-ua="Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1">
+                            <div class="preset-item-title">iPhone - Safari</div>
+                            <div class="preset-item-ua">Safari on iOS 16.6 (iPhone)</div>
+                        </div>
+                        <div class="preset-item" data-ua="Mozilla/5.0 (Linux; Android 13; SM-S901U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36">
+                            <div class="preset-item-title">Android - Chrome</div>
+                            <div class="preset-item-ua">Chrome on Android 13 (Samsung Galaxy S22)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <h2>分析结果</h2>
+                </div>
+                
+                <div id="resultContainer">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i> 等待分析用户代理字符串...
+                    </div>
+                </div>
+                
+                <div class="raw-data">
+                    <h3>原始用户代理字符串</h3>
+                    <div id="rawUA" class="raw-ua">尚未分析任何用户代理字符串</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="current-ua">
+            <p><strong>当前浏览器用户代理：</strong> <span id="currentUA"></span></p>
+        </div>
+        
+        <footer>
+            
+        </footer>
+    </div>
+
+    <script>
+        // 显示当前浏览器的用户代理
+        document.getElementById('currentUA').textContent = navigator.userAgent;
+        
+        // 获取DOM元素
+        const userAgentInput = document.getElementById('userAgentInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const currentBtn = document.getElementById('currentBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const rawUA = document.getElementById('rawUA');
+        const presetItems = document.querySelectorAll('.preset-item');
+        
+        // 用户代理解析函数
+        function parseUserAgent(uaString) {
+            const result = {
+                browser: { name: "未知", version: "未知", details: "" },
+                engine: { name: "未知", version: "未知", details: "" },
+                os: { name: "未知", version: "未知", details: "" },
+                cpu: { name: "未知", details: "" },
+                device: { type: "未知", model: "未知", details: "" }
+            };
+            
+            // 浏览器检测
+            if (uaString.includes("Chrome") && !uaString.includes("Edg") && !uaString.includes("OPR") && !uaString.includes("Safari/")) {
+                result.browser.name = "Chrome";
+                const match = uaString.match(/Chrome\/([\d.]+)/);
+                if (match) result.browser.version = match[1];
+                result.browser.details = "Google Chrome浏览器";
+            } else if (uaString.includes("Firefox")) {
+                result.browser.name = "Firefox";
+                const match = uaString.match(/Firefox\/([\d.]+)/);
+                if (match) result.browser.version = match[1];
+                result.browser.details = "Mozilla Firefox浏览器";
+            } else if (uaString.includes("Safari") && !uaString.includes("Chrome")) {
+                result.browser.name = "Safari";
+                const match = uaString.match(/Version\/([\d.]+)/);
+                if (match) result.browser.version = match[1];
+                result.browser.details = "Apple Safari浏览器";
+            } else if (uaString.includes("Edg")) {
+                result.browser.name = "Edge";
+                const match = uaString.match(/Edg\/([\d.]+)/);
+                if (match) result.browser.version = match[1];
+                result.browser.details = "Microsoft Edge浏览器";
+            } else if (uaString.includes("OPR")) {
+                result.browser.name = "Opera";
+                const match = uaString.match(/OPR\/([\d.]+)/);
+                if (match) result.browser.version = match[1];
+                result.browser.details = "Opera浏览器";
+            }
+            
+            // 渲染引擎检测
+            if (uaString.includes("AppleWebKit") && uaString.includes("Chrome")) {
+                result.engine.name = "Blink";
+                result.engine.details = "Blink渲染引擎 (Chrome/Edge/Opera)";
+            } else if (uaString.includes("AppleWebKit") && !uaString.includes("Chrome")) {
+                result.engine.name = "WebKit";
+                result.engine.details = "WebKit渲染引擎 (Safari)";
+            } else if (uaString.includes("Gecko")) {
+                result.engine.name = "Gecko";
+                result.engine.details = "Gecko渲染引擎 (Firefox)";
+            }
+            
+            // 操作系统检测
+            if (uaString.includes("Windows NT 10.0")) {
+                result.os.name = "Windows";
+                result.os.version = "10/11";
+                result.os.details = "Microsoft Windows 10 或 11";
+            } else if (uaString.includes("Windows NT 6.3")) {
+                result.os.name = "Windows";
+                result.os.version = "8.1";
+                result.os.details = "Microsoft Windows 8.1";
+            } else if (uaString.includes("Windows NT 6.2")) {
+                result.os.name = "Windows";
+                result.os.version = "8";
+                result.os.details = "Microsoft Windows 8";
+            } else if (uaString.includes("Windows NT 6.1")) {
+                result.os.name = "Windows";
+                result.os.version = "7";
+                result.os.details = "Microsoft Windows 7";
+            } else if (uaString.includes("Macintosh")) {
+                result.os.name = "macOS";
+                const match = uaString.match(/Mac OS X ([\d_]+)/);
+                if (match) {
+                    const version = match[1].replace(/_/g, '.');
+                    result.os.version = version;
+                    result.os.details = `Apple macOS ${version}`;
+                } else {
+                    result.os.details = "Apple macOS";
+                }
+            } else if (uaString.includes("iPhone") || uaString.includes("iPad") || uaString.includes("iPod")) {
+                result.os.name = "iOS";
+                const match = uaString.match(/OS ([\d_]+)/);
+                if (match) {
+                    const version = match[1].replace(/_/g, '.');
+                    result.os.version = version;
+                    result.os.details = `Apple iOS ${version}`;
+                } else {
+                    result.os.details = "Apple iOS";
+                }
+            } else if (uaString.includes("Android")) {
+                result.os.name = "Android";
+                const match = uaString.match(/Android ([\d.]+)/);
+                if (match) {
+                    result.os.version = match[1];
+                    result.os.details = `Google Android ${match[1]}`;
+                } else {
+                    result.os.details = "Google Android";
+                }
+            } else if (uaString.includes("Linux")) {
+                result.os.name = "Linux";
+                result.os.details = "Linux操作系统";
+            }
+            
+            // CPU架构检测
+            if (uaString.includes("Win64") || uaString.includes("x64") || uaString.includes("AMD64")) {
+                result.cpu.name = "x64";
+                result.cpu.details = "64位处理器 (x86-64/AMD64)";
+            } else if (uaString.includes("x86") || uaString.includes("Win32")) {
+                result.cpu.name = "x86";
+                result.cpu.details = "32位处理器 (x86)";
+            } else if (uaString.includes("ARM") || uaString.includes("arm")) {
+                result.cpu.name = "ARM";
+                result.cpu.details = "ARM架构处理器";
+            } else if (uaString.includes("aarch64")) {
+                result.cpu.name = "ARM64";
+                result.cpu.details = "64位ARM架构处理器";
+            }
+            
+            // 设备类型和型号检测
+            if (uaString.includes("Mobile") || uaString.includes("iPhone") || uaString.includes("Android")) {
+                result.device.type = "移动设备";
+                
+                if (uaString.includes("iPhone")) {
+                    result.device.model = "iPhone";
+                    result.device.details = "Apple iPhone";
+                } else if (uaString.includes("iPad")) {
+                    result.device.type = "平板设备";
+                    result.device.model = "iPad";
+                    result.device.details = "Apple iPad";
+                } else if (uaString.includes("Android")) {
+                    // 尝试检测Android设备型号
+                    if (uaString.includes("SM-") || uaString.includes("Samsung")) {
+                        const match = uaString.match(/SM-([A-Za-z0-9]+)/);
+                        result.device.model = match ? `Samsung Galaxy ${match[1]}` : "Samsung设备";
+                        result.device.details = "Samsung Galaxy系列";
+                    } else if (uaString.includes("Pixel")) {
+                        result.device.model = "Google Pixel";
+                        result.device.details = "Google Pixel手机";
+                    } else {
+                        result.device.model = "Android设备";
+                        result.device.details = "Android智能手机";
+                    }
+                } else {
+                    result.device.model = "智能手机";
+                    result.device.details = "移动智能手机";
+                }
+            } else if (uaString.includes("Tablet") || uaString.includes("iPad")) {
+                result.device.type = "平板设备";
+                result.device.model = "平板电脑";
+                result.device.details = "平板设备";
+            } else {
+                result.device.type = "桌面设备";
+                result.device.model = "桌面电脑";
+                result.device.details = "台式机或笔记本电脑";
+            }
+            
+            return result;
+        }
+        
+        // 显示分析结果
+        function displayResults(result) {
+            const resultHTML = `
+                <div class="result-grid">
+                    <div class="result-card browser">
+                        <div class="card-title">
+                            <h3><i class="fas fa-globe"></i> 浏览器</h3>
+                            <i class="fas fa-window-restore"></i>
+                        </div>
+                        <div class="card-content">${result.browser.name} ${result.browser.version}</div>
+                        <div class="card-details">${result.browser.details}</div>
+                    </div>
+                    
+                    <div class="result-card engine">
+                        <div class="card-title">
+                            <h3><i class="fas fa-cogs"></i> 渲染引擎</h3>
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="card-content">${result.engine.name}</div>
+                        <div class="card-details">${result.engine.details}</div>
+                    </div>
+                    
+                    <div class="result-card os">
+                        <div class="card-title">
+                            <h3><i class="fas fa-desktop"></i> 操作系统</h3>
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <div class="card-content">${result.os.name} ${result.os.version}</div>
+                        <div class="card-details">${result.os.details}</div>
+                    </div>
+                    
+                    <div class="result-card cpu">
+                        <div class="card-title">
+                            <h3><i class="fas fa-microchip"></i> CPU架构</h3>
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <div class="card-content">${result.cpu.name}</div>
+                        <div class="card-details">${result.cpu.details}</div>
+                    </div>
+                    
+                    <div class="result-card device">
+                        <div class="card-title">
+                            <h3><i class="fas fa-mobile-alt"></i> 设备类型</h3>
+                            <i class="fas fa-tablet-alt"></i>
+                        </div>
+                        <div class="card-content">${result.device.type} - ${result.device.model}</div>
+                        <div class="card-details">${result.device.details}</div>
+                    </div>
+                </div>
+            `;
+            
+            resultContainer.innerHTML = resultHTML;
+        }
+        
+        // 分析用户代理字符串
+        function analyzeUserAgent() {
+            const uaString = userAgentInput.value.trim();
+            
+            if (!uaString) {
+                alert("请输入用户代理字符串！");
+                userAgentInput.focus();
+                return;
+            }
+            
+            // 显示加载状态
+            resultContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> 正在分析用户代理字符串...</div>';
+            
+            // 模拟分析延迟，使加载状态可见
+            setTimeout(() => {
+                const result = parseUserAgent(uaString);
+                displayResults(result);
+                rawUA.textContent = uaString;
+            }, 300);
+        }
+        
+        // 使用当前浏览器用户代理
+        function useCurrentUserAgent() {
+            userAgentInput.value = navigator.userAgent;
+            analyzeUserAgent();
+        }
+        
+        // 清除输入和结果
+        function clearAll() {
+            userAgentInput.value = "";
+            resultContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> 等待分析用户代理字符串...</div>';
+            rawUA.textContent = "尚未分析任何用户代理字符串";
+        }
+        
+        // 事件监听器
+        analyzeBtn.addEventListener('click', analyzeUserAgent);
+        currentBtn.addEventListener('click', useCurrentUserAgent);
+        clearBtn.addEventListener('click', clearAll);
+        
+        // 预设用户代理点击事件
+        presetItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const ua = this.getAttribute('data-ua');
+                userAgentInput.value = ua;
+                analyzeUserAgent();
+            });
+        });
+        
+        // 页面加载时分析当前用户代理
+        window.addEventListener('DOMContentLoaded', () => {
+            userAgentInput.value = navigator.userAgent;
+            analyzeUserAgent();
+        });
+        
+        // 按Enter键触发分析
+        userAgentInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                analyzeUserAgent();
+            }
+        });
+    </script>
+</body>
+</html>

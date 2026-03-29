@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>版随机点名器 - 支持多种导入方式- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-rollcall/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4a54e1, #2575fc);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            border-bottom: 5px solid #ffcc00;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+            gap: 30px;
+        }
+        
+        .panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid #eaeaea;
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            color: #2575fc;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            color: #ffcc00;
+        }
+        
+        .selected-student-container {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(to right, #f8f9ff, #eef3ff);
+            border-radius: 15px;
+            margin-bottom: 25px;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px dashed #d1ddff;
+            transition: all 0.3s ease;
+        }
+        
+        .selected-student-container.active {
+            border-color: #2575fc;
+            background: linear-gradient(to right, #f0f5ff, #e1ebff);
+            box-shadow: 0 10px 20px rgba(37, 117, 252, 0.15);
+        }
+        
+        .selected-label {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .selected-name {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #2575fc;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .selected-class {
+            font-size: 1.3rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #4a54e1, #2575fc);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 117, 252, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #ff9a00, #ffcc00);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 153, 0, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 176, 155, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(to right, #ff8a00, #ffcc00);
+            color: white;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 138, 0, 0.3);
+        }
+        
+        .student-list {
+            max-height: 350px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid #eaeaea;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+        
+        .student-item:hover {
+            background-color: #f8faff;
+        }
+        
+        .student-item.selected {
+            background-color: #e8f0ff;
+            font-weight: 600;
+            color: #2575fc;
+        }
+        
+        .student-name {
+            font-size: 1.1rem;
+        }
+        
+        .student-class {
+            font-size: 0.9rem;
+            color: #777;
+            font-style: italic;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ff416c;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .delete-btn:hover {
+            background-color: #fff0f3;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        .add-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 176, 155, 0.3);
+        }
+        
+        .history-container {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            padding: 10px 15px;
+            border-bottom: 1px dashed #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-name {
+            font-weight: 500;
+        }
+        
+        .history-time {
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .empty-message {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2575fc;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* 新增样式：导入方式标签页 */
+        .import-tabs {
+            display: flex;
+            border-bottom: 2px solid #eaeaea;
+            margin-bottom: 20px;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-btn.active {
+            color: #2575fc;
+            border-bottom: 3px solid #2575fc;
+            background-color: #f8faff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .file-upload-area {
+            border: 3px dashed #c1ddff;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #f8faff;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #2575fc;
+            background-color: #f0f5ff;
+        }
+        
+        .file-upload-area i {
+            font-size: 3rem;
+            color: #2575fc;
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-area p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(to right, #4a54e1, #2575fc);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .file-label:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(37, 117, 252, 0.3);
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .textarea-import {
+            height: 200px;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+        
+        .import-format {
+            background-color: #f9f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .import-format h4 {
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .class-management {
+            margin-top: 20px;
+        }
+        
+        .class-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .class-tag {
+            background: linear-gradient(to right, #e8f0ff, #d1e1ff);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2575fc;
+            font-weight: 500;
+        }
+        
+        .remove-class-btn {
+            background: none;
+            border: none;
+            color: #ff416c;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .remove-class-btn:hover {
+            background-color: #fff0f3;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-buttons .btn {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1400px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .panel {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .selected-name {
+                font-size: 2.8rem;
+            }
+            
+            .button-container {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .import-tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                border-bottom: none;
+                border-right: 3px solid transparent;
+                text-align: left;
+            }
+            
+            .tab-btn.active {
+                border-bottom: none;
+                border-right: 3px solid #2575fc;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: #e8f0ff; }
+            100% { background-color: transparent; }
+        }
+        
+        .highlight {
+            animation: highlight 2s ease;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-random"></i> 随机点名器</h1>
+            <p class="subtitle">支持多种导入方式 - 随机选择学生回答问题，增加课堂互动性</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-user-check"></i> 当前被选中的学生</h2>
+                
+                <div class="selected-student-container" id="selectedContainer">
+                    <div class="selected-label">点击下方按钮开始随机点名</div>
+                    <div class="selected-name" id="selectedName">等待选择...</div>
+                    <div class="selected-class" id="selectedClass">班级信息将显示在这里</div>
+                </div>
+                
+                <div class="button-container">
+                    <button class="btn btn-primary" id="randomBtn">
+                        <i class="fas fa-random"></i> 随机选择学生
+                    </button>
+                    <button class="btn btn-secondary" id="startStopBtn">
+                        <i class="fas fa-play"></i> 开始/停止滚动
+                    </button>
+                    <button class="btn btn-danger" id="clearHistoryBtn">
+                        <i class="fas fa-history"></i> 清空历史记录
+                    </button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalStudents">0</div>
+                        <div class="stat-label">学生总数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="selectedCount">0</div>
+                        <div class="stat-label">已选次数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="remainingStudents">0</div>
+                        <div class="stat-label">未选学生</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-users"></i> 学生名单管理</h2>
+                
+                <div class="import-tabs">
+                    <button class="tab-btn active" data-tab="manual-tab">手动添加</button>
+                    <button class="tab-btn" data-tab="txt-tab">TXT导入</button>
+                    <button class="tab-btn" data-tab="bulk-tab">批量输入</button>
+                </div>
+                
+                <!-- 手动添加选项卡 -->
+                <div id="manual-tab" class="tab-content active">
+                    <div class="input-group">
+                        <label for="studentName">学生姓名</label>
+                        <input type="text" id="studentName" placeholder="输入学生姓名">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="studentClass">班级/小组</label>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="studentClass">
+                                <!-- 班级选项将通过JavaScript动态添加 -->
+                            </select>
+                            <input type="text" id="newClass" placeholder="或输入新班级" style="flex: 1;">
+                        </div>
+                    </div>
+                    
+                    <button class="add-btn" id="addStudentBtn">
+                        <i class="fas fa-plus-circle"></i> 添加学生到名单
+                    </button>
+                </div>
+                
+                <!-- TXT导入选项卡 -->
+                <div id="txt-tab" class="tab-content">
+                    <div class="file-upload-area" id="fileDropArea">
+                        <i class="fas fa-file-upload"></i>
+                        <p>点击上传或拖拽TXT文件到此区域</p>
+                        <p style="font-size: 0.9rem; color: #777;">支持.txt格式，每行格式：学生姓名,班级</p>
+                        <input type="file" id="fileInput" class="file-input" accept=".txt">
+                        <label for="fileInput" class="file-label">选择TXT文件</label>
+                        <div class="file-info" id="fileInfo">未选择文件</div>
+                    </div>
+                    
+                    <div class="import-format">
+                        <h4><i class="fas fa-info-circle"></i> TXT文件格式说明</h4>
+                        <p>每行一个学生，格式为：<strong>学生姓名,班级</strong></p>
+                        <p>示例：</p>
+                        <pre style="background-color: #fff; padding: 10px; border-radius: 5px; margin-top: 5px;">
+张三,一年级一班
+李四,一年级一班
+王五,一年级二班
+赵六,一年级二班</pre>
+                        <p>注意：使用英文逗号分隔，班级名称不能包含逗号</p>
+                    </div>
+                    
+                    <div class="button-container">
+                        <button class="btn btn-success" id="uploadBtn">
+                            <i class="fas fa-upload"></i> 上传并导入学生
+                        </button>
+                        <button class="btn btn-warning" id="clearAllBtn">
+                            <i class="fas fa-trash-alt"></i> 清空所有学生
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 批量输入选项卡 -->
+                <div id="bulk-tab" class="tab-content">
+                    <div class="input-group">
+                        <label for="bulkText">批量输入学生名单</label>
+                        <textarea id="bulkText" class="textarea-import" placeholder="请输入学生名单，每行一个学生，格式：学生姓名,班级&#10;示例：&#10;张三,一年级一班&#10;李四,一年级一班&#10;王五,一年级二班"></textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="defaultClass">默认班级（如果行中没有指定班级）</label>
+                        <input type="text" id="defaultClass" placeholder="例如：一年级一班" value="未分组">
+                    </div>
+                    
+                    <div class="button-container">
+                        <button class="btn btn-success" id="importBulkBtn">
+                            <i class="fas fa-file-import"></i> 导入批量名单
+                        </button>
+                        <button class="btn btn-warning" id="clearBulkBtn">
+                            <i class="fas fa-eraser"></i> 清空文本框
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="class-management">
+                    <h3 class="panel-title" style="font-size: 1.2rem; margin-top: 25px;">
+                        <i class="fas fa-layer-group"></i> 班级/小组管理
+                    </h3>
+                    <div class="class-list" id="classList">
+                        <!-- 班级标签将通过JavaScript动态添加 -->
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <input type="text" id="addClassInput" placeholder="输入新班级名称" style="width: calc(100% - 120px); display: inline-block;">
+                        <button class="btn btn-primary" id="addClassBtn" style="width: 110px; display: inline-block; padding: 14px 10px;">
+                            <i class="fas fa-plus"></i> 添加
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="student-list" id="studentList">
+                    <!-- 学生列表将通过JavaScript动态添加 -->
+                    <div class="empty-message">暂无学生，请添加学生到名单</div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" id="exportBtn">
+                        <i class="fas fa-file-export"></i> 导出名单
+                    </button>
+                    <button class="btn btn-primary" id="downloadTemplateBtn">
+                        <i class="fas fa-file-download"></i> 下载模板
+                    </button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-history"></i> 选择历史记录</h2>
+                
+                <div class="history-container" id="historyList">
+                    <!-- 历史记录将通过JavaScript动态添加 -->
+                    <div class="empty-message">暂无选择记录</div>
+                </div>
+                
+                <div class="input-group" style="margin-top: 25px;">
+                    <label for="autoSelectInterval">自动选择间隔（秒）</label>
+                    <input type="number" id="autoSelectInterval" min="2" max="60" value="5">
+                </div>
+                
+                <div class="button-container" style="margin-top: 15px;">
+                    <button class="btn btn-secondary" id="autoSelectBtn">
+                        <i class="fas fa-robot"></i> 开启自动选择模式
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background-color: #f9f9ff; border-radius: 10px; border-left: 4px solid #2575fc;">
+                    <h4 style="color: #2575fc; margin-bottom: 8px;"><i class="fas fa-lightbulb"></i> 使用提示</h4>
+                    <p style="color: #666; font-size: 0.95rem;">1. 支持三种方式导入学生名单：手动添加、TXT文件上传、批量文本输入</p>
+                    <p style="color: #666; font-size: 0.95rem;">2. 可以自定义班级/小组，支持班级管理功能</p>
+                    <p style="color: #666; font-size: 0.95rem;">3. 点击"随机选择学生"按钮随机点名，使用"开始/停止滚动"按钮实现名字滚动效果</p>
+                    <p style="color: #666; font-size: 0.95rem;">4. 已选学生不会被重复选择，直到所有学生都被选过</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>随机点名器 &copy; 笨鸟办公工具箱 - 支持多种导入方式和自定义班级 | 提示：已选学生不会被重复选择，直到所有学生都被选过</p>
+    </footer>
+
+    <script>
+        // 初始学生数据
+        let students = [
+            { name: "张三", className: "一年级一班" },
+            { name: "李四", className: "一年级一班" },
+            { name: "王五", className: "一年级二班" },
+            { name: "赵六", className: "一年级二班" },
+            { name: "刘七", className: "二年级一班" },
+            { name: "陈八", className: "二年级一班" },
+            { name: "杨九", className: "三年级一班" },
+            { name: "吴十", className: "四年级一班" }
+        ];
+        
+        // 班级列表
+        let classList = ["一年级一班", "一年级二班", "二年级一班", "三年级一班", "四年级一班", "未分组"];
+        
+        // 已选学生记录
+        let selectedStudents = [];
+        let selectionHistory = [];
+        let isRolling = false;
+        let rollInterval;
+        let autoSelectIntervalId = null;
+        let autoSelectMode = false;
+        let currentFile = null;
+        
+        // DOM元素
+        const selectedNameEl = document.getElementById('selectedName');
+        const selectedClassEl = document.getElementById('selectedClass');
+        const selectedContainerEl = document.getElementById('selectedContainer');
+        const studentListEl = document.getElementById('studentList');
+        const historyListEl = document.getElementById('historyList');
+        const totalStudentsEl = document.getElementById('totalStudents');
+        const selectedCountEl = document.getElementById('selectedCount');
+        const remainingStudentsEl = document.getElementById('remainingStudents');
+        const classListEl = document.getElementById('classList');
+        const studentClassSelect = document.getElementById('studentClass');
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateClassList();
+            updateStudentList();
+            updateStats();
+            setupTabs();
+            
+            // 添加事件监听器
+            document.getElementById('randomBtn').addEventListener('click', selectRandomStudent);
+            document.getElementById('startStopBtn').addEventListener('click', toggleRolling);
+            document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+            document.getElementById('addStudentBtn').addEventListener('click', addStudent);
+            document.getElementById('autoSelectBtn').addEventListener('click', toggleAutoSelect);
+            document.getElementById('studentName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addStudent();
+            });
+            
+            // 新增功能事件监听器
+            document.getElementById('uploadBtn').addEventListener('click', uploadTxtFile);
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            document.getElementById('importBulkBtn').addEventListener('click', importBulkText);
+            document.getElementById('clearBulkBtn').addEventListener('click', clearBulkText);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAllStudents);
+            document.getElementById('exportBtn').addEventListener('click', exportStudentList);
+            document.getElementById('downloadTemplateBtn').addEventListener('click', downloadTemplate);
+            document.getElementById('addClassBtn').addEventListener('click', addNewClass);
+            document.getElementById('addClassInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addNewClass();
+            });
+            
+            // 拖拽上传功能
+            setupDragAndDrop();
+            
+            // 如果新班级输入框有内容，则使用新班级，否则使用下拉框选择
+            document.getElementById('newClass').addEventListener('input', function() {
+                if (this.value.trim()) {
+                    studentClassSelect.disabled = true;
+                } else {
+                    studentClassSelect.disabled = false;
+                }
+            });
+        });
+        
+        // 设置选项卡切换
+        function setupTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 移除所有活动状态
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // 添加当前活动状态
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+        
+        // 更新班级列表显示
+        function updateClassList() {
+            // 更新班级下拉选择框
+            studentClassSelect.innerHTML = '';
+            classList.forEach(className => {
+                const option = document.createElement('option');
+                option.value = className;
+                option.textContent = className;
+                studentClassSelect.appendChild(option);
+            });
+            
+            // 更新班级标签显示
+            classListEl.innerHTML = '';
+            classList.forEach(className => {
+                const classTag = document.createElement('div');
+                classTag.className = 'class-tag';
+                classTag.innerHTML = `
+                    <span>${className}</span>
+                    <button class="remove-class-btn" data-class="${className}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                classListEl.appendChild(classTag);
+            });
+            
+            // 为删除班级按钮添加事件监听器
+            document.querySelectorAll('.remove-class-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const className = this.getAttribute('data-class');
+                    removeClass(className);
+                });
+            });
+        }
+        
+        // 添加新班级
+        function addNewClass() {
+            const classInput = document.getElementById('addClassInput');
+            const className = classInput.value.trim();
+            
+            if (!className) {
+                showMessage('请输入班级名称', 'warning');
+                return;
+            }
+            
+            if (classList.includes(className)) {
+                showMessage('该班级已存在', 'warning');
+                return;
+            }
+            
+            classList.push(className);
+            updateClassList();
+            classInput.value = '';
+            showMessage(`成功添加班级: ${className}`, 'success');
+        }
+        
+        // 移除班级
+        function removeClass(className) {
+            // 检查该班级是否有学生
+            const studentsInClass = students.filter(student => student.className === className);
+            
+            if (studentsInClass.length > 0) {
+                if (!confirm(`班级"${className}"中有${studentsInClass.length}名学生，删除班级将把这些学生移到"未分组"班级，确定继续吗？`)) {
+                    return;
+                }
+                
+                // 将学生移到"未分组"
+                students.forEach(student => {
+                    if (student.className === className) {
+                        student.className = '未分组';
+                    }
+                });
+            }
+            
+            // 从班级列表中移除
+            const index = classList.indexOf(className);
+            if (index > -1) {
+                classList.splice(index, 1);
+            }
+            
+            updateClassList();
+            updateStudentList();
+            showMessage(`已移除班级: ${className}`, 'info');
+        }
+        
+        // 更新学生列表显示
+        function updateStudentList() {
+            studentListEl.innerHTML = '';
+            
+            if (students.length === 0) {
+                studentListEl.innerHTML = '<div class="empty-message">暂无学生，请添加学生到名单</div>';
+                return;
+            }
+            
+            // 按班级分组显示
+            const groupedStudents = {};
+            students.forEach(student => {
+                if (!groupedStudents[student.className]) {
+                    groupedStudents[student.className] = [];
+                }
+                groupedStudents[student.className].push(student);
+            });
+            
+            // 显示每个班级的学生
+            Object.keys(groupedStudents).forEach(className => {
+                // 添加班级标题
+                const classHeader = document.createElement('div');
+                classHeader.style.cssText = 'padding: 10px 15px; background-color: #f0f5ff; font-weight: 600; color: #2575fc; border-radius: 5px; margin: 10px 0 5px 0;';
+                classHeader.textContent = `📚 ${className} (${groupedStudents[className].length}人)`;
+                studentListEl.appendChild(classHeader);
+                
+                // 添加该班级的学生
+                groupedStudents[className].forEach((student, index) => {
+                    const studentItem = document.createElement('div');
+                    studentItem.className = 'student-item';
+                    if (selectedStudents.includes(student.name)) {
+                        studentItem.classList.add('selected');
+                    }
+                    
+                    studentItem.innerHTML = `
+                        <div>
+                            <div class="student-name">${student.name}</div>
+                            <div class="student-class">${student.className}</div>
+                        </div>
+                        <button class="delete-btn" data-index="${students.findIndex(s => s.name === student.name && s.className === student.className)}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    studentListEl.appendChild(studentItem);
+                });
+            });
+            
+            // 为删除按钮添加事件监听器
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    removeStudent(index);
+                });
+            });
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            totalStudentsEl.textContent = students.length;
+            selectedCountEl.textContent = selectedStudents.length;
+            remainingStudentsEl.textContent = students.length - selectedStudents.length;
+        }
+        
+        // 添加学生（手动方式）
+        function addStudent() {
+            const nameInput = document.getElementById('studentName');
+            const classSelect = document.getElementById('studentClass');
+            const newClassInput = document.getElementById('newClass');
+            
+            const name = nameInput.value.trim();
+            let className = '';
+            
+            // 确定班级：优先使用新班级输入框的内容
+            if (newClassInput.value.trim()) {
+                className = newClassInput.value.trim();
+                // 如果该班级不在班级列表中，添加到班级列表
+                if (!classList.includes(className)) {
+                    classList.push(className);
+                    updateClassList();
+                }
+            } else {
+                className = classSelect.value;
+            }
+            
+            if (!name) {
+                showMessage('请输入学生姓名', 'warning');
+                nameInput.focus();
+                return;
+            }
+            
+            // 检查是否已存在同名同班学生
+            const exists = students.some(student => student.name === name && student.className === className);
+            if (exists) {
+                alert('该班级中已存在同名学生');
+                return;
+            }
+            
+            // 添加新学生
+            students.push({ name, className });
+            
+            // 清空输入框
+            nameInput.value = '';
+            newClassInput.value = '';
+            nameInput.focus();
+            studentClassSelect.disabled = false;
+            
+            // 更新显示
+            updateStudentList();
+            updateStats();
+            
+            // 显示添加成功提示
+            showMessage(`成功添加学生: ${name} (${className})`, 'success');
+        }
+        
+        // 移除学生
+        function removeStudent(index) {
+            if (index >= 0 && index < students.length) {
+                const removedStudent = students[index];
+                students.splice(index, 1);
+                
+                // 如果该学生已被选中，从已选列表中移除
+                const selectedIndex = selectedStudents.indexOf(removedStudent.name);
+                if (selectedIndex > -1) {
+                    selectedStudents.splice(selectedIndex, 1);
+                }
+                
+                // 更新显示
+                updateStudentList();
+                updateStats();
+                
+                showMessage(`已移除学生: ${removedStudent.name}`, 'info');
+            }
+        }
+        
+        // 随机选择学生
+        function selectRandomStudent() {
+            if (students.length === 0) {
+                showMessage('学生名单为空，请先添加学生', 'warning');
+                return;
+            }
+            
+            // 如果所有学生都已被选择过，重置已选列表
+            if (selectedStudents.length >= students.length) {
+                if (confirm('所有学生都已被选择过，是否重置已选列表重新开始？')) {
+                    selectedStudents = [];
+                } else {
+                    return;
+                }
+            }
+            
+            // 筛选未选中的学生
+            const availableStudents = students.filter(student => !selectedStudents.includes(student.name));
+            
+            if (availableStudents.length === 0) {
+                showMessage('没有可用的学生', 'warning');
+                return;
+            }
+            
+            // 随机选择一个学生
+            const randomIndex = Math.floor(Math.random() * availableStudents.length);
+            const selectedStudent = availableStudents[randomIndex];
+            
+            // 添加到已选列表
+            selectedStudents.push(selectedStudent.name);
+            
+            // 更新显示
+            selectedNameEl.textContent = selectedStudent.name;
+            selectedClassEl.textContent = selectedStudent.className;
+            selectedContainerEl.classList.add('active');
+            selectedNameEl.classList.add('pulse');
+            
+            // 添加到历史记录
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            selectionHistory.unshift({
+                name: selectedStudent.name,
+                className: selectedStudent.className,
+                time: timeString
+            });
+            
+            // 更新历史记录显示
+            updateHistoryList();
+            updateStats();
+            updateStudentList();
+            
+            // 移除动画类
+            setTimeout(() => {
+                selectedNameEl.classList.remove('pulse');
+            }, 500);
+            
+            // 高亮显示已选学生
+            highlightSelectedStudent(selectedStudent.name);
+            
+            // 显示选中消息
+            showMessage(`已选中: ${selectedStudent.name} (${selectedStudent.className})`, 'success');
+        }
+        
+        // 高亮显示已选学生
+        function highlightSelectedStudent(studentName) {
+            // 找到学生列表中的对应项
+            const studentItems = document.querySelectorAll('.student-item');
+            studentItems.forEach(item => {
+                const nameElement = item.querySelector('.student-name');
+                if (nameElement && nameElement.textContent === studentName) {
+                    item.classList.add('selected', 'highlight');
+                    
+                    // 移除高亮类
+                    setTimeout(() => {
+                        item.classList.remove('highlight');
+                    }, 2000);
+                }
+            });
+        }
+        
+        // 更新历史记录显示
+        function updateHistoryList() {
+            historyListEl.innerHTML = '';
+            
+            if (selectionHistory.length === 0) {
+                historyListEl.innerHTML = '<div class="empty-message">暂无选择记录</div>';
+                return;
+            }
+            
+            selectionHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-name">${item.name} <span style="color: #999; font-size: 0.9em;">(${item.className})</span></div>
+                    <div class="history-time">${item.time}</div>
+                `;
+                historyListEl.appendChild(historyItem);
+            });
+        }
+        
+        // 开始/停止滚动名字
+        function toggleRolling() {
+            const startStopBtn = document.getElementById('startStopBtn');
+            const icon = startStopBtn.querySelector('i');
+            
+            if (!isRolling) {
+                // 开始滚动
+                isRolling = true;
+                startStopBtn.innerHTML = '<i class="fas fa-stop"></i> 停止滚动';
+                startStopBtn.style.backgroundColor = '#ff416c';
+                selectedContainerEl.classList.add('active');
+                
+                let counter = 0;
+                rollInterval = setInterval(() => {
+                    if (students.length === 0) {
+                        clearInterval(rollInterval);
+                        isRolling = false;
+                        startStopBtn.innerHTML = '<i class="fas fa-play"></i> 开始滚动';
+                        startStopBtn.style.backgroundColor = '';
+                        return;
+                    }
+                    
+                    // 滚动显示学生名字
+                    const index = counter % students.length;
+                    selectedNameEl.textContent = students[index].name;
+                    selectedClassEl.textContent = students[index].className;
+                    
+                    counter++;
+                }, 100);
+            } else {
+                // 停止滚动
+                clearInterval(rollInterval);
+                isRolling = false;
+                startStopBtn.innerHTML = '<i class="fas fa-play"></i> 开始滚动';
+                startStopBtn.style.backgroundColor = '';
+                
+                // 如果没有名字显示，恢复默认
+                if (!selectedNameEl.textContent || selectedNameEl.textContent === '等待选择...') {
+                    selectedContainerEl.classList.remove('active');
+                }
+            }
+        }
+        
+        // 清空历史记录
+        function clearHistory() {
+            if (selectionHistory.length === 0) {
+                showMessage('历史记录已经是空的', 'info');
+                return;
+            }
+            
+            if (confirm('确定要清空所有历史记录吗？')) {
+                selectionHistory = [];
+                updateHistoryList();
+                showMessage('历史记录已清空', 'success');
+            }
+        }
+        
+        // 切换自动选择模式
+        function toggleAutoSelect() {
+            const autoSelectBtn = document.getElementById('autoSelectBtn');
+            const intervalInput = document.getElementById('autoSelectInterval');
+            
+            if (!autoSelectMode) {
+                // 开始自动选择
+                const interval = parseInt(intervalInput.value) * 1000;
+                if (isNaN(interval) || interval < 2000) {
+                    showMessage('请设置合理的间隔时间（至少2秒）', 'warning');
+                    return;
+                }
+                
+                autoSelectMode = true;
+                autoSelectBtn.innerHTML = '<i class="fas fa-stop-circle"></i> 停止自动选择';
+                autoSelectBtn.style.backgroundColor = '#ff416c';
+                
+                // 立即选择一次
+                selectRandomStudent();
+                
+                // 设置定时器
+                autoSelectIntervalId = setInterval(() => {
+                    selectRandomStudent();
+                }, interval);
+                
+                showMessage(`已开启自动选择模式，每${interval/1000}秒选择一次`, 'success');
+            } else {
+                // 停止自动选择
+                autoSelectMode = false;
+                autoSelectBtn.innerHTML = '<i class="fas fa-robot"></i> 开启自动选择模式';
+                autoSelectBtn.style.backgroundColor = '';
+                
+                if (autoSelectIntervalId) {
+                    clearInterval(autoSelectIntervalId);
+                    autoSelectIntervalId = null;
+                }
+                
+                showMessage('已停止自动选择模式', 'info');
+            }
+        }
+        
+        // 设置拖拽上传
+        function setupDragAndDrop() {
+            const fileDropArea = document.getElementById('fileDropArea');
+            
+            fileDropArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#2575fc';
+                this.style.backgroundColor = '#f0f5ff';
+            });
+            
+            fileDropArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#c1ddff';
+                this.style.backgroundColor = '#f8faff';
+            });
+            
+            fileDropArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#c1ddff';
+                this.style.backgroundColor = '#f8faff';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+        }
+        
+        // 处理文件选择
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+        
+        // 处理文件
+        function handleFile(file) {
+            currentFile = file;
+            document.getElementById('fileInfo').innerHTML = `
+                已选择文件: <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB)
+            `;
+        }
+        
+        // 上传并导入TXT文件
+        function uploadTxtFile() {
+            if (!currentFile) {
+                showMessage('请先选择TXT文件', 'warning');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                importFromText(content, 'txt');
+            };
+            reader.readAsText(currentFile);
+        }
+        
+        // 批量文本导入
+        function importBulkText() {
+            const bulkText = document.getElementById('bulkText').value.trim();
+            const defaultClass = document.getElementById('defaultClass').value.trim() || '未分组';
+            
+            if (!bulkText) {
+                showMessage('请输入学生名单', 'warning');
+                return;
+            }
+            
+            importFromText(bulkText, 'bulk', defaultClass);
+        }
+        
+        // 从文本导入学生
+        function importFromText(text, sourceType, defaultClass = '未分组') {
+            const lines = text.split('\n');
+            let importedCount = 0;
+            let skippedCount = 0;
+            
+            lines.forEach(line => {
+                line = line.trim();
+                if (!line) return;
+                
+                let name, className;
+                
+                if (line.includes(',')) {
+                    // 格式：姓名,班级
+                    const parts = line.split(',');
+                    name = parts[0].trim();
+                    className = parts[1] ? parts[1].trim() : defaultClass;
+                } else if (line.includes(' ')) {
+                    // 格式：姓名 班级（空格分隔）
+                    const parts = line.split(' ');
+                    name = parts[0].trim();
+                    className = parts[1] ? parts[1].trim() : defaultClass;
+                } else {
+                    // 只有姓名，使用默认班级
+                    name = line.trim();
+                    className = defaultClass;
+                }
+                
+                if (!name) {
+                    skippedCount++;
+                    return;
+                }
+                
+                // 检查是否已存在同名同班学生
+                const exists = students.some(student => student.name === name && student.className === className);
+                if (!exists) {
+                    students.push({ name, className });
+                    importedCount++;
+                    
+                    // 如果班级不在班级列表中，添加到班级列表
+                    if (!classList.includes(className)) {
+                        classList.push(className);
+                    }
+                } else {
+                    skippedCount++;
+                }
+            });
+            
+            // 更新显示
+            updateClassList();
+            updateStudentList();
+            updateStats();
+            
+            // 显示结果
+            let message = `成功导入 ${importedCount} 名学生`;
+            if (skippedCount > 0) {
+                message += `，跳过 ${skippedCount} 名（可能已存在或格式不正确）`;
+            }
+            showMessage(message, 'success');
+            
+            // 清空文件信息和批量文本框
+            if (sourceType === 'txt') {
+                document.getElementById('fileInfo').textContent = '未选择文件';
+                currentFile = null;
+                document.getElementById('fileInput').value = '';
+            }
+        }
+        
+        // 清空批量文本框
+        function clearBulkText() {
+            document.getElementById('bulkText').value = '';
+            showMessage('文本框已清空', 'info');
+        }
+        
+        // 清空所有学生
+        function clearAllStudents() {
+            if (students.length === 0) {
+                showMessage('学生名单已经是空的', 'info');
+                return;
+            }
+            
+            if (confirm(`确定要清空所有学生吗？这将删除 ${students.length} 名学生记录。`)) {
+                students = [];
+                selectedStudents = [];
+                updateStudentList();
+                updateStats();
+                showMessage('已清空所有学生', 'success');
+            }
+        }
+        
+        // 导出学生名单
+        function exportStudentList() {
+            if (students.length === 0) {
+                showMessage('没有学生可以导出', 'warning');
+                return;
+            }
+            
+            let exportText = '';
+            students.forEach(student => {
+                exportText += `${student.name},${student.className}\n`;
+            });
+            
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `学生名单_${new Date().toLocaleDateString().replace(/\//g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage(`已导出 ${students.length} 名学生名单`, 'success');
+        }
+        
+        // 下载模板文件
+        function downloadTemplate() {
+            const templateText = `张三,一年级一班
+李四,一年级一班
+王五,一年级二班
+赵六,一年级二班
+刘七,二年级一班
+陈八,二年级一班
+杨九,三年级一班
+吴十,四年级一班`;
+
+            const blob = new Blob([templateText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '学生名单模板.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('模板文件下载成功', 'success');
+        }
+        
+        // 显示消息提示
+        function showMessage(message, type) {
+            // 移除已有的消息提示
+            const existingMessage = document.querySelector('.message-toast');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // 创建新的消息提示
+            const messageEl = document.createElement('div');
+            messageEl.className = `message-toast`;
+            messageEl.textContent = message;
+            
+            // 根据类型设置样式
+            let bgColor, borderColor;
+            switch(type) {
+                case 'success':
+                    bgColor = '#d4edda';
+                    borderColor = '#c3e6cb';
+                    break;
+                case 'warning':
+                    bgColor = '#fff3cd';
+                    borderColor = '#ffeaa7';
+                    break;
+                case 'info':
+                    bgColor = '#d1ecf1';
+                    borderColor = '#bee5eb';
+                    break;
+                default:
+                    bgColor = '#f8d7da';
+                    borderColor = '#f5c6cb';
+            }
+            
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                z-index: 1000;
+                font-weight: 500;
+                background-color: ${bgColor};
+                border-left: 5px solid ${borderColor};
+                animation: slideIn 0.3s ease;
+            `;
+            
+            // 添加动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(messageEl);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (messageEl.parentNode) {
+                    messageEl.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        if (messageEl.parentNode) {
+                            messageEl.remove();
+                        }
+                    }, 300);
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

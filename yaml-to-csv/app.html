@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML 转 CSV - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/yaml-to-csv/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(100, 116, 139, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+        }
+
+        .btn-warning:hover {
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-info {
+            background: #3b82f6;
+        }
+
+        .btn-info:hover {
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e9ecef;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 350px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.3s;
+            white-space: pre;
+            overflow-x: auto;
+            background-color: #fff;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #64748b;
+            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.1);
+        }
+
+        .editor-textarea.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .editor-textarea.success {
+            border-color: #10b981;
+            background-color: #f0fdf4;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .status-box.error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+
+        .status-box.warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+
+        .status-box.info {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+
+        .status-box.active {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .status-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            flex: 1;
+            margin: 0;
+        }
+
+        .status-box.error p {
+            color: #dc2626;
+        }
+
+        .status-box.warning p {
+            color: #d97706;
+        }
+
+        .status-box.info p {
+            color: #1e40af;
+        }
+
+        .status-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .error-details {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Consolas', monospace;
+            line-height: 1.4;
+        }
+
+        .error-line {
+            background-color: #fee;
+            color: #c00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .error-position {
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .control {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .control input,
+        .control select,
+        .control textarea {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d0d7de;
+            font-size: 14px;
+        }
+
+        .csv-options {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+
+        .csv-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .csv-option label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .csv-option input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .csv-option input[type="text"] {
+            width: 40px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #d0d7de;
+            text-align: center;
+        }
+
+        .help-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #64748b;
+        }
+
+        .help-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .help-item {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .help-item h4 {
+            color: #64748b;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .help-item p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 5px 0;
+        }
+
+        .help-item ul {
+            margin: 5px 0;
+            padding-left: 20px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .help-item li {
+            margin-bottom: 3px;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .highlight {
+            background-color: #ffecb3;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #333;
+        }
+
+        .highlight-error {
+            background-color: #fee;
+            color: #c00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .preview-table {
+            margin-top: 20px;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            display: none;
+        }
+
+        .preview-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .preview-table th {
+            background-color: #64748b;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            border-right: 1px solid #475569;
+        }
+
+        .preview-table th:last-child {
+            border-right: none;
+        }
+
+        .preview-table td {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            vertical-align: top;
+        }
+
+        .preview-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .preview-table tr:hover {
+            background-color: #f0f4f8;
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 250px;
+            }
+
+            .help-content {
+                grid-template-columns: 1fr;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+
+            .csv-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .stats {
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>YAML 转 CSV</h1>
+            <p>智能转换工具 - 详细错误提示与数据预览</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <div class="status-icon" id="status-icon"></div>
+                <div>
+                    <p id="status-message">准备好转换YAML到CSV</p>
+                    <div id="error-details" class="error-details" style="display: none;"></div>
+                    <div id="error-position" class="error-position" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" onclick="convert()">
+                        <i class="fas fa-sync-alt"></i> 立即转换
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSample()">
+                        <i class="fas fa-code"></i> 示例
+                    </button>
+                    <button class="btn btn-warning" onclick="validateYAML()">
+                        <i class="fas fa-check-circle"></i> 语法检查
+                    </button>
+                    <button class="btn btn-danger" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> 清空
+                    </button>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <i class="fas fa-file-alt"></i>
+                        <span>行数: <span id="line-count">0</span></span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-font"></i>
+                        <span>字符: <span id="char-count">0</span></span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-list"></i>
+                        <span>条目: <span id="item-count">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="csv-options">
+                <div class="csv-option">
+                    <label>
+                        <input type="checkbox" id="include-header" checked>
+                        包含表头
+                    </label>
+                </div>
+                <div class="csv-option">
+                    <label>
+                        分隔符:
+                        <input type="text" id="delimiter" value="," maxlength="1">
+                    </label>
+                </div>
+                <div class="csv-option">
+                    <label>
+                        引用符:
+                        <input type="text" id="quote-char" value='"' maxlength="1">
+                    </label>
+                </div>
+                <div class="csv-option">
+                    <label>
+                        <input type="checkbox" id="escape-special" checked>
+                        转义特殊字符
+                    </label>
+                </div>
+                <div class="csv-option">
+                    <button class="btn btn-info" style="padding: 6px 12px; font-size: 13px;" onclick="previewData()">
+                        <i class="fas fa-eye"></i> 数据预览
+                    </button>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <i class="fab fa-yaml"></i> YAML 输入
+                        </span>
+                        <div class="btn-group" style="gap: 5px;">
+                            <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="formatYAML()">
+                                <i class="fas fa-indent"></i> 格式化
+                            </button>
+                            <button class="btn btn-info" style="padding: 6px 12px; font-size: 12px;" onclick="pasteToInput()">
+                                <i class="fas fa-paste"></i> 粘贴
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="editor-textarea" id="input" placeholder="粘贴 YAML 内容...&#10;&#10;示例:&#10;- name: Alice&#10;  age: 30&#10;- name: Bob&#10;  age: 28&#10;- name: Carol&#10;  age: 25" 
+                              oninput="updateStats()" 
+                              onkeydown="handleTabKey(event)"></textarea>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <i class="fas fa-file-csv"></i> CSV 输出
+                        </span>
+                        <div class="btn-group" style="gap: 5px;">
+                            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="copyOutput()">
+                                <i class="fas fa-copy"></i> 复制
+                            </button>
+                            <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="downloadCSV()">
+                                <i class="fas fa-download"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="editor-textarea" id="output" placeholder="转换后的 CSV 将显示在这里..." readonly></textarea>
+                </div>
+            </div>
+
+            <div class="preview-table" id="preview-table">
+                <table>
+                    <thead id="preview-header">
+                        <!-- 表头将由JavaScript动态生成 -->
+                    </thead>
+                    <tbody id="preview-body">
+                        <!-- 表格内容将由JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="help-section">
+                <div class="help-title">
+                    <i class="fas fa-info-circle"></i> 使用提示与常见错误
+                </div>
+                <div class="help-content">
+                    <div class="help-item">
+                        <h4><i class="fas fa-lightbulb"></i> 输入格式</h4>
+                        <p>YAML 文件应该是一个数组，每个元素是一个对象（键值对）。</p>
+                        <div class="code-block">
+- name: Alice
+  age: 30
+  city: "New York"
+- name: Bob
+  age: 28
+  city: "London"
+                        </div>
+                    </div>
+                    <div class="help-item">
+                        <h4><i class="fas fa-exclamation-triangle"></i> 常见错误</h4>
+                        <ul>
+                            <li>缩进必须使用空格，不能使用制表符</li>
+                            <li>键值对必须使用正确的冒号分隔</li>
+                            <li>字符串包含特殊字符时需要使用引号</li>
+                            <li>数组元素必须以连字符开头</li>
+                        </ul>
+                    </div>
+                    <div class="help-item">
+                        <h4><i class="fas fa-cogs"></i> 转换选项</h4>
+                        <ul>
+                            <li><strong>分隔符</strong>: 控制CSV字段分隔符</li>
+                            <li><strong>引用符</strong>: 包裹包含特殊字符的字段</li>
+                            <li><strong>包含表头</strong>: 在第一行包含列名</li>
+                            <li><strong>转义特殊字符</strong>: 自动处理换行符和引号</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // YAML 解析函数
+        function parseYAML(yamlString) {
+            const lines = yamlString.split('\n');
+            const result = [];
+            let currentObject = null;
+            let currentIndent = 0;
+            let inArray = false;
+            let inObject = false;
+            let lineNumber = 0;
+            let error = null;
+
+            // 移除注释和空行
+            const processedLines = lines.map((line, index) => {
+                lineNumber = index + 1;
+                
+                // 检查是否有解析错误
+                if (line.includes(':') && !line.trim().startsWith('-') && 
+                    line.indexOf(':') !== line.trim().indexOf(':')) {
+                    error = `第 ${lineNumber} 行: 冒号前不能有空格 (${line})`;
+                }
+                
+                // 移除行尾注释
+                const commentIndex = line.indexOf('#');
+                if (commentIndex !== -1) {
+                    line = line.substring(0, commentIndex);
+                }
+                return line;
+            });
+
+            if (error) {
+                throw new Error(error);
+            }
+
+            // 解析每一行
+            processedLines.forEach((line, index) => {
+                lineNumber = index + 1;
+                const trimmedLine = line.trim();
+                
+                if (trimmedLine === '') {
+                    return; // 跳过空行
+                }
+
+                const indent = line.search(/\S|$/); // 计算缩进
+
+                // 处理数组元素（以 - 开头）
+                if (trimmedLine.startsWith('-')) {
+                    // 如果已经有对象，先保存
+                    if (currentObject !== null) {
+                        result.push(currentObject);
+                    }
+                    
+                    // 创建新对象
+                    currentObject = {};
+                    currentIndent = indent;
+                    inArray = true;
+                    inObject = false;
+                    
+                    // 解析连字符后的内容
+                    const content = trimmedLine.substring(1).trim();
+                    if (content !== '') {
+                        // 如果连字符后直接跟着键值对
+                        if (content.includes(':')) {
+                            const [key, ...valueParts] = content.split(':');
+                            const value = valueParts.join(':').trim();
+                            currentObject[key.trim()] = parseValue(value);
+                            inObject = true;
+                        }
+                    }
+                } 
+                // 处理键值对（在对象内）
+                else if (trimmedLine.includes(':') && indent > currentIndent && inArray) {
+                    const [key, ...valueParts] = trimmedLine.split(':');
+                    const value = valueParts.join(':').trim();
+                    currentObject[key.trim()] = parseValue(value);
+                    inObject = true;
+                }
+                // 多行字符串处理
+                else if (inObject && (trimmedLine.startsWith('|') || trimmedLine.startsWith('>'))) {
+                    // 简单处理多行字符串
+                    const lines = [];
+                    for (let i = index + 1; i < processedLines.length; i++) {
+                        const nextLine = processedLines[i];
+                        if (nextLine.trim() === '' || nextLine.search(/\S|$/) <= indent) {
+                            break;
+                        }
+                        lines.push(nextLine.trim());
+                    }
+                    currentObject[Object.keys(currentObject).pop()] = lines.join('\n');
+                }
+            });
+
+            // 添加最后一个对象
+            if (currentObject !== null) {
+                result.push(currentObject);
+            }
+
+            return result;
+        }
+
+        // 解析值
+        function parseValue(value) {
+            if (value === '' || value === 'null') {
+                return null;
+            }
+            if (value === 'true' || value === 'false') {
+                return value === 'true';
+            }
+            if (!isNaN(value) && value.trim() !== '') {
+                const num = parseFloat(value);
+                if (!isNaN(num) && isFinite(num)) {
+                    return num;
+                }
+            }
+            // 移除字符串引号
+            if ((value.startsWith('"') && value.endsWith('"')) || 
+                (value.startsWith("'") && value.endsWith("'"))) {
+                return value.substring(1, value.length - 1);
+            }
+            return value;
+        }
+
+        // 转换YAML到CSV
+        function convertYAMLtoCSV(yamlData, options = {}) {
+            const {
+                delimiter = ',',
+                quoteChar = '"',
+                includeHeader = true,
+                escapeSpecial = true
+            } = options;
+
+            if (!Array.isArray(yamlData) || yamlData.length === 0) {
+                return '';
+            }
+
+            // 收集所有键
+            const allKeys = [];
+            yamlData.forEach(item => {
+                Object.keys(item).forEach(key => {
+                    if (!allKeys.includes(key)) {
+                        allKeys.push(key);
+                    }
+                });
+            });
+
+            // 转义函数
+            const escapeValue = (value) => {
+                if (value === null || value === undefined) {
+                    return '';
+                }
+                
+                let strValue = String(value);
+                
+                if (escapeSpecial) {
+                    // 转义引号
+                    strValue = strValue.replace(new RegExp(quoteChar, 'g'), quoteChar + quoteChar);
+                    
+                    // 检查是否需要引号包裹
+                    const needsQuotes = strValue.includes(delimiter) || 
+                                        strValue.includes('\n') || 
+                                        strValue.includes('\r') || 
+                                        strValue.includes(quoteChar);
+                    
+                    if (needsQuotes) {
+                        strValue = quoteChar + strValue + quoteChar;
+                    }
+                }
+                
+                return strValue;
+            };
+
+            // 构建CSV行
+            const rows = [];
+            
+            // 添加表头
+            if (includeHeader) {
+                const headerRow = allKeys.map(key => escapeValue(key)).join(delimiter);
+                rows.push(headerRow);
+            }
+            
+            // 添加数据行
+            yamlData.forEach(item => {
+                const row = allKeys.map(key => {
+                    const value = key in item ? item[key] : '';
+                    return escapeValue(value);
+                }).join(delimiter);
+                rows.push(row);
+            });
+
+            return rows.join('\n');
+        }
+
+        // 主转换函数
+        function convert() {
+            const input = document.getElementById('input').value;
+            const output = document.getElementById('output');
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            const errorDetails = document.getElementById('error-details');
+            const errorPosition = document.getElementById('error-position');
+            const previewTable = document.getElementById('preview-table');
+
+            // 重置状态
+            statusBox.className = 'status-box';
+            errorDetails.style.display = 'none';
+            errorPosition.style.display = 'none';
+            previewTable.style.display = 'none';
+
+            if (!input.trim()) {
+                showError('请输入YAML内容', '请输入有效的YAML内容再进行转换。');
+                output.value = '';
+                updateStats();
+                return;
+            }
+
+            try {
+                // 解析YAML
+                const yamlData = parseYAML(input);
+                
+                if (yamlData.length === 0) {
+                    showError('未找到有效数据', 'YAML文件中未找到有效的数组数据。');
+                    output.value = '';
+                    updateStats();
+                    return;
+                }
+
+                // 获取转换选项
+                const options = {
+                    delimiter: document.getElementById('delimiter').value || ',',
+                    quoteChar: document.getElementById('quote-char').value || '"',
+                    includeHeader: document.getElementById('include-header').checked,
+                    escapeSpecial: document.getElementById('escape-special').checked
+                };
+
+                // 转换到CSV
+                const csvData = convertYAMLtoCSV(yamlData, options);
+                
+                // 更新输出
+                output.value = csvData;
+                
+                // 更新状态
+                statusBox.className = 'status-box active';
+                statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                statusMessage.textContent = `转换成功！共 ${yamlData.length} 条记录，${Object.keys(yamlData[0] || {}).length} 个字段。`;
+                
+                // 更新统计
+                updateStats(yamlData.length);
+                
+                // 添加成功动画
+                statusBox.classList.add('pulse');
+                setTimeout(() => statusBox.classList.remove('pulse'), 500);
+                
+            } catch (error) {
+                showError('转换失败', error.message, error.line);
+                output.value = '';
+                updateStats(0);
+            }
+        }
+
+        // 显示错误
+        function showError(title, message, line = null) {
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            const errorDetails = document.getElementById('error-details');
+            const errorPosition = document.getElementById('error-position');
+            const inputTextarea = document.getElementById('input');
+
+            // 更新状态框
+            statusBox.className = 'status-box error active';
+            statusIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            statusMessage.textContent = title;
+            
+            // 显示错误详情
+            errorDetails.textContent = message;
+            errorDetails.style.display = 'block';
+            
+            // 显示错误位置
+            if (line) {
+                errorPosition.textContent = `错误位置: 第 ${line} 行`;
+                errorPosition.style.display = 'block';
+                
+                // 高亮错误行
+                const lines = inputTextarea.value.split('\n');
+                const errorLine = lines[line - 1];
+                if (errorLine) {
+                    errorDetails.innerHTML += `<br><br><span class="error-line">${errorLine}</span>`;
+                }
+            }
+            
+            // 高亮输入框
+            inputTextarea.classList.add('error');
+            setTimeout(() => inputTextarea.classList.remove('error'), 2000);
+        }
+
+        // 更新统计信息
+        function updateStats(itemCount = null) {
+            const input = document.getElementById('input').value;
+            const lines = input.split('\n').filter(line => line.trim() !== '').length;
+            const chars = input.length;
+            
+            document.getElementById('line-count').textContent = lines;
+            document.getElementById('char-count').textContent = chars;
+            
+            if (itemCount !== null) {
+                document.getElementById('item-count').textContent = itemCount;
+            }
+        }
+
+        // 语法检查
+        function validateYAML() {
+            const input = document.getElementById('input').value;
+            
+            if (!input.trim()) {
+                showError('请输入内容', '请输入YAML内容进行语法检查。');
+                return;
+            }
+
+            try {
+                const yamlData = parseYAML(input);
+                const statusBox = document.getElementById('status-box');
+                const statusIcon = document.getElementById('status-icon');
+                const statusMessage = document.getElementById('status-message');
+
+                statusBox.className = 'status-box active';
+                statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                statusMessage.textContent = `语法检查通过！共发现 ${yamlData.length} 条记录。`;
+                
+                // 添加成功动画
+                statusBox.classList.add('pulse');
+                setTimeout(() => statusBox.classList.remove('pulse'), 500);
+                
+            } catch (error) {
+                showError('语法错误', error.message, error.line);
+            }
+        }
+
+        // 格式化YAML
+        function formatYAML() {
+            const input = document.getElementById('input');
+            const inputValue = input.value.trim();
+            
+            if (!inputValue) {
+                showError('请输入内容', '请输入YAML内容进行格式化。');
+                return;
+            }
+
+            try {
+                const yamlData = parseYAML(inputValue);
+                const formatted = formatYAMLString(yamlData);
+                input.value = formatted;
+                
+                const statusBox = document.getElementById('status-box');
+                const statusIcon = document.getElementById('status-icon');
+                const statusMessage = document.getElementById('status-message');
+                
+                statusBox.className = 'status-box active';
+                statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                statusMessage.textContent = 'YAML格式化完成！';
+                
+                // 更新统计
+                updateStats(yamlData.length);
+                
+            } catch (error) {
+                showError('格式化失败', error.message, error.line);
+            }
+        }
+
+        // 格式化YAML字符串
+        function formatYAMLString(data) {
+            let result = '';
+            data.forEach((item, index) => {
+                result += `- `;
+                const keys = Object.keys(item);
+                keys.forEach((key, i) => {
+                    const value = item[key];
+                    const indent = i === 0 ? '' : '  ';
+                    const formattedValue = formatYAMLValue(value);
+                    result += `${indent}${key}: ${formattedValue}`;
+                    if (i < keys.length - 1) {
+                        result += '\n';
+                    }
+                });
+                if (index < data.length - 1) {
+                    result += '\n';
+                }
+            });
+            return result;
+        }
+
+        // 格式化YAML值
+        function formatYAMLValue(value) {
+            if (value === null || value === undefined) {
+                return 'null';
+            }
+            if (typeof value === 'boolean') {
+                return value ? 'true' : 'false';
+            }
+            if (typeof value === 'number') {
+                return value.toString();
+            }
+            if (typeof value === 'string') {
+                // 检查是否需要引号
+                if (value.includes(':') || value.includes('#') || value.includes('\n')) {
+                    return `"${value.replace(/"/g, '\\"')}"`;
+                }
+                return value;
+            }
+            return JSON.stringify(value);
+        }
+
+        // 加载示例
+        function loadSample() {
+            const sampleYAML = `- name: Alice
+  age: 30
+  city: "New York"
+  email: alice@example.com
+  active: true
+  tags:
+    - developer
+    - designer
+
+- name: Bob
+  age: 28
+  city: London
+  email: bob@example.com
+  active: false
+  tags:
+    - manager
+    - analyst
+
+- name: Carol
+  age: 35
+  city: "Tokyo, Japan"
+  email: carol@example.com
+  active: true
+  salary: 75000.50
+  notes: "Senior developer with 10+ years experience"
+
+- name: David
+  age: 42
+  city: Berlin
+  email: david@example.com
+  active: true
+  department: "Engineering"
+  projects: 5`;
+
+            document.getElementById('input').value = sampleYAML;
+            convert(); // 自动转换
+            updateStats();
+            
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            
+            statusBox.className = 'status-box info active';
+            statusIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+            statusMessage.textContent = '示例数据已加载并自动转换！';
+        }
+
+        // 清空所有
+        function clearAll() {
+            if (confirm('确定要清空所有内容吗？')) {
+                document.getElementById('input').value = '';
+                document.getElementById('output').value = '';
+                document.getElementById('preview-table').style.display = 'none';
+                document.getElementById('status-box').className = 'status-box';
+                updateStats(0);
+                
+                const statusBox = document.getElementById('status-box');
+                const statusIcon = document.getElementById('status-icon');
+                const statusMessage = document.getElementById('status-message');
+                
+                statusBox.className = 'status-box info active';
+                statusIcon.innerHTML = '<i class="fas fa-info-circle"></i>';
+                statusMessage.textContent = '所有内容已清空！';
+            }
+        }
+
+        // 复制输出
+        function copyOutput() {
+            const output = document.getElementById('output');
+            
+            if (!output.value.trim()) {
+                showError('没有内容可复制', '请先转换YAML到CSV。');
+                return;
+            }
+
+            output.select();
+            document.execCommand('copy');
+            
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            
+            statusBox.className = 'status-box active';
+            statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            statusMessage.textContent = 'CSV内容已复制到剪贴板！';
+            
+            // 添加成功动画
+            statusBox.classList.add('pulse');
+            setTimeout(() => statusBox.classList.remove('pulse'), 500);
+        }
+
+        // 下载CSV
+        function downloadCSV() {
+            const output = document.getElementById('output');
+            
+            if (!output.value.trim()) {
+                showError('没有内容可下载', '请先转换YAML到CSV。');
+                return;
+            }
+
+            const blob = new Blob([output.value], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `yaml_to_csv_${new Date().getTime()}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            
+            statusBox.className = 'status-box active';
+            statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            statusMessage.textContent = 'CSV文件已开始下载！';
+        }
+
+        // 数据预览
+        function previewData() {
+            const input = document.getElementById('input').value;
+            
+            if (!input.trim()) {
+                showError('没有数据可预览', '请输入YAML内容。');
+                return;
+            }
+
+            try {
+                const yamlData = parseYAML(input);
+                
+                if (yamlData.length === 0) {
+                    showError('没有有效数据', 'YAML文件中未找到有效的数组数据。');
+                    return;
+                }
+
+                // 收集所有键
+                const allKeys = [];
+                yamlData.forEach(item => {
+                    Object.keys(item).forEach(key => {
+                        if (!allKeys.includes(key)) {
+                            allKeys.push(key);
+                        }
+                    });
+                });
+
+                // 构建表头
+                const previewHeader = document.getElementById('preview-header');
+                previewHeader.innerHTML = '';
+                allKeys.forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key;
+                    previewHeader.appendChild(th);
+                });
+
+                // 构建表格内容
+                const previewBody = document.getElementById('preview-body');
+                previewBody.innerHTML = '';
+                
+                // 只显示前10行
+                const displayData = yamlData.slice(0, 10);
+                displayData.forEach(item => {
+                    const tr = document.createElement('tr');
+                    allKeys.forEach(key => {
+                        const td = document.createElement('td');
+                        const value = key in item ? item[key] : '';
+                        td.textContent = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                        tr.appendChild(td);
+                    });
+                    previewBody.appendChild(tr);
+                });
+
+                // 显示预览表格
+                const previewTable = document.getElementById('preview-table');
+                previewTable.style.display = 'block';
+                
+                // 显示预览信息
+                const statusBox = document.getElementById('status-box');
+                const statusIcon = document.getElementById('status-icon');
+                const statusMessage = document.getElementById('status-message');
+                
+                statusBox.className = 'status-box info active';
+                statusIcon.innerHTML = '<i class="fas fa-eye"></i>';
+                statusMessage.textContent = `数据预览 (显示前 ${displayData.length} 条记录，共 ${yamlData.length} 条)`;
+                
+            } catch (error) {
+                showError('预览失败', error.message, error.line);
+            }
+        }
+
+        // 粘贴到输入框
+        function pasteToInput() {
+            const input = document.getElementById('input');
+            input.focus();
+            document.execCommand('paste');
+            
+            // 更新统计
+            setTimeout(() => updateStats(), 100);
+        }
+
+        // 处理Tab键
+        function handleTabKey(event) {
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                const textarea = event.target;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                
+                // 插入两个空格
+                textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+                
+                // 移动光标位置
+                textarea.selectionStart = textarea.selectionEnd = start + 2;
+                
+                // 更新统计
+                updateStats();
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats(0);
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Enter 转换
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    convert();
+                }
+                // Ctrl + L 加载示例
+                if (e.ctrlKey && e.key === 'l') {
+                    e.preventDefault();
+                    loadSample();
+                }
+                // Ctrl + F 格式化
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    formatYAML();
+                }
+                // Ctrl + V 粘贴
+                if (e.ctrlKey && e.key === 'v') {
+                    setTimeout(() => updateStats(), 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

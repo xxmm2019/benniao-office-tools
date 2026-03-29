@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML 实体编码/解码 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/html-entity/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .editor-panel:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-title::before {
+            content: "📝";
+            font-size: 1.1em;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(37, 117, 252, 0.4);
+        }
+
+        .small-btn {
+            padding: 8px 16px;
+            font-size: 14px;
+            min-width: auto;
+        }
+
+        .character-count {
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box h3::before {
+            content: "💡";
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .btn {
+                min-width: 120px;
+                padding: 12px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HTML 实体编码/解码</h1>
+            <p>将 HTML 特殊字符转换为实体编码或反向转换</p>
+        </div>
+
+        <div class="card">
+            <div class="action-bar">
+                <button class="btn" onclick="encode()">
+                    <span>🔒</span> 编码 →
+                </button>
+                <button class="btn" onclick="decode()">
+                    <span>🔓</span> ← 解码
+                </button>
+                <button class="btn btn-secondary" onclick="loadSample()">
+                    <span>📋</span> 示例
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <span>🗑️</span> 清空
+                </button>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输入文本</span>
+                        <button class="btn btn-secondary small-btn" onclick="pasteToInput()">
+                            <span>📥</span> 粘贴
+                        </button>
+                    </div>
+                    <textarea class="editor-textarea" id="input" 
+                              placeholder="在此输入要编码或解码的文本，例如：<div>Hello & World</div>"
+                              oninput="updateCharCount('input', 'inputCount')"></textarea>
+                    <div class="character-count" id="inputCount">字符数: 0</div>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输出结果</span>
+                        <button class="btn btn-secondary small-btn" onclick="copyOutput()">
+                            <span>📤</span> 复制
+                        </button>
+                    </div>
+                    <textarea class="editor-textarea" id="output" 
+                              placeholder="编码或解码后的结果将显示在这里..."
+                              readonly
+                              oninput="updateCharCount('output', 'outputCount')"></textarea>
+                    <div class="character-count" id="outputCount">字符数: 0</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>使用说明</h3>
+                <p><strong>编码：</strong>将 HTML 特殊字符（如 &lt; &gt; &amp; 等）转换为对应的 HTML 实体编码，防止代码被解析。</p>
+                <p><strong>解码：</strong>将 HTML 实体编码转换回原始字符，便于查看和编辑。</p>
+                <p><strong>常用实体：</strong> &amp;lt; (&lt;) | &amp;gt; (&gt;) | &amp;amp; (&amp;) | &amp;quot; (&quot;) | &amp;#39; (')</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // HTML 实体映射表
+        const htmlEntities = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '©': '&copy;',
+            '®': '&reg;',
+            '€': '&euro;',
+            '£': '&pound;',
+            '¥': '&yen;',
+            '¢': '&cent;',
+            ' ': '&nbsp;',
+            '–': '&ndash;',
+            '—': '&mdash;'
+        };
+
+        // 反向映射表（用于解码）
+        const reverseEntities = Object.fromEntries(
+            Object.entries(htmlEntities).map(([key, value]) => [value, key])
+        );
+
+        // 更新字符计数
+        function updateCharCount(textareaId, countId) {
+            const textarea = document.getElementById(textareaId);
+            const countElement = document.getElementById(countId);
+            const count = textarea.value.length;
+            countElement.textContent = `字符数: ${count}`;
+        }
+
+        // HTML 编码函数
+        function encode() {
+            const input = document.getElementById('input').value;
+            if (!input.trim()) {
+                alert('请输入要编码的文本！');
+                return;
+            }
+
+            let output = input;
+            // 编码特殊字符
+            for (const [char, entity] of Object.entries(htmlEntities)) {
+                output = output.replace(new RegExp(char, 'g'), entity);
+            }
+            
+            document.getElementById('output').value = output;
+            updateCharCount('output', 'outputCount');
+            
+            // 显示成功消息
+            showNotification('编码成功！', 'success');
+        }
+
+        // HTML 解码函数
+        function decode() {
+            const input = document.getElementById('input').value;
+            if (!input.trim()) {
+                alert('请输入要解码的文本！');
+                return;
+            }
+
+            let output = input;
+            // 解码实体（按实体长度降序排序，避免部分匹配问题）
+            const sortedEntities = Object.keys(reverseEntities).sort((a, b) => b.length - a.length);
+            
+            for (const entity of sortedEntities) {
+                output = output.replace(new RegExp(entity, 'g'), reverseEntities[entity]);
+            }
+            
+            // 处理数字实体（如 &#39;）
+            output = output.replace(/&#(\d+);/g, (match, dec) => {
+                return String.fromCharCode(dec);
+            });
+            
+            // 处理十六进制实体（如 &#x27;）
+            output = output.replace(/&#x([0-9a-fA-F]+);/g, (match, hex) => {
+                return String.fromCharCode(parseInt(hex, 16));
+            });
+
+            document.getElementById('output').value = output;
+            updateCharCount('output', 'outputCount');
+            
+            // 显示成功消息
+            showNotification('解码成功！', 'success');
+        }
+
+        // 加载示例
+        function loadSample() {
+            const sampleText = `<!DOCTYPE html>
+<html>
+<head>
+    <title>示例页面</title>
+</head>
+<body>
+    <h1>欢迎使用 HTML 实体工具</h1>
+    <p>这里包含一些特殊字符：</p>
+    <ul>
+        <li>小于号：<</li>
+        <li>大于号：></li>
+        <li>和号：&</li>
+        <li>双引号："</li>
+        <li>单引号：'</li>
+        <li>版权符号：©</li>
+        <li>注册商标：®</li>
+        <li>欧元符号：€</li>
+    </ul>
+    <script>
+        // 这是一段 JavaScript 代码
+        console.log("Hello & World");
+    <\/script>
+</body>
+</html>`;
+            
+            document.getElementById('input').value = sampleText;
+            document.getElementById('output').value = '';
+            updateCharCount('input', 'inputCount');
+            updateCharCount('output', 'outputCount');
+            
+            showNotification('示例已加载！', 'info');
+        }
+
+        // 清空所有内容
+        function clearAll() {
+            if (confirm('确定要清空所有内容吗？')) {
+                document.getElementById('input').value = '';
+                document.getElementById('output').value = '';
+                updateCharCount('input', 'inputCount');
+                updateCharCount('output', 'outputCount');
+                
+                showNotification('已清空！', 'info');
+            }
+        }
+
+        // 粘贴到输入框
+        async function pasteToInput() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('input').value = text;
+                updateCharCount('input', 'inputCount');
+                showNotification('粘贴成功！', 'success');
+            } catch (err) {
+                console.error('粘贴失败:', err);
+                alert('粘贴失败，请手动粘贴或检查剪贴板权限');
+            }
+        }
+
+        // 复制输出内容
+        async function copyOutput() {
+            const output = document.getElementById('output').value;
+            if (!output.trim()) {
+                alert('没有内容可复制！');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(output);
+                showNotification('复制成功！', 'success');
+            } catch (err) {
+                console.error('复制失败:', err);
+                // 降级方案
+                const textarea = document.createElement('textarea');
+                textarea.value = output;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showNotification('复制成功！', 'success');
+            }
+        }
+
+        // 显示通知
+        function showNotification(message, type = 'info') {
+            // 移除已有的通知
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            // 添加样式
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#F44336' : '#2196F3'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 15px;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+                font-weight: 500;
+            `;
+            
+            // 按钮样式
+            notification.querySelector('button').style.cssText = `
+                background: none;
+                border: none;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 0;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: background 0.3s;
+            `;
+            
+            notification.querySelector('button').onmouseover = function() {
+                this.style.background = 'rgba(255,255,255,0.2)';
+            };
+            
+            notification.querySelector('button').onmouseout = function() {
+                this.style.background = 'none';
+            };
+            
+            // 添加动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后自动移除
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+
+        // 初始化字符计数
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharCount('input', 'inputCount');
+            updateCharCount('output', 'outputCount');
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', function(e) {
+                // Ctrl + Enter 编码
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    encode();
+                }
+                // Ctrl + Shift + Enter 解码
+                if (e.ctrlKey && e.shiftKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    decode();
+                }
+                // Ctrl + L 加载示例
+                if (e.ctrlKey && e.key === 'l') {
+                    e.preventDefault();
+                    loadSample();
+                }
+                // Ctrl + C 复制输出
+                if (e.ctrlKey && e.key === 'c' && document.activeElement.id !== 'input') {
+                    e.preventDefault();
+                    copyOutput();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

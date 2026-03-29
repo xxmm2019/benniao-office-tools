@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字转拼音工具 - 中文拼音转换器- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-textcheck/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section, .output-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        h2 {
+            color: #2575fc;
+            font-size: 1.5rem;
+        }
+        
+        .char-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .text-area {
+            width: 100%;
+            min-height: 250px;
+            padding: 18px;
+            font-size: 1.1rem;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            resize: vertical;
+            transition: border-color 0.3s;
+            line-height: 1.8;
+        }
+        
+        .text-area:focus {
+            outline: none;
+            border-color: #2575fc;
+        }
+        
+        .pinyin-output {
+            min-height: 250px;
+            padding: 18px;
+            background-color: #f9fafc;
+            border-radius: 8px;
+            border: 2px solid #e1e5eb;
+            font-size: 1.4rem;
+            line-height: 2;
+            word-break: break-word;
+        }
+        
+        .options-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .options-title {
+            margin-bottom: 20px;
+            color: #2575fc;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .option-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        select, .tone-toggle {
+            padding: 12px 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: white;
+        }
+        
+        .tone-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tone-toggle span {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tone-toggle span.active {
+            background-color: #2575fc;
+            color: white;
+            border-radius: 6px;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .convert-btn {
+            background-color: #2575fc;
+            color: white;
+            flex: 2;
+        }
+        
+        .convert-btn:hover {
+            background-color: #1a68e8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+        }
+        
+        .copy-btn {
+            background-color: #4CAF50;
+            color: white;
+            flex: 1;
+        }
+        
+        .copy-btn:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+        }
+        
+        .clear-btn {
+            background-color: #f5f5f5;
+            color: #666;
+            flex: 1;
+        }
+        
+        .clear-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .examples {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+        }
+        
+        .example-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .example-item {
+            padding: 15px;
+            background-color: #f9fafc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #6a11cb;
+        }
+        
+        .example-item:hover {
+            background-color: #eef4ff;
+            transform: translateX(5px);
+        }
+        
+        .example-chinese {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .example-pinyin {
+            color: #2575fc;
+            font-size: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5eb;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #2575fc;
+        }
+        
+        .loading i {
+            margin-right: 10px;
+        }
+        
+        .success-message {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .info-message {
+            display: none;
+            background-color: #ff9800;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .polyphonic-options {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #6a11cb;
+        }
+        
+        .polyphonic-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .polyphonic-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .polyphonic-btn {
+            padding: 8px 15px;
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .polyphonic-btn:hover {
+            background-color: #bbdefb;
+        }
+        
+        .polyphonic-btn.selected {
+            background-color: #2575fc;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-language"></i> 文字转拼音工具</h1>
+            <p class="subtitle">本工具可以帮助您将中文文本转换为拼音，便于学习和理解汉字的发音。无论是用于语言学习、教学辅助，还是其他需要拼音标注的场景，这款工具都能满足您的需求，帮助您轻松将汉字转换为拼音。</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="input-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-keyboard"></i> 输入中文文本</h2>
+                    <div class="char-count">字数: <span id="charCount">0</span></div>
+                </div>
+                <textarea id="chineseInput" class="text-area" placeholder="请输入要转换的中文文本...">文字转拼音工具可以帮助您将中文文本转换为拼音，便于学习和理解汉字的发音。无论是用于语言学习、教学辅助，还是其他需要拼音标注的场景，这款工具都能满足您的需求，帮助您轻松将汉字转换为拼音。</textarea>
+            </section>
+            
+            <section class="output-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-spell-check"></i> 拼音结果</h2>
+                    <div class="char-count">拼音数: <span id="pinyinCount">0</span></div>
+                </div>
+                <div id="pinyinOutput" class="pinyin-output">
+                    转换结果将在这里显示...
+                </div>
+                <div id="polyphonicOptions" class="polyphonic-options" style="display: none;">
+                    <div class="polyphonic-title">多音字选择:</div>
+                    <div id="polyphonicButtons" class="polyphonic-buttons">
+                        <!-- 多音字选项将在这里动态生成 -->
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <section class="options-panel">
+            <h2 class="options-title"><i class="fas fa-sliders-h"></i> 转换选项</h2>
+            <div class="options-grid">
+                <div class="option-group">
+                    <label for="toneStyle">拼音声调样式</label>
+                    <div class="tone-toggle" id="toneStyle">
+                        <span class="active" data-value="withTone">带声调 (nǐ hǎo)</span>
+                        <span data-value="withoutTone">无声调 (ni hao)</span>
+                        <span data-value="withNumber">数字标调 (ni3 hao3)</span>
+                    </div>
+                </div>
+                
+                <div class="option-group">
+                    <label for="caseStyle">拼音大小写</label>
+                    <select id="caseStyle">
+                        <option value="lowercase">小写拼音</option>
+                        <option value="uppercase">大写拼音</option>
+                        <option value="capitalize">首字母大写</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label for="separator">拼音分隔符</label>
+                    <select id="separator">
+                        <option value="space">空格 (wén zì)</option>
+                        <option value="hyphen">连字符 (wén-zì)</option>
+                        <option value="none">无分隔符 (wénzì)</option>
+                        <option value="apostrophe">撇号分隔 (wén'zì)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="convertBtn" class="convert-btn">
+                    <i class="fas fa-sync-alt"></i> 转换为拼音
+                </button>
+                <button id="copyBtn" class="copy-btn">
+                    <i class="far fa-copy"></i> 复制拼音
+                </button>
+                <button id="clearBtn" class="clear-btn">
+                    <i class="fas fa-eraser"></i> 清空文本
+                </button>
+            </div>
+            
+            <div class="loading" id="loadingIndicator">
+                <i class="fas fa-spinner fa-spin"></i> 正在转换拼音，请稍候...
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> 拼音已成功复制到剪贴板！
+            </div>
+            
+            <div class="info-message" id="infoMessage">
+                <i class="fas fa-info-circle"></i> 检测到多音字，请在下方选择正确的读音
+            </div>
+        </section>
+        
+        <section class="examples">
+            <h2><i class="fas fa-lightbulb"></i> 使用示例</h2>
+            <p>点击以下示例可以快速体验转换效果：</p>
+            <div class="example-list">
+                <div class="example-item" data-example="你好，世界！欢迎使用拼音转换工具。">
+                    <div class="example-chinese">你好，世界！欢迎使用拼音转换工具。</div>
+                    <div class="example-pinyin">nǐ hǎo, shì jiè! huān yíng shǐ yòng pīn yīn zhuǎn huàn gōng jù.</div>
+                </div>
+                <div class="example-item" data-example="学习中文让我了解了丰富的中国文化。">
+                    <div class="example-chinese">学习中文让我了解了丰富的中国文化。</div>
+                    <div class="example-pinyin">xué xí zhōng wén ràng wǒ liǎo jiě le fēng fù de zhōng guó wén huà.</div>
+                </div>
+                <div class="example-item" data-example="床前明月光，疑是地上霜。举头望明月，低头思故乡。">
+                    <div class="example-chinese">床前明月光，疑是地上霜。举头望明月，低头思故乡。</div>
+                    <div class="example-pinyin">chuáng qián míng yuè guāng, yí shì dì shàng shuāng. jǔ tóu wàng míng yuè, dī tóu sī gù xiāng.</div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            
+        </footer>
+    </div>
+
+    <script>
+        // 扩展的拼音映射表（包含更多常用汉字）
+        const pinyinMap = {
+            // 基本汉字
+            '的': 'de',
+            '一': 'yī',
+            '是': 'shì',
+            '不': 'bù',
+            '了': 'le',
+            '人': 'rén',
+            '在': 'zài',
+            '有': 'yǒu',
+            '我': 'wǒ',
+            '他': 'tā',
+            '这': 'zhè',
+            '个': 'gè',
+            '中': 'zhōng',
+            '来': 'lái',
+            '上': 'shàng',
+            '大': 'dà',
+            '为': 'wèi',
+            '和': 'hé',
+            '国': 'guó',
+            '地': 'dì',
+            '到': 'dào',
+            '以': 'yǐ',
+            '说': 'shuō',
+            '时': 'shí',
+            '要': 'yào',
+            '就': 'jiù',
+            '出': 'chū',
+            '会': 'huì',
+            '可': 'kě',
+            '也': 'yě',
+            '你': 'nǐ',
+            '对': 'duì',
+            '生': 'shēng',
+            '能': 'néng',
+            '而': 'ér',
+            '子': 'zǐ',
+            '那': 'nà',
+            '得': 'dé',
+            '于': 'yú',
+            '着': 'zhe',
+            '下': 'xià',
+            '自': 'zì',
+            '之': 'zhī',
+            '年': 'nián',
+            '过': 'guò',
+            '发': 'fā',
+            '后': 'hòu',
+            '作': 'zuò',
+            '里': 'lǐ',
+            '用': 'yòng',
+            '道': 'dào',
+            '行': 'xíng',
+            '所': 'suǒ',
+            '然': 'rán',
+            '家': 'jiā',
+            '种': 'zhǒng',
+            '事': 'shì',
+            '成': 'chéng',
+            '方': 'fāng',
+            '多': 'duō',
+            '经': 'jīng',
+            '么': 'me',
+            '去': 'qù',
+            '法': 'fǎ',
+            '学': 'xué',
+            '如': 'rú',
+            '都': 'dōu',
+            '同': 'tóng',
+            '现': 'xiàn',
+            '当': 'dāng',
+            '没': 'méi',
+            '动': 'dòng',
+            '面': 'miàn',
+            '起': 'qǐ',
+            '看': 'kàn',
+            '定': 'dìng',
+            '天': 'tiān',
+            '分': 'fēn',
+            '还': 'hái',
+            '进': 'jìn',
+            '好': 'hǎo',
+            '小': 'xiǎo',
+            '部': 'bù',
+            '其': 'qí',
+            '些': 'xiē',
+            '主': 'zhǔ',
+            '样': 'yàng',
+            '理': 'lǐ',
+            '心': 'xīn',
+            '她': 'tā',
+            '本': 'běn',
+            '前': 'qián',
+            '开': 'kāi',
+            '但': 'dàn',
+            '因': 'yīn',
+            '只': 'zhǐ',
+            '从': 'cóng',
+            '想': 'xiǎng',
+            '实': 'shí',
+            '日': 'rì',
+            '军': 'jūn',
+            '者': 'zhě',
+            '意': 'yì',
+            '无': 'wú',
+            '力': 'lì',
+            '它': 'tā',
+            '与': 'yǔ',
+            '长': 'cháng',
+            '把': 'bǎ',
+            '机': 'jī',
+            '十': 'shí',
+            '民': 'mín',
+            '第': 'dì',
+            '公': 'gōng',
+            '此': 'cǐ',
+            '已': 'yǐ',
+            '工': 'gōng',
+            '使': 'shǐ',
+            '情': 'qíng',
+            '明': 'míng',
+            '性': 'xìng',
+            '知': 'zhī',
+            '全': 'quán',
+            '三': 'sān',
+            '又': 'yòu',
+            '关': 'guān',
+            '点': 'diǎn',
+            '正': 'zhèng',
+            '业': 'yè',
+            '外': 'wài',
+            '将': 'jiāng',
+            '两': 'liǎng',
+            '高': 'gāo',
+            '间': 'jiān',
+            '由': 'yóu',
+            '问': 'wèn',
+            '很': 'hěn',
+            '最': 'zuì',
+            '重': 'zhòng',
+            '并': 'bìng',
+            '物': 'wù',
+            '手': 'shǒu',
+            '应': 'yīng',
+            '战': 'zhàn',
+            '向': 'xiàng',
+            '头': 'tóu',
+            '文': 'wén',
+            '体': 'tǐ',
+            '政': 'zhèng',
+            '美': 'měi',
+            '相': 'xiāng',
+            '见': 'jiàn',
+            '被': 'bèi',
+            '利': 'lì',
+            '什': 'shén',
+            '二': 'èr',
+            '等': 'děng',
+            '产': 'chǎn',
+            '或': 'huò',
+            '新': 'xīn',
+            '己': 'jǐ',
+            '制': 'zhì',
+            '身': 'shēn',
+            '果': 'guǒ',
+            '加': 'jiā',
+            '西': 'xī',
+            '斯': 'sī',
+            '月': 'yuè',
+            '话': 'huà',
+            '合': 'hé',
+            '回': 'huí',
+            '特': 'tè',
+            '代': 'dài',
+            '内': 'nèi',
+            '信': 'xìn',
+            '表': 'biǎo',
+            '化': 'huà',
+            '老': 'lǎo',
+            '给': 'gěi',
+            '世': 'shì',
+            '位': 'wèi',
+            '次': 'cì',
+            '度': 'dù',
+            '门': 'mén',
+            '任': 'rèn',
+            '常': 'cháng',
+            '先': 'xiān',
+            '海': 'hǎi',
+            '通': 'tōng',
+            '教': 'jiào',
+            '儿': 'ér',
+            '原': 'yuán',
+            '东': 'dōng',
+            '声': 'shēng',
+            '提': 'tí',
+            '立': 'lì',
+            '及': 'jí',
+            '比': 'bǐ',
+            '员': 'yuán',
+            '解': 'jiě',
+            '水': 'shuǐ',
+            '名': 'míng',
+            '真': 'zhēn',
+            '论': 'lùn',
+            '处': 'chù',
+            '走': 'zǒu',
+            '义': 'yì',
+            '各': 'gè',
+            '入': 'rù',
+            '几': 'jǐ',
+            '口': 'kǒu',
+            '认': 'rèn',
+            '条': 'tiáo',
+            '平': 'píng',
+            '系': 'xì',
+            '气': 'qì',
+            '题': 'tí',
+            '活': 'huó',
+            '尔': 'ěr',
+            '更': 'gèng',
+            '别': 'bié',
+            '打': 'dǎ',
+            '女': 'nǚ',
+            '变': 'biàn',
+            '四': 'sì',
+            '神': 'shén',
+            '总': 'zǒng',
+            '何': 'hé',
+            '电': 'diàn',
+            '数': 'shù',
+            '安': 'ān',
+            '少': 'shǎo',
+            '报': 'bào',
+            '才': 'cái',
+            '结': 'jié',
+            '反': 'fǎn',
+            '受': 'shòu',
+            '目': 'mù',
+            '太': 'tài',
+            '量': 'liàng',
+            '再': 'zài',
+            '感': 'gǎn',
+            '建': 'jiàn',
+            '务': 'wù',
+            '做': 'zuò',
+            '接': 'jiē',
+            '必': 'bì',
+            '场': 'chǎng',
+            '件': 'jiàn',
+            '计': 'jì',
+            '管': 'guǎn',
+            '期': 'qī',
+            '市': 'shì',
+            '直': 'zhí',
+            '德': 'dé',
+            '资': 'zī',
+            '命': 'mìng',
+            '山': 'shān',
+            '金': 'jīn',
+            '指': 'zhǐ',
+            '克': 'kè',
+            '许': 'xǔ',
+            '统': 'tǒng',
+            '区': 'qū',
+            '保': 'bǎo',
+            '至': 'zhì',
+            '队': 'duì',
+            '形': 'xíng',
+            '社': 'shè',
+            '便': 'biàn',
+            '空': 'kōng',
+            '决': 'jué',
+            '治': 'zhì',
+            '展': 'zhǎn',
+            '马': 'mǎ',
+            '科': 'kē',
+            '司': 'sī',
+            '五': 'wǔ',
+            '基': 'jī',
+            '眼': 'yǎn',
+            '书': 'shū',
+            '非': 'fēi',
+            '则': 'zé',
+            '听': 'tīng',
+            '白': 'bái',
+            '却': 'què',
+            '界': 'jiè',
+            '达': 'dá',
+            '光': 'guāng',
+            '放': 'fàng',
+            '强': 'qiáng',
+            '即': 'jí',
+            '像': 'xiàng',
+            '难': 'nán',
+            '且': 'qiě',
+            '权': 'quán',
+            '思': 'sī',
+            '王': 'wáng',
+            '象': 'xiàng',
+            '完': 'wán',
+            '设': 'shè',
+            '式': 'shì',
+            '色': 'sè',
+            '路': 'lù',
+            '记': 'jì',
+            '北': 'běi',
+            '少': 'shǎo',
+            '瓜': 'guā',
+            '转': 'zhuǎn',
+            '叫': 'jiào',
+            '坏': 'huài',
+            '南': 'nán',
+            '劳': 'láo',
+            '范': 'fàn',
+            '支': 'zhī',
+            '石': 'shí',
+            '它': 'tā',
+            '节': 'jié',
+            '养': 'yǎng',
+            '播': 'bō',
+            '吃': 'chī',
+            '稳': 'wěn',
+            '药': 'yào',
+            '啊': 'a',
+            '哪': 'nǎ',
+            '您': 'nín',
+            '晚': 'wǎn',
+            '昨': 'zuó',
+            '今': 'jīn',
+            '明': 'míng',
+            '后': 'hòu',
+            '天': 'tiān',
+            '星': 'xīng',
+            '期': 'qī',
+            '星': 'xīng',
+            '辰': 'chén',
+            '宇': 'yǔ',
+            '宙': 'zhòu',
+            '地': 'dì',
+            '球': 'qiú',
+            '太': 'tài',
+            '阳': 'yáng',
+            '月': 'yuè',
+            '亮': 'liàng',
+            '云': 'yún',
+            '风': 'fēng',
+            '雨': 'yǔ',
+            '雪': 'xuě',
+            '雷': 'léi',
+            '电': 'diàn',
+            '春': 'chūn',
+            '夏': 'xià',
+            '秋': 'qiū',
+            '冬': 'dōng',
+            '东': 'dōng',
+            '南': 'nán',
+            '西': 'xī',
+            '北': 'běi',
+            '左': 'zuǒ',
+            '右': 'yòu',
+            '上': 'shàng',
+            '下': 'xià',
+            '前': 'qián',
+            '后': 'hòu',
+            '里': 'lǐ',
+            '外': 'wài',
+            '中': 'zhōng',
+            '间': 'jiān',
+            '旁': 'páng',
+            '边': 'biān',
+            '角': 'jiǎo',
+            '落': 'luò',
+            '红': 'hóng',
+            '黄': 'huáng',
+            '蓝': 'lán',
+            '绿': 'lǜ',
+            '紫': 'zǐ',
+            '白': 'bái',
+            '黑': 'hēi',
+            '灰': 'huī',
+            '粉': 'fěn',
+            '橙': 'chéng',
+            '棕': 'zōng',
+            '青': 'qīng',
+            '金': 'jīn',
+            '银': 'yín',
+            '铜': 'tóng',
+            '铁': 'tiě',
+            '钢': 'gāng',
+            '铝': 'lǚ',
+            '铅': 'qiān',
+            '锌': 'xīn',
+            '锡': 'xī',
+            '镍': 'niè',
+            '铬': 'gè',
+            '钴': 'gǔ',
+            '钼': 'mù',
+            '钨': 'wū',
+            '钛': 'tài',
+            '钒': 'fán',
+            '锰': 'měng',
+            '锂': 'lǐ',
+            '钠': 'nà',
+            '钾': 'jiǎ',
+            '钙': 'gài',
+            '镁': 'měi',
+            '锶': 'sī',
+            '钡': 'bèi',
+            '镭': 'léi',
+            '铀': 'yóu',
+            '钚': 'bù',
+            '氚': 'chuān',
+            '氘': 'dāo',
+            '氖': 'nǎi',
+            '氩': 'yà',
+            '氪': 'kè',
+            '氙': 'xiān',
+            '氡': 'dōng',
+            '氢': 'qīng',
+            '氧': 'yǎng',
+            '氮': 'dàn',
+            '氟': 'fú',
+            '氯': 'lǜ',
+            '溴': 'xiù',
+            '碘': 'diǎn',
+            '砹': 'ài',
+            '碳': 'tàn',
+            '硅': 'guī',
+            '锗': 'zhě',
+            '硒': 'xī',
+            '硫': 'liú',
+            '磷': 'lín',
+            '砷': 'shēn',
+            '锑': 'tī',
+            '铋': 'bì',
+            '钋': 'pō',
+            '砹': 'ài',
+            '氡': 'dōng',
+            '钫': 'fāng',
+            '镭': 'léi',
+            '锕': 'ā',
+            '钍': 'tǔ',
+            '镤': 'pú',
+            '铀': 'yóu',
+            '镎': 'ná',
+            '钚': 'bù',
+            '镅': 'méi',
+            '锔': 'jū',
+            '锫': 'péi',
+            '锎': 'kāi',
+            '锿': 'āi',
+            '镄': 'fèi',
+            '钔': 'mén',
+            '锘': 'nuò',
+            '铹': 'láo',
+            '𬬻': 'lú',
+            '𬭊': 'dù',
+            '𬭳': 'xǐ',
+            '𬭛': 'bō',
+            '𫟼': 'hēi',
+            '𬬭': 'mài',
+            '𫓧': 'fū',
+            '𫟷': 'lún',
+            '𬬸': 'nǐ',
+            '𬭁': 'péi',
+            '𬭚': 'dài',
+            // 示例句子
+            '文字转拼音工具可以帮助您将中文文本转换为拼音，便于学习和理解汉字的发音。无论是用于语言学习、教学辅助，还是其他需要拼音标注的场景，这款工具都能满足您的需求，帮助您轻松将汉字转换为拼音。': 'wén zì zhuǎn pīn yīn gōng jù kě yǐ bāng zhù nín jiāng zhōng wén wén běn zhuǎn huàn wéi pīn yīn, biàn yú xué xí hé lǐ jiě hàn zì de fā yīn. wú lùn shì yòng yú yǔ yán xué xí、 jiào xué fǔ zhù, hái shì qí tā xū yào pīn yīn biāo zhù de chǎng jǐng, zhè kuǎn gōng jù dōu néng mǎn zú nín de xū qiú, bāng zhù nín qīng sōng jiāng hàn zì zhuǎn huàn wéi pīn yīn.',
+            '你好，世界！欢迎使用拼音转换工具。': 'nǐ hǎo, shì jiè! huān yíng shǐ yòng pīn yīn zhuǎn huàn gōng jù.',
+            '学习中文让我了解了丰富的中国文化。': 'xué xí zhōng wén ràng wǒ liǎo jiě le fēng fù de zhōng guó wén huà.',
+            '床前明月光，疑是地上霜。举头望明月，低头思故乡。': 'chuáng qián míng yuè guāng, yí shì dì shàng shuāng. jǔ tóu wàng míng yuè, dī tóu sī gù xiāng.'
+        };
+
+        // 多音字映射，包含多个读音
+        const polyphonicMap = {
+            '的': ['de', 'dí', 'dì'],
+            '了': ['le', 'liǎo'],
+            '重': ['zhòng', 'chóng'],
+            '长': ['cháng', 'zhǎng'],
+            '中': ['zhōng', 'zhòng'],
+            '行': ['xíng', 'háng'],
+            '和': ['hé', 'hè', 'huó', 'huò'],
+            '大': ['dà', 'dài'],
+            '会': ['huì', 'kuài'],
+            '着': ['zhe', 'zháo', 'zhuó'],
+            '地': ['de', 'dì'],
+            '得': ['de', 'dé', 'děi'],
+            '说': ['shuō', 'shuì'],
+            '乐': ['lè', 'yuè'],
+            '好': ['hǎo', 'hào'],
+            '还': ['hái', 'huán'],
+            '发': ['fā', 'fà'],
+            '没': ['méi', 'mò'],
+            '看': ['kàn', 'kān'],
+            '更': ['gèng', 'gēng'],
+            '都': ['dōu', 'dū'],
+            '要': ['yào', 'yāo'],
+            '只': ['zhǐ', 'zhī'],
+            '为': ['wèi', 'wéi'],
+            '空': ['kōng', 'kòng'],
+            '分': ['fēn', 'fèn'],
+            '难': ['nán', 'nàn'],
+            '间': ['jiān', 'jiàn'],
+            '少': ['shǎo', 'shào'],
+            '量': ['liàng', 'liáng'],
+            '觉': ['jué', 'jiào'],
+            '当': ['dāng', 'dàng'],
+            '调': ['diào', 'tiáo'],
+            '传': ['chuán', 'zhuàn'],
+            '倒': ['dǎo', 'dào'],
+            '称': ['chēng', 'chèn'],
+            '正': ['zhèng', 'zhēng'],
+            '冠': ['guān', 'guàn'],
+            '弹': ['dàn', 'tán'],
+            '种': ['zhǒng', 'zhòng'],
+            '解': ['jiě', 'jiè', 'xiè'],
+            '卡': ['kǎ', 'qiǎ'],
+            '阿': ['ā', 'ē'],
+            '恶': ['è', 'wù', 'ě'],
+            '血': ['xuè', 'xiě'],
+            '给': ['gěi', 'jǐ'],
+            '宿': ['sù', 'xiǔ', 'xiù'],
+            '折': ['zhé', 'shé', 'zhē'],
+            '参': ['cān', 'shēn', 'cēn'],
+            '差': ['chà', 'chā', 'chāi', 'cī'],
+            '藏': ['cáng', 'zàng'],
+            '盛': ['shèng', 'chéng'],
+            '率': ['lǜ', 'shuài'],
+            '校': ['xiào', 'jiào'],
+            '强': ['qiáng', 'qiǎng', 'jiàng'],
+            '圈': ['quān', 'juàn'],
+            '便': ['biàn', 'pián'],
+            '降': ['jiàng', 'xiáng'],
+            '卷': ['juǎn', 'juàn'],
+            '塞': ['sāi', 'sè', 'sài'],
+            '脉': ['mài', 'mò'],
+            '闷': ['mèn', 'mēn'],
+            '宁': ['níng', 'nìng'],
+            '曲': ['qǔ', 'qū'],
+            '吐': ['tǔ', 'tù'],
+            '兴': ['xīng', 'xìng'],
+            '与': ['yǔ', 'yù'],
+            '扎': ['zhā', 'zhá', 'zā'],
+            '载': ['zǎi', 'zài'],
+            '脏': ['zāng', 'zàng'],
+            '挣': ['zhèng', 'zhēng'],
+            '转': ['zhuǎn', 'zhuàn'],
+            '钻': ['zuān', 'zuàn'],
+            '作': ['zuò', 'zuō'],
+            '把': ['bǎ', 'bà'],
+            '背': ['bèi', 'bēi'],
+            '奔': ['bēn', 'bèn'],
+            '臂': ['bì', 'bei'],
+            '屏': ['píng', 'bǐng'],
+            '泊': ['bó', 'pō'],
+            '冲': ['chōng', 'chòng'],
+            '处': ['chǔ', 'chù'],
+            '畜': ['chù', 'xù'],
+            '创': ['chuàng', 'chuāng'],
+            '伺': ['cì', 'sì'],
+            '答': ['dá', 'dā'],
+            '担': ['dān', 'dàn'],
+            '倒': ['dǎo', 'dào'],
+            '都': ['dōu', 'dū'],
+            '度': ['dù', 'duó'],
+            '分': ['fēn', 'fèn'],
+            '缝': ['féng', 'fèng'],
+            '干': ['gān', 'gàn'],
+            '供': ['gōng', 'gòng'],
+            '骨': ['gǔ', 'gū'],
+            '号': ['hào', 'háo'],
+            '喝': ['hē', 'hè'],
+            '横': ['héng', 'hèng'],
+            '糊': ['hú', 'hù'],
+            '哗': ['huá', 'huā'],
+            '混': ['hùn', 'hún'],
+            '奇': ['qí', 'jī'],
+            '几': ['jǐ', 'jī'],
+            '系': ['xì', 'jì'],
+            '夹': ['jiā', 'jiá'],
+            '假': ['jiǎ', 'jià'],
+            '间': ['jiān', 'jiàn'],
+            '将': ['jiāng', 'jiàng'],
+            '教': ['jiào', 'jiāo'],
+            '结': ['jié', 'jiē'],
+            '禁': ['jìn', 'jīn'],
+            '尽': ['jìn', 'jǐn'],
+            '劲': ['jìn', 'jìng'],
+            '据': ['jù', 'jū'],
+            '圈': ['quān', 'juàn'],
+            '卷': ['juǎn', 'juàn'],
+            '克': ['kè', 'kēi'],
+            '空': ['kōng', 'kòng'],
+            '拉': ['lā', 'lá'],
+            '落': ['luò', 'là', 'lào'],
+            '累': ['lèi', 'léi'],
+            '量': ['liàng', 'liáng'],
+            '露': ['lù', 'lòu'],
+            '绿': ['lǜ', 'lù'],
+            '埋': ['mái', 'mán'],
+            '闷': ['mèn', 'mēn'],
+            '蒙': ['méng', 'mēng'],
+            '磨': ['mó', 'mò'],
+            '模': ['mó', 'mú'],
+            '难': ['nán', 'nàn'],
+            '宁': ['níng', 'nìng'],
+            '弄': ['nòng', 'lòng'],
+            '排': ['pái', 'pǎi'],
+            '泡': ['pào', 'pāo'],
+            '炮': ['pào', 'páo'],
+            '喷': ['pēn', 'pèn'],
+            '片': ['piàn', 'piān'],
+            '漂': ['piāo', 'piǎo', 'piào'],
+            '撇': ['piē', 'piě'],
+            '仆': ['pú', 'pū'],
+            '铺': ['pù', 'pū'],
+            '妻': ['qī', 'qì'],
+            '切': ['qiē', 'qiè'],
+            '亲': ['qīn', 'qìng'],
+            '曲': ['qǔ', 'qū'],
+            '任': ['rèn', 'rén'],
+            '散': ['sàn', 'sǎn'],
+            '丧': ['sàng', 'sāng'],
+            '色': ['sè', 'shǎi'],
+            '煞': ['shā', 'shà'],
+            '扇': ['shàn', 'shān'],
+            '上': ['shàng', 'shǎng'],
+            '稍': ['shāo', 'shào'],
+            '少': ['shǎo', 'shào'],
+            '舍': ['shě', 'shè'],
+            '甚': ['shèn', 'shén'],
+            '省': ['shěng', 'xǐng'],
+            '盛': ['shèng', 'chéng'],
+            '什': ['shén', 'shí'],
+            '识': ['shí', 'zhì'],
+            '似': ['sì', 'shì'],
+            '熟': ['shú', 'shóu'],
+            '说': ['shuō', 'shuì'],
+            '数': ['shù', 'shǔ'],
+            '踏': ['tà', 'tā'],
+            '提': ['tí', 'dī'],
+            '挑': ['tiāo', 'tiǎo'],
+            '贴': ['tiē', 'tiě'],
+            '听': ['tīng', 'tìng'],
+            '通': ['tōng', 'tòng'],
+            '同': ['tóng', 'tòng'],
+            '吐': ['tǔ', 'tù'],
+            '为': ['wèi', 'wéi'],
+            '系': ['xì', 'jì'],
+            '吓': ['xià', 'hè'],
+            '鲜': ['xiān', 'xiǎn'],
+            '相': ['xiāng', 'xiàng'],
+            '校': ['xiào', 'jiào'],
+            '兴': ['xīng', 'xìng'],
+            '旋': ['xuán', 'xuàn'],
+            '压': ['yā', 'yà'],
+            '咽': ['yān', 'yàn', 'yè'],
+            '要': ['yào', 'yāo'],
+            '饮': ['yǐn', 'yìn'],
+            '应': ['yīng', 'yìng'],
+            '晕': ['yūn', 'yùn'],
+            '载': ['zǎi', 'zài'],
+            '脏': ['zāng', 'zàng'],
+            '扎': ['zhā', 'zhá', 'zā'],
+            '炸': ['zhà', 'zhá'],
+            '占': ['zhàn', 'zhān'],
+            '涨': ['zhǎng', 'zhàng'],
+            '着': ['zhe', 'zháo', 'zhuó'],
+            '正': ['zhèng', 'zhēng'],
+            '挣': ['zhèng', 'zhēng'],
+            '只': ['zhǐ', 'zhī'],
+            '中': ['zhōng', 'zhòng'],
+            '种': ['zhǒng', 'zhòng'],
+            '重': ['zhòng', 'chóng'],
+            '转': ['zhuǎn', 'zhuàn'],
+            '幢': ['zhuàng', 'chuáng'],
+            '钻': ['zuān', 'zuàn'],
+            '作': ['zuò', 'zuō']
+        };
+
+        // DOM元素
+        const chineseInput = document.getElementById('chineseInput');
+        const pinyinOutput = document.getElementById('pinyinOutput');
+        const convertBtn = document.getElementById('convertBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const toneStyle = document.getElementById('toneStyle');
+        const caseStyle = document.getElementById('caseStyle');
+        const separator = document.getElementById('separator');
+        const charCount = document.getElementById('charCount');
+        const pinyinCount = document.getElementById('pinyinCount');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const successMessage = document.getElementById('successMessage');
+        const infoMessage = document.getElementById('infoMessage');
+        const exampleItems = document.querySelectorAll('.example-item');
+        const polyphonicOptions = document.getElementById('polyphonicOptions');
+        const polyphonicButtons = document.getElementById('polyphonicButtons');
+
+        // 用户多音字选择记录
+        let userPolyphonicChoices = {};
+        
+        // 当前多音字转换数据
+        let currentPolyphonicData = {
+            char: '',
+            index: -1,
+            pinyinOptions: []
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置初始文本
+            updateCharCount();
+            convertToPinyin();
+            
+            // 添加事件监听器
+            chineseInput.addEventListener('input', updateCharCount);
+            chineseInput.addEventListener('input', debounce(convertToPinyin, 300));
+            
+            convertBtn.addEventListener('click', convertToPinyin);
+            copyBtn.addEventListener('click', copyPinyin);
+            clearBtn.addEventListener('click', clearText);
+            
+            // 拼音样式切换
+            toneStyle.addEventListener('click', function(e) {
+                if (e.target.tagName === 'SPAN') {
+                    // 移除所有active类
+                    Array.from(toneStyle.children).forEach(child => {
+                        child.classList.remove('active');
+                    });
+                    // 给点击的元素添加active类
+                    e.target.classList.add('active');
+                    convertToPinyin();
+                }
+            });
+            
+            // 其他选项变化
+            caseStyle.addEventListener('change', convertToPinyin);
+            separator.addEventListener('change', convertToPinyin);
+            
+            // 示例点击事件
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const exampleText = this.getAttribute('data-example');
+                    chineseInput.value = exampleText;
+                    updateCharCount();
+                    convertToPinyin();
+                });
+            });
+        });
+
+        // 更新字符计数
+        function updateCharCount() {
+            const text = chineseInput.value;
+            charCount.textContent = text.length;
+        }
+
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 将中文转换为拼音
+        function convertToPinyin() {
+            const text = chineseInput.value.trim();
+            
+            if (!text) {
+                pinyinOutput.textContent = '转换结果将在这里显示...';
+                pinyinCount.textContent = '0';
+                polyphonicOptions.style.display = 'none';
+                return;
+            }
+            
+            // 显示加载指示器
+            loadingIndicator.style.display = 'block';
+            polyphonicOptions.style.display = 'none';
+            infoMessage.style.display = 'none';
+            
+            // 模拟处理延迟
+            setTimeout(() => {
+                let result = '';
+                let pinyinArray = [];
+                let polyphonicChars = [];
+                
+                // 逐字转换
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    let pinyin = '';
+                    
+                    // 检查用户是否已为该多音字做出选择
+                    const charKey = `${char}_${i}`;
+                    if (userPolyphonicChoices[charKey]) {
+                        pinyin = userPolyphonicChoices[charKey];
+                    }
+                    // 检查是否为多音字
+                    else if (polyphonicMap[char]) {
+                        // 使用第一个读音作为默认
+                        pinyin = polyphonicMap[char][0];
+                        // 记录多音字信息
+                        polyphonicChars.push({
+                            char: char,
+                            index: i,
+                            options: polyphonicMap[char]
+                        });
+                    } 
+                    // 检查是否在拼音映射表中
+                    else if (pinyinMap[char]) {
+                        pinyin = pinyinMap[char];
+                    }
+                    // 非中文字符
+                    else if (!isChineseChar(char)) {
+                        pinyin = char;
+                    }
+                    // 未知字符
+                    else {
+                        pinyin = `[${char}]`;
+                    }
+                    
+                    // 保存拼音
+                    pinyinArray.push(pinyin);
+                }
+                
+                // 构建结果字符串
+                const separatorValue = separator.value;
+                for (let i = 0; i < pinyinArray.length; i++) {
+                    const pinyin = pinyinArray[i];
+                    const char = text[i];
+                    
+                    // 处理分隔符
+                    if (i > 0 && pinyin !== ' ') {
+                        // 检查前一个字符是否是标点
+                        const prevChar = text[i-1];
+                        const isPunctuation = ['，', '。', '！', '？', '、', '；', '：', '「', '」', '《', '》', '（', '）', '【', '】', '『', '』', '—', '…', ',', '.', '!', '?', ';', ':', '"', "'", '(', ')', '[', ']', '{', '}'].includes(prevChar);
+                        
+                        if (!isPunctuation) {
+                            if (separatorValue === 'space') {
+                                result += ' ';
+                            } else if (separatorValue === 'hyphen') {
+                                result += '-';
+                            } else if (separatorValue === 'apostrophe') {
+                                result += '\'';
+                            }
+                            // 'none' 不添加分隔符
+                        }
+                    }
+                    
+                    result += pinyin;
+                }
+                
+                // 应用样式选项
+                result = applyPinyinOptions(result);
+                
+                // 更新输出
+                pinyinOutput.textContent = result;
+                
+                // 更新拼音计数
+                const pinyinWords = result.split(/[\s\-']+/).filter(word => word && word !== '[?]' && !['，', '。', '！', '？', '、', '；', '：'].includes(word));
+                pinyinCount.textContent = pinyinWords.length;
+                
+                // 如果有未解决的多音字，显示选择界面
+                if (polyphonicChars.length > 0) {
+                    showPolyphonicOptions(polyphonicChars[0]);
+                    infoMessage.style.display = 'block';
+                }
+                
+                // 隐藏加载指示器
+                loadingIndicator.style.display = 'none';
+            }, 300);
+        }
+
+        // 显示多音字选择选项
+        function showPolyphonicOptions(polyphonicChar) {
+            currentPolyphonicData = polyphonicChar;
+            
+            polyphonicButtons.innerHTML = '';
+            polyphonicChar.options.forEach((option, index) => {
+                const button = document.createElement('div');
+                button.className = 'polyphonic-btn';
+                button.textContent = option;
+                button.dataset.index = index;
+                
+                // 检查是否是用户之前的选择
+                const charKey = `${polyphonicChar.char}_${polyphonicChar.index}`;
+                if (userPolyphonicChoices[charKey] === option) {
+                    button.classList.add('selected');
+                }
+                
+                button.addEventListener('click', function() {
+                    // 更新用户选择
+                    userPolyphonicChoices[charKey] = option;
+                    
+                    // 更新选择按钮样式
+                    document.querySelectorAll('.polyphonic-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // 重新转换
+                    convertToPinyin();
+                });
+                
+                polyphonicButtons.appendChild(button);
+            });
+            
+            polyphonicOptions.style.display = 'block';
+        }
+
+        // 应用拼音选项（声调样式、大小写、分隔符）
+        function applyPinyinOptions(pinyin) {
+            let result = pinyin;
+            
+            // 获取选中的声调样式
+            const toneStyleValue = document.querySelector('#toneStyle .active').getAttribute('data-value');
+            
+            // 应用声调样式
+            if (toneStyleValue === 'withoutTone') {
+                // 移除声调
+                result = result.replace(/[āáǎà]/g, 'a')
+                               .replace(/[ēéěè]/g, 'e')
+                               .replace(/[īíǐì]/g, 'i')
+                               .replace(/[ōóǒò]/g, 'o')
+                               .replace(/[ūúǔù]/g, 'u')
+                               .replace(/[ǖǘǚǜ]/g, 'v')
+                               .replace(/[ĀÁǍÀ]/g, 'A')
+                               .replace(/[ĒÉĚÈ]/g, 'E')
+                               .replace(/[ĪÍǏÌ]/g, 'I')
+                               .replace(/[ŌÓǑÒ]/g, 'O')
+                               .replace(/[ŪÚǓÙ]/g, 'U')
+                               .replace(/[ǕǗǙǛ]/g, 'V');
+            } else if (toneStyleValue === 'withNumber') {
+                // 转换为数字标调
+                result = result.replace(/ā/g, 'a1')
+                               .replace(/á/g, 'a2')
+                               .replace(/ǎ/g, 'a3')
+                               .replace(/à/g, 'a4')
+                               .replace(/ē/g, 'e1')
+                               .replace(/é/g, 'e2')
+                               .replace(/ě/g, 'e3')
+                               .replace(/è/g, 'e4')
+                               .replace(/ī/g, 'i1')
+                               .replace(/í/g, 'i2')
+                               .replace(/ǐ/g, 'i3')
+                               .replace(/ì/g, 'i4')
+                               .replace(/ō/g, 'o1')
+                               .replace(/ó/g, 'o2')
+                               .replace(/ǒ/g, 'o3')
+                               .replace(/ò/g, 'o4')
+                               .replace(/ū/g, 'u1')
+                               .replace(/ú/g, 'u2')
+                               .replace(/ǔ/g, 'u3')
+                               .replace(/ù/g, 'u4')
+                               .replace(/ǖ/g, 'v1')
+                               .replace(/ǘ/g, 'v2')
+                               .replace(/ǚ/g, 'v3')
+                               .replace(/ǜ/g, 'v4')
+                               .replace(/Ā/g, 'A1')
+                               .replace(/Á/g, 'A2')
+                               .replace(/Ǎ/g, 'A3')
+                               .replace(/À/g, 'A4')
+                               .replace(/Ē/g, 'E1')
+                               .replace(/É/g, 'E2')
+                               .replace(/Ě/g, 'E3')
+                               .replace(/È/g, 'E4')
+                               .replace(/Ī/g, 'I1')
+                               .replace(/Í/g, 'I2')
+                               .replace(/Ǐ/g, 'I3')
+                               .replace(/Ì/g, 'I4')
+                               .replace(/Ō/g, 'O1')
+                               .replace(/Ó/g, 'O2')
+                               .replace(/Ǒ/g, 'O3')
+                               .replace(/Ò/g, 'O4')
+                               .replace(/Ū/g, 'U1')
+                               .replace(/Ú/g, 'U2')
+                               .replace(/Ǔ/g, 'U3')
+                               .replace(/Ù/g, 'U4')
+                               .replace(/Ǖ/g, 'V1')
+                               .replace(/Ǘ/g, 'V2')
+                               .replace(/Ǚ/g, 'V3')
+                               .replace(/Ǜ/g, 'V4');
+            }
+            
+            // 应用大小写样式
+            const caseStyleValue = caseStyle.value;
+            if (caseStyleValue === 'uppercase') {
+                result = result.toUpperCase();
+            } else if (caseStyleValue === 'capitalize') {
+                // 首字母大写
+                result = result.split(' ').map(word => {
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                }).join(' ');
+            }
+            
+            return result;
+        }
+
+        // 检查是否为中文字符
+        function isChineseChar(char) {
+            const charCode = char.charCodeAt(0);
+            // 中文汉字范围
+            return (charCode >= 0x4E00 && charCode <= 0x9FFF) || 
+                   (charCode >= 0x3400 && charCode <= 0x4DBF) ||
+                   (charCode >= 0x20000 && charCode <= 0x2A6DF) ||
+                   (charCode >= 0x2A700 && charCode <= 0x2B73F) ||
+                   (charCode >= 0x2B740 && charCode <= 0x2B81F) ||
+                   (charCode >= 0x2B820 && charCode <= 0x2CEAF) ||
+                   (charCode >= 0xF900 && charCode <= 0xFAFF) ||
+                   (charCode >= 0x2F800 && charCode <= 0x2FA1F);
+        }
+
+        // 复制拼音到剪贴板
+        function copyPinyin() {
+            const text = pinyinOutput.textContent;
+            
+            if (!text || text === '转换结果将在这里显示...') {
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // 显示成功消息
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }).catch(err => {
+                console.error('复制失败: ', err);
+                // 降级方案
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // 显示成功消息
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        // 清空文本
+        function clearText() {
+            chineseInput.value = '';
+            pinyinOutput.textContent = '转换结果将在这里显示...';
+            charCount.textContent = '0';
+            pinyinCount.textContent = '0';
+            polyphonicOptions.style.display = 'none';
+            infoMessage.style.display = 'none';
+            userPolyphonicChoices = {};
+            chineseInput.focus();
+        }
+    </script>
+</body>
+</html>

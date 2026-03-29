@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>蛋白质摄入计算器 - 科学计算你的蛋白质需求 - 笨鸟办公工具集箱</title>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-protein-calculator/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+           background: linear-gradient(90deg, #FF5F6D, #FF916F, #FFC371);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, #0077b6 0%, #00b4d8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+        
+        .tagline {
+            background: rgba(0, 119, 182, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            border-left: 5px solid #0077b6;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .calculator {
+            flex: 1;
+            min-width: 350px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results {
+            flex: 1;
+            min-width: 350px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #0077b6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #0077b6;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .input-with-unit {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-with-unit input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .input-with-unit input:focus {
+            border-color: #0077b6;
+            outline: none;
+        }
+        
+        .unit {
+            width: 60px;
+            padding: 12px;
+            background: #f1f9ff;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            color: #0077b6;
+        }
+        
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .radio-option {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .radio-option input[type="radio"] {
+            display: none;
+        }
+        
+        .radio-option label {
+            display: block;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .radio-option input[type="radio"]:checked + label {
+            background: #e6f7ff;
+            border-color: #0077b6;
+            color: #0077b6;
+            font-weight: 600;
+        }
+        
+        .radio-option label:hover {
+            background: #e9ecef;
+        }
+        
+        .select-group {
+            position: relative;
+        }
+        
+        .select-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            font-size: 1.1rem;
+            background: white;
+            cursor: pointer;
+            appearance: none;
+            transition: border-color 0.3s;
+        }
+        
+        .select-group select:focus {
+            border-color: #0077b6;
+            outline: none;
+        }
+        
+        .select-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #0077b6;
+            pointer-events: none;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #0077b6 0%, #00b4d8 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-secondary {
+            background: #f1f9ff;
+            color: #0077b6;
+            border: 2px solid #0077b6;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.1);
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            border-left: 5px solid #0077b6;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0077b6;
+            margin-bottom: 5px;
+        }
+        
+        .result-unit {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .result-range {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #b3e0ff;
+            color: #666;
+        }
+        
+        .food-sources {
+            margin-top: 25px;
+        }
+        
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .food-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        
+        .food-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .food-icon {
+            font-size: 2rem;
+            color: #0077b6;
+            margin-bottom: 10px;
+        }
+        
+        .food-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .food-protein {
+            color: #0077b6;
+            font-weight: 600;
+        }
+        
+        .progress-container {
+            margin-top: 25px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0077b6 0%, #00b4d8 100%);
+            border-radius: 10px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .protein-info {
+            margin-top: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        
+        .info-title {
+            color: #0077b6;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-list {
+            padding-left: 20px;
+        }
+        
+        .info-list li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 20px 0;
+            border-top: 1px solid #ddd;
+            width: 100%;
+        }
+        
+        .disclaimer {
+            background: #fff3cd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 5px solid #ffc107;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+            }
+            
+            .radio-option {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .calculator, .results {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .food-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .result-value {
+                font-size: 2rem;
+            }
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0077b6;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dumbbell"></i> 蛋白质摄入计算器</h1>
+            <p class="subtitle">科学计算你的蛋白质需求，助力健康生活。根据你的体重、活动水平和健身目标，获取个性化的蛋白质摄入建议。</p>
+            <div class="tagline">
+                <i class="fas fa-lightbulb"></i> 蛋白质是身体构建和修复组织的基本营养素，充足摄入对肌肉生长、代谢健康和身体功能至关重要。
+            </div>
+        </header>
+        
+        <div class="app-container">
+            <div class="calculator">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> 计算你的蛋白质需求</h2>
+                
+                <div class="form-group">
+                    <label for="weight">体重</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="weight" min="20" max="300" value="70">
+                        <div class="unit" id="weightUnit">公斤</div>
+                    </div>
+                    <div class="radio-group" id="weightUnitSelector">
+                        <div class="radio-option">
+                            <input type="radio" id="kg" name="weightUnit" value="kg" checked>
+                            <label for="kg">公斤 (kg)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="lbs" name="weightUnit" value="lbs">
+                            <label for="lbs">磅 (lbs)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activityLevel">活动水平</label>
+                    <div class="select-group">
+                        <select id="activityLevel">
+                            <option value="sedentary">久坐 (办公室工作，很少或没有运动)</option>
+                            <option value="light" selected>轻度活动 (每周锻炼1-3天)</option>
+                            <option value="moderate">中度活动 (每周锻炼3-5天)</option>
+                            <option value="active">活跃 (每天锻炼或体力工作)</option>
+                            <option value="veryActive">非常活跃 (高强度训练每天两次或体力劳动)</option>
+                            <option value="athlete">运动员 (高强度训练，以竞技为目标)</option>
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="goal">健身目标</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="maintain" name="goal" value="maintain" checked>
+                            <label for="maintain">维持体重</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="lose" name="goal" value="lose">
+                            <label for="lose">减脂/减重</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="gain" name="goal" value="gain">
+                            <label for="gain">增肌</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ageGroup">年龄组</label>
+                    <div class="select-group">
+                        <select id="ageGroup">
+                            <option value="youngAdult" selected>18-30岁</option>
+                            <option value="adult">31-50岁</option>
+                            <option value="olderAdult">51-70岁</option>
+                            <option value="senior">70岁以上</option>
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">性别</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="male" name="gender" value="male" checked>
+                            <label for="male">男性</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="female" name="gender" value="female">
+                            <label for="female">女性</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn btn-primary" id="calculateBtn">
+                        <i class="fas fa-calculator"></i> 计算蛋白质需求
+                    </button>
+                    <button class="btn btn-secondary" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
+            </div>
+            
+            <div class="results">
+                <h2 class="section-title"><i class="fas fa-chart-line"></i> 你的蛋白质需求</h2>
+                
+                <div id="resultsContainer" style="display: none;">
+                    <div class="result-card">
+                        <div class="result-title">每日蛋白质摄入量</div>
+                        <div class="result-value" id="proteinResult">0</div>
+                        <div class="result-unit">克/天</div>
+                        <div class="result-range" id="proteinRange"></div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>基于目标：<span id="goalText">维持体重</span></span>
+                            <span id="proteinPerKg">0 g/kg</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="proteinProgress" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="food-sources">
+                        <h3 class="section-title"><i class="fas fa-utensils"></i> 蛋白质食物来源</h3>
+                        <div class="food-grid" id="foodSources">
+                            <!-- 食物将通过JavaScript生成 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="placeholderResults" style="text-align: center; padding: 40px 20px; color: #888;">
+                    <i class="fas fa-calculator fa-3x" style="margin-bottom: 20px; color: #ccc;"></i>
+                    <h3>输入你的信息</h3>
+                    <p>填写左侧表单并点击"计算蛋白质需求"按钮查看结果</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="protein-info">
+            <h3 class="info-title"><i class="fas fa-info-circle"></i> 关于蛋白质摄入的科学知识</h3>
+            <ul class="info-list">
+                <li><strong>一般人群</strong>: 建议每日蛋白质摄入量为每公斤体重0.8克，但活动人群需要更多。</li>
+                <li><strong>增肌人群</strong>: 研究表明，每公斤体重1.6-2.2克蛋白质有助于最大化肌肉蛋白质合成。</li>
+                <li><strong>减脂人群</strong>: 较高蛋白质摄入(每公斤体重1.2-2.0克)有助于保持肌肉、增加饱腹感和维持代谢。</li>
+                <li><strong>老年人</strong>: 为对抗肌肉减少症，建议每公斤体重1.0-1.2克蛋白质，均匀分布在三餐中。</li>
+                <li><strong>运动员</strong>: 耐力运动员需要1.2-1.4克/公斤，力量运动员需要1.6-2.2克/公斤。</li>
+            </ul>
+        </div>
+        
+        <div class="disclaimer">
+            <p><strong>免责声明</strong>: 此计算器提供的建议仅供参考，不能替代专业医疗建议。如果您有特殊健康状况、怀孕或哺乳期，请咨询医生或营养师获取个性化建议。</p>
+        </div>
+        
+        <footer>
+           　
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">计算完成！</span>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const weightInput = document.getElementById('weight');
+        const weightUnit = document.getElementById('weightUnit');
+        const weightUnitSelector = document.getElementById('weightUnitSelector');
+        const activityLevel = document.getElementById('activityLevel');
+        const goalRadios = document.querySelectorAll('input[name="goal"]');
+        const ageGroup = document.getElementById('ageGroup');
+        const genderRadios = document.querySelectorAll('input[name="gender"]');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const placeholderResults = document.getElementById('placeholderResults');
+        const proteinResult = document.getElementById('proteinResult');
+        const proteinRange = document.getElementById('proteinRange');
+        const goalText = document.getElementById('goalText');
+        const proteinPerKg = document.getElementById('proteinPerKg');
+        const proteinProgress = document.getElementById('proteinProgress');
+        const foodSources = document.getElementById('foodSources');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // 蛋白质食物数据库
+        const proteinFoods = [
+            { name: "鸡胸肉", protein: 31, icon: "fas fa-drumstick-bite", color: "#e63946" },
+            { name: "鸡蛋", protein: 13, icon: "fas fa-egg", color: "#ffd166" },
+            { name: "三文鱼", protein: 25, icon: "fas fa-fish", color: "#ef476f" },
+            { name: "希腊酸奶", protein: 10, icon: "fas fa-blender", color: "#a8dadc" },
+            { name: "瘦牛肉", protein: 26, icon: "fas fa-hamburger", color: "#780000" },
+            { name: "豆腐", protein: 8, icon: "fas fa-seedling", color: "#90be6d" },
+            { name: "扁豆", protein: 9, icon: "fas fa-seedling", color: "#f3722c" },
+            { name: "杏仁", protein: 21, icon: "fas fa-acorn", color: "#f9c74f" },
+            { name: "奶酪", protein: 25, icon: "fas fa-cheese", color: "#ffbd00" },
+            { name: "蛋白粉", protein: 24, icon: "fas fa-wine-bottle", color: "#577590" }
+        ];
+        
+        // 活动水平因子 (克/公斤体重)
+        const activityFactors = {
+            sedentary: { min: 0.8, max: 1.0, label: "久坐" },
+            light: { min: 1.0, max: 1.2, label: "轻度活动" },
+            moderate: { min: 1.2, max: 1.6, label: "中度活动" },
+            active: { min: 1.6, max: 1.8, label: "活跃" },
+            veryActive: { min: 1.8, max: 2.0, label: "非常活跃" },
+            athlete: { min: 2.0, max: 2.2, label: "运动员" }
+        };
+        
+        // 目标调整因子
+        const goalFactors = {
+            maintain: { factor: 0, label: "维持体重" },
+            lose: { factor: 0.1, label: "减脂/减重" }, // 增加10%以保持肌肉
+            gain: { factor: 0.2, label: "增肌" } // 增加20%以支持肌肉生长
+        };
+        
+        // 年龄调整因子
+        const ageFactors = {
+            youngAdult: { factor: 0, label: "18-30岁" },
+            adult: { factor: -0.05, label: "31-50岁" }, // 减少5%
+            olderAdult: { factor: -0.1, label: "51-70岁" }, // 减少10%
+            senior: { factor: -0.15, label: "70岁以上" } // 减少15%
+        };
+        
+        // 初始化
+        function init() {
+            // 设置事件监听器
+            weightUnitSelector.addEventListener('change', updateWeightUnit);
+            calculateBtn.addEventListener('click', calculateProtein);
+            resetBtn.addEventListener('click', resetForm);
+            
+            // 初始计算
+            calculateProtein();
+        }
+        
+        // 更新体重单位
+        function updateWeightUnit() {
+            const unit = document.querySelector('input[name="weightUnit"]:checked').value;
+            weightUnit.textContent = unit === 'kg' ? '公斤' : '磅';
+            
+            // 转换当前体重值
+            let weight = parseFloat(weightInput.value);
+            
+            if (unit === 'kg') {
+                // 如果当前是磅，转换为公斤
+                weightInput.value = Math.round(weight * 0.453592);
+            } else {
+                // 如果当前是公斤，转换为磅
+                weightInput.value = Math.round(weight / 0.453592);
+            }
+        }
+        
+        // 计算蛋白质需求
+        function calculateProtein() {
+            // 获取输入值
+            const weight = parseFloat(weightInput.value);
+            const unit = document.querySelector('input[name="weightUnit"]:checked').value;
+            const activity = activityLevel.value;
+            const goal = document.querySelector('input[name="goal"]:checked').value;
+            const age = ageGroup.value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            
+            // 验证输入
+            if (!weight || weight <= 0) {
+                showToast("请输入有效的体重值");
+                return;
+            }
+            
+            // 将体重转换为公斤（如果输入是磅）
+            let weightKg = unit === 'kg' ? weight : weight * 0.453592;
+            
+            // 获取基础蛋白质因子
+            const activityFactor = activityFactors[activity];
+            let proteinPerKgMin = activityFactor.min;
+            let proteinPerKgMax = activityFactor.max;
+            
+            // 根据目标调整
+            const goalFactor = goalFactors[goal].factor;
+            proteinPerKgMin += proteinPerKgMin * goalFactor;
+            proteinPerKgMax += proteinPerKgMax * goalFactor;
+            
+            // 根据年龄调整
+            const ageFactor = ageFactors[age].factor;
+            proteinPerKgMin += proteinPerKgMin * ageFactor;
+            proteinPerKgMax += proteinPerKgMax * ageFactor;
+            
+            // 根据性别微调（男性通常需要稍多）
+            if (gender === 'male') {
+                proteinPerKgMin += 0.05;
+                proteinPerKgMax += 0.05;
+            }
+            
+            // 计算蛋白质范围
+            const proteinMin = Math.round(weightKg * proteinPerKgMin);
+            const proteinMax = Math.round(weightKg * proteinPerKgMax);
+            const proteinAvg = Math.round((proteinMin + proteinMax) / 2);
+            
+            // 更新结果
+            updateResults(proteinAvg, proteinMin, proteinMax, weightKg, goal, activity);
+            
+            // 显示结果容器
+            resultsContainer.style.display = 'block';
+            placeholderResults.style.display = 'none';
+            
+            // 显示通知
+            showToast("蛋白质需求计算完成！");
+        }
+        
+        // 更新结果
+        function updateResults(avg, min, max, weightKg, goal, activity) {
+            // 更新主要结果
+            proteinResult.textContent = avg;
+            
+            // 更新范围
+            proteinRange.textContent = `建议范围: ${min} - ${max} 克/天`;
+            
+            // 更新目标文本
+            goalText.textContent = goalFactors[goal].label;
+            
+            // 更新每公斤蛋白质
+            const proteinPerKgValue = (avg / weightKg).toFixed(1);
+            proteinPerKg.textContent = `${proteinPerKgValue} 克/公斤`;
+            
+            // 更新进度条
+            const progressPercentage = Math.min(100, (avg / 200) * 100);
+            proteinProgress.style.width = `${progressPercentage}%`;
+            proteinProgress.textContent = `${Math.round(progressPercentage)}%`;
+            
+            // 更新食物来源
+            updateFoodSources(avg);
+        }
+        
+        // 更新食物来源
+        function updateFoodSources(dailyProtein) {
+            foodSources.innerHTML = '';
+            
+            // 计算每种食物需要多少份才能满足每日需求
+            proteinFoods.forEach(food => {
+                const servings = Math.ceil(dailyProtein / food.protein);
+                const foodItem = document.createElement('div');
+                foodItem.className = 'food-item';
+                
+                foodItem.innerHTML = `
+                    <div class="food-icon">
+                        <i class="${food.icon}" style="color: ${food.color}"></i>
+                    </div>
+                    <div class="food-name">${food.name}</div>
+                    <div class="food-protein">${food.protein}克/100克</div>
+                    <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                        约${servings}份满足需求
+                    </div>
+                `;
+                
+                foodSources.appendChild(foodItem);
+            });
+        }
+        
+        // 重置表单
+        function resetForm() {
+            weightInput.value = 70;
+            
+            // 重置单选按钮
+            document.getElementById('kg').checked = true;
+            weightUnit.textContent = '公斤';
+            
+            activityLevel.value = 'light';
+            
+            document.getElementById('maintain').checked = true;
+            
+            ageGroup.value = 'youngAdult';
+            
+            document.getElementById('male').checked = true;
+            
+            // 重置结果
+            resultsContainer.style.display = 'none';
+            placeholderResults.style.display = 'block';
+            
+            showToast("表单已重置");
+        }
+        
+        // 显示通知
+        function showToast(message) {
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // 添加键盘快捷键支持
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                calculateProtein();
+            }
+            
+            if (e.key === 'Escape') {
+                resetForm();
+            }
+        });
+    </script>
+</body>
+</html>

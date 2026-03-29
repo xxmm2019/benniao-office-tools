@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多功能计算器- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-calculate/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .tabs-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .tabs::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .tabs::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(5px);
+            white-space: nowrap;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: #2575fc;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculator-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .calculator.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .calculator h2 {
+            color: #2575fc;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(to right, #8e9eab, #eef2f3);
+            color: #333;
+        }
+        
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-left: 5px solid #2575fc;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .result h3 {
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .functions-list {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .functions-list h4 {
+            margin-bottom: 10px;
+            color: #2575fc;
+        }
+        
+        .functions-list ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        
+        .functions-list li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .math-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .math-btn {
+            padding: 12px;
+            background: #f0f5ff;
+            border: 1px solid #d0ddff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        
+        .math-btn:hover {
+            background: #e1ebff;
+            transform: translateY(-2px);
+        }
+        
+        .math-btn.operator {
+            background: #e6f0ff;
+            font-weight: bold;
+        }
+        
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .row .input-group {
+            flex: 1;
+        }
+        
+        /* 普通计算器样式 */
+        .basic-calculator {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .calculator-display {
+            background: #f5f7ff;
+            border: 2px solid #d0ddff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 2rem;
+            min-height: 80px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .calc-btn {
+            padding: 18px 10px;
+            background: #f0f5ff;
+            border: 1px solid #d0ddff;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .calc-btn:hover {
+            background: #e1ebff;
+            transform: translateY(-2px);
+        }
+        
+        .calc-btn.operator {
+            background: #c2d6ff;
+            font-weight: bold;
+        }
+        
+        .calc-btn.equals {
+            background: linear-gradient(to right, #2575fc, #6a11cb);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .calc-btn.clear {
+            background: #ffcccc;
+        }
+        
+        .calc-btn.double {
+            grid-column: span 2;
+        }
+        
+        /* 程序员计算器样式 */
+        .programmer-buttons {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .prog-btn {
+            padding: 12px 5px;
+            background: #e6f0ff;
+            border: 1px solid #c2d6ff;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .prog-btn:hover {
+            background: #d0ddff;
+        }
+        
+        .prog-btn.active {
+            background: #2575fc;
+            color: white;
+        }
+        
+        .bit-buttons {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        
+        .bit-btn {
+            padding: 8px 2px;
+            background: #f0f5ff;
+            border: 1px solid #d0ddff;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .bit-btn:hover {
+            background: #e1ebff;
+        }
+        
+        .bit-btn.active {
+            background: #2575fc;
+            color: white;
+        }
+        
+        /* 木工计算器样式 */
+        .carpentry-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .carpentry-option {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .carpentry-btn {
+            background: #f0f5ff;
+            border: 2px solid #d0ddff;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .carpentry-btn:hover {
+            background: #e1ebff;
+            transform: translateY(-3px);
+        }
+        
+        .carpentry-btn.active {
+            background: #2575fc;
+            color: white;
+            border-color: #2575fc;
+        }
+        
+        /* 设计计算器样式 */
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .design-card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e1ebff;
+        }
+        
+        .color-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+        }
+        
+        /* CAD计算器样式 */
+        .cad-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .cad-card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e1ebff;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .tab-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .calculator {
+                padding: 20px;
+            }
+            
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .math-buttons, .calculator-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .programmer-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .bit-buttons {
+                grid-template-columns: repeat(8, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .math-buttons, .calculator-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .programmer-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .bit-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> 多功能计算器</h1>
+            <p>一站式解决您的数学计算、ETA估算、百分比计算及专业计算需求</p>
+        </header>
+        
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="math">
+                    <i class="fas fa-square-root-alt"></i> 数学计算器
+                </button>
+                <button class="tab-btn" data-tab="ordinary">
+                    <i class="fas fa-calculator"></i> 普通计算器
+                </button>
+                <button class="tab-btn" data-tab="programmer">
+                    <i class="fas fa-code"></i> 程序员计算器
+                </button>
+                <button class="tab-btn" data-tab="eta">
+                    <i class="fas fa-clock"></i> ETA 计算器
+                </button>
+                <button class="tab-btn" data-tab="percentage">
+                    <i class="fas fa-percentage"></i> 百分比计算器
+                </button>
+                <button class="tab-btn" data-tab="carpentry">
+                    <i class="fas fa-hammer"></i> 木工计算器
+                </button>
+                <button class="tab-btn" data-tab="design">
+                    <i class="fas fa-palette"></i> 设计计算器
+                </button>
+                <button class="tab-btn" data-tab="cad">
+                    <i class="fas fa-ruler-combined"></i> CAD 计算器
+                </button>
+            </div>
+        </div>
+        
+        <div class="calculator-container">
+            <!-- 数学计算器 -->
+            <div class="calculator active" id="math-calc">
+                <h2><i class="fas fa-square-root-alt"></i> 数学表达式计算器</h2>
+                <p>输入数学表达式进行计算。可使用 sqrt, cos, sin, abs, log, exp 等函数。</p>
+                
+                <div class="input-group">
+                    <label for="math-expression">输入数学表达式：</label>
+                    <input type="text" id="math-expression" placeholder="例如：sqrt(25) + cos(0) * 3^2" value="sqrt(25) + cos(0) * 3^2">
+                </div>
+                
+                <div class="math-buttons">
+                    <button class="math-btn" data-value="sqrt(">sqrt( )</button>
+                    <button class="math-btn" data-value="cos(">cos( )</button>
+                    <button class="math-btn" data-value="sin(">sin( )</button>
+                    <button class="math-btn" data-value="abs(">abs( )</button>
+                    <button class="math-btn" data-value="log(">log( )</button>
+                    <button class="math-btn" data-value="exp(">exp( )</button>
+                    <button class="math-btn operator" data-value="+">+</button>
+                    <button class="math-btn operator" data-value="-">-</button>
+                    <button class="math-btn operator" data-value="*">×</button>
+                    <button class="math-btn operator" data-value="/">÷</button>
+                    <button class="math-btn" data-value="(">(</button>
+                    <button class="math-btn" data-value=")">)</button>
+                    <button class="math-btn" data-value="^">^</button>
+                    <button class="math-btn" data-value="pi">π</button>
+                    <button class="math-btn" id="clear-expression">清空</button>
+                </div>
+                
+                <button class="btn" id="calculate-math">计算表达式</button>
+                
+                <div class="functions-list">
+                    <h4>可用函数示例：</h4>
+                    <ul>
+                        <li><strong>sqrt(x)</strong> - 平方根</li>
+                        <li><strong>cos(x)</strong> - 余弦（x为弧度）</li>
+                        <li><strong>sin(x)</strong> - 正弦（x为弧度）</li>
+                        <li><strong>tan(x)</strong> - 正切（x为弧度）</li>
+                        <li><strong>abs(x)</strong> - 绝对值</li>
+                        <li><strong>log(x)</strong> - 自然对数</li>
+                        <li><strong>log10(x)</strong> - 以10为底的对数</li>
+                        <li><strong>exp(x)</strong> - e的x次幂</li>
+                        <li><strong>pow(x, y)</strong> - x的y次幂</li>
+                        <li><strong>pi</strong> - π (3.14159...)</li>
+                    </ul>
+                </div>
+                
+                <div class="result" id="math-result">
+                    <h3>计算结果：</h3>
+                    <div class="result-value" id="math-result-value"></div>
+                </div>
+            </div>
+            
+            <!-- 普通计算器 -->
+            <div class="calculator" id="ordinary-calc">
+                <h2><i class="fas fa-calculator"></i> 普通计算器</h2>
+                <p>提供基本的加减乘除运算，带有数字键盘和基本运算符。</p>
+                
+                <div class="basic-calculator">
+                    <div class="calculator-display" id="calc-display">0</div>
+                    
+                    <div class="calculator-buttons">
+                        <button class="calc-btn clear" id="clear-all">C</button>
+                        <button class="calc-btn clear" id="clear-entry">CE</button>
+                        <button class="calc-btn operator" data-action="backspace">⌫</button>
+                        <button class="calc-btn operator" data-action="/">÷</button>
+                        
+                        <button class="calc-btn" data-number="7">7</button>
+                        <button class="calc-btn" data-number="8">8</button>
+                        <button class="calc-btn" data-number="9">9</button>
+                        <button class="calc-btn operator" data-action="*">×</button>
+                        
+                        <button class="calc-btn" data-number="4">4</button>
+                        <button class="calc-btn" data-number="5">5</button>
+                        <button class="calc-btn" data-number="6">6</button>
+                        <button class="calc-btn operator" data-action="-">-</button>
+                        
+                        <button class="calc-btn" data-number="1">1</button>
+                        <button class="calc-btn" data-number="2">2</button>
+                        <button class="calc-btn" data-number="3">3</button>
+                        <button class="calc-btn operator" data-action="+">+</button>
+                        
+                        <button class="calc-btn" data-number="0">0</button>
+                        <button class="calc-btn" data-action=".">.</button>
+                        <button class="calc-btn equals" data-action="=">=</button>
+                    </div>
+                </div>
+                
+                <div class="result" id="ordinary-result">
+                    <h3>计算结果：</h3>
+                    <div class="result-value" id="ordinary-result-value"></div>
+                </div>
+            </div>
+            
+            <!-- 程序员计算器 -->
+            <div class="calculator" id="programmer-calc">
+                <h2><i class="fas fa-code"></i> 程序员计算器</h2>
+                <p>支持二进制、八进制、十进制、十六进制之间的转换和位运算。</p>
+                
+                <div class="input-group">
+                    <label for="programmer-input">输入数值：</label>
+                    <input type="text" id="programmer-input" placeholder="输入数值进行转换" value="255">
+                </div>
+                
+                <div class="programmer-buttons">
+                    <button class="prog-btn active" data-base="2">二进制</button>
+                    <button class="prog-btn" data-base="8">八进制</button>
+                    <button class="prog-btn" data-base="10">十进制</button>
+                    <button class="prog-btn" data-base="16">十六进制</button>
+                    <button class="prog-btn" data-action="and">AND</button>
+                    <button class="prog-btn" data-action="or">OR</button>
+                    <button class="prog-btn" data-action="xor">XOR</button>
+                    <button class="prog-btn" data-action="not">NOT</button>
+                </div>
+                
+                <div class="input-group">
+                    <label>位运算操作：</label>
+                    <div class="row">
+                        <div class="input-group">
+                            <input type="text" id="programmer-input1" placeholder="第一个数值" value="15">
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="programmer-input2" placeholder="第二个数值" value="10">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bit-buttons" id="bit-buttons">
+                    <!-- 16位二进制按钮将由JavaScript生成 -->
+                </div>
+                
+                <button class="btn" id="calculate-programmer">计算与转换</button>
+                
+                <div class="result" id="programmer-result">
+                    <h3>转换与计算结果：</h3>
+                    <div class="result-value" id="programmer-result-value"></div>
+                </div>
+            </div>
+            
+            <!-- ETA 计算器 -->
+            <div class="calculator" id="eta-calc">
+                <h2><i class="fas fa-clock"></i> ETA 计算器</h2>
+                <p>根据已处理量和总处理量，估算任务完成时间。</p>
+                
+                <div class="input-group">
+                    <label for="total-items">总任务量（例如：总文件大小、总项目数）：</label>
+                    <input type="number" id="total-items" placeholder="例如：1000" value="1000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="processed-items">已完成任务量：</label>
+                    <input type="number" id="processed-items" placeholder="例如：250" value="250">
+                </div>
+                
+                <div class="input-group">
+                    <label for="start-time">开始时间：</label>
+                    <input type="datetime-local" id="start-time">
+                </div>
+                
+                <div class="input-group">
+                    <label for="current-speed">当前处理速度（单位/分钟）：</label>
+                    <input type="number" id="current-speed" placeholder="例如：10" value="10">
+                </div>
+                
+                <button class="btn" id="calculate-eta">计算 ETA</button>
+                
+                <div class="result" id="eta-result">
+                    <h3>估算结果：</h3>
+                    <div class="result-value" id="eta-result-value"></div>
+                </div>
+            </div>
+            
+            <!-- 百分比计算器 -->
+            <div class="calculator" id="percentage-calc">
+                <h2><i class="fas fa-percentage"></i> 百分比计算器</h2>
+                <p>计算百分比、百分比变化或从百分比求值。</p>
+                
+                <div class="tabs" style="margin-top: 20px; justify-content: flex-start;">
+                    <button class="tab-btn small-tab active" data-subtab="percent-of">百分比计算</button>
+                    <button class="tab-btn small-tab" data-subtab="percent-change">百分比变化</button>
+                    <button class="tab-btn small-tab" data-subtab="value-from-percent">从百分比求值</button>
+                </div>
+                
+                <!-- 百分比计算 -->
+                <div class="percentage-subtab active" id="percent-of">
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="base-value">数值：</label>
+                            <input type="number" id="base-value" placeholder="例如：200" value="200">
+                        </div>
+                        <div class="input-group">
+                            <label for="percentage">百分比：</label>
+                            <input type="number" id="percentage" placeholder="例如：15" value="15">
+                        </div>
+                    </div>
+                    <button class="btn calculate-percent-btn" data-type="percent-of">计算百分比值</button>
+                </div>
+                
+                <!-- 百分比变化 -->
+                <div class="percentage-subtab" id="percent-change">
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="old-value">原值：</label>
+                            <input type="number" id="old-value" placeholder="例如：200" value="200">
+                        </div>
+                        <div class="input-group">
+                            <label for="new-value">新值：</label>
+                            <input type="number" id="new-value" placeholder="例如：230" value="230">
+                        </div>
+                    </div>
+                    <button class="btn calculate-percent-btn" data-type="percent-change">计算百分比变化</button>
+                </div>
+                
+                <!-- 从百分比求值 -->
+                <div class="percentage-subtab" id="value-from-percent">
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="partial-value">部分值：</label>
+                            <input type="number" id="partial-value" placeholder="例如：30" value="30">
+                        </div>
+                        <div class="input-group">
+                            <label for="total-percent">百分比：</label>
+                            <input type="number" id="total-percent" placeholder="例如：15" value="15">
+                        </div>
+                    </div>
+                    <button class="btn calculate-percent-btn" data-type="value-from-percent">计算总值</button>
+                </div>
+                
+                <div class="result" id="percentage-result">
+                    <h3>计算结果：</h3>
+                    <div class="result-value" id="percentage-result-value"></div>
+                </div>
+            </div>
+            
+            <!-- 木工计算器 -->
+            <div class="calculator" id="carpentry-calc">
+                <h2><i class="fas fa-hammer"></i> 木工计算器</h2>
+                <p>用于木工相关的计算，如板材切割、角度计算、材料估算等。</p>
+                
+                <div class="carpentry-options">
+                    <div class="carpentry-option">
+                        <div class="carpentry-btn active" data-calc="board-foot">
+                            <i class="fas fa-cube fa-2x"></i>
+                            <h4>板材体积计算</h4>
+                            <p>计算板材的板英尺数</p>
+                        </div>
+                    </div>
+                    <div class="carpentry-option">
+                        <div class="carpentry-btn" data-calc="miter-angle">
+                            <i class="fas fa-cut fa-2x"></i>
+                            <h4>斜接角度计算</h4>
+                            <p>计算斜接切割角度</p>
+                        </div>
+                    </div>
+                    <div class="carpentry-option">
+                        <div class="carpentry-btn" data-calc="material-estimate">
+                            <i class="fas fa-ruler-combined fa-2x"></i>
+                            <h4>材料估算</h4>
+                            <p>估算所需材料数量</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 板材体积计算 -->
+                <div class="carpentry-subtab active" id="board-foot-calc">
+                    <div class="row">
+                        <div class="input-group">
+                            <label for="board-length">长度 (英尺)：</label>
+                            <input type="number" id="board-length" placeholder="例如：8" value="8">
+                        </div>
+                        <div class="input-group">
+                            <label for="board-width">宽度 (英寸)：</label>
+                            <input type="number" id="board-width" placeholder="例如：6" value="6">
+                        </div>
+                        <div class="input-group">
+                            <label for="board-thickness">厚度 (英寸)：</label>
+                            <input type="number" id="board-thickness" placeholder="例如：1" value="1">
+                        </div>
+                    </div>
+                    <button class="btn" id="calculate-board-foot">计算板英尺数</button>
+                </div>
+                
+                <!-- 斜接角度计算 -->
+                <div class="carpentry-subtab" id="miter-angle-calc">
+                    <div class="input-group">
+                        <label for="corner-angle">拐角角度 (度)：</label>
+                        <input type="number" id="corner-angle" placeholder="例如：90" value="90" min="1" max="179">
+                    </div>
+                    <div class="input-group">
+                        <label for="pieces-number">边数：</label>
+                        <input type="number" id="pieces-number" placeholder="例如：2" value="2" min="2">
+                    </div>
+                    <button class="btn" id="calculate-miter-angle">计算斜接角度</button>
+                </div>
+                
+                <!-- 材料估算 -->
+                <div class="carpentry-subtab" id="material-estimate-calc">
+                    <div class="input-group">
+                        <label for="project-length">项目长度 (英尺)：</label>
+                        <input type="number" id="project-length" placeholder="例如：10" value="10">
+                    </div>
+                    <div class="input-group">
+                        <label for="project-width">项目宽度 (英尺)：</label>
+                        <input type="number" id="project-width" placeholder="例如：8" value="8">
+                    </div>
+                    <div class="input-group">
+                        <label for="material-width">材料宽度 (英寸)：</label>
+                        <input type="number" id="material-width" placeholder="例如：6" value="6">
+                    </div>
+                    <div class="input-group">
+                        <label for="waste-percent">损耗百分比 (%)：</label>
+                        <input type="number" id="waste-percent" placeholder="例如：10" value="10" min="0" max="100">
+                    </div>
+                    <button class="btn" id="calculate-material-estimate">估算材料数量</button>
+                </div>
+                
+                <div class="result" id="carpentry-result">
+                    <h3>计算结果：</h3>
+                    <div class="result-value" id="carpentry-result-value"></div>
+                </div>
+            </div>
+            
+            <!-- 设计计算器 -->
+            <div class="calculator" id="design-calc">
+                <h2><i class="fas fa-palette"></i> 设计计算器</h2>
+                <p>用于设计相关的计算，如黄金比例、颜色转换、字体比例等。</p>
+                
+                <div class="design-grid">
+                    <div class="design-card">
+                        <h4><i class="fas fa-phi"></i> 黄金比例计算</h4>
+                        <div class="input-group">
+                            <label for="golden-ratio-value">输入数值：</label>
+                            <input type="number" id="golden-ratio-value" placeholder="例如：100" value="100">
+                        </div>
+                        <button class="btn-secondary" id="calculate-golden-ratio">计算黄金比例</button>
+                        <div id="golden-ratio-result" style="margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div class="design-card">
+                        <h4><i class="fas fa-paint-brush"></i> 颜色转换器</h4>
+                        <div class="input-group">
+                            <label for="color-hex">HEX 颜色值：</label>
+                            <input type="text" id="color-hex" placeholder="#FF5733" value="#FF5733">
+                        </div>
+                        <div class="color-preview" id="color-preview"></div>
+                        <button class="btn-secondary" id="convert-color">转换颜色</button>
+                        <div id="color-conversion-result" style="margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div class="design-card">
+                        <h4><i class="fas fa-text-height"></i> 字体比例计算</h4>
+                        <div class="input-group">
+                            <label for="base-font-size">基础字体大小 (px)：</label>
+                            <input type="number" id="base-font-size" placeholder="例如：16" value="16">
+                        </div>
+                        <div class="input-group">
+                            <label for="scale-ratio">比例系数：</label>
+                            <input type="number" id="scale-ratio" placeholder="例如：1.25" value="1.25" step="0.05">
+                        </div>
+                        <button class="btn-secondary" id="calculate-font-scale">计算字体比例</button>
+                        <div id="font-scale-result" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CAD计算器 -->
+            <div class="calculator" id="cad-calc">
+                <h2><i class="fas fa-ruler-combined"></i> CAD 计算器</h2>
+                <p>用于CAD设计中的单位转换、坐标计算、尺寸标注等。</p>
+                
+                <div class="cad-grid">
+                    <div class="cad-card">
+                        <h4><i class="fas fa-exchange-alt"></i> 单位转换</h4>
+                        <div class="input-group">
+                            <label for="unit-value">数值：</label>
+                            <input type="number" id="unit-value" placeholder="例如：100" value="100">
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="from-unit">从：</label>
+                                <select id="from-unit">
+                                    <option value="mm">毫米 (mm)</option>
+                                    <option value="cm">厘米 (cm)</option>
+                                    <option value="m">米 (m)</option>
+                                    <option value="in" selected>英寸 (in)</option>
+                                    <option value="ft">英尺 (ft)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="to-unit">到：</label>
+                                <select id="to-unit">
+                                    <option value="mm" selected>毫米 (mm)</option>
+                                    <option value="cm">厘米 (cm)</option>
+                                    <option value="m">米 (m)</option>
+                                    <option value="in">英寸 (in)</option>
+                                    <option value="ft">英尺 (ft)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn-secondary" id="convert-units">转换单位</button>
+                        <div id="unit-conversion-result" style="margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div class="cad-card">
+                        <h4><i class="fas fa-map-marker-alt"></i> 坐标距离计算</h4>
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="point1-x">点1 X 坐标：</label>
+                                <input type="number" id="point1-x" placeholder="X1" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="point1-y">点1 Y 坐标：</label>
+                                <input type="number" id="point1-y" placeholder="Y1" value="0">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group">
+                                <label for="point2-x">点2 X 坐标：</label>
+                                <input type="number" id="point2-x" placeholder="X2" value="100">
+                            </div>
+                            <div class="input-group">
+                                <label for="point2-y">点2 Y 坐标：</label>
+                                <input type="number" id="point2-y" placeholder="Y2" value="100">
+                            </div>
+                        </div>
+                        <button class="btn-secondary" id="calculate-distance">计算距离</button>
+                        <div id="distance-result" style="margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div class="cad-card">
+                        <h4><i class="fas fa-expand-alt"></i> 缩放比例计算</h4>
+                        <div class="input-group">
+                            <label for="actual-size">实际尺寸：</label>
+                            <input type="number" id="actual-size" placeholder="例如：100" value="100">
+                        </div>
+                        <div class="input-group">
+                            <label for="drawing-size">图纸尺寸：</label>
+                            <input type="number" id="drawing-size" placeholder="例如：50" value="50">
+                        </div>
+                        <button class="btn-secondary" id="calculate-scale">计算比例</button>
+                        <div id="scale-result" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            
+        </div>
+    </div>
+
+    <script>
+        // 标签切换功能
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const calculators = document.querySelectorAll('.calculator');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // 更新标签按钮状态
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // 显示对应的计算器
+                calculators.forEach(calc => calc.classList.remove('active'));
+                document.getElementById(`${tabId}-calc`).classList.add('active');
+            });
+        });
+        
+        // 数学计算器功能
+        const mathExpressionInput = document.getElementById('math-expression');
+        const mathButtons = document.querySelectorAll('.math-btn');
+        const calculateMathBtn = document.getElementById('calculate-math');
+        const mathResult = document.getElementById('math-result');
+        const mathResultValue = document.getElementById('math-result-value');
+        const clearExpressionBtn = document.getElementById('clear-expression');
+        
+        // 数学按钮点击事件
+        mathButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.getAttribute('data-value');
+                
+                if (button.id === 'clear-expression') {
+                    mathExpressionInput.value = '';
+                } else {
+                    mathExpressionInput.value += value;
+                    mathExpressionInput.focus();
+                }
+            });
+        });
+        
+        // 计算数学表达式
+        calculateMathBtn.addEventListener('click', () => {
+            try {
+                let expression = mathExpressionInput.value.trim();
+                
+                if (!expression) {
+                    throw new Error('请输入数学表达式');
+                }
+                
+                // 替换常用数学符号
+                expression = expression.replace(/\^/g, '**');
+                expression = expression.replace(/pi/g, Math.PI);
+                
+                // 使用Function构造函数进行安全计算
+                const result = new Function('return ' + expression)();
+                
+                mathResultValue.textContent = `${expression} = ${result}`;
+                mathResult.classList.add('show');
+            } catch (error) {
+                mathResultValue.textContent = `错误: ${error.message}`;
+                mathResult.classList.add('show');
+            }
+        });
+        
+        // ETA计算器功能
+        const calculateEtaBtn = document.getElementById('calculate-eta');
+        const etaResult = document.getElementById('eta-result');
+        const etaResultValue = document.getElementById('eta-result-value');
+        
+        // 设置默认开始时间为当前时间
+        const now = new Date();
+        const formattedNow = now.toISOString().slice(0, 16);
+        document.getElementById('start-time').value = formattedNow;
+        
+        calculateEtaBtn.addEventListener('click', () => {
+            const totalItems = parseFloat(document.getElementById('total-items').value);
+            const processedItems = parseFloat(document.getElementById('processed-items').value);
+            const startTime = new Date(document.getElementById('start-time').value);
+            const currentSpeed = parseFloat(document.getElementById('current-speed').value);
+            
+            // 验证输入
+            if (!totalItems || !processedItems || !currentSpeed || isNaN(startTime.getTime())) {
+                etaResultValue.textContent = '错误: 请填写所有字段';
+                etaResult.classList.add('show');
+                return;
+            }
+            
+            if (processedItems >= totalItems) {
+                etaResultValue.textContent = '任务已完成!';
+                etaResult.classList.add('show');
+                return;
+            }
+            
+            if (currentSpeed <= 0) {
+                etaResultValue.textContent = '错误: 处理速度必须大于0';
+                etaResult.classList.add('show');
+                return;
+            }
+            
+            // 计算剩余时间和ETA
+            const remainingItems = totalItems - processedItems;
+            const remainingMinutes = remainingItems / currentSpeed;
+            const completionTime = new Date(startTime.getTime() + remainingMinutes * 60000);
+            
+            // 计算已用时间
+            const currentTime = new Date();
+            const elapsedMinutes = (currentTime.getTime() - startTime.getTime()) / 60000;
+            const progressPercentage = (processedItems / totalItems * 100).toFixed(1);
+            
+            // 格式化输出
+            const formattedCompletionTime = completionTime.toLocaleString();
+            const formattedRemainingTime = formatTime(remainingMinutes);
+            
+            etaResultValue.innerHTML = `
+                <p><strong>完成进度:</strong> ${progressPercentage}%</p>
+                <p><strong>剩余数量:</strong> ${remainingItems}</p>
+                <p><strong>预计剩余时间:</strong> ${formattedRemainingTime}</p>
+                <p><strong>预计完成时间:</strong> ${formattedCompletionTime}</p>
+            `;
+            etaResult.classList.add('show');
+        });
+        
+        // 格式化时间函数
+        function formatTime(minutes) {
+            const days = Math.floor(minutes / (60 * 24));
+            const hours = Math.floor((minutes % (60 * 24)) / 60);
+            const mins = Math.floor(minutes % 60);
+            
+            let result = '';
+            if (days > 0) result += `${days}天 `;
+            if (hours > 0) result += `${hours}小时 `;
+            if (mins > 0 || result === '') result += `${mins}分钟`;
+            
+            return result;
+        }
+        
+        // 百分比计算器功能
+        const percentSubTabs = document.querySelectorAll('.small-tab');
+        const percentageSubTabContents = document.querySelectorAll('.percentage-subtab');
+        
+        // 百分比子标签切换
+        percentSubTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const subtabId = tab.getAttribute('data-subtab');
+                
+                percentSubTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                percentageSubTabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(subtabId).classList.add('active');
+            });
+        });
+        
+        // 百分比计算按钮
+        const calculatePercentBtns = document.querySelectorAll('.calculate-percent-btn');
+        const percentageResult = document.getElementById('percentage-result');
+        const percentageResultValue = document.getElementById('percentage-result-value');
+        
+        calculatePercentBtns.forEach(button => {
+            button.addEventListener('click', () => {
+                const type = button.getAttribute('data-type');
+                let resultText = '';
+                
+                try {
+                    switch(type) {
+                        case 'percent-of':
+                            const baseValue = parseFloat(document.getElementById('base-value').value);
+                            const percentage = parseFloat(document.getElementById('percentage').value);
+                            
+                            if (!baseValue || !percentage) {
+                                throw new Error('请输入有效数值');
+                            }
+                            
+                            const result = (baseValue * percentage) / 100;
+                            resultText = `${percentage}% 的 ${baseValue} = ${result}`;
+                            break;
+                            
+                        case 'percent-change':
+                            const oldValue = parseFloat(document.getElementById('old-value').value);
+                            const newValue = parseFloat(document.getElementById('new-value').value);
+                            
+                            if (!oldValue || !newValue) {
+                                throw new Error('请输入有效数值');
+                            }
+                            
+                            const change = ((newValue - oldValue) / oldValue) * 100;
+                            const changeText = change >= 0 ? `增加` : `减少`;
+                            resultText = `从 ${oldValue} 到 ${newValue} 的变化: ${change.toFixed(2)}% (${changeText})`;
+                            break;
+                            
+                        case 'value-from-percent':
+                            const partialValue = parseFloat(document.getElementById('partial-value').value);
+                            const totalPercent = parseFloat(document.getElementById('total-percent').value);
+                            
+                            if (!partialValue || !totalPercent) {
+                                throw new Error('请输入有效数值');
+                            }
+                            
+                            if (totalPercent === 0) {
+                                throw new Error('百分比不能为0');
+                            }
+                            
+                            const totalValue = (partialValue * 100) / totalPercent;
+                            resultText = `${partialValue} 是 ${totalPercent}% 的 ${totalValue.toFixed(2)}`;
+                            break;
+                    }
+                    
+                    percentageResultValue.textContent = resultText;
+                    percentageResult.classList.add('show');
+                    
+                } catch (error) {
+                    percentageResultValue.textContent = `错误: ${error.message}`;
+                    percentageResult.classList.add('show');
+                }
+            });
+        });
+        
+        // 普通计算器功能
+        const calcDisplay = document.getElementById('calc-display');
+        const calcButtons = document.querySelectorAll('.calc-btn');
+        const ordinaryResult = document.getElementById('ordinary-result');
+        const ordinaryResultValue = document.getElementById('ordinary-result-value');
+        
+        let currentInput = '0';
+        let previousInput = '';
+        let operation = null;
+        let shouldResetScreen = false;
+        
+        function updateDisplay() {
+            calcDisplay.textContent = currentInput;
+        }
+        
+        function resetCalculator() {
+            currentInput = '0';
+            previousInput = '';
+            operation = null;
+            updateDisplay();
+        }
+        
+        function handleNumber(number) {
+            if (currentInput === '0' || shouldResetScreen) {
+                currentInput = number;
+                shouldResetScreen = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+        
+        function handleOperation(op) {
+            if (operation !== null) calculateResult();
+            previousInput = currentInput;
+            operation = op;
+            shouldResetScreen = true;
+        }
+        
+        function calculateResult() {
+            if (operation === null || shouldResetScreen) return;
+            
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            let result;
+            
+            switch(operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    if (current === 0) {
+                        result = '错误: 除数不能为0';
+                    } else {
+                        result = prev / current;
+                    }
+                    break;
+                default:
+                    return;
+            }
+            
+            currentInput = result.toString();
+            operation = null;
+            previousInput = '';
+            updateDisplay();
+            
+            // 显示结果
+            ordinaryResultValue.textContent = `计算结果: ${result}`;
+            ordinaryResult.classList.add('show');
+        }
+        
+        calcButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.hasAttribute('data-number')) {
+                    handleNumber(button.getAttribute('data-number'));
+                } else if (button.hasAttribute('data-action')) {
+                    const action = button.getAttribute('data-action');
+                    
+                    switch(action) {
+                        case 'clear-all':
+                            resetCalculator();
+                            ordinaryResult.classList.remove('show');
+                            break;
+                        case 'clear-entry':
+                            currentInput = '0';
+                            updateDisplay();
+                            break;
+                        case 'backspace':
+                            if (currentInput.length > 1) {
+                                currentInput = currentInput.slice(0, -1);
+                            } else {
+                                currentInput = '0';
+                            }
+                            updateDisplay();
+                            break;
+                        case '.':
+                            if (!currentInput.includes('.')) {
+                                currentInput += '.';
+                                updateDisplay();
+                            }
+                            break;
+                        case '=':
+                            calculateResult();
+                            break;
+                        default:
+                            handleOperation(action);
+                    }
+                }
+            });
+        });
+        
+        // 程序员计算器功能
+        const programmerInput = document.getElementById('programmer-input');
+        const programmerButtons = document.querySelectorAll('.prog-btn');
+        const calculateProgrammerBtn = document.getElementById('calculate-programmer');
+        const programmerResult = document.getElementById('programmer-result');
+        const programmerResultValue = document.getElementById('programmer-result-value');
+        const bitButtonsContainer = document.getElementById('bit-buttons');
+        
+        let selectedBase = 10;
+        
+        // 初始化位按钮
+        function initBitButtons() {
+            bitButtonsContainer.innerHTML = '';
+            for (let i = 15; i >= 0; i--) {
+                const button = document.createElement('button');
+                button.className = 'bit-btn';
+                button.textContent = `2^${i}`;
+                button.dataset.bit = i;
+                button.addEventListener('click', toggleBit);
+                bitButtonsContainer.appendChild(button);
+            }
+        }
+        
+        initBitButtons();
+        
+        // 进制按钮切换
+        programmerButtons.forEach(button => {
+            if (button.dataset.base) {
+                button.addEventListener('click', () => {
+                    programmerButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    selectedBase = parseInt(button.dataset.base);
+                    
+                    // 转换当前输入值到新进制
+                    const currentValue = programmerInput.value;
+                    if (currentValue) {
+                        try {
+                            // 先转换为十进制，再转换为目标进制
+                            const decimalValue = parseInt(currentValue, selectedBase);
+                            if (!isNaN(decimalValue)) {
+                                programmerInput.value = decimalValue.toString(selectedBase).toUpperCase();
+                            }
+                        } catch(e) {
+                            // 如果转换失败，清空输入
+                            programmerInput.value = '';
+                        }
+                    }
+                });
+            }
+        });
+        
+        // 位按钮切换
+        function toggleBit(event) {
+            const bit = parseInt(event.target.dataset.bit);
+            event.target.classList.toggle('active');
+            updateBitValue();
+        }
+        
+        function updateBitValue() {
+            let decimalValue = 0;
+            const activeBits = document.querySelectorAll('.bit-btn.active');
+            
+            activeBits.forEach(bitBtn => {
+                const bitValue = Math.pow(2, parseInt(bitBtn.dataset.bit));
+                decimalValue += bitValue;
+            });
+            
+            programmerInput.value = decimalValue.toString(selectedBase).toUpperCase();
+        }
+        
+        // 计算程序员计算器
+        calculateProgrammerBtn.addEventListener('click', () => {
+            try {
+                const input1 = document.getElementById('programmer-input1').value;
+                const input2 = document.getElementById('programmer-input2').value;
+                const action = document.querySelector('.prog-btn[data-action].active')?.dataset.action;
+                
+                let resultText = '';
+                
+                // 进制转换
+                const decimalValue = parseInt(programmerInput.value, selectedBase);
+                
+                if (isNaN(decimalValue)) {
+                    throw new Error('请输入有效的数值');
+                }
+                
+                resultText = `<p><strong>进制转换结果:</strong></p>`;
+                resultText += `<p>二进制: ${decimalValue.toString(2)}</p>`;
+                resultText += `<p>八进制: ${decimalValue.toString(8)}</p>`;
+                resultText += `<p>十进制: ${decimalValue.toString(10)}</p>`;
+                resultText += `<p>十六进制: ${decimalValue.toString(16).toUpperCase()}</p>`;
+                
+                // 位运算
+                if (action && input1 && input2) {
+                    const num1 = parseInt(input1);
+                    const num2 = parseInt(input2);
+                    
+                    let bitResult;
+                    switch(action) {
+                        case 'and':
+                            bitResult = num1 & num2;
+                            resultText += `<p><strong>位运算 (AND):</strong> ${num1} AND ${num2} = ${bitResult}</p>`;
+                            break;
+                        case 'or':
+                            bitResult = num1 | num2;
+                            resultText += `<p><strong>位运算 (OR):</strong> ${num1} OR ${num2} = ${bitResult}</p>`;
+                            break;
+                        case 'xor':
+                            bitResult = num1 ^ num2;
+                            resultText += `<p><strong>位运算 (XOR):</strong> ${num1} XOR ${num2} = ${bitResult}</p>`;
+                            break;
+                        case 'not':
+                            bitResult = ~num1;
+                            resultText += `<p><strong>位运算 (NOT):</strong> NOT ${num1} = ${bitResult}</p>`;
+                            break;
+                    }
+                }
+                
+                programmerResultValue.innerHTML = resultText;
+                programmerResult.classList.add('show');
+                
+            } catch (error) {
+                programmerResultValue.textContent = `错误: ${error.message}`;
+                programmerResult.classList.add('show');
+            }
+        });
+        
+        // 木工计算器功能
+        const carpentryOptions = document.querySelectorAll('.carpentry-btn');
+        const carpentrySubtabs = document.querySelectorAll('.carpentry-subtab');
+        const carpentryResult = document.getElementById('carpentry-result');
+        const carpentryResultValue = document.getElementById('carpentry-result-value');
+        
+        // 木工选项切换
+        carpentryOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const calcType = option.dataset.calc;
+                
+                carpentryOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                
+                carpentrySubtabs.forEach(subtab => subtab.classList.remove('active'));
+                document.getElementById(`${calcType}-calc`).classList.add('active');
+                
+                // 清空结果
+                carpentryResult.classList.remove('show');
+            });
+        });
+        
+        // 板材体积计算
+        document.getElementById('calculate-board-foot').addEventListener('click', () => {
+            const length = parseFloat(document.getElementById('board-length').value);
+            const width = parseFloat(document.getElementById('board-width').value);
+            const thickness = parseFloat(document.getElementById('board-thickness').value);
+            
+            if (!length || !width || !thickness) {
+                carpentryResultValue.textContent = '错误: 请输入所有尺寸';
+                carpentryResult.classList.add('show');
+                return;
+            }
+            
+            // 板英尺计算公式: (长度(英尺) × 宽度(英寸) × 厚度(英寸)) / 12
+            const boardFeet = (length * width * thickness) / 12;
+            carpentryResultValue.textContent = `板材体积: ${boardFeet.toFixed(2)} 板英尺 (${length}英尺 × ${width}英寸 × ${thickness}英寸)`;
+            carpentryResult.classList.add('show');
+        });
+        
+        // 斜接角度计算
+        document.getElementById('calculate-miter-angle').addEventListener('click', () => {
+            const cornerAngle = parseFloat(document.getElementById('corner-angle').value);
+            const pieces = parseFloat(document.getElementById('pieces-number').value);
+            
+            if (!cornerAngle || !pieces || cornerAngle <= 0 || cornerAngle >= 180 || pieces < 2) {
+                carpentryResultValue.textContent = '错误: 请输入有效的角度和边数';
+                carpentryResult.classList.add('show');
+                return;
+            }
+            
+            // 斜接角度计算公式: 拐角角度 / 2
+            const miterAngle = cornerAngle / 2;
+            
+            // 对于多边形，每个边的斜接角度
+            const polygonMiterAngle = 180 - (360 / pieces);
+            
+            carpentryResultValue.innerHTML = `
+                <p><strong>斜接角度计算:</strong></p>
+                <p>${cornerAngle}度拐角的斜接角度: ${miterAngle.toFixed(1)}度</p>
+                <p>${pieces}边形每个边的斜接角度: ${polygonMiterAngle.toFixed(1)}度</p>
+            `;
+            carpentryResult.classList.add('show');
+        });
+        
+        // 材料估算
+        document.getElementById('calculate-material-estimate').addEventListener('click', () => {
+            const projectLength = parseFloat(document.getElementById('project-length').value);
+            const projectWidth = parseFloat(document.getElementById('project-width').value);
+            const materialWidth = parseFloat(document.getElementById('material-width').value);
+            const wastePercent = parseFloat(document.getElementById('waste-percent').value) || 0;
+            
+            if (!projectLength || !projectWidth || !materialWidth) {
+                carpentryResultValue.textContent = '错误: 请输入项目尺寸和材料宽度';
+                carpentryResult.classList.add('show');
+                return;
+            }
+            
+            // 计算面积（平方英尺）
+            const area = projectLength * projectWidth;
+            
+            // 材料宽度转换为英尺
+            const materialWidthFeet = materialWidth / 12;
+            
+            // 计算所需材料长度（考虑损耗）
+            const materialLength = area / materialWidthFeet;
+            const materialLengthWithWaste = materialLength * (1 + wastePercent / 100);
+            
+            // 计算板材数量（假设标准板材长度为8英尺）
+            const standardBoardLength = 8;
+            const boardsNeeded = Math.ceil(materialLengthWithWaste / standardBoardLength);
+            
+            carpentryResultValue.innerHTML = `
+                <p><strong>材料估算结果:</strong></p>
+                <p>项目面积: ${area.toFixed(2)} 平方英尺</p>
+                <p>所需材料长度: ${materialLengthWithWaste.toFixed(2)} 英尺 (包含${wastePercent}%损耗)</p>
+                <p>需要 ${boardsNeeded} 块 ${standardBoardLength}英尺长的板材</p>
+            `;
+            carpentryResult.classList.add('show');
+        });
+        
+        // 设计计算器功能
+        // 黄金比例计算
+        document.getElementById('calculate-golden-ratio').addEventListener('click', () => {
+            const value = parseFloat(document.getElementById('golden-ratio-value').value);
+            
+            if (!value) {
+                document.getElementById('golden-ratio-result').innerHTML = '<p style="color: red;">错误: 请输入数值</p>';
+                return;
+            }
+            
+            const goldenRatio = 1.61803398875;
+            const smaller = value / goldenRatio;
+            const larger = value * goldenRatio;
+            
+            document.getElementById('golden-ratio-result').innerHTML = `
+                <p><strong>黄金比例计算:</strong></p>
+                <p>基于 ${value} 的黄金比例分割:</p>
+                <p>较小部分: ${smaller.toFixed(2)}</p>
+                <p>较大部分: ${larger.toFixed(2)}</p>
+                <p>比例: ${value}:${smaller.toFixed(2)} ≈ ${goldenRatio.toFixed(5)}:1</p>
+            `;
+        });
+        
+        // 颜色转换器
+        document.getElementById('convert-color').addEventListener('click', () => {
+            const hexColor = document.getElementById('color-hex').value;
+            const colorPreview = document.getElementById('color-preview');
+            
+            // 验证HEX颜色格式
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            if (!hexRegex.test(hexColor)) {
+                document.getElementById('color-conversion-result').innerHTML = '<p style="color: red;">错误: 请输入有效的HEX颜色值 (如 #FF5733)</p>';
+                return;
+            }
+            
+            // 更新颜色预览
+            colorPreview.style.backgroundColor = hexColor;
+            
+            // 转换HEX到RGB
+            let r, g, b;
+            if (hexColor.length === 4) {
+                // 短格式 #RGB
+                r = parseInt(hexColor[1] + hexColor[1], 16);
+                g = parseInt(hexColor[2] + hexColor[2], 16);
+                b = parseInt(hexColor[3] + hexColor[3], 16);
+            } else {
+                // 长格式 #RRGGBB
+                r = parseInt(hexColor.substring(1, 3), 16);
+                g = parseInt(hexColor.substring(3, 5), 16);
+                b = parseInt(hexColor.substring(5, 7), 16);
+            }
+            
+            // 转换RGB到HSL
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0; // 灰色
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            
+            h = Math.round(h * 360);
+            s = Math.round(s * 100);
+            l = Math.round(l * 100);
+            
+            document.getElementById('color-conversion-result').innerHTML = `
+                <p><strong>颜色转换结果:</strong></p>
+                <p>HEX: ${hexColor.toUpperCase()}</p>
+                <p>RGB: rgb(${Math.round(r*255)}, ${Math.round(g*255)}, ${Math.round(b*255)})</p>
+                <p>HSL: hsl(${h}, ${s}%, ${l}%)</p>
+            `;
+        });
+        
+        // 初始化颜色预览
+        document.getElementById('convert-color').click();
+        
+        // 字体比例计算
+        document.getElementById('calculate-font-scale').addEventListener('click', () => {
+            const baseSize = parseFloat(document.getElementById('base-font-size').value);
+            const scaleRatio = parseFloat(document.getElementById('scale-ratio').value);
+            
+            if (!baseSize || !scaleRatio) {
+                document.getElementById('font-scale-result').innerHTML = '<p style="color: red;">错误: 请输入基础字体大小和比例系数</p>';
+                return;
+            }
+            
+            let resultHTML = `<p><strong>字体比例序列 (基于 ${baseSize}px, 比例 ${scaleRatio}):</strong></p>`;
+            
+            // 计算6个级别
+            for (let i = -2; i <= 3; i++) {
+                const fontSize = baseSize * Math.pow(scaleRatio, i);
+                const levelName = i === 0 ? '基准' : i === -1 ? '小' : i === -2 ? '极小' : i === 1 ? '大' : i === 2 ? '极大' : '超大';
+                
+                resultHTML += `<p>${levelName}: ${fontSize.toFixed(1)}px</p>`;
+            }
+            
+            document.getElementById('font-scale-result').innerHTML = resultHTML;
+        });
+        
+        // CAD计算器功能
+        // 单位转换
+        document.getElementById('convert-units').addEventListener('click', () => {
+            const value = parseFloat(document.getElementById('unit-value').value);
+            const fromUnit = document.getElementById('from-unit').value;
+            const toUnit = document.getElementById('to-unit').value;
+            
+            if (!value) {
+                document.getElementById('unit-conversion-result').innerHTML = '<p style="color: red;">错误: 请输入数值</p>';
+                return;
+            }
+            
+            // 先转换为毫米作为中间单位
+            let valueInMm;
+            
+            switch(fromUnit) {
+                case 'mm': valueInMm = value; break;
+                case 'cm': valueInMm = value * 10; break;
+                case 'm': valueInMm = value * 1000; break;
+                case 'in': valueInMm = value * 25.4; break;
+                case 'ft': valueInMm = value * 304.8; break;
+                default: valueInMm = value;
+            }
+            
+            // 从毫米转换为目标单位
+            let result;
+            
+            switch(toUnit) {
+                case 'mm': result = valueInMm; break;
+                case 'cm': result = valueInMm / 10; break;
+                case 'm': result = valueInMm / 1000; break;
+                case 'in': result = valueInMm / 25.4; break;
+                case 'ft': result = valueInMm / 304.8; break;
+                default: result = valueInMm;
+            }
+            
+            document.getElementById('unit-conversion-result').innerHTML = `
+                <p><strong>单位转换结果:</strong></p>
+                <p>${value} ${fromUnit} = ${result.toFixed(4)} ${toUnit}</p>
+            `;
+        });
+        
+        // 坐标距离计算
+        document.getElementById('calculate-distance').addEventListener('click', () => {
+            const x1 = parseFloat(document.getElementById('point1-x').value);
+            const y1 = parseFloat(document.getElementById('point1-y').value);
+            const x2 = parseFloat(document.getElementById('point2-x').value);
+            const y2 = parseFloat(document.getElementById('point2-y').value);
+            
+            if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2)) {
+                document.getElementById('distance-result').innerHTML = '<p style="color: red;">错误: 请输入有效的坐标值</p>';
+                return;
+            }
+            
+            // 计算两点间距离
+            const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            
+            // 计算角度
+            const angleRad = Math.atan2(y2 - y1, x2 - x1);
+            const angleDeg = angleRad * (180 / Math.PI);
+            
+            document.getElementById('distance-result').innerHTML = `
+                <p><strong>坐标距离计算结果:</strong></p>
+                <p>点1: (${x1}, ${y1})</p>
+                <p>点2: (${x2}, ${y2})</p>
+                <p>距离: ${distance.toFixed(2)} 单位</p>
+                <p>角度: ${angleDeg.toFixed(1)} 度</p>
+            `;
+        });
+        
+        // 缩放比例计算
+        document.getElementById('calculate-scale').addEventListener('click', () => {
+            const actualSize = parseFloat(document.getElementById('actual-size').value);
+            const drawingSize = parseFloat(document.getElementById('drawing-size').value);
+            
+            if (!actualSize || !drawingSize) {
+                document.getElementById('scale-result').innerHTML = '<p style="color: red;">错误: 请输入实际尺寸和图纸尺寸</p>';
+                return;
+            }
+            
+            if (drawingSize === 0) {
+                document.getElementById('scale-result').innerHTML = '<p style="color: red;">错误: 图纸尺寸不能为0</p>';
+                return;
+            }
+            
+            // 计算比例
+            const scale = actualSize / drawingSize;
+            
+            // 转换为常见比例格式
+            let scaleText;
+            if (scale >= 1) {
+                scaleText = `1:${scale.toFixed(2)}`;
+            } else {
+                scaleText = `${(1/scale).toFixed(2)}:1`;
+            }
+            
+            document.getElementById('scale-result').innerHTML = `
+                <p><strong>缩放比例计算结果:</strong></p>
+                <p>实际尺寸: ${actualSize}</p>
+                <p>图纸尺寸: ${drawingSize}</p>
+                <p>比例: ${scaleText}</p>
+                <p>比例值: ${scale.toFixed(4)}</p>
+            `;
+        });
+        
+        // 为数学计算器添加键盘支持
+        mathExpressionInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calculateMathBtn.click();
+            }
+        });
+        
+        // 页面加载时默认计算一次数学表达式
+        window.addEventListener('load', () => {
+            calculateMathBtn.click();
+        });
+    </script>
+</body>
+</html>

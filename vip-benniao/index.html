@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="renderer" content="webkit">
+    <meta name="referrer" content="never">
+    <meta http-equiv="Cache-Control" content="no-transform"> 
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=520, initial-scale=1, maximum-scale=1, user-scalable=yes">
+    <title>笨鸟办公-公益VIP视频解析</title>
+    
+    <link rel="stylesheet" type="text/css" href="style.css"> 
+    <script data-ad-client="ca-pub-5372697601462596" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body>
+    <div id="main">
+        
+            <div id="menu">
+            <ul id="playpanel" class="list tip clearfix">
+                <select id="api"></select>
+                <input id="url" type="text" placeholder="输入完整视频网址，包含：http://">
+                <button id="play" onclick="play();">Go-开始播放</button>
+
+
+            </ul>         
+        </div> 
+        <ul id="player" class="list table">
+          <!--  <div class="body">
+                <p>输入视频地址
+                如当前热播的速度与机器9 输入：https://v.qq.com/x/cover/nbusftujqwczi7y.html点击播放，即可</p>
+                
+            </div> -->
+          
+			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="fluid"
+     data-ad-layout-key="-6t+ed+2i-1n-4w"
+     data-ad-client="ca-pub-5372697601462596"
+     data-ad-slot="5586879731"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+ 
+            <div class="language">
+        <a class="btn2 btn-outline2" href="http://www.le.com/" rel="nofollow" target="_blank">进入乐视视频</a>
+        <a class="btn2 btn-outline2" href="http://www.iqiyi.com/" rel="nofollow" target="_blank">进入奇艺视频</a>
+        <a class="btn2 btn-outline2" href="http://www.mgtv.com/" rel="nofollow" target="_blank">进入芒果视频</a>
+		    <a class="btn2 btn-outline2" href="http://www.tudou.com/" rel="nofollow" target="_blank">进入土豆视频</a>		
+       <br>
+		    <a class="btn2 btn-outline2" href="http://v.qq.com/" rel="nofollow" target="_blank">进入腾讯视频</a>		
+        <a class="btn2 btn-outline2" href="http://www.youku.com/" rel="nofollow" target="_blank">进入优酷视频</a>
+		    <a class="btn2 btn-outline2" href="http://tv.sohu.com/" rel="nofollow" target="_blank">进入搜狐视频</a>
+		    <a class="btn2 btn-outline2" href="http://www.pptv.com/" rel="nofollow" target="_blank">进入pptv视频</a>
+		    
+		    
+	 
+ 
+		    
+		    
+  </div>
+
+  
+        </ul>
+     
+
+<div class="footer">
+  
+              
+               
+               
+          	VIP免费看 自用不对外推广,请理性使用。2025年12月新更新 VIP视频解析播放器特点：可跳过各视频站的广告、突破VIP观看限制
+	 
+    </div>
+     
+    <script>
+        var data = [
+  
+                {name:"测试线路",url:"https://jx.ppflv.com/?url="},
+                
+               {name:"影片专用",url:"https://z1.m1907.top/?jx="},
+ {name:"电视剧解析",url:"https://z1.m1907.top/?jx="},
+ {name:"电影解析",url:"https://z1.m1907.top/?jx="},
+ {name:"万能解析",url:"https://z1.m1907.top/?jx="},
+{name:"智能解析",url:"https://z1.m1907.cn/?jx="},
+
+ {name:"M1907解析",url:"https://im1907.top/?jx="},
+ {name:"M3U8解析",url:"https://jx.m3u8.tv/jiexi/?url="},
+ {name:"8090解析",url:"https://www.8090g.cn/jiexi/?url="},
+{name:"虾米解析",url:"https://jx.xmflv.com/?url="},
+
+
+ {name:"咸鱼解析",url:"https://jx.xymp4.cc/?url="},
+ {name:"极速解析",url:"https://jx.2s0.cn/player/?url="},
+ {name:"PlayerJY解析",url:"https://jx.playerjy.com/?url="},
+
+
+ 
+
+				
+                ];
+        for (var i in  data){
+            var opt = document.createElement ("option");
+            opt.value = data[i].url;
+            opt.innerText = data[i].name;
+            document.getElementById("api").appendChild (opt);
+        }
+        function play(){
+            var url = document.getElementById("url").value;
+            if(url.indexOf('http') == -1){  
+                alert('视频地址不正确！');return;
+            }
+            var api = document.getElementById("api").value;
+            url = api + url;
+            document.getElementById("player").innerHTML='<iframe marginwidth="0" marginheight="0" hspace="0" vspace="0" frameborder="0" allowfullscreen="true" scrolling="no" height="100%" width="100%" src="'+url+'"></iframe>';
+        }
+    </script>
+
+</body>
+</html>

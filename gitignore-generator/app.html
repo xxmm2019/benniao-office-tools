@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gitignore 生成器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/gitignore-generator/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 10px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-group label:hover {
+            background: #f1f3f5;
+            border-color: #f59e0b;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #f59e0b;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .output-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .output-box label {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .output-box textarea {
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 200px;
+            transition: border-color 0.2s;
+            background: #f8fafc;
+        }
+
+        .output-box textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+        }
+
+        .output-box textarea:read-only {
+            cursor: default;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: #10b981;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                max-height: 250px;
+            }
+            
+            .form-actions {
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: 140px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                min-width: 120px;
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gitignore 生成器</h1>
+            <p>为您的项目快速生成专业的 .gitignore 文件</p>
+        </div>
+
+        <div class="card">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label>选择技术栈/环境</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" value="node"> Node.js</label>
+                        <label><input type="checkbox" value="python"> Python</label>
+                        <label><input type="checkbox" value="java"> Java</label>
+                        <label><input type="checkbox" value="php"> PHP</label>
+                        <label><input type="checkbox" value="ruby"> Ruby</label>
+                        <label><input type="checkbox" value="go"> Go</label>
+                        <label><input type="checkbox" value="rust"> Rust</label>
+                        <label><input type="checkbox" value="csharp"> C#</label>
+                        <label><input type="checkbox" value="vue"> Vue.js</label>
+                        <label><input type="checkbox" value="react"> React</label>
+                        <label><input type="checkbox" value="angular"> Angular</label>
+                        <label><input type="checkbox" value="docker"> Docker</label>
+                        <label><input type="checkbox" value="vscode"> VS Code</label>
+                        <label><input type="checkbox" value="macos"> macOS</label>
+                        <label><input type="checkbox" value="windows"> Windows</label>
+                        <label><input type="checkbox" value="linux"> Linux</label>
+                        <label><input type="checkbox" value="intellij"> IntelliJ IDEA</label>
+                        <label><input type="checkbox" value="eclipse"> Eclipse</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn" onclick="generateGitignore()">
+                    <span>生成 .gitignore</span>
+                </button>
+                <button class="btn btn-success" onclick="copyToClipboard()">
+                    <span>复制到剪贴板</span>
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <span>清空全部</span>
+                </button>
+            </div>
+            
+            <div class="output-box">
+                <div class="output-header">
+                    <label>.gitignore 文件内容</label>
+                    <small>将以下内容保存为 .gitignore 文件</small>
+                </div>
+                <textarea id="gitignore-output" rows="15" readonly placeholder="选择左侧的技术栈/环境后点击生成按钮..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">已复制到剪贴板！</div>
+
+    <script>
+        const GITIGNORE_TEMPLATES = {
+            node: `# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.DS_Store
+*.log
+.idea/
+.vscode/
+dist/
+build/
+coverage/
+.nyc_output/`,
+
+            python: `# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv/
+venv/
+ENV/`,
+
+            java: `# Java
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+target/
+build/
+.idea/
+*.iml
+out/
+.gradle/
+.DS_Store`,
+
+            php: `# PHP
+vendor/
+.env
+composer.lock
+.DS_Store
+Thumbs.db
+.idea/
+*.log
+.phpunit.result.cache
+build/
+coverage/`,
+
+            ruby: `# Ruby
+*.gem
+*.rbc
+/.config
+/coverage/
+InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+.DS_Store
+*.bundle
+*.so
+*.o
+*.a
+mkmf.log`,
+
+            go: `# Go
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with \`go test -c\`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/`,
+
+            rust: `# Rust
+# Compiled files
+*.o
+*.so
+*.rlib
+*.dll
+*.exe
+
+# Executables
+target/
+
+# Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
+# More information here https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
+Cargo.lock
+
+# These are backup files generated by rustfmt
+**/*.rs.bk`,
+
+            csharp: `# C#
+## Ignore Visual Studio temporary files, build results, and
+## files generated by popular Visual Studio add-ons.
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/`,
+
+            vue: `# Vue.js
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.log
+.idea/
+.vscode/
+coverage/`,
+
+            react: `# React
+node_modules/
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.idea/
+.vscode/
+coverage/
+build/
+dist/`,
+
+            angular: `# Angular
+node_modules/
+dist/
+tmp/
+*.log
+.idea/
+.vscode/
+coverage/
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log/`,
+
+            docker: `# Docker
+*.swp
+*.swo
+*~`,
+
+            vscode: `# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace`,
+
+            macos: `# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk`,
+
+            windows: `# Windows
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk`,
+
+            linux: `# Linux
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*`,
+
+            intellij: `# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.idea_modules/
+atlassian-ide-plugin.xml`,
+
+            eclipse: `# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Eclipse Core
+.project
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+`
+        };
+
+        function generateGitignore() {
+            const selected = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
+                .map(input => input.value);
+            
+            if (selected.length === 0) {
+                showNotification('请至少选择一个技术栈或环境', 'warning');
+                return;
+            }
+            
+            let output = '';
+            
+            selected.forEach(key => {
+                if (GITIGNORE_TEMPLATES[key]) {
+                    output += GITIGNORE_TEMPLATES[key] + '\n\n';
+                }
+            });
+            
+            // 移除最后一个多余的空行
+            output = output.trim();
+            
+            document.getElementById('gitignore-output').value = output;
+            showNotification('已生成 .gitignore 文件', 'success');
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('gitignore-output');
+            
+            if (!output.value.trim()) {
+                showNotification('没有内容可复制', 'warning');
+                return;
+            }
+            
+            output.select();
+            output.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                navigator.clipboard.writeText(output.value).then(() => {
+                    showNotification('已复制到剪贴板', 'success');
+                }).catch(err => {
+                    // Fallback for older browsers
+                    document.execCommand('copy');
+                    showNotification('已复制到剪贴板', 'success');
+                });
+            } catch (err) {
+                // Final fallback
+                document.execCommand('copy');
+                showNotification('已复制到剪贴板', 'success');
+            }
+        }
+
+        function clearAll() {
+            // 清空所有复选框
+            document.querySelectorAll('.checkbox-group input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // 清空输出
+            document.getElementById('gitignore-output').value = '';
+            
+            showNotification('已清空全部内容', 'info');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            
+            // 设置消息和颜色
+            notification.textContent = message;
+            
+            switch(type) {
+                case 'success':
+                    notification.style.background = '#10b981';
+                    break;
+                case 'warning':
+                    notification.style.background = '#f59e0b';
+                    break;
+                case 'info':
+                    notification.style.background = '#3b82f6';
+                    break;
+                default:
+                    notification.style.background = '#10b981';
+            }
+            
+            // 显示通知
+            notification.style.display = 'block';
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // 页面加载完成后自动聚焦到第一个复选框
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstCheckbox = document.querySelector('.checkbox-group input[type="checkbox"]');
+            if (firstCheckbox) {
+                firstCheckbox.focus();
+            }
+        });
+    </script>
+</body>
+</html>

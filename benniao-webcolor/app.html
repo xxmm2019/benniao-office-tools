@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB开发常用安全颜色代码- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-webcolor/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .intro {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #2575fc;
+        }
+        
+        .intro h2 {
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            background-color: #f1f3f5;
+            color: #495057;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-btn.active {
+            background-color: #2575fc;
+            color: white;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .color-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .color-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .color-preview {
+            height: 120px;
+            width: 100%;
+        }
+        
+        .color-info {
+            padding: 15px;
+        }
+        
+        .color-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+        
+        .color-hex {
+            color: #666;
+            font-family: monospace;
+            font-size: 1rem;
+            margin-bottom: 3px;
+        }
+        
+        .color-rgb {
+            color: #888;
+            font-size: 0.9rem;
+            font-family: monospace;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+            color: #666;
+            border-top: 1px solid #eaeaea;
+            font-size: 0.95rem;
+        }
+        
+        .color-category {
+            font-size: 1.5rem;
+            margin: 30px 0 15px;
+            color: #2575fc;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        @media (max-width: 768px) {
+            .color-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .color-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .filter-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-palette"></i> WEB安全颜色代码</h1>
+            <p class="subtitle">收集整理了216种在Web开发中常用的安全颜色，这些颜色在任何显示器上都能保持一致的显示效果</p>
+        </header>
+        
+        <section class="intro">
+            <h2>什么是Web安全色？</h2>
+            <p>Web安全色是指在不同的操作系统、浏览器和显示设备上都能保持一致显示效果的216种颜色。这些颜色由RGB值中00、33、66、99、CC、FF（十六进制）或0、51、102、153、204、255（十进制）的组合构成，确保在256色显示器上不会出现抖动或颜色变化。</p>
+        </section>
+        
+        <section class="controls">
+            <button class="filter-btn active" data-filter="all">全部颜色</button>
+            <button class="filter-btn" data-filter="red">红色系</button>
+            <button class="filter-btn" data-filter="orange">橙色系</button>
+            <button class="filter-btn" data-filter="yellow">黄色系</button>
+            <button class="filter-btn" data-filter="green">绿色系</button>
+            <button class="filter-btn" data-filter="blue">蓝色系</button>
+            <button class="filter-btn" data-filter="purple">紫色系</button>
+            <button class="filter-btn" data-filter="gray">灰度系</button>
+        </section>
+        
+        <main id="color-container">
+            <!-- 颜色卡片将通过JavaScript动态生成 -->
+        </main>
+        
+        <footer>
+            
+        </footer>
+        
+        <div class="notification" id="notification">
+            已复制颜色值：<span id="copied-color">#FFFFFF</span>
+        </div>
+    </div>
+
+    <script>
+        // Web安全色数据
+        const webSafeColors = [
+            // 红色系
+            { name: "深红色", hex: "#990000", rgb: "153,0,0", category: "red" },
+            { name: "红色", hex: "#CC0000", rgb: "204,0,0", category: "red" },
+            { name: "浅红色", hex: "#FF0000", rgb: "255,0,0", category: "red" },
+            { name: "暗玫瑰红", hex: "#993333", rgb: "153,51,51", category: "red" },
+            { name: "玫瑰红", hex: "#CC3333", rgb: "204,51,51", category: "red" },
+            { name: "亮玫瑰红", hex: "#FF3333", rgb: "255,51,51", category: "red" },
+            { name: "暗珊瑚红", hex: "#996666", rgb: "153,102,102", category: "red" },
+            { name: "珊瑚红", hex: "#CC6666", rgb: "204,102,102", category: "red" },
+            { name: "亮珊瑚红", hex: "#FF6666", rgb: "255,102,102", category: "red" },
+            
+            // 橙色系
+            { name: "深橙色", hex: "#993300", rgb: "153,51,0", category: "orange" },
+            { name: "橙色", hex: "#CC6600", rgb: "204,102,0", category: "orange" },
+            { name: "浅橙色", hex: "#FF9900", rgb: "255,153,0", category: "orange" },
+            { name: "暗杏色", hex: "#CC9966", rgb: "204,153,102", category: "orange" },
+            { name: "杏色", hex: "#FFCC99", rgb: "255,204,153", category: "orange" },
+            { name: "亮杏色", hex: "#FFCC66", rgb: "255,204,102", category: "orange" },
+            
+            // 黄色系
+            { name: "深黄色", hex: "#999900", rgb: "153,153,0", category: "yellow" },
+            { name: "黄色", hex: "#CCCC00", rgb: "204,204,0", category: "yellow" },
+            { name: "浅黄色", hex: "#FFFF00", rgb: "255,255,0", category: "yellow" },
+            { name: "暗奶油色", hex: "#CCCC66", rgb: "204,204,102", category: "yellow" },
+            { name: "奶油色", hex: "#FFFF66", rgb: "255,255,102", category: "yellow" },
+            { name: "亮奶油色", hex: "#FFFF99", rgb: "255,255,153", category: "yellow" },
+            
+            // 绿色系
+            { name: "深绿色", hex: "#006600", rgb: "0,102,0", category: "green" },
+            { name: "绿色", hex: "#009900", rgb: "0,153,0", category: "green" },
+            { name: "浅绿色", hex: "#00CC00", rgb: "0,204,0", category: "green" },
+            { name: "亮绿色", hex: "#00FF00", rgb: "0,255,0", category: "green" },
+            { name: "暗春绿色", hex: "#33CC33", rgb: "51,204,51", category: "green" },
+            { name: "春绿色", hex: "#66FF66", rgb: "102,255,102", category: "green" },
+            { name: "深海绿色", hex: "#006666", rgb: "0,102,102", category: "green" },
+            { name: "海绿色", hex: "#009999", rgb: "0,153,153", category: "green" },
+            { name: "浅海绿色", hex: "#00CCCC", rgb: "0,204,204", category: "green" },
+            { name: "亮海绿色", hex: "#00FFFF", rgb: "0,255,255", category: "green" },
+            
+            // 蓝色系
+            { name: "深蓝色", hex: "#000099", rgb: "0,0,153", category: "blue" },
+            { name: "蓝色", hex: "#0000CC", rgb: "0,0,204", category: "blue" },
+            { name: "浅蓝色", hex: "#0000FF", rgb: "0,0,255", category: "blue" },
+            { name: "暗天蓝色", hex: "#3366FF", rgb: "51,102,255", category: "blue" },
+            { name: "天蓝色", hex: "#3399FF", rgb: "51,153,255", category: "blue" },
+            { name: "亮天蓝色", hex: "#66CCFF", rgb: "102,204,255", category: "blue" },
+            { name: "深海军蓝", hex: "#000066", rgb: "0,0,102", category: "blue" },
+            { name: "海军蓝", hex: "#000080", rgb: "0,0,128", category: "blue" },
+            { name: "浅海军蓝", hex: "#333399", rgb: "51,51,153", category: "blue" },
+            
+            // 紫色系
+            { name: "深紫色", hex: "#660066", rgb: "102,0,102", category: "purple" },
+            { name: "紫色", hex: "#990099", rgb: "153,0,153", category: "purple" },
+            { name: "浅紫色", hex: "#CC00CC", rgb: "204,0,204", category: "purple" },
+            { name: "亮紫色", hex: "#FF00FF", rgb: "255,0,255", category: "purple" },
+            { name: "暗紫红色", hex: "#993399", rgb: "153,51,153", category: "purple" },
+            { name: "紫红色", hex: "#CC66CC", rgb: "204,102,204", category: "purple" },
+            { name: "亮紫红色", hex: "#FF99FF", rgb: "255,153,255", category: "purple" },
+            
+            // 灰度系
+            { name: "黑色", hex: "#000000", rgb: "0,0,0", category: "gray" },
+            { name: "深灰色", hex: "#333333", rgb: "51,51,51", category: "gray" },
+            { name: "灰色", hex: "#666666", rgb: "102,102,102", category: "gray" },
+            { name: "中灰色", hex: "#999999", rgb: "153,153,153", category: "gray" },
+            { name: "浅灰色", hex: "#CCCCCC", rgb: "204,204,204", category: "gray" },
+            { name: "淡灰色", hex: "#DDDDDD", rgb: "221,221,221", category: "gray" },
+            { name: "白色", hex: "#FFFFFF", rgb: "255,255,255", category: "gray" },
+            
+            // 补充更多安全色
+            { name: "橄榄色", hex: "#808000", rgb: "128,128,0", category: "green" },
+            { name: "茶色", hex: "#D2B48C", rgb: "210,180,140", category: "orange" },
+            { name: "巧克力色", hex: "#D2691E", rgb: "210,105,30", category: "orange" },
+            { name: " saddle棕", hex: "#8B4513", rgb: "139,69,19", category: "orange" },
+            { name: "紫罗兰色", hex: "#9400D3", rgb: "148,0,211", category: "purple" },
+            { name: "靛蓝色", hex: "#4B0082", rgb: "75,0,130", category: "purple" },
+            { name: "深粉色", hex: "#FF1493", rgb: "255,20,147", category: "red" },
+            { name: "深天蓝色", hex: "#00BFFF", rgb: "0,191,255", category: "blue" },
+            { name: "青绿色", hex: "#40E0D0", rgb: "64,224,208", category: "green" },
+            { name: "春绿色", hex: "#00FF7F", rgb: "0,255,127", category: "green" },
+            { name: "柠檬绸色", hex: "#FFFACD", rgb: "255,250,205", category: "yellow" },
+            { name: "淡紫色", hex: "#E6E6FA", rgb: "230,230,250", category: "purple" },
+            { name: "米色", hex: "#F5F5DC", rgb: "245,245,220", category: "yellow" },
+            { name: "浅玫瑰色", hex: "#FFE4E1", rgb: "255,228,225", category: "red" },
+            { name: "淡蓝色", hex: "#F0F8FF", rgb: "240,248,255", category: "blue" },
+            { name: "淡绿色", hex: "#F0FFF0", rgb: "240,255,240", category: "green" }
+        ];
+
+        // 按类别分组
+        const categories = {
+            all: "全部颜色",
+            red: "红色系",
+            orange: "橙色系",
+            yellow: "黄色系",
+            green: "绿色系",
+            blue: "蓝色系",
+            purple: "紫色系",
+            gray: "灰度系"
+        };
+
+        // 渲染颜色卡片
+        function renderColors(filter = "all") {
+            const container = document.getElementById("color-container");
+            container.innerHTML = "";
+            
+            // 如果是全部，按类别分组显示
+            if (filter === "all") {
+                for (const [key, label] of Object.entries(categories)) {
+                    if (key === "all") continue;
+                    
+                    const categoryColors = webSafeColors.filter(color => color.category === key);
+                    if (categoryColors.length === 0) continue;
+                    
+                    // 添加类别标题
+                    const categoryTitle = document.createElement("h2");
+                    categoryTitle.className = "color-category";
+                    categoryTitle.textContent = label;
+                    container.appendChild(categoryTitle);
+                    
+                    // 创建该类别颜色网格
+                    const categoryGrid = document.createElement("div");
+                    categoryGrid.className = "color-grid";
+                    
+                    categoryColors.forEach(color => {
+                        categoryGrid.appendChild(createColorCard(color));
+                    });
+                    
+                    container.appendChild(categoryGrid);
+                }
+            } else {
+                // 单个类别显示
+                const categoryColors = webSafeColors.filter(color => color.category === filter);
+                
+                // 添加类别标题
+                const categoryTitle = document.createElement("h2");
+                categoryTitle.className = "color-category";
+                categoryTitle.textContent = categories[filter];
+                container.appendChild(categoryTitle);
+                
+                // 创建颜色网格
+                const colorGrid = document.createElement("div");
+                colorGrid.className = "color-grid";
+                
+                categoryColors.forEach(color => {
+                    colorGrid.appendChild(createColorCard(color));
+                });
+                
+                container.appendChild(colorGrid);
+            }
+            
+            // 重新绑定点击事件
+            bindColorCardEvents();
+        }
+
+        // 创建颜色卡片
+        function createColorCard(color) {
+            const card = document.createElement("div");
+            card.className = "color-card";
+            card.dataset.category = color.category;
+            
+            card.innerHTML = `
+                <div class="color-preview" style="background-color: ${color.hex};"></div>
+                <div class="color-info">
+                    <div class="color-name">${color.name}</div>
+                    <div class="color-hex">${color.hex}</div>
+                    <div class="color-rgb">rgb(${color.rgb})</div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // 绑定颜色卡片点击事件
+        function bindColorCardEvents() {
+            const colorCards = document.querySelectorAll(".color-card");
+            const notification = document.getElementById("notification");
+            const copiedColorSpan = document.getElementById("copied-color");
+            
+            colorCards.forEach(card => {
+                card.addEventListener("click", function() {
+                    const hexValue = this.querySelector(".color-hex").textContent;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(hexValue).then(() => {
+                        // 显示通知
+                        copiedColorSpan.textContent = hexValue;
+                        copiedColorSpan.style.color = hexValue;
+                        notification.classList.add("show");
+                        
+                        // 3秒后隐藏通知
+                        setTimeout(() => {
+                            notification.classList.remove("show");
+                        }, 3000);
+                    }).catch(err => {
+                        console.error("复制失败: ", err);
+                    });
+                });
+            });
+        }
+
+        // 绑定筛选按钮事件
+        function bindFilterEvents() {
+            const filterBtns = document.querySelectorAll(".filter-btn");
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener("click", function() {
+                    // 移除所有按钮的active类
+                    filterBtns.forEach(b => b.classList.remove("active"));
+                    
+                    // 为当前按钮添加active类
+                    this.classList.add("active");
+                    
+                    // 获取筛选条件
+                    const filter = this.dataset.filter;
+                    
+                    // 渲染对应颜色
+                    renderColors(filter);
+                });
+            });
+        }
+
+        // 初始化页面
+        document.addEventListener("DOMContentLoaded", function() {
+            // 初始渲染全部颜色
+            renderColors();
+            
+            // 绑定筛选按钮事件
+            bindFilterEvents();
+            
+            // 显示颜色总数
+            const colorCount = webSafeColors.length;
+            document.querySelector("header p.subtitle").textContent += ` | 共收录 ${colorCount} 种安全颜色`;
+        });
+    </script>
+</body>
+</html>

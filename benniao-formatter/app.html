@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公众号智能排版工具- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-formatter/">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", "PingFang SC", sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #2f5496;
+            color: #fff;
+            padding: 16px 24px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .tool-area {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .style-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 16px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .style-btn {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            background-color: #fff;
+            color: #343a40;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .style-btn:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .style-btn.active {
+            background-color: #2f5496;
+            color: #fff;
+            border-color: #2f5496;
+        }
+
+        .editor-area {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        label {
+            font-size: 15px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        #sourceText {
+            width: 100%;
+            height: 180px;
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #343a40;
+        }
+
+        #sourceText:focus {
+            outline: none;
+            border-color: #2f5496;
+            box-shadow: 0 0 0 3px rgba(47, 84, 150, 0.1);
+        }
+
+        #resultText {
+            width: 100%;
+            height: 180px;
+            padding: 16px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #343a40;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-y: auto;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        #formatBtn {
+            padding: 10px 24px;
+            background-color: #2f5496;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.2s ease;
+        }
+
+        #formatBtn:hover {
+            background-color: #234177;
+        }
+
+        #copyBtn {
+            padding: 10px 24px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.2s ease;
+        }
+
+        #copyBtn:hover {
+            background-color: #218838;
+        }
+
+        .tip {
+            font-size: 13px;
+            color: #6c757d;
+            margin-left: auto;
+        }
+
+        .copy-tip {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: rgba(40, 167, 69, 0.9);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .copy-tip.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">公众号智能排版工具</div>
+        <div class="tool-area">
+            <div class="style-buttons">
+                <div class="style-btn active" data-style="default">默认样式（清晰易读）</div>
+                <div class="style-btn" data-style="title">标题突出样式</div>
+                <div class="style-btn" data-style="paragraph">段落间距优化</div>
+                <div class="style-btn" data-style="quote">引用强调样式</div>
+                <div class="style-btn" data-style="list">列表规整样式</div>
+            </div>
+
+            <div class="editor-area">
+                <label for="sourceText"> 请输入原始文本：</label>
+                <textarea id="sourceText" placeholder="在这里粘贴你的公众号原始内容，支持普通文本、分段内容、列表等..."></textarea>
+            </div>
+
+            <div class="editor-area">
+                <label for="resultText"> 排版后预览：</label>
+                <div id="resultText"></div>
+            </div>
+
+            <div class="btn-group">
+                <button id="formatBtn">一键排版</button>
+                <button id="copyBtn">复制排版内容</button>
+                <div class="tip">提示：排版后可直接复制到公众号编辑器使用</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="copy-tip" id="copyTip">复制成功！已存入剪贴板</div>
+
+    <script>
+        // 获取DOM元素
+        const styleBtns = document.querySelectorAll('.style-btn');
+        const sourceText = document.getElementById('sourceText');
+        const resultText = document.getElementById('resultText');
+        const formatBtn = document.getElementById('formatBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyTip = document.getElementById('copyTip');
+        let currentStyle = 'default'; // 默认选中样式
+
+        // 样式切换逻辑
+        styleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有active类
+                styleBtns.forEach(item => item.classList.remove('active'));
+                // 给当前点击的按钮添加active类
+                btn.classList.add('active');
+                // 更新当前样式
+                currentStyle = btn.dataset.style;
+                // 如果已有原始文本，重新排版
+                if (sourceText.value.trim()) {
+                    formatText();
+                }
+            });
+        });
+
+        // 排版核心函数
+        function formatText() {
+            const rawText = sourceText.value.trim();
+            if (!rawText) {
+                resultText.innerHTML = '请先输入需要排版的文本内容';
+                return;
+            }
+
+            let formattedText = '';
+
+            // 根据不同样式进行排版
+            switch (currentStyle) {
+                case 'default':
+                    // 默认样式：去除多余空行，统一行间距，首行不缩进
+                    formattedText = rawText.replace(/\n{3,}/g, '\n\n').replace(/^\s+|\s+$/gm, '');
+                    break;
+                case 'title':
+                    // 标题突出样式：给首行（标题）加粗，增大间距
+                    const titleArr = rawText.split('\n');
+                    if (titleArr.length > 0) {
+                        // 标题加粗
+                        titleArr[0] = `【${titleArr[0].trim()}】`;
+                        // 标题与正文之间增加空行
+                        formattedText = titleArr.join('\n').replace(/\n{2,}/g, '\n\n').replace(/^\s+|\s+$/gm, '');
+                    }
+                    break;
+                case 'paragraph':
+                    // 段落间距优化：增大段落之间的间距，首行缩进2个字符
+                    formattedText = rawText.replace(/\n{2,}/g, '\n\n\n')
+                                          .replace(/^(.*?)$/gm, (match) => {
+                                              return match.trim() ? `  ${match.trim()}` : match;
+                                          });
+                    break;
+                case 'quote':
+                    // 引用强调样式：给段落添加引用符号，突出重点
+                    formattedText = rawText.replace(/\n{3,}/g, '\n\n')
+                                          .replace(/^(.*?)$/gm, (match) => {
+                                              return match.trim() ? `「${match.trim()}」` : match;
+                                          });
+                    break;
+                case 'list':
+                    // 列表规整样式：自动给无序列表添加序号/项目符号
+                    formattedText = rawText.replace(/\n{3,}/g, '\n\n').replace(/^\s+|\s+$/gm, '');
+                    const listArr = formattedText.split('\n');
+                    let listIndex = 1;
+                    formattedText = listArr.map(item => {
+                        if (item.trim() && !item.startsWith('①') && !item.startsWith('-')) {
+                            return `${listIndex++}、${item.trim()}`;
+                        }
+                        return item;
+                    }).join('\n');
+                    break;
+                default:
+                    formattedText = rawText.replace(/\n{3,}/g, '\n\n').replace(/^\s+|\s+$/gm, '');
+            }
+
+            // 渲染排版后的文本
+            resultText.textContent = formattedText;
+        }
+
+        // 一键排版按钮点击事件
+        formatBtn.addEventListener('click', formatText);
+
+        // 一键复制功能
+        copyBtn.addEventListener('click', async () => {
+            const textToCopy = resultText.textContent.trim();
+            if (!textToCopy) {
+                alert('暂无可复制的排版内容，请先进行排版！');
+                return;
+            }
+
+            try {
+                // 复制到剪贴板
+                await navigator.clipboard.writeText(textToCopy);
+                // 显示复制成功提示
+                copyTip.classList.add('show');
+                // 3秒后隐藏提示
+                setTimeout(() => {
+                    copyTip.classList.remove('show');
+                }, 2000);
+            } catch (err) {
+                console.error('复制失败：', err);
+                alert('复制失败，请手动选中复制！');
+            }
+        });
+
+        // 初始化：默认显示提示文本
+        resultText.textContent = '排版后的内容将在这里预览，支持一键复制到公众号编辑器';
+    </script>
+</body>
+</html>

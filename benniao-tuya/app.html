@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线涂鸦画板 - 释放您的艺术天赋</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff8a00, #e52e71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+        
+        .toolbar {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(40, 40, 60, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .tool-section {
+            background: rgba(50, 50, 70, 0.6);
+            border-radius: 12px;
+            padding: 18px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            font-size: 1.2rem;
+        }
+        
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-swatch.active {
+            border-color: white;
+            transform: scale(1.1);
+        }
+        
+        .custom-color {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        #colorPicker {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: transparent;
+        }
+        
+        #colorValue {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .brush-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #444;
+            outline: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ff8a00;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .brush-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .preview-circle {
+            border-radius: 50%;
+            background-color: currentColor;
+            border: 2px solid #666;
+        }
+        
+        .tool-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .tool-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4a4a6d, #3a3a5d);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tool-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tool-btn.clear {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+        }
+        
+        .tool-btn.save {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+        }
+        
+        .canvas-container {
+            flex: 3;
+            min-width: 300px;
+            background: #222;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .canvas-header {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .canvas-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        .canvas-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #4dffea;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        canvas {
+            display: block;
+            background-color: white;
+            cursor: crosshair;
+            width: 100%;
+            height: 500px;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            background: rgba(40, 40, 60, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        
+        .instructions h2 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .instructions li:before {
+            content: "•";
+            color: #ff8a00;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #888;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .toolbar {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-palette"></i> 在线涂鸦画板</h1>
+            <p class="subtitle">为您提供在线画画、在线涂鸦、涂鸦自定义颜色和调色功能。在这里您可以尽情发挥您的画画艺术天赋，画出您想要的涂鸦之作，涂鸦完成后可以保存到本地。</p>
+        </header>
+        
+        <main class="app-container">
+            <div class="toolbar">
+                <div class="tool-section">
+                    <h2 class="section-title"><i class="fas fa-fill-drip"></i> 颜色选择</h2>
+                    <div class="color-palette" id="colorPalette">
+                        <!-- 颜色样本将通过JavaScript动态生成 -->
+                    </div>
+                    
+                    <div class="custom-color">
+                        <input type="color" id="colorPicker" value="#ff0000">
+                        <div>
+                            <div>自定义颜色</div>
+                            <div id="colorValue">#FF0000</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <h2 class="section-title"><i class="fas fa-paint-brush"></i> 画笔设置</h2>
+                    <div class="brush-controls">
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>画笔粗细</span>
+                                <span id="brushSizeValue">5px</span>
+                            </div>
+                            <input type="range" id="brushSize" min="1" max="50" value="5">
+                        </div>
+                        
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>画笔透明度</span>
+                                <span id="opacityValue">100%</span>
+                            </div>
+                            <input type="range" id="opacity" min="10" max="100" value="100">
+                        </div>
+                        
+                        <div class="brush-preview">
+                            <div>画笔预览</div>
+                            <div class="preview-circle" id="brushPreview"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <h2 class="section-title"><i class="fas fa-sliders-h"></i> 画板工具</h2>
+                    <div class="tool-buttons">
+                        <button class="tool-btn" id="clearBtn">
+                            <i class="fas fa-trash-alt"></i> 清空画布
+                        </button>
+                        <button class="tool-btn" id="undoBtn">
+                            <i class="fas fa-undo"></i> 撤销
+                        </button>
+                        <button class="tool-btn save" id="saveBtn">
+                            <i class="fas fa-download"></i> 保存图片
+                        </button>
+                        <button class="tool-btn" id="fillBgBtn">
+                            <i class="fas fa-fill"></i> 填充背景
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <div class="canvas-header">
+                    <div class="canvas-title">创作区 - 尽情发挥您的艺术天赋</div>
+                    <div class="canvas-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="strokeCount">0</div>
+                            <div class="stat-label">画笔 strokes</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="drawingTime">0:00</div>
+                            <div class="stat-label">绘制时间</div>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="drawingCanvas">
+                    您的浏览器不支持Canvas，请升级浏览器以使用此功能。
+                </canvas>
+            </div>
+        </main>
+        
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> 使用说明</h2>
+            <ul>
+                <li>在画布上点击并拖动鼠标进行绘画</li>
+                <li>选择预设颜色或使用自定义颜色选择器调整画笔颜色</li>
+                <li>调整画笔粗细和透明度以获得不同效果</li>
+                <li>使用"撤销"按钮可以撤销上一步操作</li>
+                <li>使用"填充背景"可以更改画布背景颜色</li>
+                <li>完成创作后，点击"保存图片"将作品下载到本地</li>
+                <li>您的所有涂鸦数据仅保存在本地浏览器中，不会上传到服务器</li>
+            </ul>
+        </div>
+        
+        <footer>
+             
+        </footer>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const colorPalette = document.getElementById('colorPalette');
+        const colorPicker = document.getElementById('colorPicker');
+        const colorValue = document.getElementById('colorValue');
+        const brushSize = document.getElementById('brushSize');
+        const brushSizeValue = document.getElementById('brushSizeValue');
+        const opacity = document.getElementById('opacity');
+        const opacityValue = document.getElementById('opacityValue');
+        const brushPreview = document.getElementById('brushPreview');
+        const clearBtn = document.getElementById('clearBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const fillBgBtn = document.getElementById('fillBgBtn');
+        const strokeCountElement = document.getElementById('strokeCount');
+        const drawingTimeElement = document.getElementById('drawingTime');
+        
+        // 初始化变量
+        let currentColor = '#ff0000';
+        let currentBrushSize = 5;
+        let currentOpacity = 1.0;
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let strokeCount = 0;
+        let startTime = new Date();
+        let drawingHistory = [];
+        let historyIndex = -1;
+        
+        // 预设颜色
+        const presetColors = [
+            '#FF0000', '#FF4500', '#FFA500', '#FFD700', '#FFFF00',
+            '#9ACD32', '#00FF00', '#20B2AA', '#1E90FF', '#0000FF',
+            '#8A2BE2', '#FF00FF', '#FF1493', '#000000', '#696969',
+            '#FFFFFF', '#F5F5DC', '#D2B48C', '#8B4513', '#A52A2A'
+        ];
+        
+        // 初始化画布
+        function initCanvas() {
+            // 设置画布尺寸
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            // 设置初始背景
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 保存初始状态到历史记录
+            saveCanvasState();
+            
+            // 更新绘制时间
+            updateDrawingTime();
+        }
+        
+        // 生成颜色样本
+        function generateColorPalette() {
+            colorPalette.innerHTML = '';
+            
+            presetColors.forEach(color => {
+                const swatch = document.createElement('div');
+                swatch.className = 'color-swatch';
+                swatch.style.backgroundColor = color;
+                swatch.dataset.color = color;
+                
+                // 标记第一个颜色为默认选中
+                if (color === '#FF0000') {
+                    swatch.classList.add('active');
+                }
+                
+                swatch.addEventListener('click', function() {
+                    // 移除所有样本的active类
+                    document.querySelectorAll('.color-swatch').forEach(s => {
+                        s.classList.remove('active');
+                    });
+                    
+                    // 添加active类到当前样本
+                    this.classList.add('active');
+                    
+                    // 更新当前颜色
+                    currentColor = this.dataset.color;
+                    colorPicker.value = currentColor;
+                    colorValue.textContent = currentColor.toUpperCase();
+                    
+                    // 更新画笔预览
+                    updateBrushPreview();
+                });
+                
+                colorPalette.appendChild(swatch);
+            });
+        }
+        
+        // 更新画笔预览
+        function updateBrushPreview() {
+            brushPreview.style.width = `${currentBrushSize * 4}px`;
+            brushPreview.style.height = `${currentBrushSize * 4}px`;
+            brushPreview.style.color = currentColor;
+            brushPreview.style.opacity = currentOpacity;
+        }
+        
+        // 保存画布状态到历史记录
+        function saveCanvasState() {
+            // 只保存最近20个状态
+            if (historyIndex < drawingHistory.length - 1) {
+                drawingHistory = drawingHistory.slice(0, historyIndex + 1);
+            }
+            
+            // 保存当前画布状态
+            drawingHistory.push(canvas.toDataURL());
+            historyIndex++;
+            
+            // 限制历史记录数量
+            if (drawingHistory.length > 20) {
+                drawingHistory.shift();
+                historyIndex--;
+            }
+        }
+        
+        // 撤销操作
+        function undoDrawing() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                
+                const img = new Image();
+                img.onload = function() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    strokeCount--;
+                    strokeCountElement.textContent = strokeCount;
+                };
+                img.src = drawingHistory[historyIndex];
+            }
+        }
+        
+        // 开始绘制
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = getMousePos(e);
+            
+            // 开始新的一笔时保存状态
+            saveCanvasState();
+        }
+        
+        // 绘制中
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            e.preventDefault();
+            
+            const [x, y] = getMousePos(e);
+            
+            // 设置绘图样式
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentBrushSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.globalAlpha = currentOpacity;
+            
+            // 开始绘制路径
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            
+            // 更新最后位置
+            [lastX, lastY] = [x, y];
+        }
+        
+        // 停止绘制
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                strokeCount++;
+                strokeCountElement.textContent = strokeCount;
+            }
+        }
+        
+        // 获取鼠标位置
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let x, y;
+            
+            if (e.type.includes('touch')) {
+                x = e.touches[0].clientX - rect.left;
+                y = e.touches[0].clientY - rect.top;
+            } else {
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+            
+            return [x, y];
+        }
+        
+        // 清空画布
+        function clearCanvas() {
+            if (confirm('确定要清空画布吗？这将清除所有绘画内容。')) {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 重置计数
+                strokeCount = 0;
+                strokeCountElement.textContent = strokeCount;
+                
+                // 保存状态
+                saveCanvasState();
+            }
+        }
+        
+        // 填充背景
+        function fillBackground() {
+            const bgColor = prompt('请输入背景颜色（颜色名称、十六进制代码或RGB值）：', '#FFFFFF');
+            
+            if (bgColor) {
+                // 保存当前状态
+                saveCanvasState();
+                
+                // 保存当前绘制内容
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                // 填充背景
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 将绘制内容放回
+                ctx.putImageData(imageData, 0, 0);
+            }
+        }
+        
+        // 保存图片
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = `涂鸦作品-${new Date().toISOString().slice(0, 10)}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // 更新绘制时间
+        function updateDrawingTime() {
+            const now = new Date();
+            const diff = Math.floor((now - startTime) / 1000);
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            
+            drawingTimeElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // 初始化事件监听
+        function initEventListeners() {
+            // 画笔大小调整
+            brushSize.addEventListener('input', function() {
+                currentBrushSize = parseInt(this.value);
+                brushSizeValue.textContent = `${currentBrushSize}px`;
+                updateBrushPreview();
+            });
+            
+            // 透明度调整
+            opacity.addEventListener('input', function() {
+                currentOpacity = parseInt(this.value) / 100;
+                opacityValue.textContent = `${this.value}%`;
+                updateBrushPreview();
+            });
+            
+            // 颜色选择器
+            colorPicker.addEventListener('input', function() {
+                currentColor = this.value;
+                colorValue.textContent = currentColor.toUpperCase();
+                
+                // 更新选中的颜色样本
+                document.querySelectorAll('.color-swatch').forEach(swatch => {
+                    swatch.classList.remove('active');
+                    if (swatch.dataset.color.toUpperCase() === currentColor.toUpperCase()) {
+                        swatch.classList.add('active');
+                    }
+                });
+                
+                updateBrushPreview();
+            });
+            
+            // 鼠标事件
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // 触摸事件（移动设备支持）
+            canvas.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                startDrawing(e);
+            });
+            canvas.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                draw(e);
+            });
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            // 按钮事件
+            clearBtn.addEventListener('click', clearCanvas);
+            undoBtn.addEventListener('click', undoDrawing);
+            saveBtn.addEventListener('click', saveImage);
+            fillBgBtn.addEventListener('click', fillBackground);
+            
+            // 窗口大小调整时重新初始化画布
+            window.addEventListener('resize', initCanvas);
+        }
+        
+        // 初始化应用
+        function initApp() {
+            initCanvas();
+            generateColorPalette();
+            updateBrushPreview();
+            initEventListeners();
+            
+            // 每秒钟更新一次绘制时间
+            setInterval(updateDrawingTime, 1000);
+        }
+        
+        // 启动应用
+        window.addEventListener('load', initApp);
+    </script>
+</body>
+</html>

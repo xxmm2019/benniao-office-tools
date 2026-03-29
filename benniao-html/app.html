@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML转义字符对照表 | 快速查找工具</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        /* 极简化的header样式 */
+        header {
+            background-color: #2563eb; /* 蓝色背景 */
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+        
+        .tip-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+        
+        .search-container {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .filter-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        
+        .result-count {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        thead {
+            background-color: #f8f9fa;
+        }
+        
+        th {
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover td {
+            background-color: #f9fbfd;
+        }
+        
+        .char-col {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            text-align: center;
+            width: 70px;
+        }
+        
+        .decimal-col, .entity-col {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background-color: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 4px;
+            color: #c2410c;
+        }
+        
+        .description-col {
+            color: #555;
+        }
+        
+        .usage-col {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            background-color: #f0f8ff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            color: #2c3e50;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .highlight {
+            background-color: #fef9c3;
+            font-weight: bold;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+                font-size: 0.85rem;
+            }
+            
+            .char-col {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 进一步简化的header部分 -->
+        <header>
+            <h1>HTML转义字符对照表</h1>
+            <p class="subtitle">快速查找HTML实体、十进制和十六进制编码</p>
+            <div class="tip-box">
+                <i class="fas fa-search"></i>
+                <span>使用 Ctrl+F 快速查找字符</span>
+            </div>
+        </header>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索字符、十进制、实体或描述...">
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="special">特殊字符</button>
+                <button class="filter-btn" data-filter="symbols">符号</button>
+                <button class="filter-btn" data-filter="math">数学</button>
+                <button class="filter-btn" data-filter="arrows">箭头</button>
+                <button class="filter-btn" data-filter="currency">货币</button>
+            </div>
+            <div class="result-count">
+                找到 <span id="matchCount">0</span> 个匹配项
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="charTable">
+                <thead>
+                    <tr>
+                        <th width="70">字符</th>
+                        <th width="110">十进制</th>
+                        <th width="110">实体名称</th>
+                        <th>描述</th>
+                        <th width="180">使用示例</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- 表格内容将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+            <div id="noResults" class="no-results">
+                <i class="fas fa-search" style="font-size: 1.8rem; margin-bottom: 10px; color: #aaa;"></i>
+                <h3>未找到匹配的字符</h3>
+                <p>请尝试其他搜索词或筛选条件</p>
+            </div>
+        </div>
+        
+        <footer>
+            
+        </footer>
+    </div>
+
+    <script>
+        // HTML转义字符数据
+        const htmlEntities = [
+            { char: '<', decimal: '&#60;', entity: '&lt;', description: '小于号', category: 'special', example: '&lt;div&gt;' },
+            { char: '>', decimal: '&#62;', entity: '&gt;', description: '大于号', category: 'special', example: '&lt;/div&gt;' },
+            { char: '&', decimal: '&#38;', entity: '&amp;', description: '和号', category: 'special', example: 'John &amp; Jane' },
+            { char: '"', decimal: '&#34;', entity: '&quot;', description: '双引号', category: 'special', example: '&lt;img src=&quot;image.jpg&quot;&gt;' },
+            { char: "'", decimal: '&#39;', entity: '&apos;', description: '单引号 (仅限XHTML)', category: 'special', example: "It&apos;s easy" },
+            { char: '©', decimal: '&#169;', entity: '&copy;', description: '版权符号', category: 'symbols', example: '&copy; 2023 Company' },
+            { char: '®', decimal: '&#174;', entity: '&reg;', description: '注册商标', category: 'symbols', example: 'Product&reg;' },
+            { char: '™', decimal: '&#8482;', entity: '&trade;', description: '商标符号', category: 'symbols', example: 'Brand&trade;' },
+            { char: ' ', decimal: '&#160;', entity: '&nbsp;', description: '不换行空格', category: 'special', example: 'Hello&nbsp;World' },
+            { char: '€', decimal: '&#8364;', entity: '&euro;', description: '欧元符号', category: 'currency', example: 'Price: &euro;10' },
+            { char: '£', decimal: '&#163;', entity: '&pound;', description: '英镑符号', category: 'currency', example: 'Price: &pound;20' },
+            { char: '¥', decimal: '&#165;', entity: '&yen;', description: '日元/人民币符号', category: 'currency', example: 'Price: &yen;100' },
+            { char: '$', decimal: '&#36;', entity: '&dollar;', description: '美元符号', category: 'currency', example: 'Price: &dollar;5' },
+            { char: '¢', decimal: '&#162;', entity: '&cent;', description: '分币符号', category: 'currency', example: 'Price: &cent;50' },
+            { char: '§', decimal: '&#167;', entity: '&sect;', description: '章节符号', category: 'symbols', example: 'See &sect;3.1' },
+            { char: '¶', decimal: '&#182;', entity: '&para;', description: '段落符号', category: 'symbols', example: 'Refer to &para;4' },
+            { char: '•', decimal: '&#8226;', entity: '&bull;', description: '项目符号', category: 'symbols', example: '&bull; Item 1' },
+            { char: '…', decimal: '&#8230;', entity: '&hellip;', description: '省略号', category: 'symbols', example: 'Text&hellip;' },
+            { char: '←', decimal: '&#8592;', entity: '&larr;', description: '左箭头', category: 'arrows', example: '&larr; Back' },
+            { char: '→', decimal: '&#8594;', entity: '&rarr;', description: '右箭头', category: 'arrows', example: 'Next &rarr;' },
+            { char: '↑', decimal: '&#8593;', entity: '&uarr;', description: '上箭头', category: 'arrows', example: '&uarr; Increase' },
+            { char: '↓', decimal: '&#8595;', entity: '&darr;', description: '下箭头', category: 'arrows', example: '&darr; Decrease' },
+            { char: '±', decimal: '&#177;', entity: '&plusmn;', description: '正负号', category: 'math', example: 'Temperature &plusmn;2°C' },
+            { char: '×', decimal: '&#215;', entity: '&times;', description: '乘号', category: 'math', example: '5 &times; 3 = 15' },
+            { char: '÷', decimal: '&#247;', entity: '&divide;', description: '除号', category: 'math', example: '10 &divide; 2 = 5' },
+            { char: '≠', decimal: '&#8800;', entity: '&ne;', description: '不等于', category: 'math', example: 'a &ne; b' },
+            { char: '≈', decimal: '&#8776;', entity: '&asymp;', description: '约等于', category: 'math', example: '&asymp; 3.14' },
+            { char: '≤', decimal: '&#8804;', entity: '&le;', description: '小于等于', category: 'math', example: 'x &le; 10' },
+            { char: '≥', decimal: '&#8805;', entity: '&ge;', description: '大于等于', category: 'math', example: 'y &ge; 0' },
+            { char: '½', decimal: '&#189;', entity: '&frac12;', description: '二分之一', category: 'math', example: '&frac12; cup' },
+            { char: '¼', decimal: '&#188;', entity: '&frac14;', description: '四分之一', category: 'math', example: '&frac14; pound' },
+            { char: '¾', decimal: '&#190;', entity: '&frac34;', description: '四分之三', category: 'math', example: '&frac34; completed' },
+            { char: '°', decimal: '&#176;', entity: '&deg;', description: '度符号', category: 'symbols', example: '45&deg; angle' },
+            { char: 'µ', decimal: '&#181;', entity: '&micro;', description: '微符号', category: 'symbols', example: '10 &micro;m' },
+            { char: '∀', decimal: '&#8704;', entity: '&forall;', description: '对所有', category: 'math', example: '&forall; x &isin; R' },
+            { char: '∃', decimal: '&#8707;', entity: '&exist;', description: '存在', category: 'math', example: '&exist; y &gt; 0' },
+            { char: '∅', decimal: '&#8709;', entity: '&empty;', description: '空集', category: 'math', example: 'A = &empty;' },
+            { char: '∑', decimal: '&#8721;', entity: '&sum;', description: '求和', category: 'math', example: '&sum; x_i' },
+            { char: '√', decimal: '&#8730;', entity: '&radic;', description: '平方根', category: 'math', example: '&radic;9 = 3' },
+            { char: '∞', decimal: '&#8734;', entity: '&infin;', description: '无穷大', category: 'math', example: 'limit &rarr; &infin;' },
+        ];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const tableBody = document.getElementById('tableBody');
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const matchCountElement = document.getElementById('matchCount');
+            const totalCountElement = document.getElementById('totalCount');
+            const noResultsElement = document.getElementById('noResults');
+            
+            let currentFilter = 'all';
+            let currentSearch = '';
+            
+            // 显示所有字符
+            function renderTable() {
+                let filteredEntities = htmlEntities;
+                
+                // 应用筛选
+                if (currentFilter !== 'all') {
+                    filteredEntities = filteredEntities.filter(entity => entity.category === currentFilter);
+                }
+                
+                // 应用搜索
+                if (currentSearch) {
+                    const searchLower = currentSearch.toLowerCase();
+                    filteredEntities = filteredEntities.filter(entity => 
+                        entity.char.toLowerCase().includes(searchLower) ||
+                        entity.decimal.toLowerCase().includes(searchLower) ||
+                        entity.entity.toLowerCase().includes(searchLower) ||
+                        entity.description.toLowerCase().includes(searchLower)
+                    );
+                }
+                
+                // 清空表格
+                tableBody.innerHTML = '';
+                
+                // 显示/隐藏无结果消息
+                if (filteredEntities.length === 0) {
+                    noResultsElement.style.display = 'block';
+                } else {
+                    noResultsElement.style.display = 'none';
+                }
+                
+                // 渲染表格行
+                filteredEntities.forEach(entity => {
+                    const row = document.createElement('tr');
+                    
+                    // 高亮搜索关键词
+                    let charDisplay = entity.char;
+                    let decimalDisplay = entity.decimal;
+                    let entityDisplay = entity.entity;
+                    let descriptionDisplay = entity.description;
+                    
+                    if (currentSearch) {
+                        const searchLower = currentSearch.toLowerCase();
+                        const highlight = text => text.replace(
+                            new RegExp(`(${escapeRegExp(currentSearch)})`, 'gi'),
+                            '<span class="highlight">$1</span>'
+                        );
+                        
+                        charDisplay = highlight(charDisplay);
+                        decimalDisplay = highlight(decimalDisplay);
+                        entityDisplay = highlight(entityDisplay);
+                        descriptionDisplay = highlight(descriptionDisplay);
+                    }
+                    
+                    row.innerHTML = `
+                        <td class="char-col">${charDisplay}</td>
+                        <td class="decimal-col">${decimalDisplay}</td>
+                        <td class="entity-col">${entityDisplay}</td>
+                        <td class="description-col">${descriptionDisplay}</td>
+                        <td class="usage-col">${entity.example}</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // 更新计数
+                matchCountElement.textContent = filteredEntities.length;
+                totalCountElement.textContent = htmlEntities.length;
+            }
+            
+            // 转义正则表达式特殊字符
+            function escapeRegExp(string) {
+                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+            
+            // 搜索功能
+            searchInput.addEventListener('input', function() {
+                currentSearch = this.value.trim();
+                renderTable();
+            });
+            
+            // 筛选按钮功能
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // 为当前按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 更新当前筛选器
+                    currentFilter = this.getAttribute('data-filter');
+                    
+                    // 重新渲染表格
+                    renderTable();
+                });
+            });
+            
+            // 初始渲染
+            renderTable();
+            
+            // 添加键盘快捷键提示
+            document.addEventListener('keydown', function(e) {
+                // 检查是否按下了Ctrl+F
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    // 阻止默认的查找行为
+                    e.preventDefault();
+                    // 聚焦到搜索框
+                    searchInput.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

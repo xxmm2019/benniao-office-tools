@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+     
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML 转 XML - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/yaml-to-xml/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #06b6d4 0%, #06b6d4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #06b6d4 0%, #06b6d4 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 320px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            transition: border-color 0.3s;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #06b6d4;
+        }
+
+        .editor-textarea.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .status-box.error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+
+        .status-box.warning {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+
+        .status-box.info {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+        }
+
+        .status-box.active {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .status-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            flex: 1;
+        }
+
+        .status-box.error p {
+            color: #dc2626;
+        }
+
+        .status-box.warning p {
+            color: #d97706;
+        }
+
+        .status-box.info p {
+            color: #1e40af;
+        }
+
+        .status-icon {
+            font-size: 18px;
+        }
+
+        .error-details {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: monospace;
+            line-height: 1.4;
+        }
+
+        .error-line {
+            background-color: #fee;
+            color: #c00;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .error-position {
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .control {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .control input,
+        .control select,
+        .control textarea {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d0d7de;
+            font-size: 14px;
+        }
+
+        .help-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .help-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .help-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .help-item {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .help-item h4 {
+            color: #06b6d4;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .help-item p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin-top: 5px;
+        }
+
+        .highlight {
+            background-color: #ffecb3;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 240px;
+            }
+
+            .help-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>YAML 转 XML</h1>
+            <p>智能转换工具 - 详细错误提示与语法检查</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <div class="status-icon" id="status-icon"></div>
+                <div>
+                    <p id="status-message">已完成转换</p>
+                    <div id="error-details" class="error-details" style="display: none;"></div>
+                    <div id="error-position" class="error-position" style="display: none;"></div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" onclick="convert()">
+                        <i class="fas fa-sync-alt"></i> 立即转换
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSample()">
+                        <i class="fas fa-code"></i> 示例
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> 清空
+                    </button>
+                    <button class="btn btn-success" onclick="validateYAML()">
+                        <i class="fas fa-check-circle"></i> 语法检查
+                    </button>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <i class="fas fa-file-alt"></i>
+                        <span>行数: <span id="line-count">0</span></span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-font"></i>
+                        <span>字符: <span id="char-count">0</span></span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-code"></i>
+                        <span>深度: <span id="depth-level">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <i class="fas fa-file-code"></i> YAML 输入
+                        </span>
+                        <div class="btn-group" style="gap: 5px;">
+                            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="formatYAML()">
+                                <i class="fas fa-indent"></i> 格式化
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="editor-textarea" id="input" placeholder="粘贴 YAML 内容...&#10;&#10;示例:&#10;user:&#10;  name: Alice&#10;  role: admin&#10;  tags:&#10;    - developer&#10;    - designer" oninput="updateStats()"></textarea>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <i class="fas fa-file-export"></i> XML 输出
+                        </span>
+                        <div class="btn-group" style="gap: 5px;">
+                            <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="copyOutput()">
+                                <i class="fas fa-copy"></i> 复制
+                            </button>
+                            <button class="btn btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="downloadXML()">
+                                <i class="fas fa-download"></i> 下载
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="editor-textarea" id="output" placeholder="转换后的 XML 将显示在这里..." readonly></textarea>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <div class="help-title">
+                                               <i class="fas fa-info-circle"></i> 使用提示与常见错误
+                        </div>
+                        <div class="help-content">
+                            <div class="help-item">
+                                <h4><i class="fas fa-lightbulb"></i> YAML 语法提示</h4>
+                                <p>YAML 使用缩进表示结构，注意使用空格（推荐2个或4个空格），<span class="highlight">不要使用制表符(Tab)</span>。</p>
+                                <div class="code-block"># 正确示例
+person:
+  name: "张三"
+  age: 30
+  address:
+    city: "北京"
+    postal: "100000"</div>
+                            </div>
+                            <div class="help-item">
+                                <h4><i class="fas fa-exclamation-triangle"></i> 常见错误</h4>
+                                <p>1. 缩进不一致：必须使用相同数量的空格缩进同一级别的元素</p>
+                                <p>2. 冒号后缺少空格：<span class="highlight">key: value</span> 正确 | <span class="highlight">key:value</span> 错误</p>
+                                <p>3. 字符串引号使用不当：特殊字符需要引号包裹</p>
+                            </div>
+                            <div class="help-item">
+                                <h4><i class="fas fa-code"></i> XML 输出说明</h4>
+                                <p>转换后的 XML 将使用 UTF-8 编码，并自动格式化缩进。</p>
+                                <p>数组元素会自动添加索引属性：<span class="highlight">item index="0"</span></p>
+                                <div class="code-block">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;root&gt;
+  &lt;person&gt;
+    &lt;name&gt;张三&lt;/name&gt;
+  &lt;/person&gt;
+&lt;/root&gt;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script>
+        // DOM 元素
+        const inputTextarea = document.getElementById('input');
+        const outputTextarea = document.getElementById('output');
+        const statusBox = document.getElementById('status-box');
+        const statusIcon = document.getElementById('status-icon');
+        const statusMessage = document.getElementById('status-message');
+        const errorDetails = document.getElementById('error-details');
+        const errorPosition = document.getElementById('error-position');
+        const lineCountElement = document.getElementById('line-count');
+        const charCountElement = document.getElementById('char-count');
+        const depthLevelElement = document.getElementById('depth-level');
+
+        // 更新统计信息
+        function updateStats() {
+            const text = inputTextarea.value;
+            const lines = text.split('\n').length;
+            const chars = text.length;
+            
+            // 计算YAML深度（简单版本）
+            let maxDepth = 0;
+            let currentDepth = 0;
+            text.split('\n').forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed && !trimmed.startsWith('#')) {
+                    const leadingSpaces = line.search(/\S/);
+                    currentDepth = Math.floor(leadingSpaces / 2);
+                    if (currentDepth > maxDepth) maxDepth = currentDepth;
+                }
+            });
+            
+            lineCountElement.textContent = lines;
+            charCountElement.textContent = chars;
+            depthLevelElement.textContent = maxDepth;
+        }
+
+        // 显示状态消息
+        function showStatus(type, message, details = null, position = null) {
+            statusBox.className = `status-box ${type} active`;
+            
+            // 设置图标
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            statusIcon.textContent = icons[type] || 'ℹ️';
+            
+            // 设置消息
+            statusMessage.textContent = message;
+            
+            // 设置错误详情
+            if (details) {
+                errorDetails.textContent = details;
+                errorDetails.style.display = 'block';
+            } else {
+                errorDetails.style.display = 'none';
+            }
+            
+            // 设置错误位置
+            if (position) {
+                errorPosition.textContent = position;
+                errorPosition.style.display = 'block';
+            } else {
+                errorPosition.style.display = 'none';
+            }
+            
+            // 自动隐藏成功消息
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusBox.classList.remove('active');
+                }, 3000);
+            }
+        }
+
+        // 格式化 YAML
+        function formatYAML() {
+            try {
+                const yamlText = inputTextarea.value.trim();
+                if (!yamlText) {
+                    showStatus('warning', '请输入 YAML 内容进行格式化');
+                    return;
+                }
+                
+                const parsed = jsyaml.load(yamlText);
+                const formatted = jsyaml.dump(parsed, {
+                    indent: 2,
+                    lineWidth: -1, // 不换行
+                    quotingType: '"',
+                    forceQuotes: false
+                });
+                
+                inputTextarea.value = formatted;
+                updateStats();
+                showStatus('success', 'YAML 格式化成功');
+            } catch (error) {
+                showStatus('error', '格式化失败', error.message, `位置: 第 ${error.mark?.line + 1 || '未知'} 行`);
+                inputTextarea.classList.add('error');
+            }
+        }
+
+        // 验证 YAML 语法
+        function validateYAML() {
+            try {
+                const yamlText = inputTextarea.value.trim();
+                if (!yamlText) {
+                    showStatus('warning', '请输入 YAML 内容进行验证');
+                    return;
+                }
+                
+                jsyaml.load(yamlText);
+                inputTextarea.classList.remove('error');
+                showStatus('success', 'YAML 语法正确');
+            } catch (error) {
+                showStatus('error', 'YAML 语法错误', error.message, `位置: 第 ${error.mark?.line + 1 || '未知'} 行`);
+                inputTextarea.classList.add('error');
+            }
+        }
+
+        // 将对象转换为 XML
+        function objToXml(obj, indent = 0, rootName = 'root') {
+            let xml = '';
+            const spaces = '  '.repeat(indent);
+            
+            if (Array.isArray(obj)) {
+                obj.forEach((item, index) => {
+                    if (typeof item === 'object' && item !== null) {
+                        xml += `${spaces}<item index="${index}">\n`;
+                        xml += objToXml(item, indent + 1);
+                        xml += `${spaces}</item>\n`;
+                    } else {
+                        xml += `${spaces}<item index="${index}">${escapeXml(item.toString())}</item>\n`;
+                    }
+                });
+            } else if (typeof obj === 'object' && obj !== null) {
+                Object.entries(obj).forEach(([key, value]) => {
+                    if (typeof value === 'object' && value !== null) {
+                        xml += `${spaces}<${key}>\n`;
+                        xml += objToXml(value, indent + 1);
+                        xml += `${spaces}</${key}>\n`;
+                    } else {
+                        const strValue = value === null ? '' : escapeXml(value.toString());
+                        xml += `${spaces}<${key}>${strValue}</${key}>\n`;
+                    }
+                });
+            } else {
+                xml += `${spaces}${escapeXml(obj.toString())}\n`;
+            }
+            
+            return xml;
+        }
+
+        // 转义 XML 特殊字符
+        function escapeXml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+
+        // 主转换函数
+        function convert() {
+            try {
+                const yamlText = inputTextarea.value.trim();
+                if (!yamlText) {
+                    showStatus('warning', '请输入 YAML 内容');
+                    return;
+                }
+                
+                // 解析 YAML
+                const parsed = jsyaml.load(yamlText);
+                
+                // 转换为 XML
+                let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+                xml += '<root>\n';
+                xml += objToXml(parsed, 1);
+                xml += '</root>';
+                
+                // 更新输出
+                outputTextarea.value = xml;
+                inputTextarea.classList.remove('error');
+                showStatus('success', '转换成功！XML 已生成');
+                
+                // 更新统计
+                updateStats();
+                
+            } catch (error) {
+                showStatus('error', '转换失败', error.message, `位置: 第 ${error.mark?.line + 1 || '未知'} 行`);
+                inputTextarea.classList.add('error');
+                outputTextarea.value = '';
+            }
+        }
+
+        // 加载示例数据
+        function loadSample() {
+            const sampleYAML = `# YAML 示例 - 用户信息
+user:
+  name: "张三"
+  age: 30
+  active: true
+  skills:
+    - "JavaScript"
+    - "Python"
+    - "Go"
+  contact:
+    email: "zhangsan@example.com"
+    phone: "+86 13800138000"
+  projects:
+    - name: "项目A"
+      status: "completed"
+    - name: "项目B"
+      status: "ongoing"
+  metadata:
+    created: 2023-10-01
+    tags:
+      - developer
+      - backend`;
+
+            inputTextarea.value = sampleYAML;
+            convert();
+            updateStats();
+            showStatus('info', '示例数据已加载');
+        }
+
+        // 清空所有内容
+        function clearAll() {
+            if (confirm('确定要清空所有内容吗？')) {
+                inputTextarea.value = '';
+                outputTextarea.value = '';
+                inputTextarea.classList.remove('error');
+                statusBox.classList.remove('active');
+                updateStats();
+                showStatus('info', '已清空所有内容', null, null);
+                setTimeout(() => {
+                    statusBox.classList.remove('active');
+                }, 1500);
+            }
+        }
+
+        // 复制输出到剪贴板
+        function copyOutput() {
+            if (!outputTextarea.value.trim()) {
+                showStatus('warning', '没有内容可复制');
+                return;
+            }
+            
+            navigator.clipboard.writeText(outputTextarea.value)
+                .then(() => {
+                    showStatus('success', 'XML 已复制到剪贴板');
+                })
+                .catch(err => {
+                    showStatus('error', '复制失败', err.message);
+                });
+        }
+
+        // 下载 XML 文件
+        function downloadXML() {
+            if (!outputTextarea.value.trim()) {
+                showStatus('warning', '没有内容可下载');
+                return;
+            }
+            
+            const blob = new Blob([outputTextarea.value], { type: 'application/xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `converted-${new Date().getTime()}.xml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('success', 'XML 文件已开始下载');
+        }
+
+        // 初始化
+        function init() {
+            // 添加键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    convert();
+                }
+                if (e.ctrlKey && e.key === 'l') {
+                    e.preventDefault();
+                    clearAll();
+                }
+                if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+                    e.preventDefault();
+                    loadSample();
+                }
+            });
+
+            // 实时语法检查
+            let checkTimeout;
+            inputTextarea.addEventListener('input', () => {
+                clearTimeout(checkTimeout);
+                checkTimeout = setTimeout(() => {
+                    const text = inputTextarea.value.trim();
+                    if (text) {
+                        try {
+                            jsyaml.load(text);
+                            inputTextarea.classList.remove('error');
+                        } catch (error) {
+                            // 实时检查不显示错误，只添加错误样式
+                            inputTextarea.classList.add('error');
+                        }
+                    } else {
+                        inputTextarea.classList.remove('error');
+                    }
+                    updateStats();
+                }, 500);
+            });
+
+            // 页面加载时更新统计
+            updateStats();
+            
+            // 显示欢迎消息
+            setTimeout(() => {
+                showStatus('info', '准备好转换 YAML 到 XML。您可以粘贴 YAML 内容或点击"示例"按钮加载示例数据。');
+            }, 1000);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

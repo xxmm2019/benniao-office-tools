@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>密码强度分析仪 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-password/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f1f1f1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(0, 10, 20, 0.7);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.8rem;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .input-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .password-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            padding-right: 3.5rem;
+            font-size: 1.3rem;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 2px solid #2d3748;
+            border-radius: 12px;
+            color: #f1f1f1;
+            transition: all 0.3s ease;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+        }
+        
+        .toggle-visibility {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #a0a0c0;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .toggle-visibility:hover {
+            color: #4cc9f0;
+        }
+        
+        .strength-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .strength-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .strength-title h2 {
+            font-size: 1.5rem;
+        }
+        
+        .strength-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        
+        .strength-bar {
+            height: 14px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: all 0.5s ease;
+        }
+        
+        .strength-weak {
+            background: linear-gradient(to right, #ef476f, #ff9a5a);
+            width: 25%;
+        }
+        
+        .strength-fair {
+            background: linear-gradient(to right, #ff9a5a, #ffd166);
+            width: 50%;
+        }
+        
+        .strength-good {
+            background: linear-gradient(to right, #ffd166, #06d6a0);
+            width: 75%;
+        }
+        
+        .strength-strong {
+            background: linear-gradient(to right, #06d6a0, #4cc9f0);
+            width: 100%;
+        }
+        
+        .requirements {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .requirement {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+        
+        .requirement i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+            width: 24px;
+        }
+        
+        .requirement.met {
+            color: #06d6a0;
+        }
+        
+        .requirement.unmet {
+            color: #a0a0c0;
+        }
+        
+        .time-estimate {
+            background-color: rgba(0, 15, 30, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 1px solid rgba(67, 97, 238, 0.2);
+        }
+        
+        .time-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #4cc9f0;
+        }
+        
+        .time-value {
+            font-size: 2.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .time-description {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            line-height: 1.5;
+        }
+        
+        .tips-section {
+            background-color: rgba(0, 20, 40, 0.6);
+            border-radius: 15px;
+            padding: 1.8rem;
+            border-left: 5px solid #4361ee;
+        }
+        
+        .tips-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #4cc9f0;
+        }
+        
+        .tips-section ul {
+            padding-left: 1.5rem;
+            color: #c0c0e0;
+        }
+        
+        .tips-section li {
+            margin-bottom: 0.7rem;
+            line-height: 1.5;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+        
+        .examples {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+        
+        .example-password {
+            background-color: rgba(67, 97, 238, 0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .example-password:hover {
+            background-color: rgba(67, 97, 238, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.8rem;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .time-value {
+                font-size: 2.2rem;
+            }
+            
+            .requirements {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .password-input {
+                font-size: 1.1rem;
+                padding: 1rem 1.2rem;
+                padding-right: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> 密码强度分析仪</h1>
+            <p class="subtitle">输入密码以分析其安全强度，并获取破解时间估算。您的密码不会被传输或保存。</p>
+        </header>
+        
+        <section class="input-section">
+            <div class="password-container">
+                <input type="password" id="passwordInput" class="password-input" placeholder="输入密码进行分析..." autocomplete="off">
+                <button type="button" class="toggle-visibility" id="toggleVisibility">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            
+            <div class="examples">
+                <div class="example-password" data-password="password123">尝试: password123</div>
+                <div class="example-password" data-password="MyDogName2023">尝试: MyDogName2023</div>
+                <div class="example-password" data-password="P@ssw0rd!2024">尝试: P@ssw0rd!2024</div>
+                <div class="example-password" data-password="aB7$fgH9*klM">尝试: aB7$fgH9*klM</div>
+            </div>
+        </section>
+        
+        <section class="strength-section">
+            <div class="strength-title">
+                <h2>密码强度</h2>
+                <div class="strength-value" id="strengthText">无</div>
+            </div>
+            <div class="strength-bar">
+                <div class="strength-fill" id="strengthBar"></div>
+            </div>
+        </section>
+        
+        <section class="requirements">
+            <div class="requirement unmet" id="reqLength">
+                <i class="fas fa-times-circle"></i>
+                <span>至少12个字符</span>
+            </div>
+            <div class="requirement unmet" id="reqLowercase">
+                <i class="fas fa-times-circle"></i>
+                <span>包含小写字母 (a-z)</span>
+            </div>
+            <div class="requirement unmet" id="reqUppercase">
+                <i class="fas fa-times-circle"></i>
+                <span>包含大写字母 (A-Z)</span>
+            </div>
+            <div class="requirement unmet" id="reqNumbers">
+                <i class="fas fa-times-circle"></i>
+                <span>包含数字 (0-9)</span>
+            </div>
+            <div class="requirement unmet" id="reqSpecial">
+                <i class="fas fa-times-circle"></i>
+                <span>包含特殊字符 (!@#$%等)</span>
+            </div>
+        </section>
+        
+        <section class="time-estimate">
+            <h3 class="time-title">预估破解时间</h3>
+            <div class="time-value" id="crackTime">即刻</div>
+            <p class="time-description" id="crackDescription">使用现代计算能力（每秒100亿次哈希尝试）</p>
+        </section>
+        
+        <section class="tips-section">
+            <h3><i class="fas fa-lightbulb"></i> 创建强密码的技巧</h3>
+            <ul>
+                <li>使用至少12个字符，包含字母、数字和特殊符号的组合</li>
+                <li>避免使用常见单词、姓名或容易猜到的个人信息</li>
+                <li>考虑使用密码短语，例如"BlueCoffeeMug$OnMyDesk!"</li>
+                <li>为每个账户使用不同的密码</li>
+                <li>考虑使用密码管理器来安全存储密码</li>
+            </ul>
+        </section>
+        
+        <footer>
+            
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleVisibility = document.getElementById('toggleVisibility');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            const crackTime = document.getElementById('crackTime');
+            const crackDescription = document.getElementById('crackDescription');
+            const examplePasswords = document.querySelectorAll('.example-password');
+            
+            // 密码要求元素
+            const reqLength = document.getElementById('reqLength');
+            const reqLowercase = document.getElementById('reqLowercase');
+            const reqUppercase = document.getElementById('reqUppercase');
+            const reqNumbers = document.getElementById('reqNumbers');
+            const reqSpecial = document.getElementById('reqSpecial');
+            
+            // 切换密码可见性
+            toggleVisibility.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            // 示例密码点击事件
+            examplePasswords.forEach(example => {
+                example.addEventListener('click', function() {
+                    const password = this.getAttribute('data-password');
+                    passwordInput.value = password;
+                    passwordInput.dispatchEvent(new Event('input'));
+                    passwordInput.focus();
+                });
+            });
+            
+            // 密码输入事件监听
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                analyzePassword(password);
+            });
+            
+            // 初始分析空密码
+            analyzePassword('');
+            
+            // 密码分析函数
+            function analyzePassword(password) {
+                // 检查密码要求
+                const hasLength = password.length >= 12;
+                const hasLowercase = /[a-z]/.test(password);
+                const hasUppercase = /[A-Z]/.test(password);
+                const hasNumbers = /\d/.test(password);
+                const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+                
+                // 更新要求显示
+                updateRequirement(reqLength, hasLength);
+                updateRequirement(reqLowercase, hasLowercase);
+                updateRequirement(reqUppercase, hasUppercase);
+                updateRequirement(reqNumbers, hasNumbers);
+                updateRequirement(reqSpecial, hasSpecial);
+                
+                // 计算密码强度分数
+                let score = 0;
+                if (hasLength) score++;
+                if (hasLowercase) score++;
+                if (hasUppercase) score++;
+                if (hasNumbers) score++;
+                if (hasSpecial) score++;
+                
+                // 长度额外加分
+                if (password.length >= 16) score++;
+                if (password.length >= 20) score++;
+                
+                // 更新强度显示
+                updateStrengthDisplay(score, password.length);
+                
+                // 计算破解时间
+                calculateCrackTime(password, score);
+            }
+            
+            // 更新要求显示
+            function updateRequirement(element, met) {
+                if (met) {
+                    element.classList.remove('unmet');
+                    element.classList.add('met');
+                    element.innerHTML = '<i class="fas fa-check-circle"></i>' + element.textContent;
+                } else {
+                    element.classList.remove('met');
+                    element.classList.add('unmet');
+                    element.innerHTML = '<i class="fas fa-times-circle"></i>' + element.textContent;
+                }
+            }
+            
+            // 更新强度显示
+            function updateStrengthDisplay(score, length) {
+                let strength = '';
+                let strengthClass = '';
+                
+                // 根据分数确定强度
+                if (length === 0) {
+                    strength = '无';
+                    strengthClass = '';
+                    strengthBar.className = 'strength-fill';
+                    strengthBar.style.width = '0%';
+                } else if (score <= 2) {
+                    strength = '弱';
+                    strengthClass = 'strength-weak';
+                } else if (score === 3) {
+                    strength = '一般';
+                    strengthClass = 'strength-fair';
+                } else if (score === 4) {
+                    strength = '良好';
+                    strengthClass = 'strength-good';
+                } else {
+                    strength = '很强';
+                    strengthClass = 'strength-strong';
+                }
+                
+                // 更新显示
+                strengthText.textContent = strength;
+                strengthBar.className = 'strength-fill ' + strengthClass;
+            }
+            
+            // 计算破解时间
+            function calculateCrackTime(password, score) {
+                if (password.length === 0) {
+                    crackTime.textContent = '即刻';
+                    crackDescription.textContent = '使用现代计算能力（每秒100亿次哈希尝试）';
+                    return;
+                }
+                
+                // 计算字符集大小
+                let charsetSize = 0;
+                if (/[a-z]/.test(password)) charsetSize += 26; // 小写字母
+                if (/[A-Z]/.test(password)) charsetSize += 26; // 大写字母
+                if (/\d/.test(password)) charsetSize += 10; // 数字
+                if (/[^a-zA-Z0-9]/.test(password)) charsetSize += 32; // 特殊字符
+                
+                // 如果字符集大小为0（理论上不会发生），设为10
+                charsetSize = charsetSize || 10;
+                
+                // 可能的组合数
+                const combinations = Math.pow(charsetSize, password.length);
+                
+                // 假设每秒尝试100亿次（10^10）
+                const attemptsPerSecond = 1e10;
+                const secondsToCrack = combinations / attemptsPerSecond;
+                
+                // 转换为易读的时间格式
+                crackTime.textContent = formatTime(secondsToCrack);
+                crackDescription.textContent = getCrackDescription(secondsToCrack, attemptsPerSecond);
+            }
+            
+            // 格式化时间
+            function formatTime(seconds) {
+                if (seconds < 1) return '即刻';
+                if (seconds < 60) return '数秒';
+                
+                const minutes = seconds / 60;
+                if (minutes < 60) return `${Math.round(minutes)} 分钟`;
+                
+                const hours = minutes / 60;
+                if (hours < 24) return `${Math.round(hours)} 小时`;
+                
+                const days = hours / 24;
+                if (days < 30) return `${Math.round(days)} 天`;
+                
+                const months = days / 30.44;
+                if (months < 12) return `${Math.round(months)} 个月`;
+                
+                const years = days / 365.25;
+                if (years < 1000) return `${years.toFixed(1)} 年`;
+                
+                const millennia = years / 1000;
+                if (millennia < 1000000) return `${millennia.toFixed(1)} 千年`;
+                
+                return `${(millennia / 1000000).toFixed(1)} 百万年`;
+            }
+            
+            // 获取破解时间描述
+            function getCrackDescription(seconds, attemptsPerSecond) {
+                if (seconds < 1) {
+                    return '使用现代计算能力（每秒100亿次哈希尝试）';
+                } else if (seconds < 3600) {
+                    return '使用现代计算能力（每秒100亿次哈希尝试）';
+                } else if (seconds < 86400) {
+                    return '使用现代计算能力（每秒100亿次哈希尝试）';
+                } else {
+                    return '使用现代计算能力（每秒100亿次哈希尝试）';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

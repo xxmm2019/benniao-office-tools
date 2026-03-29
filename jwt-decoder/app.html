@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT 解码器 - 笨鸟办公工具箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/jwt-decoder/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .input-area {
+            margin-bottom: 25px;
+        }
+
+        .input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .input-header h3 {
+            color: #333;
+            font-size: 1.2rem;
+        }
+
+        .clear-btn, .format-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #c82333;
+        }
+
+        .format-btn {
+            background: #28a745;
+        }
+
+        .format-btn:hover {
+            background: #218838;
+        }
+
+        .btn-group {
+            display: flex;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .parts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .part-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+
+        .part-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .part-title {
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .copy-btn.copied {
+            background: #28a745;
+        }
+
+        .part-content {
+            padding: 20px;
+        }
+
+        .json-display {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .json-key {
+            color: #e06c75;
+        }
+
+        .json-string {
+            color: #98c379;
+        }
+
+        .json-number {
+            color: #d19a66;
+        }
+
+        .json-boolean {
+            color: #56b6c2;
+        }
+
+        .json-null {
+            color: #c678dd;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .info-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .info-box.warning p {
+            color: #e65100;
+        }
+
+        .error-box {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .error-box p {
+            color: #c62828;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .signature-info {
+            background: #f0f8ff;
+            border-left: 4px solid #2196f3;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .signature-info p {
+            color: #0d47a1;
+            font-size: 14px;
+        }
+
+        .validation-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        .validation-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .validation-item:last-child {
+            border-bottom: none;
+        }
+
+        .validation-label {
+            color: #666;
+        }
+
+        .validation-value {
+            font-weight: 500;
+        }
+
+        .valid {
+            color: #28a745;
+        }
+
+        .invalid {
+            color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .parts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .clear-btn, .format-btn {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JWT 解码器</h1>
+            <p>解码和验证 JSON Web Token</p>
+        </div>
+
+        <div class="card">
+            <div class="info-box">
+                <p><strong>安全提示：</strong>此工具仅用于解码和查看 JWT 结构。它不会验证签名，也不会访问任何服务器。所有处理都在本地浏览器中完成。请勿在生产环境中使用解码后的敏感信息。</p>
+            </div>
+
+            <div class="input-area">
+                <div class="input-header">
+                    <h3>输入 JWT Token</h3>
+                    <div class="btn-group">
+                        <button class="format-btn" onclick="formatInput()">格式化</button>
+                        <button class="clear-btn" onclick="clearInput()">清空</button>
+                    </div>
+                </div>
+                <textarea id="jwt-input" placeholder="粘贴你的 JWT Token 在这里（格式如：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c）..." oninput="decode()"></textarea>
+                <div id="error-output"></div>
+            </div>
+
+            <div id="output">
+                <div class="empty-state">
+                    <p>输入 JWT Token 查看解码结果</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 示例 JWT
+        const exampleJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE3MTAwMDAwMDAsImFkbWluIjp0cnVlLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+        // 页面加载时显示示例
+        window.addEventListener('load', function() {
+            const input = document.getElementById('jwt-input');
+            if (!input.value.trim()) {
+                input.value = exampleJWT;
+                decode();
+            }
+        });
+
+        function clearInput() {
+            document.getElementById('jwt-input').value = '';
+            document.getElementById('error-output').innerHTML = '';
+            document.getElementById('output').innerHTML = `
+                <div class="empty-state">
+                    <p>输入 JWT Token 查看解码结果</p>
+                </div>
+            `;
+        }
+
+        function formatInput() {
+            const input = document.getElementById('jwt-input');
+            const value = input.value.trim();
+            const parts = value.split('.');
+            
+            if (parts.length === 3) {
+                // 格式化显示，每部分单独一行
+                input.value = parts.join('.\n');
+            } else {
+                alert('请输入有效的 JWT Token（包含三个部分，用点号分隔）');
+            }
+        }
+
+        function base64UrlDecode(str) {
+            // 处理 Base64Url 编码
+            let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+            
+            // 添加填充
+            while (base64.length % 4) {
+                base64 += '=';
+            }
+            
+            try {
+                // 解码并转为 UTF-8
+                const decoded = atob(base64);
+                return decodeURIComponent(escape(decoded));
+            } catch (e) {
+                // 如果解码失败，返回原始 base64 解码结果
+                return atob(base64);
+            }
+        }
+
+        function formatJsonWithSyntaxHighlighting(jsonObj) {
+            const jsonStr = JSON.stringify(jsonObj, null, 2);
+            
+            // 高亮 JSON 语法
+            return jsonStr.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+                let cls = 'json-number';
+                
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                        match = match.replace(/":$/, '":');
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        function decode() {
+            const input = document.getElementById('jwt-input').value.trim();
+            const output = document.getElementById('output');
+            const errorOutput = document.getElementById('error-output');
+
+            errorOutput.innerHTML = '';
+
+            if (!input) {
+                output.innerHTML = `
+                    <div class="empty-state">
+                        <p>输入 JWT Token 查看解码结果</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const parts = input.split('.');
+
+            if (parts.length !== 3) {
+                errorOutput.innerHTML = `
+                    <div class="error-box">
+                        <p>无效的 JWT 格式。JWT 应该包含 3 个部分，用点号分隔。</p>
+                        <p><strong>格式：</strong> header.payload.signature</p>
+                    </div>
+                `;
+                output.innerHTML = '';
+                return;
+            }
+
+            try {
+                const [headerEncoded, payloadEncoded, signature] = parts;
+                
+                // 解码 header 和 payload
+                let header, payload;
+                try {
+                    header = JSON.parse(base64UrlDecode(headerEncoded));
+                } catch (e) {
+                    throw new Error('无法解码 JWT Header：' + e.message);
+                }
+                
+                try {
+                    payload = JSON.parse(base64UrlDecode(payloadEncoded));
+                } catch (e) {
+                    throw new Error('无法解码 JWT Payload：' + e.message);
+                }
+
+                // 生成验证信息
+                const validationInfo = generateValidationInfo(payload);
+                
+                // 生成输出 HTML
+                output.innerHTML = `
+                    <div class="parts-grid">
+                        <div class="part-card">
+                            <div class="part-header">
+                                <div class="part-title">Header</div>
+                                <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(JSON.stringify(header, null, 2))}', this)">复制</button>
+                            </div>
+                            <div class="part-content">
+                                <div class="json-display">${formatJsonWithSyntaxHighlighting(header)}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="part-card">
+                            <div class="part-header">
+                                <div class="part-title">Payload</div>
+                                <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(JSON.stringify(payload, null, 2))}', this)">复制</button>
+                            </div>
+                            <div class="part-content">
+                                <div class="json-display">${formatJsonWithSyntaxHighlighting(payload)}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="part-card">
+                            <div class="part-header">
+                                <div class="part-title">Signature</div>
+                                <button class="copy-btn" onclick="copyToClipboard('${signature}', this)">复制</button>
+                            </div>
+                            <div class="part-content">
+                                <div class="json-display">${signature}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="signature-info">
+                        <p><strong>注意：</strong>此工具仅解码 JWT，不验证签名。签名验证需要密钥（secret key 或公钥），这只能在服务器端安全地进行。</p>
+                    </div>
+                    
+                    ${validationInfo}
+                `;
+
+            } catch (error) {
+                errorOutput.innerHTML = `
+                    <div class="error-box">
+                        <p><strong>解码错误：</strong> ${error.message}</p>
+                        <p>请确保输入了有效的 JWT Token。</p>
+                    </div>
+                `;
+                output.innerHTML = '';
+            }
+        }
+
+        function generateValidationInfo(payload) {
+            let validationHtml = '<div class="validation-result"><h4>Token 信息</h4>';
+            const now = Math.floor(Date.now() / 1000);
+            
+            // 检查过期时间
+            if (payload.exp) {
+                const isExpired = payload.exp < now;
+                validationHtml += `
+                    <div class="validation-item">
+                        <span class="validation-label">过期时间 (exp):</span>
+                        <span class="validation-value ${isExpired ? 'invalid' : 'valid'}">
+                            ${new Date(payload.exp * 1000).toLocaleString()} 
+                            ${isExpired ? '（已过期）' : '（有效）'}
+                        </span>
+                    </div>
+                `;
+            }
+            
+            // 检查生效时间
+            if (payload.nbf) {
+                const isActive = payload.nbf <= now;
+                validationHtml += `
+                    <div class="validation-item">
+                        <span class="validation-label">生效时间 (nbf):</span>
+                        <span class="validation-value ${isActive ? 'valid' : 'invalid'}">
+                            ${new Date(payload.nbf * 1000).toLocaleString()} 
+                            ${isActive ? '（已生效）' : '（未生效）'}
+                        </span>
+                    </div>
+                `;
+            }
+            
+            // 检查签发时间
+            if (payload.iat) {
+                validationHtml += `
+                    <div class="validation-item">
+                        <span class="validation-label">签发时间 (iat):</span>
+                        <span class="validation-value">${new Date(payload.iat * 1000).toLocaleString()}</span>
+                    </div>
+                `;
+            }
+            
+            // 显示主题
+            if (payload.sub) {
+                validationHtml += `
+                    <div class="validation-item">
+                        <span class="validation-label">用户标识 (sub):</span>
+                        <span class="validation-value">${payload.sub}</span>
+                    </div>
+                `;
+            }
+            
+            // 显示发行人
+            if (payload.iss) {
+                validationHtml += `
+                    <div class="validation-item">
+                        <span class="validation-label">发行人 (iss):</span>
+                        <span class="validation-value">${payload.iss}</span>
+                    </div>
+                `;
+            }
+            
+            // 显示受众
+            if (payload.aud) {
+                const aud = Array.isArray(payload.aud) ? payload.aud.join(', ') : payload.aud;
+                validationHtml += `
+                    <div class="validation-item">
+                        <span class="validation-label">受众 (aud):</span>
+                        <span class="validation-value">${aud}</span>
+                    </div>
+                `;
+            }
+            
+            // 显示 JWT ID
+            if (payload.jti) {
+                validationHtml += `
+                    <div class="validation-item">
+                        <span class="validation-label">JWT ID (jti):</span>
+                        <span class="validation-value">${payload.jti}</span>
+                    </div>
+                `;
+            }
+            
+            validationHtml += '</div>';
+            return validationHtml;
+        }
+
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '已复制!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败: ', err);
+                alert('复制失败，请手动复制');
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 初始解码示例
+        setTimeout(() => {
+            if (document.getElementById('jwt-input').value.trim()) {
+                decode();
+            }
+        }, 100);
+    </script>
+</body>
+</html>

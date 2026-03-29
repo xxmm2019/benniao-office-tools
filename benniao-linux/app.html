@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux常用命令大全</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 30px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            color: #4CAF50;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .tip-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .tip-box i {
+            font-size: 1.3rem;
+            color: #4CAF50;
+        }
+        
+        .search-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 6px;
+            margin-left: auto;
+        }
+        
+        .search-hint kbd {
+            background-color: #2c3e50;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .content {
+            padding: 30px 40px;
+        }
+        
+        .category {
+            margin-bottom: 25px;
+            border: 1px solid #e1e5eb;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .category:hover {
+            border-color: #c1c9d6;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .category-header {
+            background-color: #f8f9fa;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .category-header:hover {
+            background-color: #edf2f7;
+        }
+        
+        .category-header h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .category-header i {
+            color: #4a6491;
+            font-size: 1.2rem;
+        }
+        
+        .toggle-icon {
+            color: #6c757d;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .category-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .category-content.expanded {
+            padding: 25px;
+            max-height: 2000px;
+        }
+        
+        .command-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 20px;
+        }
+        
+        .command-item {
+            background-color: white;
+            border-left: 4px solid #4CAF50;
+            padding: 18px;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s ease;
+        }
+        
+        .command-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .command {
+            font-family: 'Courier New', monospace;
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            border-left: 3px solid #4a6491;
+            overflow-x: auto;
+        }
+        
+        .description {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .example {
+            margin-top: 8px;
+            font-size: 0.95rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .example code {
+            background-color: #f1f3f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #6c757d;
+            font-size: 0.95rem;
+            border-top: 1px solid #e1e5eb;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header, .content {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .command-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .tip-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .search-hint {
+                margin-left: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .category-header {
+                padding: 15px;
+            }
+            
+            .category-content.expanded {
+                padding: 15px;
+            }
+            
+            .command-item {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-terminal"></i> Linux常用命令大全</h1>
+            <p class="subtitle">收录了最常用的Linux命令，适合开发者和系统管理员日常参考</p>
+            
+            <div class="tip-box">
+                <i class="fas fa-lightbulb"></i>
+                <div>
+                    <strong>小贴士：</strong> 使用浏览器的查找功能（Ctrl+F 或 Cmd+F）可以快速搜索命令
+                </div>
+                <div class="search-hint">
+                    快捷键：<kbd>Ctrl</kbd> + <kbd>F</kbd>
+                </div>
+            </div>
+        </header>
+        
+        <div class="content">
+            <div class="category" id="file-commands">
+                <div class="category-header">
+                    <h3><i class="fas fa-folder-open"></i> 文件和目录操作</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="category-content">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command">ls [选项] [目录名]</div>
+                            <div class="description">列出目录内容。常用选项：-l 显示详细信息，-a 显示所有文件（包括隐藏文件），-h 人类可读的文件大小。</div>
+                            <div class="example">示例：<code>ls -la /home</code> 显示/home目录下所有文件的详细信息</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">cd [目录路径]</div>
+                            <div class="description">切换当前工作目录。使用 <code>cd ~</code> 返回家目录，<code>cd ..</code> 返回上级目录。</div>
+                            <div class="example">示例：<code>cd /var/www</code> 切换到/var/www目录</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">pwd</div>
+                            <div class="description">显示当前工作目录的完整路径。</div>
+                            <div class="example">示例：<code>pwd</code> 显示当前所在的目录路径</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">cp [选项] 源文件 目标文件</div>
+                            <div class="description">复制文件或目录。常用选项：-r 递归复制目录，-i 交互式复制（覆盖前询问）。</div>
+                            <div class="example">示例：<code>cp -r dir1 dir2</code> 将dir1目录复制到dir2</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">mv [选项] 源文件 目标文件</div>
+                            <div class="description">移动或重命名文件或目录。</div>
+                            <div class="example">示例：<code>mv file1.txt file2.txt</code> 将file1.txt重命名为file2.txt</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">rm [选项] 文件或目录</div>
+                            <div class="description">删除文件或目录。常用选项：-r 递归删除，-f 强制删除（不提示）。</div>
+                            <div class="example">示例：<code>rm -rf dir</code> 强制删除dir目录及其所有内容</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">mkdir [选项] 目录名</div>
+                            <div class="description">创建新目录。常用选项：-p 创建多级目录。</div>
+                            <div class="example">示例：<code>mkdir -p project/src/test</code> 创建多级目录</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">find [路径] [表达式]</div>
+                            <div class="description">在目录树中查找文件。可以根据名称、类型、大小、时间等条件查找。</div>
+                            <div class="example">示例：<code>find /home -name "*.txt"</code> 在/home目录下查找所有.txt文件</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category" id="system-commands">
+                <div class="category-header">
+                    <h3><i class="fas fa-desktop"></i> 系统信息与进程管理</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="category-content">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command">ps [选项]</div>
+                            <div class="description">显示当前进程状态。常用选项：aux 显示所有用户的所有进程，-ef 显示完整格式。</div>
+                            <div class="example">示例：<code>ps aux | grep nginx</code> 查找nginx相关进程</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">top</div>
+                            <div class="description">动态显示系统进程信息，包括CPU、内存使用率等。按q退出。</div>
+                            <div class="example">示例：<code>top</code> 实时查看系统进程状态</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">htop</div>
+                            <div class="description">top的增强版，提供彩色界面和鼠标操作（需要单独安装）。</div>
+                            <div class="example">示例：<code>htop</code> 更友好的进程查看界面</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">kill [选项] PID</div>
+                            <div class="description">向进程发送信号，默认发送TERM信号（15）终止进程。常用选项：-9 强制终止。</div>
+                            <div class="example">示例：<code>kill -9 1234</code> 强制终止PID为1234的进程</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">df [选项]</div>
+                            <div class="description">显示磁盘空间使用情况。常用选项：-h 人类可读格式。</div>
+                            <div class="example">示例：<code>df -h</code> 以易读格式显示磁盘使用情况</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">free [选项]</div>
+                            <div class="description">显示内存使用情况。常用选项：-h 人类可读格式，-m 以MB为单位。</div>
+                            <div class="example">示例：<code>free -h</code> 以易读格式显示内存使用情况</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">uname [选项]</div>
+                            <div class="description">显示系统信息。常用选项：-a 显示所有信息。</div>
+                            <div class="example">示例：<code>uname -a</code> 显示所有系统信息</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">whoami</div>
+                            <div class="description">显示当前登录的用户名。</div>
+                            <div class="example">示例：<code>whoami</code> 显示当前用户</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category" id="network-commands">
+                <div class="category-header">
+                    <h3><i class="fas fa-network-wired"></i> 网络操作</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="category-content">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command">ping [选项] 主机名/IP</div>
+                            <div class="description">测试与目标主机的网络连接。常用选项：-c 指定发送包的数量。</div>
+                            <div class="example">示例：<code>ping -c 4 google.com</code> 向google.com发送4个ping包</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">ifconfig</div>
+                            <div class="description">显示或配置网络接口参数（较旧系统）。新系统推荐使用<code>ip addr</code>。</div>
+                            <div class="example">示例：<code>ifconfig eth0</code> 显示eth0接口信息</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">netstat [选项]</div>
+                            <div class="description">显示网络连接、路由表、接口统计等信息。常用选项：-tulnp 显示所有监听端口。</div>
+                            <div class="example">示例：<code>netstat -tulnp</code> 显示所有监听端口和对应进程</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">ss [选项]</div>
+                            <div class="description">netstat的替代工具，更快更高效。常用选项：-tulnp 显示所有监听端口。</div>
+                            <div class="example">示例：<code>ss -tulnp</code> 显示所有监听端口和对应进程</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">curl [选项] URL</div>
+                            <div class="description">用于传输数据的命令行工具，支持多种协议（HTTP、FTP等）。</div>
+                            <div class="example">示例：<code>curl -I https://example.com</code> 获取HTTP响应头</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">wget [选项] URL</div>
+                            <div class="description">从网络下载文件，支持HTTP、HTTPS和FTP协议。</div>
+                            <div class="example">示例：<code>wget https://example.com/file.zip</code> 下载文件</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">ssh [选项] 用户名@主机名</div>
+                            <div class="description">通过SSH协议安全登录远程主机。</div>
+                            <div class="example">示例：<code>ssh user@example.com</code> SSH登录到远程服务器</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">scp [选项] 源文件 目标文件</div>
+                            <div class="description">通过SSH安全地复制文件。</div>
+                            <div class="example">示例：<code>scp file.txt user@example.com:/home/user</code> 复制文件到远程主机</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category" id="text-commands">
+                <div class="category-header">
+                    <h3><i class="fas fa-file-alt"></i> 文本处理与查看</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="category-content">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command">cat [选项] 文件</div>
+                            <div class="description">连接文件并打印到标准输出设备。常用于查看文件内容。</div>
+                            <div class="example">示例：<code>cat file.txt</code> 显示file.txt的内容</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">less [选项] 文件</div>
+                            <div class="description">分页显示文件内容，支持向前向后翻页。按q退出。</div>
+                            <div class="example">示例：<code>less largefile.log</code> 分页查看大文件</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">head [选项] 文件</div>
+                            <div class="description">显示文件开头部分。默认显示前10行，可用-n指定行数。</div>
+                            <div class="example">示例：<code>head -20 file.txt</code> 显示文件前20行</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">tail [选项] 文件</div>
+                            <div class="description">显示文件末尾部分。常用选项：-f 实时追踪文件变化。</div>
+                            <div class="example">示例：<code>tail -f /var/log/syslog</code> 实时查看系统日志</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">grep [选项] 模式 文件</div>
+                            <div class="description">在文件中搜索匹配模式的行。常用选项：-i 忽略大小写，-r 递归搜索。</div>
+                            <div class="example">示例：<code>grep -r "error" /var/log</code> 在/var/log目录递归搜索"error"</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">sed [选项] '命令' 文件</div>
+                            <div class="description">流编辑器，用于对文本进行过滤和转换。</div>
+                            <div class="example">示例：<code>sed 's/old/new/g' file.txt</code> 将文件中所有old替换为new</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">awk [选项] '模式 {动作}' 文件</div>
+                            <div class="description">强大的文本分析工具，可用于提取和报告数据。</div>
+                            <div class="example">示例：<code>awk '{print $1}' file.txt</code> 打印文件每行的第一个字段</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">vim [选项] 文件</div>
+                            <div class="description">强大的文本编辑器。基本操作：i进入插入模式，ESC退出插入模式，:wq保存并退出。</div>
+                            <div class="example">示例：<code>vim file.txt</code> 使用vim编辑文件</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="category" id="permission-commands">
+                <div class="category-header">
+                    <h3><i class="fas fa-user-shield"></i> 权限与用户管理</h3>
+                    <span class="toggle-icon"><i class="fas fa-chevron-down"></i></span>
+                </div>
+                <div class="category-content">
+                    <div class="command-list">
+                        <div class="command-item">
+                            <div class="command">chmod [选项] 权限 文件</div>
+                            <div class="description">更改文件或目录的权限。权限可以用数字（如755）或符号（如u+x）表示。</div>
+                            <div class="example">示例：<code>chmod 755 script.sh</code> 设置脚本可执行权限</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">chown [选项] 用户:组 文件</div>
+                            <div class="description">更改文件或目录的所有者和所属组。</div>
+                            <div class="example">示例：<code>chown user:group file.txt</code> 更改文件所有者和组</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">sudo 命令</div>
+                            <div class="description">以超级用户权限执行命令。需要输入当前用户的密码（如果用户有sudo权限）。</div>
+                            <div class="example">示例：<code>sudo apt update</code> 以管理员权限更新软件包列表</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">passwd [用户名]</div>
+                            <div class="description">更改用户密码。如果不指定用户名，则更改当前用户的密码。</div>
+                            <div class="example">示例：<code>passwd john</code> 更改john用户的密码</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">useradd [选项] 用户名</div>
+                            <div class="description">创建新用户。常用选项：-m 创建家目录，-s 指定shell。</div>
+                            <div class="example">示例：<code>useradd -m -s /bin/bash john</code> 创建用户john并设置bash为默认shell</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">usermod [选项] 用户名</div>
+                            <div class="description">修改用户属性，如所属组、家目录、shell等。</div>
+                            <div class="example">示例：<code>usermod -aG sudo john</code> 将john添加到sudo组</div>
+                        </div>
+                        
+                        <div class="command-item">
+                            <div class="command">groupadd [选项] 组名</div>
+                            <div class="description">创建新用户组。</div>
+                            <div class="example">示例：<code>groupadd developers</code> 创建developers组</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+             
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认展开第一个分类
+            const firstCategory = document.querySelector('.category');
+            const firstContent = firstCategory.querySelector('.category-content');
+            const firstToggleIcon = firstCategory.querySelector('.toggle-icon i');
+            
+            firstContent.classList.add('expanded');
+            firstToggleIcon.classList.remove('fa-chevron-down');
+            firstToggleIcon.classList.add('fa-chevron-up');
+            
+            // 为所有分类标题添加点击事件
+            const categoryHeaders = document.querySelectorAll('.category-header');
+            
+            categoryHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const category = this.parentElement;
+                    const content = category.querySelector('.category-content');
+                    const toggleIcon = category.querySelector('.toggle-icon i');
+                    
+                    // 切换内容显示/隐藏
+                    content.classList.toggle('expanded');
+                    
+                    // 切换图标
+                    if (content.classList.contains('expanded')) {
+                        toggleIcon.classList.remove('fa-chevron-down');
+                        toggleIcon.classList.add('fa-chevron-up');
+                    } else {
+                        toggleIcon.classList.remove('fa-chevron-up');
+                        toggleIcon.classList.add('fa-chevron-down');
+                    }
+                });
+            });
+            
+            // 添加键盘快捷键提示
+            document.addEventListener('keydown', function(e) {
+                // 当按下Ctrl+F时，显示提示
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    // 创建一个小提示
+                    const tip = document.createElement('div');
+                    tip.style.cssText = `
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        background-color: #4CAF50;
+                        color: white;
+                        padding: 10px 15px;
+                        border-radius: 6px;
+                        z-index: 1000;
+                        font-weight: bold;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                        animation: fadeInOut 2.5s ease;
+                    `;
+                    
+                    // 添加动画样式
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes fadeInOut {
+                            0% { opacity: 0; transform: translateY(-10px); }
+                            15% { opacity: 1; transform: translateY(0); }
+                            85% { opacity: 1; transform: translateY(0); }
+                            100% { opacity: 0; transform: translateY(-10px); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                    
+                    tip.innerHTML = '<i class="fas fa-search"></i> 在页面中查找命令...';
+                    document.body.appendChild(tip);
+                    
+                    // 3秒后移除提示
+                    setTimeout(() => {
+                        tip.remove();
+                        style.remove();
+                    }, 2500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

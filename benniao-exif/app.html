@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXIF信息查看器 - 照片元数据分析工具</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2d5b7c, #4a9c8c);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.8rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: #d1e8ff;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a9c8c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #2d5b7c;
+        }
+        
+        .upload-area {
+            border: 3px dashed #2d5b7c;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            background-color: rgba(45, 91, 124, 0.05);
+        }
+        
+        .upload-area:hover {
+            background-color: rgba(45, 91, 124, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: #2d5b7c;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.3rem;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+        
+        .upload-subtext {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(to right, #2d5b7c, #4a9c8c);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .preview-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .exif-info {
+            flex-basis: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #4a9c8c;
+            transition: transform 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .info-category {
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-item {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted #eee;
+            padding-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #2d5b7c;
+            max-width: 60%;
+            text-align: right;
+            word-break: break-word;
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #888;
+            padding: 40px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        .gps-link {
+            color: #2d5b7c;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        
+        .gps-link:hover {
+            color: #4a9c8c;
+            text-decoration: underline;
+        }
+        
+        .supported-formats {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            background-color: rgba(74, 156, 140, 0.1);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-camera"></i> EXIF信息查看器</h1>
+            <p class="subtitle">快速查看照片元数据，包括设备信息、拍摄参数、GPS位置等详细信息。支持JPEG、PNG、HEIC等多种图像格式。</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="upload-section">
+                <h2 class="section-title"><i class="fas fa-cloud-upload-alt"></i> 上传照片</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <div class="upload-text">点击或拖放照片到此处</div>
+                    <div class="upload-subtext">支持 JPEG, PNG, HEIC, WebP 等格式</div>
+                    <button class="btn" id="browseBtn">选择照片</button>
+                </div>
+                
+                <input type="file" id="fileInput" class="file-input" accept="image/*">
+                
+                <div class="supported-formats">
+                    <p><i class="fas fa-info-circle"></i> EXIF信息通常包含在JPEG和TIFF格式的照片中。HEIC格式的照片需要浏览器支持才能解析。</p>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-image"></i> 照片预览</h2>
+                
+                <div class="image-preview">
+                    <div class="empty-state" id="previewEmpty">
+                        <i class="fas fa-image"></i>
+                        <p>照片预览将在此处显示</p>
+                    </div>
+                    <img id="previewImage" class="preview-img" src="" alt="预览图片">
+                </div>
+                
+                <div id="imageInfo">
+                    <div class="empty-state">
+                        <i class="fas fa-info-circle"></i>
+                        <p>上传照片后，详细信息将在此处显示</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exif-info">
+                <h2 class="section-title"><i class="fas fa-camera-retro"></i> EXIF元数据</h2>
+                
+                <div id="exifData">
+                    <div class="empty-state">
+                        <i class="fas fa-database"></i>
+                        <p>上传照片后，EXIF信息将在此处显示</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+           
+        </footer>
+    </div>
+
+    <script>
+        // DOM元素
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const browseBtn = document.getElementById('browseBtn');
+        const previewImage = document.getElementById('previewImage');
+        const previewEmpty = document.getElementById('previewEmpty');
+        const imageInfo = document.getElementById('imageInfo');
+        const exifData = document.getElementById('exifData');
+        
+        // 事件监听
+        browseBtn.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        // 拖放功能
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'rgba(45, 91, 124, 0.15)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = 'rgba(45, 91, 124, 0.05)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'rgba(45, 91, 124, 0.05)';
+            
+            if (e.dataTransfer.files.length) {
+                handleImageFile(e.dataTransfer.files[0]);
+            }
+        });
+        
+        // 文件选择功能
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleImageFile(e.target.files[0]);
+            }
+        });
+        
+        // 处理图像文件
+        async function handleImageFile(file) {
+            // 重置显示
+            resetDisplay();
+            
+            // 验证文件类型
+            if (!file.type.match('image.*')) {
+                showError('请选择有效的图像文件');
+                return;
+            }
+            
+            // 显示文件名
+            imageInfo.innerHTML = `
+                <div class="info-card">
+                    <div class="info-category"><i class="fas fa-file-alt"></i> 文件信息</div>
+                    <div class="info-item">
+                        <span class="info-label">文件名:</span>
+                        <span class="info-value">${file.name}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">文件类型:</span>
+                        <span class="info-value">${file.type}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">文件大小:</span>
+                        <span class="info-value">${formatFileSize(file.size)}</span>
+                    </div>
+                </div>
+            `;
+            
+            // 处理HEIC格式
+            let imageUrl;
+            if (file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic')) {
+                try {
+                    // 尝试转换HEIC为JPEG
+                    const blob = await heic2any({
+                        blob: file,
+                        toType: 'image/jpeg',
+                        quality: 0.8
+                    });
+                    imageUrl = URL.createObjectURL(blob);
+                } catch (error) {
+                    console.error('HEIC转换失败:', error);
+                    showError('无法处理HEIC格式图片，请尝试使用JPEG或PNG格式');
+                    return;
+                }
+            } else {
+                imageUrl = URL.createObjectURL(file);
+            }
+            
+            // 显示预览
+            previewImage.src = imageUrl;
+            previewImage.style.display = 'block';
+            previewEmpty.style.display = 'none';
+            
+            // 解析EXIF数据
+            EXIF.getData(previewImage, function() {
+                const allExifData = EXIF.getAllTags(this);
+                displayExifData(allExifData);
+            });
+        }
+        
+        // 显示EXIF数据
+        function displayExifData(exif) {
+            if (!exif || Object.keys(exif).length === 0) {
+                exifData.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>此照片不包含EXIF元数据或无法读取</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 设备信息
+            const deviceInfo = [];
+            if (exif.Make) deviceInfo.push({label: '相机品牌', value: exif.Make});
+            if (exif.Model) deviceInfo.push({label: '相机型号', value: exif.Model});
+            if (exif.Software) deviceInfo.push({label: '软件', value: exif.Software});
+            if (exif.ImageWidth && exif.ImageHeight) {
+                deviceInfo.push({label: '图像尺寸', value: `${exif.ImageWidth} × ${exif.ImageHeight}`});
+            }
+            
+            // 拍摄参数
+            const shotInfo = [];
+            if (exif.DateTimeOriginal) shotInfo.push({label: '拍摄时间', value: formatExifDate(exif.DateTimeOriginal)});
+            if (exif.ExposureTime) shotInfo.push({label: '曝光时间', value: formatExposure(exif.ExposureTime)});
+            if (exif.FNumber) shotInfo.push({label: '光圈值', value: `f/${exif.FNumber}`});
+            if (exif.ISOSpeedRatings) shotInfo.push({label: 'ISO感光度', value: exif.ISOSpeedRatings});
+            if (exif.FocalLength) shotInfo.push({label: '焦距', value: `${exif.FocalLength}mm`});
+            if (exif.Flash) shotInfo.push({label: '闪光灯', value: formatFlash(exif.Flash)});
+            
+            // GPS信息
+            const gpsInfo = [];
+            if (exif.GPSLatitude && exif.GPSLongitude) {
+                const lat = convertGPSToDecimal(exif.GPSLatitude, exif.GPSLatitudeRef);
+                const lng = convertGPSToDecimal(exif.GPSLongitude, exif.GPSLongitudeRef);
+                
+                gpsInfo.push({label: '纬度', value: lat.toFixed(6)});
+                gpsInfo.push({label: '经度', value: lng.toFixed(6)});
+                gpsInfo.push({label: '位置', value: 
+                    `<a class="gps-link" href="https://maps.google.com/?q=${lat},${lng}" target="_blank">
+                        <i class="fas fa-map-marker-alt"></i> 在Google地图中查看
+                    </a>`
+                });
+            }
+            if (exif.GPSAltitude) {
+                gpsInfo.push({label: '海拔', value: `${Math.abs(exif.GPSAltitude)} ${exif.GPSAltitudeRef === 1 ? '米' : '米(海平面以下)'}`});
+            }
+            
+            // 其他信息
+            const otherInfo = [];
+            if (exif.WhiteBalance) otherInfo.push({label: '白平衡', value: exif.WhiteBalance === 0 ? '自动' : '手动'});
+            if (exif.MeteringMode) otherInfo.push({label: '测光模式', value: formatMeteringMode(exif.MeteringMode)});
+            if (exif.ExposureProgram) otherInfo.push({label: '曝光程序', value: formatExposureProgram(exif.ExposureProgram)});
+            if (exif.ExposureBiasValue) otherInfo.push({label: '曝光补偿', value: `${exif.ExposureBiasValue} EV`});
+            if (exif.ColorSpace) otherInfo.push({label: '色彩空间', value: exif.ColorSpace === 1 ? 'sRGB' : '未校准'});
+            
+            // 构建HTML
+            let html = '<div class="info-grid">';
+            
+            // 设备信息卡片
+            if (deviceInfo.length > 0) {
+                html += createInfoCard('设备信息', 'fas fa-mobile-alt', deviceInfo);
+            }
+            
+            // 拍摄参数卡片
+            if (shotInfo.length > 0) {
+                html += createInfoCard('拍摄参数', 'fas fa-camera', shotInfo);
+            }
+            
+            // GPS信息卡片
+            if (gpsInfo.length > 0) {
+                html += createInfoCard('GPS位置', 'fas fa-map-marked-alt', gpsInfo);
+            }
+            
+            // 其他信息卡片
+            if (otherInfo.length > 0) {
+                html += createInfoCard('其他信息', 'fas fa-info-circle', otherInfo);
+            }
+            
+            html += '</div>';
+            
+            // 显示原始EXIF数据数量
+            const totalTags = Object.keys(exif).length;
+            html += `<div style="margin-top: 20px; color: #666; font-size: 0.9rem;">
+                        <i class="fas fa-tags"></i> 共读取 ${totalTags} 个EXIF标签
+                     </div>`;
+            
+            exifData.innerHTML = html;
+        }
+        
+        // 创建信息卡片
+        function createInfoCard(title, icon, items) {
+            let html = `<div class="info-card">
+                <div class="info-category"><i class="${icon}"></i> ${title}</div>`;
+            
+            items.forEach(item => {
+                html += `<div class="info-item">
+                    <span class="info-label">${item.label}:</span>
+                    <span class="info-value">${item.value}</span>
+                </div>`;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // 重置显示
+        function resetDisplay() {
+            previewImage.style.display = 'none';
+            previewEmpty.style.display = 'block';
+            imageInfo.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-info-circle"></i>
+                    <p>上传照片后，详细信息将在此处显示</p>
+                </div>
+            `;
+            exifData.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-database"></i>
+                    <p>上传照片后，EXIF信息将在此处显示</p>
+                </div>
+            `;
+        }
+        
+        // 显示错误
+        function showError(message) {
+            exifData.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        // 辅助函数：格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 辅助函数：格式化曝光时间
+        function formatExposure(exposure) {
+            if (exposure < 1) {
+                return `1/${Math.round(1/exposure)}秒`;
+            }
+            return `${exposure}秒`;
+        }
+        
+        // 辅助函数：格式化日期
+        function formatExifDate(dateString) {
+            // EXIF日期格式通常为 "YYYY:MM:DD HH:MM:SS"
+            const parts = dateString.split(' ');
+            const datePart = parts[0].replace(/:/g, '-');
+            return `${datePart} ${parts[1] || ''}`;
+        }
+        
+        // 辅助函数：转换GPS坐标为十进制
+        function convertGPSToDecimal(gpsArray, ref) {
+            const degrees = gpsArray[0] || 0;
+            const minutes = gpsArray[1] || 0;
+            const seconds = gpsArray[2] || 0;
+            
+            let decimal = degrees + (minutes / 60) + (seconds / 3600);
+            
+            // 南纬或西经需要取负值
+            if (ref === 'S' || ref === 'W') {
+                decimal = -decimal;
+            }
+            
+            return decimal;
+        }
+        
+        // 辅助函数：格式化闪光灯信息
+        function formatFlash(flash) {
+            // 闪光灯值含义：0 = 未闪光, 1 = 闪光, 5 = 闪光但未检测到返回光, 7 = 闪光且检测到返回光
+            switch(flash) {
+                case 0: return '未使用闪光灯';
+                case 1: return '使用闪光灯';
+                case 5: return '闪光但未检测到返回光';
+                case 7: return '闪光且检测到返回光';
+                default: return `闪光灯 (代码: ${flash})`;
+            }
+        }
+        
+        // 辅助函数：格式化测光模式
+        function formatMeteringMode(mode) {
+            // 测光模式：1 = 平均, 2 = 中央重点平均, 3 = 点测光, 4 = 多点测光, 5 = 多区域测光
+            switch(mode) {
+                case 1: return '平均测光';
+                case 2: return '中央重点平均测光';
+                case 3: return '点测光';
+                case 4: return '多点测光';
+                case 5: return '多区域测光';
+                default: return `测光模式 (代码: ${mode})`;
+            }
+        }
+        
+        // 辅助函数：格式化曝光程序
+        function formatExposureProgram(program) {
+            // 曝光程序：0 = 未定义, 1 = 手动, 2 = 自动, 3 = 光圈优先, 4 = 快门优先, 5 = 创意程序, 6 = 动作程序, 7 = 肖像模式, 8 = 风景模式
+            switch(program) {
+                case 0: return '未定义';
+                case 1: return '手动';
+                case 2: return '自动';
+                case 3: return '光圈优先';
+                case 4: return '快门优先';
+                case 5: return '创意程序';
+                case 6: return '动作程序';
+                case 7: return '肖像模式';
+                case 8: return '风景模式';
+                default: return `曝光程序 (代码: ${program})`;
+            }
+        }
+        
+        // 初始化示例图片
+        window.addEventListener('DOMContentLoaded', () => {
+            // 显示一些使用说明
+            imageInfo.innerHTML = `
+                <div class="info-card">
+                    <div class="info-category"><i class="fas fa-info-circle"></i> 使用说明</div>
+                    <div class="info-item">
+                        <span class="info-label">1.</span>
+                        <span class="info-value">点击"选择照片"按钮或拖放照片到上传区域</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">2.</span>
+                        <span class="info-value">支持JPEG、PNG、HEIC等多种格式</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">3.</span>
+                        <span class="info-value">EXIF信息将自动解析并显示在下方</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">4.</span>
+                        <span class="info-value">如果照片包含GPS信息，可点击链接查看位置</span>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小组分组器 - 随机分组学生工具  - 笨鸟办公工具集箱</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-grouping/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(90deg, #4a6fa5, #6c9bcf);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .panel:hover {
+            transform: translateY(-5px);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            color: #4a6fa5;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            font-size: 1.3rem;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #e1e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 15px;
+            transition: border 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #6c9bcf;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        input[type="number"], select {
+            padding: 12px 15px;
+            border: 2px solid #e1e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex-grow: 1;
+        }
+        
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #6c9bcf;
+        }
+        
+        button {
+            background: linear-gradient(90deg, #4a6fa5, #6c9bcf);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: linear-gradient(90deg, #3d5c8a, #5a87c2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #randomizeBtn {
+            background: linear-gradient(90deg, #2e7d32, #4caf50);
+        }
+        
+        #randomizeBtn:hover {
+            background: linear-gradient(90deg, #1b5e20, #388e3c);
+        }
+        
+        #resetBtn {
+            background: linear-gradient(90deg, #c62828, #f44336);
+            margin-top: 15px;
+        }
+        
+        #resetBtn:hover {
+            background: linear-gradient(90deg, #b71c1c, #d32f2f);
+        }
+        
+        .results-container {
+            margin-top: 30px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .results-title {
+            font-size: 1.8rem;
+            color: #4a6fa5;
+        }
+        
+        .groups-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .group-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .group-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .group-header {
+            background: linear-gradient(90deg, #4a6fa5, #6c9bcf);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .group-members {
+            padding: 20px;
+            list-style-type: none;
+        }
+        
+        .group-members li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: #f8fafd;
+            border-radius: 6px;
+            border-left: 4px solid #6c9bcf;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .group-members li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .student-id {
+            background-color: #e1e8f0;
+            color: #4a6fa5;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+            font-size: 1.1rem;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 2px dashed #ddd;
+            grid-column: 1 / -1;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .action-buttons button {
+            flex: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .counter {
+            background-color: #e1e8f0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #4a6fa5;
+        }
+        
+        .group-count {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #4a6fa5;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-btn {
+            padding: 8px 15px;
+            background-color: #e1e8f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .preset-btn:hover {
+            background-color: #d1d9e6;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .export-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: #f0f4f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .export-btn:hover {
+            background-color: #e1e8f0;
+        }
+        
+        /* 新增样式 */
+        .file-upload-area {
+            border: 2px dashed #c3cfe2;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #f8fafd;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #6c9bcf;
+            background-color: #f0f5ff;
+        }
+        
+        .file-upload-area.drag-over {
+            border-color: #4a6fa5;
+            background-color: #e6eeff;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-btn {
+            background: linear-gradient(90deg, #6c9bcf, #4a6fa5);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .file-upload-btn:hover {
+            background: linear-gradient(90deg, #5a87c2, #3d5c8a);
+        }
+        
+        .file-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        .custom-preset-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: center;
+        }
+        
+        .custom-preset-container input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e1e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .custom-preset-container button {
+            margin: 0;
+            padding: 10px 15px;
+            width: auto;
+        }
+        
+        .info-tip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f0f7ff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #4a6fa5;
+            border-left: 4px solid #6c9bcf;
+        }
+        
+        .info-tip i {
+            font-size: 1.1rem;
+        }
+        
+        .student-count-display {
+            display: inline-block;
+            background-color: #e1e8f0;
+            color: #4a6fa5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-users"></i> 小组分组器</h1>
+            <p class="subtitle">随机分组学生，便于小组活动。支持批量导入TXT文本、自定义学生名单、多种分组方式和结果导出功能。</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="panel">
+                <h2 class="panel-title"><i class="fas fa-edit"></i> 输入学生名单</h2>
+                
+                <div class="info-tip">
+                    <i class="fas fa-info-circle"></i>
+                    <span>当前有 <span id="currentStudentCount" class="student-count-display">12</span> 名学生</span>
+                </div>
+                
+                <div class="file-upload-area" id="fileUploadArea">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="txtFileInput" accept=".txt">
+                        <div class="file-upload-btn">
+                            <i class="fas fa-file-upload"></i> 导入TXT文件
+                        </div>
+                    </div>
+                    <p class="file-info">支持TXT文本文件，每行一个学生姓名</p>
+                    <p class="file-info" id="selectedFileName">未选择文件</p>
+                </div>
+                
+                <textarea id="studentList" placeholder="请输入学生名单，每行一个学生（可以使用示例数据、导入TXT文件或生成自定义数量的学生）&#10;例如：&#10;张三&#10;李四&#10;王五&#10;赵六&#10;刘七&#10;陈八&#10;杨九&#10;周十">张三
+李四
+王五
+赵六
+刘七
+陈八
+杨九
+周十
+吴十一
+郑十二
+孙十三
+钱十四</textarea>
+                
+                <div class="preset-buttons">
+                    <button class="preset-btn" id="preset20">20名学生</button>
+                    <button class="preset-btn" id="preset30">30名学生</button>
+                    <button class="preset-btn" id="preset40">40名学生</button>
+                    <button class="preset-btn" id="clearList">清空名单</button>
+                </div>
+                
+                <div class="custom-preset-container">
+                    <input type="number" id="customStudentCount" min="1" max="200" placeholder="输入自定义学生数量" value="50">
+                    <button class="preset-btn" id="generateCustomStudents">
+                        <i class="fas fa-plus-circle"></i> 生成
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <label for="groupMethod"><i class="fas fa-sliders-h"></i> 分组方式</label>
+                    <select id="groupMethod">
+                        <option value="byGroupNumber">按组数分组</option>
+                        <option value="byGroupSize">按每组人数分组</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <div class="input-row">
+                        <div style="flex: 1;">
+                            <label for="groupCount" id="groupCountLabel"><i class="fas fa-layer-group"></i> 组数: <span id="groupCountValue">4</span></label>
+                            <input type="number" id="groupCount" min="1" max="50" value="4">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="groupSize" id="groupSizeLabel"><i class="fas fa-user-friends"></i> 每组人数: <span id="groupSizeValue">3</span></label>
+                            <input type="number" id="groupSize" min="1" max="100" value="3">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label><i class="fas fa-cog"></i> 分组选项</label>
+                    <div style="display: flex; align-items: center; margin-top: 10px;">
+                        <input type="checkbox" id="shuffleEnabled" checked>
+                        <label for="shuffleEnabled" style="margin-bottom: 0; margin-left: 8px; font-weight: normal;">随机打乱学生顺序</label>
+                    </div>
+                </div>
+                
+                <button id="randomizeBtn">
+                    <i class="fas fa-random"></i> 开始随机分组
+                </button>
+                
+                <button id="resetBtn">
+                    <i class="fas fa-redo"></i> 重置分组
+                </button>
+                
+                <div class="export-buttons">
+                    <button class="export-btn" id="copyResults">
+                        <i class="far fa-copy"></i> 复制结果
+                    </button>
+                    <button class="export-btn" id="exportResults">
+                        <i class="fas fa-file-export"></i> 导出为文本
+                    </button>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <div class="results-header">
+                    <h2 class="results-title"><i class="fas fa-list-alt"></i> 分组结果</h2>
+                    <div class="counter">
+                        <span id="studentCount">12</span> 名学生 / <span id="actualGroupCount">4</span> 个小组
+                    </div>
+                </div>
+                
+                <div class="groups-container" id="groupsContainer">
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>分组结果将显示在这里</p>
+                        <p style="margin-top: 10px; font-size: 0.95rem;">请在左侧输入学生名单并设置分组参数，然后点击"开始随机分组"按钮</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+           
+        </div>
+        
+        <div class="notification" id="notification">
+            <i class="fas fa-check-circle"></i>
+            <span id="notificationMessage">操作成功！</span>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const studentListTextarea = document.getElementById('studentList');
+        const groupMethodSelect = document.getElementById('groupMethod');
+        const groupCountInput = document.getElementById('groupCount');
+        const groupSizeInput = document.getElementById('groupSize');
+        const groupCountValue = document.getElementById('groupCountValue');
+        const groupSizeValue = document.getElementById('groupSizeValue');
+        const randomizeBtn = document.getElementById('randomizeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const studentCountSpan = document.getElementById('studentCount');
+        const actualGroupCountSpan = document.getElementById('actualGroupCount');
+        const shuffleEnabledCheckbox = document.getElementById('shuffleEnabled');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const txtFileInput = document.getElementById('txtFileInput');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const currentStudentCount = document.getElementById('currentStudentCount');
+        const customStudentCountInput = document.getElementById('customStudentCount');
+        const generateCustomStudentsBtn = document.getElementById('generateCustomStudents');
+        
+        // 预设按钮
+        document.getElementById('preset20').addEventListener('click', () => loadPreset(20));
+        document.getElementById('preset30').addEventListener('click', () => loadPreset(30));
+        document.getElementById('preset40').addEventListener('click', () => loadPreset(40));
+        document.getElementById('clearList').addEventListener('click', clearStudentList);
+        document.getElementById('copyResults').addEventListener('click', copyResultsToClipboard);
+        document.getElementById('exportResults').addEventListener('click', exportResultsAsText);
+        
+        // 生成自定义数量学生按钮
+        generateCustomStudentsBtn.addEventListener('click', generateCustomStudents);
+        
+        // 初始化分组方式显示
+        updateGroupMethodDisplay();
+        
+        // 监听分组方式变化
+        groupMethodSelect.addEventListener('change', updateGroupMethodDisplay);
+        
+        // 监听组数和每组人数输入变化
+        groupCountInput.addEventListener('input', () => {
+            groupCountValue.textContent = groupCountInput.value;
+        });
+        
+        groupSizeInput.addEventListener('input', () => {
+            groupSizeValue.textContent = groupSizeInput.value;
+        });
+        
+        // 监听学生名单变化，更新学生数量显示
+        studentListTextarea.addEventListener('input', updateStudentCount);
+        
+        // 文件上传事件处理
+        txtFileInput.addEventListener('change', handleFileUpload);
+        
+        // 文件拖放事件处理
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('drag-over');
+        });
+        
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('drag-over');
+        });
+        
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length) {
+                txtFileInput.files = e.dataTransfer.files;
+                handleFileUpload();
+            }
+        });
+        
+        // 随机分组按钮点击事件
+        randomizeBtn.addEventListener('click', performRandomGrouping);
+        
+        // 重置按钮点击事件
+        resetBtn.addEventListener('click', resetGrouping);
+        
+        // 更新分组方式显示
+        function updateGroupMethodDisplay() {
+            const method = groupMethodSelect.value;
+            
+            if (method === 'byGroupNumber') {
+                document.getElementById('groupCountLabel').style.display = 'block';
+                document.getElementById('groupCount').style.display = 'block';
+                document.getElementById('groupSizeLabel').style.display = 'none';
+                document.getElementById('groupSize').style.display = 'none';
+            } else {
+                document.getElementById('groupCountLabel').style.display = 'none';
+                document.getElementById('groupCount').style.display = 'none';
+                document.getElementById('groupSizeLabel').style.display = 'block';
+                document.getElementById('groupSize').style.display = 'block';
+            }
+        }
+        
+        // 加载预设学生名单
+        function loadPreset(count) {
+            const presets = {
+                20: Array.from({length: 20}, (_, i) => `学生${i+1}`),
+                30: Array.from({length: 30}, (_, i) => `学生${i+1}`),
+                40: Array.from({length: 40}, (_, i) => `学生${i+1}`)
+            };
+            
+            studentListTextarea.value = presets[count].join('\n');
+            updateStudentCount();
+            showNotification(`已加载 ${count} 名学生预设名单`);
+        }
+        
+        // 生成自定义数量学生
+        function generateCustomStudents() {
+            const count = parseInt(customStudentCountInput.value);
+            if (isNaN(count) || count < 1 || count > 200) {
+                showNotification('请输入1-200之间的有效数字', 'error');
+                return;
+            }
+            
+            // 中文姓氏和名字库
+            const surnames = ['赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈', '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤', '许', '何', '吕', '施', '张', '孔', '曹', '严', '华', '金', '魏', '陶', '姜'];
+            const givenNames = ['伟', '芳', '娜', '秀英', '敏', '静', '丽', '强', '磊', '洋', '艳', '勇', '军', '杰', '娟', '涛', '明', '超', '秀兰', '霞', '平', '刚', '桂英', '林', '秀珍', '健', '丹', '彬', '桂兰', '宇', '红梅'];
+            
+            // 生成学生名单
+            const students = [];
+            const usedNames = new Set();
+            
+            while (students.length < count) {
+                const surname = surnames[Math.floor(Math.random() * surnames.length)];
+                const givenName = givenNames[Math.floor(Math.random() * givenNames.length)];
+                const studentName = `${surname}${givenName}`;
+                
+                // 确保姓名不重复
+                if (!usedNames.has(studentName)) {
+                    students.push(studentName);
+                    usedNames.add(studentName);
+                } else if (students.length > 0) {
+                    // 如果重复，添加数字后缀
+                    let i = 1;
+                    while (usedNames.has(`${studentName}${i}`)) {
+                        i++;
+                    }
+                    const uniqueName = `${studentName}${i}`;
+                    students.push(uniqueName);
+                    usedNames.add(uniqueName);
+                }
+            }
+            
+            studentListTextarea.value = students.join('\n');
+            updateStudentCount();
+            showNotification(`已生成 ${count} 名学生名单`);
+        }
+        
+        // 处理文件上传
+        function handleFileUpload() {
+            const file = txtFileInput.files[0];
+            if (!file) return;
+            
+            // 检查文件类型
+            if (!file.name.toLowerCase().endsWith('.txt')) {
+                showNotification('请选择TXT文本文件', 'error');
+                return;
+            }
+            
+            selectedFileName.textContent = `已选择: ${file.name}`;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    // 按行分割并过滤空行
+                    const lines = content.split(/\r?\n/)
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0);
+                    
+                    if (lines.length === 0) {
+                        showNotification('文件内容为空或格式不正确', 'error');
+                        return;
+                    }
+                    
+                    studentListTextarea.value = lines.join('\n');
+                    updateStudentCount();
+                    showNotification(`成功导入 ${lines.length} 名学生`);
+                } catch (error) {
+                    showNotification('读取文件时出错: ' + error.message, 'error');
+                }
+            };
+            
+            reader.onerror = function() {
+                showNotification('读取文件时出错', 'error');
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // 清空学生名单
+        function clearStudentList() {
+            studentListTextarea.value = '';
+            updateStudentCount();
+            showNotification('学生名单已清空');
+        }
+        
+        // 更新学生数量显示
+        function updateStudentCount() {
+            const studentListText = studentListTextarea.value.trim();
+            let studentCount = 0;
+            
+            if (studentListText) {
+                studentCount = studentListText.split('\n')
+                    .map(name => name.trim())
+                    .filter(name => name.length > 0).length;
+            }
+            
+            currentStudentCount.textContent = studentCount;
+            studentCountSpan.textContent = studentCount;
+        }
+        
+        // 执行随机分组
+        function performRandomGrouping() {
+            // 获取学生名单
+            const studentListText = studentListTextarea.value.trim();
+            if (!studentListText) {
+                showNotification('请输入学生名单', 'error');
+                return;
+            }
+            
+            // 分割学生名单为数组
+            let students = studentListText.split('\n')
+                .map(name => name.trim())
+                .filter(name => name.length > 0);
+            
+            // 检查是否有重复的学生名
+            const uniqueStudents = [...new Set(students)];
+            if (uniqueStudents.length !== students.length) {
+                showNotification('检测到重复的学生名，已自动去重', 'warning');
+                students = uniqueStudents;
+            }
+            
+            const studentCount = students.length;
+            studentCountSpan.textContent = studentCount;
+            
+            // 是否打乱顺序
+            if (shuffleEnabledCheckbox.checked) {
+                students = shuffleArray(students);
+            }
+            
+            // 根据分组方式进行分组
+            let groups = [];
+            const method = groupMethodSelect.value;
+            
+            if (method === 'byGroupNumber') {
+                // 按组数分组
+                const groupCount = parseInt(groupCountInput.value);
+                if (groupCount < 1 || groupCount > studentCount) {
+                    showNotification('组数必须在1到学生总数之间', 'error');
+                    return;
+                }
+                
+                groups = groupByGroupCount(students, groupCount);
+                groupCountInput.value = groupCount;
+                groupCountValue.textContent = groupCount;
+            } else {
+                // 按每组人数分组
+                const groupSize = parseInt(groupSizeInput.value);
+                if (groupSize < 1 || groupSize > studentCount) {
+                    showNotification('每组人数必须在1到学生总数之间', 'error');
+                    return;
+                }
+                
+                groups = groupByGroupSize(students, groupSize);
+                groupSizeInput.value = groupSize;
+                groupSizeValue.textContent = groupSize;
+            }
+            
+            // 更新实际组数
+            actualGroupCountSpan.textContent = groups.length;
+            
+            // 显示分组结果
+            displayGroups(groups);
+            
+            // 显示成功通知
+            showNotification(`成功将 ${studentCount} 名学生分为 ${groups.length} 个小组`);
+        }
+        
+        // 按组数分组
+        function groupByGroupCount(students, groupCount) {
+            const groups = Array.from({length: groupCount}, () => []);
+            const studentCount = students.length;
+            
+            for (let i = 0; i < studentCount; i++) {
+                const groupIndex = i % groupCount;
+                groups[groupIndex].push(students[i]);
+            }
+            
+            return groups;
+        }
+        
+        // 按每组人数分组
+        function groupByGroupSize(students, groupSize) {
+            const groups = [];
+            const studentCount = students.length;
+            const groupCount = Math.ceil(studentCount / groupSize);
+            
+            for (let i = 0; i < groupCount; i++) {
+                const start = i * groupSize;
+                const end = start + groupSize;
+                groups.push(students.slice(start, end));
+            }
+            
+            return groups;
+        }
+        
+        // 随机打乱数组
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        // 显示分组结果
+        function displayGroups(groups) {
+            groupsContainer.innerHTML = '';
+            
+            if (groups.length === 0) {
+                groupsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>没有生成任何分组</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            groups.forEach((group, index) => {
+                const groupElement = document.createElement('div');
+                groupElement.className = 'group-card';
+                
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'group-header';
+                groupHeader.textContent = `第 ${index + 1} 组 (${group.length}人)`;
+                
+                const membersList = document.createElement('ul');
+                membersList.className = 'group-members';
+                
+                group.forEach((student, studentIndex) => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span>${student}</span>
+                        <span class="student-id">${studentIndex + 1}</span>
+                    `;
+                    membersList.appendChild(listItem);
+                });
+                
+                groupElement.appendChild(groupHeader);
+                groupElement.appendChild(membersList);
+                groupsContainer.appendChild(groupElement);
+            });
+        }
+        
+        // 重置分组
+        function resetGrouping() {
+            groupsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <p>分组结果将显示在这里</p>
+                    <p style="margin-top: 10px; font-size: 0.95rem;">请在左侧输入学生名单并设置分组参数，然后点击"开始随机分组"按钮</p>
+                </div>
+            `;
+            studentCountSpan.textContent = '0';
+            actualGroupCountSpan.textContent = '0';
+            showNotification('分组结果已重置');
+        }
+        
+        // 复制结果到剪贴板
+        function copyResultsToClipboard() {
+            const groupCards = document.querySelectorAll('.group-card');
+            if (groupCards.length === 0) {
+                showNotification('没有可复制的分组结果', 'error');
+                return;
+            }
+            
+            let resultText = `小组分组结果（共 ${groupCards.length} 组）\n\n`;
+            
+            groupCards.forEach((card, index) => {
+                const groupName = card.querySelector('.group-header').textContent;
+                const members = card.querySelectorAll('.group-members li');
+                
+                resultText += `${groupName}：\n`;
+                members.forEach(member => {
+                    const studentName = member.querySelector('span:first-child').textContent;
+                    resultText += `  - ${studentName}\n`;
+                });
+                resultText += '\n';
+            });
+            
+            navigator.clipboard.writeText(resultText).then(() => {
+                showNotification('分组结果已复制到剪贴板');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showNotification('复制失败，请手动复制', 'error');
+            });
+        }
+        
+        // 导出结果为文本文件
+        function exportResultsAsText() {
+            const groupCards = document.querySelectorAll('.group-card');
+            if (groupCards.length === 0) {
+                showNotification('没有可导出的分组结果', 'error');
+                return;
+            }
+            
+            let resultText = `小组分组结果\n生成时间：${new Date().toLocaleString()}\n共 ${groupCards.length} 组\n\n`;
+            
+            groupCards.forEach((card, index) => {
+                const groupName = card.querySelector('.group-header').textContent;
+                const members = card.querySelectorAll('.group-members li');
+                
+                resultText += `${groupName}：\n`;
+                members.forEach(member => {
+                    const studentName = member.querySelector('span:first-child').textContent;
+                    resultText += `  ${studentName}\n`;
+                });
+                resultText += '\n';
+            });
+            
+            const blob = new Blob([resultText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `小组分组结果_${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('分组结果已导出为文本文件');
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'success') {
+            notificationMessage.textContent = message;
+            
+            // 根据类型设置颜色
+            if (type === 'error') {
+                notification.style.backgroundColor = '#f44336';
+            } else if (type === 'warning') {
+                notification.style.backgroundColor = '#ff9800';
+            } else {
+                notification.style.backgroundColor = '#4caf50';
+            }
+            
+            notification.classList.add('show');
+            
+            // 3秒后隐藏通知
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 页面加载时显示示例分组
+        window.addEventListener('load', () => {
+            // 更新学生数量显示
+            updateStudentCount();
+            
+            // 执行一次分组作为示例
+            setTimeout(performRandomGrouping, 500);
+        });
+    </script>
+</body>
+</html>

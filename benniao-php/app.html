@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP格式化工具 - PHP代码美化与格式化在线工具</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a3c5e;
+        }
+        
+        h1 {
+            color: #4cc9f0;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            color: #a9b7c6;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section, .output-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: #1e2a47;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a3c5e;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2a3c5e;
+        }
+        
+        .section-title i {
+            margin-right: 12px;
+            color: #4cc9f0;
+            font-size: 1.5rem;
+        }
+        
+        .section-title h2 {
+            color: #e0e0e0;
+            font-size: 1.8rem;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            background-color: #0d1525;
+            color: #a9b7c6;
+            border: 1px solid #3a4a6c;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #4cc9f0;
+        }
+        
+        .output-container {
+            background-color: #0d1525;
+            border: 1px solid #3a4a6c;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            min-width: 160px;
+        }
+        
+        .btn-format {
+            background: linear-gradient(to right, #4361ee, #3a0ca3);
+            color: white;
+        }
+        
+        .btn-copy {
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            color: white;
+        }
+        
+        .btn-clear {
+            background: linear-gradient(to right, #f72585, #b5179e);
+            color: white;
+        }
+        
+        .btn-example {
+            background: linear-gradient(to right, #ff9e00, #ff9100);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background-color: #1e2a47;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid #2a3c5e;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #4cc9f0;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card h3 {
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+        }
+        
+        .feature-card p {
+            color: #a9b7c6;
+            font-size: 1rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #a9b7c6;
+            border-top: 1px solid #2a3c5e;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .status.success {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: #4cc9f0;
+            border: 1px solid #4cc9f0;
+            display: block;
+        }
+        
+        .status.error {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: #f72585;
+            border: 1px solid #f72585;
+            display: block;
+        }
+        
+        /* PHP语法高亮样式 */
+        .php-keyword {
+            color: #ff79c6;
+            font-weight: bold;
+        }
+        
+        .php-string {
+            color: #f1fa8c;
+        }
+        
+        .php-comment {
+            color: #6272a4;
+            font-style: italic;
+        }
+        
+        .php-variable {
+            color: #8be9fd;
+        }
+        
+        .php-function {
+            color: #50fa7b;
+        }
+        
+        .php-html {
+            color: #bd93f9;
+        }
+        
+        .php-number {
+            color: #bd93f9;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                min-width: 140px;
+                padding: 12px 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> PHP格式化美化工具</h1>
+            <p class="subtitle">提供PHP代码格式化、PHP代码美化、PHP代码格式化美化排版处理。输入您需要格式化的PHP代码，点击格式化按钮，即可转换成功，并自动将PHP语法高亮着色，方便阅读查看PHP语法是否正确。</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="input-section">
+                <div class="section-title">
+                    <i class="fas fa-pencil-alt"></i>
+                    <h2>输入PHP代码</h2>
+                </div>
+                <textarea id="phpInput" placeholder="请在此处粘贴或输入您的PHP代码..."><?php
+// 示例PHP代码
+function calculateSum($numbers) {
+    $total = 0;
+    foreach($numbers as $num) {
+        $total += $num; // 累加每个数字
+    }
+    return $total;
+}
+
+class User {
+    private $name;
+    private $email;
+    
+    public function __construct($name, $email) {
+        $this->name = $name;
+        $this->email = $email;
+    }
+    
+    public function displayInfo() {
+        echo "姓名: " . $this->name . "&lt;br&gt;";
+        echo "邮箱: " . $this->email;
+    }
+}
+
+// 测试代码
+$numbers = [1, 2, 3, 4, 5];
+echo "数字之和: " . calculateSum($numbers);
+
+$user = new User("张三", "zhangsan@example.com");
+$user-&gt;displayInfo();
+?></textarea>
+            </section>
+            
+            <section class="output-section">
+                <div class="section-title">
+                    <i class="fas fa-code"></i>
+                    <h2>格式化结果</h2>
+                </div>
+                <div id="phpOutput" class="output-container">
+                    <div style="color: #a9b7c6; text-align: center; padding: 50px 20px;">
+                        <i class="fas fa-arrow-left" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.7;"></i>
+                        <p>格式化后的PHP代码将显示在这里</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">支持语法高亮和美化排版</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="status" id="statusMessage"></div>
+        
+        <div class="controls">
+            <button id="formatBtn" class="btn btn-format">
+                <i class="fas fa-magic"></i> 格式化PHP代码
+            </button>
+            <button id="copyBtn" class="btn btn-copy">
+                <i class="far fa-copy"></i> 复制结果
+            </button>
+            <button id="clearBtn" class="btn btn-clear">
+                <i class="fas fa-broom"></i> 清空内容
+            </button>
+            <button id="exampleBtn" class="btn btn-example">
+                <i class="fas fa-eye"></i> 加载示例
+            </button>
+        </div>
+        
+        <!--<div class="features">-->
+        <!--    <div class="feature-card">-->
+        <!--        <i class="fas fa-broom"></i>-->
+        <!--        <h3>代码美化</h3>-->
+        <!--        <p>自动调整PHP代码的缩进、空格和换行，使代码结构清晰易读，符合编码规范。</p>-->
+        <!--    </div>-->
+        <!--    <div class="feature-card">-->
+        <!--        <i class="fas fa-palette"></i>-->
+        <!--        <h3>语法高亮</h3>-->
+        <!--        <p>使用多种颜色突出显示PHP关键字、字符串、变量和注释，方便快速识别代码结构。</p>-->
+        <!--    </div>-->
+        <!--    <div class="feature-card">-->
+        <!--        <i class="fas fa-clipboard-check"></i>-->
+        <!--        <h3>语法检查</h3>-->
+        <!--        <p>通过高亮显示帮助您识别可能的语法错误，使代码调试和阅读更加直观高效。</p>-->
+        <!--    </div>-->
+        <!--    <div class="feature-card">-->
+        <!--        <i class="fas fa-bolt"></i>-->
+        <!--        <h3>完全离线</h3>-->
+        <!--        <p>所有操作均在浏览器中完成，无需上传代码到服务器，保护您的代码隐私和安全。</p>-->
+        <!--    </div>-->
+        <!--</div>-->
+        
+        <footer>
+             
+        </footer>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const phpInput = document.getElementById('phpInput');
+        const phpOutput = document.getElementById('phpOutput');
+        const formatBtn = document.getElementById('formatBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const exampleBtn = document.getElementById('exampleBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        // 示例PHP代码
+        const exampleCode = `<?php
+namespace App\\Services;
+
+class PaymentProcessor {
+    private $paymentGateway;
+    private $logger;
+    
+    /**
+     * 构造函数
+     * @param PaymentGateway $gateway 支付网关
+     * @param Logger $logger 日志记录器
+     */
+    public function __construct(PaymentGateway $gateway, Logger $logger) {
+        $this->paymentGateway = $gateway;
+        $this->logger = $logger;
+    }
+    
+    /**
+     * 处理支付
+     * @param array $order 订单信息
+     * @return array 支付结果
+     */
+    public function processPayment(array $order): array {
+        try {
+            // 验证订单数据
+            if (!$this->validateOrder($order)) {
+                throw new \\InvalidArgumentException("订单数据无效");
+            }
+            
+            // 计算总金额
+            $total = $this->calculateTotal($order['items']);
+            
+            // 调用支付网关
+            $result = $this->paymentGateway->charge(
+                $order['customer_id'],
+                $total,
+                $order['currency']
+            );
+            
+            // 记录支付日志
+            $this->logger->info("支付成功", [
+                'order_id' => $order['id'],
+                'amount' => $total,
+                'transaction_id' => $result['transaction_id']
+            ]);
+            
+            return [
+                'success' => true,
+                'message' => '支付处理成功',
+                'transaction_id' => $result['transaction_id']
+            ];
+            
+        } catch (\\Exception $e) {
+            $this->logger->error("支付处理失败: " . $e->getMessage(), [
+                'order_id' => $order['id'],
+                'error' => $e->getMessage()
+            ]);
+            
+            return [
+                'success' => false,
+                'message' => '支付处理失败: ' . $e->getMessage()
+            ];
+        }
+    }
+    
+    /**
+     * 验证订单
+     * @param array $order 订单信息
+     * @return bool 验证结果
+     */
+    private function validateOrder(array $order): bool {
+        return isset($order['id']) 
+            && isset($order['customer_id']) 
+            && isset($order['items']) 
+            && count($order['items']) > 0;
+    }
+    
+    /**
+     * 计算总金额
+     * @param array $items 订单项目
+     * @return float 总金额
+     */
+    private function calculateTotal(array $items): float {
+        $total = 0.0;
+        
+        foreach ($items as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
+        
+        return round($total, 2);
+    }
+}
+
+// 使用示例
+$logger = new Logger();
+$gateway = new PaymentGateway();
+$processor = new PaymentProcessor($gateway, $logger);
+
+$order = [
+    'id' => 'ORD-2023-001',
+    'customer_id' => 'CUST-12345',
+    'currency' => 'USD',
+    'items' => [
+        ['product_id' => 'PROD-001', 'price' => 29.99, 'quantity' => 2],
+        ['product_id' => 'PROD-002', 'price' => 15.50, 'quantity' => 1]
+    ]
+];
+
+$result = $processor->processPayment($order);
+
+if ($result['success']) {
+    echo "支付成功! 交易ID: " . $result['transaction_id'];
+} else {
+    echo "支付失败: " . $result['message'];
+}
+?>`;
+        
+        // PHP关键字列表
+        const phpKeywords = [
+            'abstract', 'and', 'array', 'as', 'break', 'callable', 'case', 'catch', 
+            'class', 'clone', 'const', 'continue', 'declare', 'default', 'die', 'do', 
+            'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach', 
+            'endif', 'endswitch', 'endwhile', 'eval', 'exit', 'extends', 'final', 
+            'for', 'foreach', 'function', 'global', 'goto', 'if', 'implements', 
+            'include', 'include_once', 'instanceof', 'insteadof', 'interface', 
+            'isset', 'list', 'namespace', 'new', 'or', 'print', 'private', 
+            'protected', 'public', 'require', 'require_once', 'return', 'static', 
+            'switch', 'throw', 'trait', 'try', 'unset', 'use', 'var', 'while', 
+            'xor', 'yield', '__halt_compiler', 'fn', 'match', 'enum', 'readonly'
+        ];
+        
+        // PHP内置函数列表（部分）
+        const phpFunctions = [
+            'count', 'strlen', 'substr', 'str_replace', 'explode', 'implode',
+            'array_merge', 'array_keys', 'array_values', 'in_array', 'date',
+            'time', 'strtotime', 'json_encode', 'json_decode', 'file_get_contents',
+            'file_put_contents', 'isset', 'empty', 'is_null', 'is_array',
+            'is_string', 'is_int', 'is_numeric', 'filter_var', 'htmlspecialchars',
+            'trim', 'ltrim', 'rtrim', 'strpos', 'stripos', 'strtolower', 'strtoupper'
+        ];
+        
+        // 显示状态消息
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status ' + type;
+            
+            // 3秒后隐藏消息
+            setTimeout(() => {
+                statusMessage.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 格式化PHP代码
+        function formatPHPCode(code) {
+            // 移除多余的空格和制表符
+            let formatted = code.replace(/\t/g, '    ');
+            
+            // 标准化换行符
+            formatted = formatted.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            
+            // 标准化空格
+            formatted = formatted.replace(/\s+\n/g, '\n');
+            formatted = formatted.replace(/\n\s*\n\s*\n/g, '\n\n');
+            
+            // 在特定符号前后添加空格以提高可读性
+            formatted = formatted.replace(/([=+\-*\/.%&|^<>!]=|[=+\-*\/.%&|^<>!])\s*/g, ' $1 ');
+            formatted = formatted.replace(/\s*([{}();,:])\s*/g, '$1 ');
+            formatted = formatted.replace(/([{}();,:])(?=\w)/g, '$1 ');
+            
+            // 修复可能由上述操作引起的多余空格
+            formatted = formatted.replace(/\s+/g, ' ');
+            formatted = formatted.replace(/\(\s+/g, '(');
+            formatted = formatted.replace(/\s+\)/g, ')');
+            
+            // 添加适当的缩进
+            let lines = formatted.split('\n');
+            let indentLevel = 0;
+            const indentSize = 4;
+            let inCommentBlock = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                // 处理多行注释的开始和结束
+                if (line.startsWith('/*') && !line.endsWith('*/')) {
+                    inCommentBlock = true;
+                }
+                
+                // 减少缩进级别对于闭合块
+                if (line.startsWith('}') || line.startsWith(')') || line.includes('};') || line.includes(');')) {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                }
+                
+                // 应用当前缩进
+                lines[i] = ' '.repeat(indentLevel * indentSize) + line;
+                
+                // 增加缩进级别对于新块
+                if (line.endsWith('{') || line.endsWith('(') || 
+                    line.includes('function') || line.includes('class') || 
+                    line.includes('if') || line.includes('else') || 
+                    line.includes('for') || line.includes('foreach') || 
+                    line.includes('while') || line.includes('switch') ||
+                    line.includes('try') || line.includes('catch')) {
+                    
+                    // 检查是否是单行块
+                    if (!line.includes('}') && !line.match(/\)\s*\{/)) {
+                        indentLevel++;
+                    }
+                }
+                
+                // 处理多行注释的结束
+                if (inCommentBlock && line.endsWith('*/')) {
+                    inCommentBlock = false;
+                }
+            }
+            
+            return lines.join('\n');
+        }
+        
+        // 应用PHP语法高亮
+        function highlightPHP(code) {
+            // 替换HTML实体
+            code = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+            
+            // 高亮PHP标签
+            code = code.replace(/&lt;\?php/g, '<span class="php-html">&lt;?php</span>');
+            code = code.replace(/\?&gt;/g, '<span class="php-html">?&gt;</span>');
+            
+            // 高亮注释
+            code = code.replace(/\/\/.*$/gm, '<span class="php-comment">$&</span>');
+            code = code.replace(/\/\*[\s\S]*?\*\//g, '<span class="php-comment">$&</span>');
+            code = code.replace(/#.*$/gm, '<span class="php-comment">$&</span>');
+            
+            // 高亮字符串（单引号和双引号）
+            code = code.replace(/'[^']*'/g, '<span class="php-string">$&</span>');
+            code = code.replace(/"([^"\\]|\\.)*"/g, '<span class="php-string">$&</span>');
+            
+            // 高亮数字
+            code = code.replace(/\b\d+(\.\d+)?\b/g, '<span class="php-number">$&</span>');
+            
+            // 高亮变量
+            code = code.replace(/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/g, '<span class="php-variable">$&</span>');
+            
+            // 高亮关键字
+            phpKeywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                code = code.replace(regex, `<span class="php-keyword">${keyword}</span>`);
+            });
+            
+            // 高亮函数
+            phpFunctions.forEach(func => {
+                const regex = new RegExp(`\\b${func}\\(`, 'g');
+                code = code.replace(regex, `<span class="php-function">${func}</span>(`);
+            });
+            
+            // 高亮用户定义函数
+            code = code.replace(/\bfunction\s+([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/g, 'function <span class="php-function">$1</span>');
+            
+            // 高亮类名
+            code = code.replace(/\bclass\s+([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)/g, 'class <span class="php-function">$1</span>');
+            
+            return code;
+        }
+        
+        // 处理格式化按钮点击
+        formatBtn.addEventListener('click', () => {
+            const inputCode = phpInput.value.trim();
+            
+            if (!inputCode) {
+                showStatus('请输入PHP代码进行格式化', 'error');
+                return;
+            }
+            
+            try {
+                // 格式化代码
+                const formattedCode = formatPHPCode(inputCode);
+                
+                // 应用语法高亮
+                const highlightedCode = highlightPHP(formattedCode);
+                
+                // 显示结果
+                phpOutput.innerHTML = highlightedCode;
+                
+                showStatus('PHP代码格式化成功！', 'success');
+            } catch (error) {
+                showStatus('格式化过程中出现错误: ' + error.message, 'error');
+                phpOutput.innerHTML = `<div style="color: #f72585; padding: 20px;">格式化错误: ${error.message}</div>`;
+            }
+        });
+        
+        // 处理复制按钮点击
+        copyBtn.addEventListener('click', () => {
+            const outputText = phpOutput.textContent || phpOutput.innerText;
+            
+            if (!outputText || outputText.includes('格式化后的PHP代码将显示在这里')) {
+                showStatus('没有可复制的代码，请先进行格式化', 'error');
+                return;
+            }
+            
+            // 创建一个临时文本区域来复制文本
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = outputText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showStatus('代码已复制到剪贴板！', 'success');
+                } else {
+                    showStatus('复制失败，请手动选择并复制代码', 'error');
+                }
+            } catch (err) {
+                showStatus('复制失败: ' + err, 'error');
+            }
+            
+            document.body.removeChild(tempTextArea);
+        });
+        
+        // 处理清空按钮点击
+        clearBtn.addEventListener('click', () => {
+            phpInput.value = '';
+            phpOutput.innerHTML = '<div style="color: #a9b7c6; text-align: center; padding: 50px 20px;"><i class="fas fa-arrow-left" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.7;"></i><p>格式化后的PHP代码将显示在这里</p><p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">支持语法高亮和美化排版</p></div>';
+            showStatus('内容已清空', 'success');
+        });
+        
+        // 处理示例按钮点击
+        exampleBtn.addEventListener('click', () => {
+            phpInput.value = exampleCode;
+            showStatus('示例代码已加载，点击"格式化PHP代码"查看效果', 'success');
+        });
+        
+        // 页面加载时自动格式化示例代码
+        window.addEventListener('DOMContentLoaded', () => {
+            formatBtn.click();
+        });
+    </script>
+</body>
+</html>

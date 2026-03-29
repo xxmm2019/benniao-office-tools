@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>声乐气息练习工具- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-shengyin/">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .title p {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timer-time {
+            font-size: 64px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .timer-hint {
+            font-size: 14px;
+            color: #f59e0b;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .btn {
+            width: 64px;
+            height: 64px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .history-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+
+        .history-value {
+            font-weight: bold;
+            color: #7c3aed;
+        }
+
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .history-date {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            min-width: 40px;
+        }
+
+        .history-count {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .history-max {
+            font-size: 14px;
+            font-weight: 500;
+            color: #7c3aed;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .timer-time {
+                font-size: 48px;
+            }
+            
+            .btn {
+                width: 56px;
+                height: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>声乐气息练习</h1>
+            <p>吸气到腹部，慢慢发 si 的音，气息要稳定</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">今日练习记录</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #2563eb;" id="todayCount">0</div>
+                    <div class="stat-label">练习次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #059669;" id="todayTotal">00:00</div>
+                    <div class="stat-label">累计时长</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: #7c3aed;" id="todayMax">00:00</div>
+                    <div class="stat-label">单次最长</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="timer-display">
+                <div class="timer-time" id="timerDisplay">00:00</div>
+                <div class="timer-hint" id="timerHint" style="display: none;">
+                    已达到60秒，可以停止了
+                </div>
+            </div>
+            <div class="timer-controls">
+                <button class="btn btn-primary" id="startBtn" onclick="startTimer()">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+                <button class="btn btn-danger" id="stopBtn" onclick="stopTimer()" style="display: none;">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
+                </button>
+                <button class="btn btn-secondary" onclick="resetTimer()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">历史统计</div>
+            <div class="history-stats">
+                <span>已累计打卡 <span class="history-value" id="totalDays">0</span> 天</span>
+                <span>历史最长 <span class="history-value" id="historyMax">00:00</span></span>
+            </div>
+            
+            <div class="history-list" id="historyList">
+                <!-- 历史记录将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timer = {
+            isRunning: false,
+            startTime: null,
+            currentDuration: 0,
+            interval: null
+        };
+
+        let dailyRecords = [];
+        let todayRecord = {
+            date: new Date().toISOString().split('T')[0],
+            practiceCount: 0,
+            totalDuration: 0,
+            maxDuration: 0
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecords();
+            updateDisplay();
+        });
+
+        function loadRecords() {
+            const saved = localStorage.getItem('vocalBreathingRecords');
+            if (saved) {
+                dailyRecords = JSON.parse(saved);
+                
+                const today = new Date().toISOString().split('T')[0];
+                const todayData = dailyRecords.find(r => r.date === today);
+                if (todayData) {
+                    todayRecord = todayData;
+                }
+            }
+        }
+
+        function saveRecords() {
+            localStorage.setItem('vocalBreathingRecords', JSON.stringify(dailyRecords));
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            if (dateStr === today.toISOString().split('T')[0]) {
+                return '今天';
+            } else if (dateStr === yesterday.toISOString().split('T')[0]) {
+                return '昨天';
+            } else {
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+            }
+        }
+
+        function startTimer() {
+            timer.isRunning = true;
+            timer.startTime = Date.now();
+            timer.currentDuration = 0;
+            
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'flex';
+            
+            timer.interval = setInterval(() => {
+                timer.currentDuration = Math.floor((Date.now() - timer.startTime) / 1000);
+                document.getElementById('timerDisplay').textContent = formatTime(timer.currentDuration);
+                
+                if (timer.currentDuration >= 60) {
+                    document.getElementById('timerHint').style.display = 'block';
+                } else {
+                    document.getElementById('timerHint').style.display = 'none';
+                }
+            }, 100);
+        }
+
+        function stopTimer() {
+            if (timer.currentDuration > 0) {
+                todayRecord.practiceCount += 1;
+                todayRecord.totalDuration += timer.currentDuration;
+                todayRecord.maxDuration = Math.max(todayRecord.maxDuration, timer.currentDuration);
+
+                const today = new Date().toISOString().split('T')[0];
+                const existingIndex = dailyRecords.findIndex(r => r.date === today);
+                
+                if (existingIndex >= 0) {
+                    dailyRecords[existingIndex] = todayRecord;
+                } else {
+                    dailyRecords.unshift(todayRecord);
+                }
+                
+                saveRecords();
+                updateDisplay();
+            }
+
+            resetTimer();
+        }
+
+        function resetTimer() {
+            timer.isRunning = false;
+            timer.startTime = null;
+            timer.currentDuration = 0;
+            
+            if (timer.interval) {
+                clearInterval(timer.interval);
+                timer.interval = null;
+            }
+            
+            document.getElementById('timerDisplay').textContent = '00:00';
+            document.getElementById('timerHint').style.display = 'none';
+            document.getElementById('startBtn').style.display = 'flex';
+            document.getElementById('stopBtn').style.display = 'none';
+        }
+
+        function updateDisplay() {
+            document.getElementById('todayCount').textContent = todayRecord.practiceCount;
+            document.getElementById('todayTotal').textContent = formatTime(todayRecord.totalDuration);
+            document.getElementById('todayMax').textContent = formatTime(todayRecord.maxDuration);
+
+            document.getElementById('totalDays').textContent = dailyRecords.length;
+            const historyMax = Math.max(...dailyRecords.map(r => r.maxDuration), 0);
+            document.getElementById('historyMax').textContent = formatTime(historyMax);
+
+            if (dailyRecords.length > 0) {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = '';
+
+                dailyRecords.forEach((record) => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    
+                    item.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="history-date">${formatDate(record.date)}</div>
+                            <div class="history-count">${record.practiceCount}次</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 12px; color: #6b7280;">${formatTime(record.totalDuration)}</div>
+                            <div class="history-max">${formatTime(record.maxDuration)}</div>
+                        </div>
+                    `;
+                    
+                    historyList.appendChild(item);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

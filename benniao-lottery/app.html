@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>幸运大转盘-自定义转盘抽奖系统- 笨鸟办公工具集箱</title>
+       <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-lottery/">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e6ed;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+            font-size: 1.5rem;
+        }
+        
+        .lottery-area {
+            text-align: center;
+        }
+        
+        /* 转盘样式 */
+        .wheel-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 20px auto;
+        }
+        
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 30px solid #e74c3c;
+            z-index: 10;
+        }
+        
+        .lottery-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .lottery-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .lottery-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        /* 自定义选项表单 */
+        .options-form {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            border: 2px solid #ddd;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .form-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .add-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        /* 选项列表 */
+        .options-list {
+            list-style-type: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+            transition: transform 0.2s;
+        }
+        
+        .option-item:hover {
+            transform: translateX(5px);
+            background-color: #f1f8ff;
+        }
+        
+        .option-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 15px;
+            border: 1px solid #ddd;
+        }
+        
+        .option-content {
+            flex: 1;
+            font-weight: bold;
+        }
+        
+        .option-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .option-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .edit-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        /* 抽奖记录 */
+        .record-list {
+            list-style-type: none;
+            min-height: 150px;
+        }
+        
+        .record-list li {
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .empty-record {
+            text-align: center;
+            color: #95a5a6;
+            font-style: italic;
+            padding: 40px 20px;
+        }
+        
+        .confirm-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        
+        .confirm-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        /* 结果区域 */
+        .result-area {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .result-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .section {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!--<header>-->
+    <!--    <h1>幸运大转盘-自定义转盘抽奖系统</h1>-->
+       
+    <!--</header>-->
+    
+    <div class="container">
+        <section class="section lottery-area">
+            <h2>幸运大转盘</h2>
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <canvas id="wheelCanvas" width="320" height="320"></canvas>
+            </div>
+            <div class="result-area">
+                <div class="result-text" id="resultText">等待抽奖...</div>
+            </div>
+            <button class="lottery-btn" id="lotteryBtn" disabled>开始抽奖</button>
+            <p style="margin-top: 15px; color: #7f8c8d; font-size: 0.9rem;">提示：请先添加至少2个抽奖选项</p>
+        </section>
+        
+        <section class="section">
+            <h2>自定义抽奖选项</h2>
+            <div class="options-form">
+                <div class="form-group">
+                    <label for="optionName">选项名称</label>
+                    <input type="text" id="optionName" class="form-input" placeholder="例如：一等奖、优惠券等">
+                </div>
+                <div class="form-group">
+                    <label for="optionColor">选项颜色</label>
+                    <div class="color-picker">
+                        <input type="color" id="optionColor" class="form-input" value="#3498db">
+                        <div id="colorPreview" class="color-preview"></div>
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" id="addOptionBtn" class="form-btn add-btn">添加选项</button>
+                    <button type="button" id="resetOptionsBtn" class="form-btn reset-btn">重置选项</button>
+                </div>
+            </div>
+            
+            <h3>当前选项列表</h3>
+            <ul class="options-list" id="optionsList">
+                <!-- 选项将通过JS动态添加 -->
+                <li class="empty-record">暂无抽奖选项，请添加选项</li>
+            </ul>
+        </section>
+        
+        <section class="section">
+            <h2>抽奖记录</h2>
+            <ul class="record-list" id="recordList">
+                <li class="empty-record">暂无抽奖记录</li>
+            </ul>
+            <button class="confirm-btn" id="confirmBtn">确定记录</button>
+        </section>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const wheelCanvas = document.getElementById('wheelCanvas');
+        const ctx = wheelCanvas.getContext('2d');
+        const lotteryBtn = document.getElementById('lotteryBtn');
+        const resultText = document.getElementById('resultText');
+        const optionsList = document.getElementById('optionsList');
+        const recordList = document.getElementById('recordList');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const addOptionBtn = document.getElementById('addOptionBtn');
+        const resetOptionsBtn = document.getElementById('resetOptionsBtn');
+        const optionNameInput = document.getElementById('optionName');
+        const optionColorInput = document.getElementById('optionColor');
+        const colorPreview = document.getElementById('colorPreview');
+        
+        // 初始默认选项
+        const defaultOptions = [
+            { name: "一等奖", color: "#e74c3c" },
+            { name: "二等奖", color: "#3498db" },
+            { name: "三等奖", color: "#2ecc71" },
+            { name: "纪念品", color: "#f39c12" },
+            { name: "优惠券", color: "#9b59b6" },
+            { name: "赠送称号", color: "#1abc9c" }
+        ];
+        
+        // 抽奖选项数据
+        let options = [...defaultOptions];
+        let editingIndex = -1; // 当前编辑的选项索引
+        
+        // 转盘相关变量
+        let isSpinning = false;
+        let animationId = null;
+        let currentRotation = 0; // 当前旋转角度（弧度）
+        let spinSpeed = 0; // 旋转速度（弧度/帧）
+        let spinDeceleration = 0.001; // 减速度
+        
+        // 抽奖记录
+        let records = [];
+        
+        // 初始化颜色预览
+        colorPreview.style.backgroundColor = optionColorInput.value;
+        
+        // 颜色选择器事件
+        optionColorInput.addEventListener('input', function() {
+            colorPreview.style.backgroundColor = this.value;
+        });
+        
+        // 添加选项
+        addOptionBtn.addEventListener('click', function() {
+            const name = optionNameInput.value.trim();
+            const color = optionColorInput.value;
+            
+            if (!name) {
+                alert("请输入选项名称");
+                return;
+            }
+            
+            if (editingIndex >= 0) {
+                // 编辑现有选项
+                options[editingIndex] = { name, color };
+                editingIndex = -1;
+                addOptionBtn.textContent = "添加选项";
+            } else {
+                // 添加新选项
+                options.push({ name, color });
+            }
+            
+            // 清空表单
+            optionNameInput.value = "";
+            optionColorInput.value = "#3498db";
+            colorPreview.style.backgroundColor = "#3498db";
+            
+            // 更新选项列表和转盘
+            updateOptionsList();
+            drawWheel();
+            updateLotteryButton();
+        });
+        
+        // 重置选项
+        resetOptionsBtn.addEventListener('click', function() {
+            if (confirm("确定要重置所有选项吗？这将恢复为默认选项。")) {
+                options = [...defaultOptions];
+                updateOptionsList();
+                drawWheel();
+                updateLotteryButton();
+            }
+        });
+        
+        // 更新选项列表显示
+        function updateOptionsList() {
+            optionsList.innerHTML = '';
+            
+            if (options.length === 0) {
+                optionsList.innerHTML = '<li class="empty-record">暂无抽奖选项，请添加选项</li>';
+                return;
+            }
+            
+            options.forEach((option, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'option-item';
+                listItem.innerHTML = `
+                    <div class="option-color" style="background-color: ${option.color}"></div>
+                    <div class="option-content">${option.name}</div>
+                    <div class="option-actions">
+                        <button class="option-btn edit-btn" data-index="${index}">编辑</button>
+                        <button class="option-btn delete-btn" data-index="${index}">删除</button>
+                    </div>
+                `;
+                optionsList.appendChild(listItem);
+            });
+            
+            // 添加编辑和删除事件
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    editOption(index);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    deleteOption(index);
+                });
+            });
+        }
+        
+        // 编辑选项
+        function editOption(index) {
+            const option = options[index];
+            optionNameInput.value = option.name;
+            optionColorInput.value = option.color;
+            colorPreview.style.backgroundColor = option.color;
+            editingIndex = index;
+            addOptionBtn.textContent = "更新选项";
+            optionNameInput.focus();
+        }
+        
+        // 删除选项
+        function deleteOption(index) {
+            if (confirm(`确定要删除"${options[index].name}"吗？`)) {
+                options.splice(index, 1);
+                updateOptionsList();
+                drawWheel();
+                updateLotteryButton();
+                
+                // 如果正在编辑被删除的选项，重置表单
+                if (editingIndex === index) {
+                    editingIndex = -1;
+                    addOptionBtn.textContent = "添加选项";
+                    optionNameInput.value = "";
+                    optionColorInput.value = "#3498db";
+                    colorPreview.style.backgroundColor = "#3498db";
+                }
+            }
+        }
+        
+        // 绘制转盘
+        function drawWheel() {
+            const centerX = wheelCanvas.width / 2;
+            const centerY = wheelCanvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+            
+            // 清空画布
+            ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+            
+            if (options.length === 0) {
+                // 没有选项时显示提示
+                ctx.fillStyle = "#f8f9fa";
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = "#95a5a6";
+                ctx.font = "16px Microsoft YaHei";
+                ctx.textAlign = "center";
+                ctx.fillText("请添加抽奖选项", centerX, centerY - 10);
+                ctx.fillText("至少需要2个选项", centerX, centerY + 15);
+                return;
+            }
+            
+            const anglePerOption = (Math.PI * 2) / options.length;
+            
+            // 绘制每个扇形
+            options.forEach((option, index) => {
+                const startAngle = index * anglePerOption + currentRotation;
+                const endAngle = startAngle + anglePerOption;
+                
+                // 绘制扇形
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                
+                // 填充颜色
+                ctx.fillStyle = option.color;
+                ctx.fill();
+                
+                // 绘制扇形边框
+                ctx.strokeStyle = "#fff";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // 绘制文本
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + anglePerOption / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 14px Microsoft YaHei";
+                ctx.fillText(option.name, radius - 25, 5);
+                ctx.restore();
+            });
+            
+            // 绘制中心圆
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 20, 0, Math.PI * 2);
+            ctx.fillStyle = "#2c3e50";
+            ctx.fill();
+            
+            // 绘制中心圆边框
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+        
+        // 更新抽奖按钮状态
+        function updateLotteryButton() {
+            if (options.length >= 2) {
+                lotteryBtn.disabled = false;
+            } else {
+                lotteryBtn.disabled = true;
+            }
+        }
+        
+        // 开始/停止抽奖
+        lotteryBtn.addEventListener('click', function() {
+            if (!isSpinning) {
+                // 开始抽奖
+                startSpinning();
+            } else {
+                // 停止抽奖
+                stopSpinning();
+            }
+        });
+        
+        // 开始旋转
+        function startSpinning() {
+            if (isSpinning || options.length < 2) return;
+            
+            isSpinning = true;
+            lotteryBtn.textContent = "停止抽奖";
+            lotteryBtn.style.backgroundColor = "#e74c3c";
+            resultText.textContent = "抽奖中...";
+            
+            // 随机初始速度
+            spinSpeed = 0.1 + Math.random() * 0.05;
+            
+            // 开始动画
+            animateWheel();
+        }
+        
+        // 停止旋转
+        function stopSpinning() {
+            if (!isSpinning) return;
+            
+            isSpinning = false;
+            lotteryBtn.disabled = true;
+            lotteryBtn.textContent = "抽奖中...";
+        }
+        
+        // 动画帧
+        function animateWheel() {
+            if (isSpinning) {
+                // 持续旋转
+                currentRotation += spinSpeed;
+            } else {
+                // 减速
+                spinSpeed -= spinDeceleration;
+                if (spinSpeed < 0) spinSpeed = 0;
+                currentRotation += spinSpeed;
+                
+                // 如果已经停止旋转，计算中奖结果
+                if (spinSpeed <= 0) {
+                    finishSpin();
+                    return; // 停止动画循环
+                }
+            }
+            
+            // 绘制转盘
+            drawWheel();
+            
+            // 继续动画
+            animationId = requestAnimationFrame(animateWheel);
+        }
+        
+        // 完成抽奖 - 修复指针指向问题
+        function finishSpin() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            // 计算当前角度对应的扇区
+            const anglePerOption = (Math.PI * 2) / options.length;
+            
+            // 将当前旋转角度归一化到 [0, 2π) 范围内
+            let normalizedRotation = (currentRotation % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            
+            // 指针指向正上方（12点钟方向，对应 -π/2 或 3π/2 弧度）
+            // 但我们的转盘扇区是从右侧（3点钟方向，0弧度）开始
+            // 所以我们需要计算指针指向哪个扇区
+            
+            // 计算指针位置相对于转盘0点的角度
+            // 指针指向 -π/2，减去转盘的旋转角度，得到在转盘坐标系中的角度
+            let pointerAngle = -Math.PI/2 - normalizedRotation;
+            
+            // 将角度归一化到 [0, 2π) 范围内
+            pointerAngle = (pointerAngle % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+            
+            // 计算选中的扇区索引
+            let selectedIndex = Math.floor(pointerAngle / anglePerOption);
+            
+            // 确保索引在有效范围内
+            selectedIndex = selectedIndex % options.length;
+            
+            const selectedOption = options[selectedIndex];
+            
+            // 显示结果
+            resultText.innerHTML = `恭喜获得：<span style="color:${selectedOption.color}">${selectedOption.name}</span>`;
+            
+            // 添加到记录
+            const record = {
+                id: records.length + 1,
+                prize: selectedOption.name,
+                color: selectedOption.color,
+                time: new Date().toLocaleTimeString()
+            };
+            records.push(record);
+            
+            // 更新记录显示
+            updateRecordList();
+            
+            // 重置按钮状态
+            setTimeout(() => {
+                lotteryBtn.disabled = false;
+                lotteryBtn.textContent = "开始抽奖";
+                lotteryBtn.style.backgroundColor = "#3498db";
+            }, 1000);
+        }
+        
+        // 更新抽奖记录
+        function updateRecordList() {
+            recordList.innerHTML = '';
+            
+            if (records.length === 0) {
+                recordList.innerHTML = '<li class="empty-record">暂无抽奖记录</li>';
+                return;
+            }
+            
+            // 只显示最近5条记录
+            const recentRecords = records.slice(-5).reverse();
+            
+            recentRecords.forEach(record => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <span>第${record.id}次抽奖</span>
+                    <span>
+                        ${record.prize}
+                        <span class="result-color" style="background-color: ${record.color}"></span>
+                    </span>
+                    <span style="color: #95a5a6; font-size: 0.9rem;">${record.time}</span>
+                `;
+                recordList.appendChild(listItem);
+            });
+        }
+        
+        // 确定记录按钮
+        confirmBtn.addEventListener('click', function() {
+            alert(`已保存抽奖记录，共${records.length}条记录`);
+            // 在实际应用中，这里可以将记录发送到服务器
+        });
+        
+        // 初始化
+        function init() {
+            // 初始化选项列表
+            updateOptionsList();
+            
+            // 绘制初始转盘
+            drawWheel();
+            
+            // 更新抽奖按钮状态
+            updateLotteryButton();
+            
+            // 模拟一些记录
+            const sampleRecords = [
+               
+                
+            ];
+            
+            records = sampleRecords;
+            updateRecordList();
+        }
+        
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

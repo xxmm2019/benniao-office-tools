@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML 格式化工具 - 笨鸟办公工具箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/xml-formatter/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #e0e0e0;
+            transition: border-color 0.3s;
+        }
+
+        .editor-panel:focus-within {
+            border-color: #3b82f6;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .char-count {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 350px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .editor-textarea:read-only {
+            background: #f8f9fa;
+            cursor: default;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-box.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .status-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .status-box.active {
+            display: block;
+        }
+
+        .status-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-icon {
+            font-size: 1.5rem;
+        }
+
+        .status-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            margin: 0;
+            flex: 1;
+        }
+
+        .status-box.error p {
+            color: #c62828;
+        }
+
+        .status-box.warning p {
+            color: #e65100;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .control-label {
+            font-weight: 600;
+        }
+
+        .control-input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #d0d7de;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .control-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 300px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .controls {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .btn-group {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>XML 格式化工具</h1>
+            <p>格式化 XML 结构，增加可读性，支持语法高亮显示</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <div class="status-content">
+                    <span class="status-icon" id="status-icon"></span>
+                    <p id="status-message">已完成转换</p>
+                    <button class="btn btn-success" onclick="copyOutput()" style="padding: 8px 16px;">
+                        复制结果
+                    </button>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" onclick="convert()" id="convert-btn">
+                        <span>立即转换</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSample()">
+                        <span>加载示例</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAll()">
+                        <span>清空内容</span>
+                    </button>
+                </div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="control-label">缩进大小:</label>
+                        <select class="control-input" id="indent-size" onchange="updateIndent()">
+                            <option value="2">2 空格</option>
+                            <option value="4" selected>4 空格</option>
+                            <option value="8">8 空格</option>
+                            <option value="tab">制表符</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输入 XML</span>
+                        <span class="char-count" id="input-count">0 字符</span>
+                    </div>
+                    <textarea class="editor-textarea" id="input" 
+                              placeholder="粘贴 XML 内容到这里..."
+                              oninput="updateCharCount()"></textarea>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">格式化结果</span>
+                        <span class="char-count" id="output-count">0 字符</span>
+                    </div>
+                    <textarea class="editor-textarea" id="output" 
+                              placeholder="格式化后的 XML 将显示在这里..." 
+                              readonly></textarea>
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // XML 格式化函数 - 修复版
+        function formatXML(xmlString, indent = '    ') {
+            if (!xmlString.trim()) return '';
+            
+            try {
+                // 创建 XML 解析器
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+                
+                // 检查解析错误
+                const parseError = xmlDoc.getElementsByTagName('parsererror');
+                if (parseError.length > 0) {
+                    throw new Error('XML 解析错误: ' + parseError[0].textContent);
+                }
+                
+                // 格式化函数
+                const formatNode = (node, level = 0) => {
+                    const indentStr = indent.repeat(level);
+                    let result = '';
+                    
+                    switch (node.nodeType) {
+                        case Node.ELEMENT_NODE:
+                            // 开始标签
+                            result += indentStr + '<' + node.nodeName;
+                            
+                            // 属性
+                            if (node.attributes.length > 0) {
+                                const attrs = Array.from(node.attributes)
+                                    .map(attr => ` ${attr.name}="${attr.value}"`)
+                                    .join('');
+                                result += attrs;
+                            }
+                            
+                            // 处理子节点
+                            const childNodes = Array.from(node.childNodes);
+                            const hasChildren = childNodes.some(child => 
+                                child.nodeType === Node.ELEMENT_NODE || 
+                                (child.nodeType === Node.TEXT_NODE && child.textContent.trim())
+                            );
+                            
+                            if (!hasChildren) {
+                                result += ' />\n';
+                            } else {
+                                result += '>\n';
+                                
+                                // 递归处理子节点
+                                childNodes.forEach(child => {
+                                    result += formatNode(child, level + 1);
+                                });
+                                
+                                result += indentStr + '</' + node.nodeName + '>\n';
+                            }
+                            break;
+                            
+                        case Node.TEXT_NODE:
+                            const text = node.textContent.trim();
+                            if (text) {
+                                result += indentStr + escapeXml(text) + '\n';
+                            }
+                            break;
+                            
+                        case Node.CDATA_SECTION_NODE:
+                            result += indentStr + '<![CDATA[' + node.textContent + ']]>\n';
+                            break;
+                            
+                        case Node.COMMENT_NODE:
+                            result += indentStr + '<!--' + node.textContent + '-->\n';
+                            break;
+                    }
+                    
+                    return result;
+                };
+                
+                // XML 转义函数
+                function escapeXml(text) {
+                    return text
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&apos;');
+                }
+                
+                // 从根元素开始格式化
+                const root = xmlDoc.documentElement;
+                let formatted = '<?xml version="1.0" encoding="UTF-8"?>\n';
+                formatted += formatNode(root);
+                
+                return formatted.trim();
+                
+            } catch (error) {
+                throw error;
+            }
+        }
+        
+        // 获取当前缩进设置
+        function getCurrentIndent() {
+            const select = document.getElementById('indent-size');
+            const value = select.value;
+            
+            if (value === 'tab') {
+                return '\t';
+            } else {
+                return ' '.repeat(parseInt(value));
+            }
+        }
+        
+        // 更新缩进设置
+        function updateIndent() {
+            const input = document.getElementById('input').value;
+            if (input.trim()) {
+                convert();
+            }
+        }
+        
+        // 更新字符计数
+        function updateCharCount() {
+            const input = document.getElementById('input');
+            const output = document.getElementById('output');
+            const inputCount = document.getElementById('input-count');
+            const outputCount = document.getElementById('output-count');
+            
+            inputCount.textContent = `${input.value.length} 字符`;
+            outputCount.textContent = `${output.value.length} 字符`;
+        }
+        
+        // 主转换函数
+        function convert() {
+            const input = document.getElementById('input').value;
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            const output = document.getElementById('output');
+            const loading = document.getElementById('loading');
+            const convertBtn = document.getElementById('convert-btn');
+            
+            if (!input.trim()) {
+                showStatus('请输入 XML 内容', 'error', '');
+                output.value = '';
+                updateCharCount();
+                return;
+            }
+            
+            // 显示加载状态
+            loading.classList.add('active');
+            convertBtn.disabled = true;
+            
+            // 使用 setTimeout 避免阻塞 UI
+            setTimeout(() => {
+                try {
+                    const indent = getCurrentIndent();
+                    const result = formatXML(input, indent);
+                    
+                    output.value = result;
+                    showStatus('XML 格式化完成', 'success', '');
+                    
+                } catch (error) {
+                    showStatus(`格式化失败: ${error.message}`, 'error', '');
+                    output.value = '';
+                } finally {
+                    // 隐藏加载状态
+                    loading.classList.remove('active');
+                    convertBtn.disabled = false;
+                    updateCharCount();
+                }
+            }, 100);
+        }
+        
+        // 显示状态消息
+        function showStatus(message, type = 'success', icon = '') {
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            
+            statusBox.className = `status-box ${type} active`;
+            statusIcon.textContent = icon;
+            statusMessage.textContent = message;
+            
+            // 5秒后自动隐藏成功消息
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusBox.classList.remove('active');
+                }, 5000);
+            }
+        }
+        
+        // 清空所有内容
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').value = '';
+            document.getElementById('status-box').classList.remove('active');
+            updateCharCount();
+        }
+        
+        // 加载示例
+        function loadSample() {
+            const sampleXML = `<?xml version="1.0" encoding="UTF-8"?>
+<bookstore>
+    <book category="编程">
+        <title>JavaScript高级程序设计</title>
+        <author>尼古拉斯·泽卡斯</author>
+        <year>2020</year>
+        <price>89.00</price>
+    </book>
+    <book category="设计">
+        <title>设计心理学</title>
+        <author>唐纳德·诺曼</author>
+        <year>2015</year>
+        <price>59.00</price>
+    </book>
+    <!-- 这是一条注释 -->
+    <description><![CDATA[这里可以包含 <特殊> 字符]]></description>
+</bookstore>`;
+            
+            document.getElementById('input').value = sampleXML;
+            convert();
+        }
+        
+        // 复制输出结果
+        function copyOutput() {
+            const output = document.getElementById('output');
+            
+            if (!output.value.trim()) {
+                showStatus('没有内容可以复制', 'warning', '!');
+                return;
+            }
+            
+            output.select();
+            output.setSelectionRange(0, 99999); // 移动设备支持
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showStatus('已复制到剪贴板', 'success', '');
+                } else {
+                    showStatus('复制失败，请手动选择复制', 'error', '');
+                }
+            } catch (err) {
+                // 使用新的 Clipboard API
+                navigator.clipboard.writeText(output.value).then(() => {
+                    showStatus('已复制到剪贴板', 'success', '');
+                }).catch(() => {
+                    showStatus('复制失败，请手动选择复制', 'error', '');
+                });
+            }
+        }
+        
+        // 初始化时设置事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCharCount();
+            
+            // 添加键盘快捷键支持
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    convert();
+                }
+                
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c' && e.shiftKey) {
+                    e.preventDefault();
+                    copyOutput();
+                }
+            });
+            
+            // 添加粘贴事件支持
+            document.getElementById('input').addEventListener('paste', function(e) {
+                setTimeout(updateCharCount, 100);
+            });
+        });
+    </script>
+</body>
+</html>

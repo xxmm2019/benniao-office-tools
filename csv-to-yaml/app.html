@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV 转 YAML - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/csv-to-yaml/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #7ab615 0%, #5a900b 100%);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 350px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #84cc16;
+            box-shadow: 0 0 0 3px rgba(132, 204, 22, 0.1);
+        }
+
+        #output {
+            background: #f8f9fa;
+            color: #495057;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-box.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .status-box.active {
+            display: block;
+        }
+
+        .status-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-box.error p {
+            color: #c62828;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .control {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .control label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .control input,
+        .control select,
+        .control textarea {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #d0d7de;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .control input:focus,
+        .control select:focus {
+            outline: none;
+            border-color: #84cc16;
+            box-shadow: 0 0 0 3px rgba(132, 204, 22, 0.1);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 300px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CSV 转 YAML</h1>
+            <p>快速将 CSV 表格数据转换为 YAML 格式</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <p id="status-message">✅ 转换完成</p>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" onclick="convert()">
+                        <span>🔄</span> 立即转换
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSample()">
+                        <span>📋</span> 示例
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAll()">
+                        <span>🗑️</span> 清空
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">
+                        <span>📋</span> 复制结果
+                    </button>
+                </div>
+                <div class="controls">
+                    <div class="control">
+                        <label for="delimiter">分隔符:</label>
+                        <select id="delimiter" onchange="convert()">
+                            <option value="," selected>逗号 (,)</option>
+                            <option value=";">分号 (;)</option>
+                            <option value="\t">制表符</option>
+                            <option value="|">竖线 (|)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <span>📥</span> 输入 CSV
+                        </span>
+                        <span class="file-size" id="input-size">0 字符</span>
+                    </div>
+                    <textarea class="editor-textarea" id="input" 
+                              placeholder="粘贴 CSV 数据，例如：
+name,age,city
+Alice,30,New York
+Bob,28,London
+Charlie,35,Tokyo" 
+                              oninput="updateInputSize()"></textarea>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">
+                            <span>📤</span> 输出 YAML
+                        </span>
+                        <span class="file-size" id="output-size">0 字符</span>
+                    </div>
+                    <textarea class="editor-textarea" id="output" 
+                              placeholder="转换后的 YAML 将显示在这里..." 
+                              readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 笨鸟办公工具集箱 | CSV 转 YAML 转换器</p>
+        </div>
+    </div>
+
+    <script>
+        function parseCSV(text, delimiter = ",") {
+            const lines = text.trim().split(/\r?\n/);
+            if (lines.length < 2) return [];
+            
+            const headers = lines[0].split(delimiter).map(h => h.trim());
+            const result = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                // 简单的 CSV 解析，处理引号
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    const nextChar = line[j + 1];
+                    
+                    if (char === '"') {
+                        if (inQuotes && nextChar === '"') {
+                            current += '"';
+                            j++;
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === delimiter && !inQuotes) {
+                        values.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                values.push(current.trim());
+                
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = values[index] || '';
+                });
+                result.push(obj);
+            }
+            
+            return result;
+        }
+
+        function stringifyYAML(data, indent = 0) {
+            if (!Array.isArray(data)) return '';
+            
+            let yaml = '';
+            data.forEach((item, index) => {
+                yaml += '  '.repeat(indent) + '- \n';
+                Object.entries(item).forEach(([key, value]) => {
+                    // 处理特殊字符和空值
+                    let strValue = String(value).trim();
+                    if (strValue === '' || 
+                        strValue.includes(':') || 
+                        strValue.includes('\n') ||
+                        /^[0-9]+$/.test(strValue) === false && isNaN(strValue) === false) {
+                        strValue = `"${strValue.replace(/"/g, '\\"')}"`;
+                    }
+                    yaml += '  '.repeat(indent + 1) + key + ': ' + strValue + '\n';
+                });
+            });
+            
+            return yaml;
+        }
+
+        function convert() {
+            const input = document.getElementById('input').value;
+            const delimiter = document.getElementById('delimiter').value;
+            const statusBox = document.getElementById('status-box');
+            const statusMessage = document.getElementById('status-message');
+            const output = document.getElementById('output');
+
+            if (!input.trim()) {
+                statusBox.className = 'status-box error active';
+                statusMessage.innerHTML = '⚠️ 请输入 CSV 内容再转换';
+                output.value = '';
+                updateOutputSize();
+                return;
+            }
+
+            try {
+                const data = parseCSV(input, delimiter);
+                if (data.length === 0) {
+                    throw new Error('无法解析 CSV 数据，请检查格式是否正确');
+                }
+                
+                const result = stringifyYAML(data);
+                output.value = result;
+                statusBox.className = 'status-box active';
+                statusMessage.innerHTML = `✅ 转换完成，共 ${data.length} 条记录`;
+                updateOutputSize();
+            } catch (error) {
+                statusBox.className = 'status-box error active';
+                statusMessage.innerHTML = `❌ 转换失败: ${error.message}`;
+                output.value = '';
+                updateOutputSize();
+            }
+        }
+
+        function updateInputSize() {
+            const input = document.getElementById('input');
+            const sizeElement = document.getElementById('input-size');
+            const size = input.value.length;
+            sizeElement.textContent = `${size} 字符`;
+        }
+
+        function updateOutputSize() {
+            const output = document.getElementById('output');
+            const sizeElement = document.getElementById('output-size');
+            const size = output.value.length;
+            sizeElement.textContent = `${size} 字符`;
+        }
+
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').value = '';
+            document.getElementById('status-box').classList.remove('active');
+            updateInputSize();
+            updateOutputSize();
+        }
+
+        function loadSample() {
+            document.getElementById('input').value = `name,age,city,department,salary
+Alice,30,New York,Engineering,85000
+Bob,28,London,Marketing,72000
+Charlie,35,Tokyo,Sales,68000
+Diana,42,Paris,HR,75000
+Ethan,29,Berlin,Engineering,88000`;
+            updateInputSize();
+            convert();
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('output');
+            if (!output.value.trim()) {
+                alert('没有内容可复制');
+                return;
+            }
+            
+            output.select();
+            output.setSelectionRange(0, 99999);
+            
+            try {
+                navigator.clipboard.writeText(output.value).then(() => {
+                    const statusBox = document.getElementById('status-box');
+                    const statusMessage = document.getElementById('status-message');
+                    statusBox.className = 'status-box active';
+                    statusMessage.innerHTML = '✅ 已复制到剪贴板';
+                    setTimeout(() => {
+                        statusBox.classList.remove('active');
+                    }, 2000);
+                });
+            } catch (err) {
+                alert('复制失败，请手动选择文本复制');
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateInputSize();
+            updateOutputSize();
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    convert();
+                }
+                if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                    clearAll();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

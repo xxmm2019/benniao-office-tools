@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML所见即所得编辑器- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-codehtml/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 28px;
+        }
+        
+        h1 i {
+            color: #3498db;
+        }
+        
+        .subtitle {
+            margin-top: 8px;
+            color: #ecf0f1;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: #34495e;
+            gap: 10px;
+            border-bottom: 1px solid #2c3e50;
+        }
+        
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            padding-right: 15px;
+            border-right: 1px solid #4a6572;
+        }
+        
+        .toolbar-group:last-child {
+            border-right: none;
+        }
+        
+        .btn {
+            background: #3498db;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn i {
+            font-size: 16px;
+        }
+        
+        .btn-toggle {
+            background: #2ecc71;
+        }
+        
+        .btn-toggle:hover {
+            background: #27ae60;
+        }
+        
+        .btn-file {
+            background: #9b59b6;
+        }
+        
+        .btn-file:hover {
+            background: #8e44ad;
+        }
+        
+        .btn-reset {
+            background: #e74c3c;
+        }
+        
+        .btn-reset:hover {
+            background: #c0392b;
+        }
+        
+        .btn-active {
+            background: #1abc9c;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .panel-container {
+            display: flex;
+            min-height: 600px;
+        }
+        
+        .editor-panel, .preview-panel {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .editor-panel {
+            border-right: 1px solid #eee;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            color: #3498db;
+        }
+        
+        #editor {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 16px;
+            line-height: 1.6;
+            outline: none;
+        }
+        
+        #editor:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        #sourceCode {
+            flex: 1;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+        
+        #sourceCode:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+        
+        .preview-area {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+        
+        .preview-area iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .mode-toggle {
+            display: flex;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .mode-btn {
+            padding: 8px 15px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .status-bar {
+            background: #34495e;
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #2c3e50;
+        }
+        
+        .char-count {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .examples {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .examples h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .example-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .example-btn {
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .example-btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        @media (max-width: 1024px) {
+            .panel-container {
+                flex-direction: column;
+            }
+            
+            .editor-panel {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .toolbar-group {
+                border-right: none;
+                border-bottom: 1px solid #4a6572;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            
+            .toolbar-group:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> HTML所见即所得编辑器</h1>
+            <p class="subtitle">功能丰富的在线HTML编辑器，立即获得内容的源代码</p>
+        </header>
+        
+        <div class="editor-container">
+            <div class="toolbar">
+                <div class="toolbar-group">
+                    <button class="btn btn-file" id="newFile"><i class="fas fa-file"></i> 新建</button>
+                    <button class="btn btn-file" id="loadFile"><i class="fas fa-folder-open"></i> 加载</button>
+                    <button class="btn btn-file" id="saveFile"><i class="fas fa-save"></i> 保存</button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn" id="boldBtn" title="粗体"><i class="fas fa-bold"></i></button>
+                    <button class="btn" id="italicBtn" title="斜体"><i class="fas fa-italic"></i></button>
+                    <button class="btn" id="underlineBtn" title="下划线"><i class="fas fa-underline"></i></button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn" id="headingBtn" title="标题"><i class="fas fa-heading"></i> 标题</button>
+                    <button class="btn" id="paragraphBtn" title="段落"><i class="fas fa-paragraph"></i> 段落</button>
+                    <button class="btn" id="listBtn" title="列表"><i class="fas fa-list"></i> 列表</button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn" id="linkBtn" title="链接"><i class="fas fa-link"></i> 链接</button>
+                    <button class="btn" id="imageBtn" title="图片"><i class="fas fa-image"></i> 图片</button>
+                    <button class="btn" id="tableBtn" title="表格"><i class="fas fa-table"></i> 表格</button>
+                </div>
+                
+                <div class="toolbar-group">
+                    <button class="btn btn-toggle" id="showSourceBtn"><i class="fas fa-code"></i> 显示源代码</button>
+                    <button class="btn btn-reset" id="resetBtn"><i class="fas fa-redo"></i> 重置</button>
+                </div>
+            </div>
+            
+            <div class="panel-container">
+                <div class="editor-panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fas fa-edit"></i> 编辑区域</div>
+                        <div class="mode-toggle">
+                            <button class="mode-btn active" id="editModeBtn">所见即所得模式</button>
+                            <button class="mode-btn" id="codeModeBtn">源代码模式</button>
+                        </div>
+                    </div>
+                    
+                    <div id="editor" contenteditable="true">
+                        <h1>欢迎使用HTML所见即所得编辑器</h1>
+                        <p>这是一个功能强大的在线HTML编辑器，您可以：</p>
+                        <ul>
+                            <li>使用上方工具栏格式化文本</li>
+                            <li>添加HTML元素如标题、段落、列表等</li>
+                            <li>插入链接、图片和表格</li>
+                            <li>在所见即所得模式和源代码模式之间切换</li>
+                            <li>实时预览编辑结果</li>
+                            <li>获取内容的HTML源代码</li>
+                        </ul>
+                        <p>尝试编辑此文本或点击下方示例按钮快速开始！</p>
+                        
+                        <h2>示例：HTML表格</h2>
+                        <table border="1" style="width:100%; border-collapse: collapse;">
+                            <tr>
+                                <th>姓名</th>
+                                <th>邮箱</th>
+                                <th>注册日期</th>
+                            </tr>
+                            <tr>
+                                <td>张三</td>
+                                <td>zhangsan@example.com</td>
+                                <td>2023-01-15</td>
+                            </tr>
+                            <tr>
+                                <td>李四</td>
+                                <td>lisi@example.com</td>
+                                <td>2023-02-28</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="preview-panel">
+                    <div class="panel-header">
+                        <div class="panel-title"><i class="fas fa-eye"></i> 预览与源代码</div>
+                    </div>
+                    
+                    <div id="previewArea" class="preview-area">
+                        <iframe id="previewFrame"></iframe>
+                    </div>
+                    
+                    <div id="sourceArea" class="hidden">
+                        <textarea id="sourceCode" placeholder="HTML源代码将在此显示..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-bar">
+                <div>HTML所见即所得编辑器 v1.0</div>
+                <div class="char-count">
+                    <span id="charCount">字符数: 0</span>
+                    <span id="wordCount">字数: 0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="examples">
+            <h3><i class="fas fa-lightbulb"></i> 快速示例</h3>
+            <div class="example-buttons">
+                <button class="example-btn" data-example="basic">基础HTML页面</button>
+                <button class="example-btn" data-example="article">文章布局</button>
+                <button class="example-btn" data-example="form">联系表单</button>
+                <button class="example-btn" data-example="cards">卡片布局</button>
+                <button class="example-btn" data-example="clean">清空编辑器</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const editor = document.getElementById('editor');
+        const sourceCode = document.getElementById('sourceCode');
+        const previewFrame = document.getElementById('previewFrame');
+        const previewArea = document.getElementById('previewArea');
+        const sourceArea = document.getElementById('sourceArea');
+        const editModeBtn = document.getElementById('editModeBtn');
+        const codeModeBtn = document.getElementById('codeModeBtn');
+        const showSourceBtn = document.getElementById('showSourceBtn');
+        const charCount = document.getElementById('charCount');
+        const wordCount = document.getElementById('wordCount');
+        
+        // 工具栏按钮
+        const boldBtn = document.getElementById('boldBtn');
+        const italicBtn = document.getElementById('italicBtn');
+        const underlineBtn = document.getElementById('underlineBtn');
+        const headingBtn = document.getElementById('headingBtn');
+        const paragraphBtn = document.getElementById('paragraphBtn');
+        const listBtn = document.getElementById('listBtn');
+        const linkBtn = document.getElementById('linkBtn');
+        const imageBtn = document.getElementById('imageBtn');
+        const tableBtn = document.getElementById('tableBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const newFileBtn = document.getElementById('newFile');
+        const loadFileBtn = document.getElementById('loadFile');
+        const saveFileBtn = document.getElementById('saveFile');
+        
+        // 示例按钮
+        const exampleButtons = document.querySelectorAll('.example-btn');
+        
+        // 当前编辑模式
+        let isEditMode = true;
+        
+        // 初始化
+        function init() {
+            updatePreview();
+            updateCounts();
+            
+            // 设置编辑器初始内容
+            updateSourceCode();
+            
+            // 绑定事件
+            editor.addEventListener('input', function() {
+                updatePreview();
+                updateSourceCode();
+                updateCounts();
+            });
+            
+            // 工具栏按钮事件
+            boldBtn.addEventListener('click', function() {
+                document.execCommand('bold');
+                editor.focus();
+            });
+            
+            italicBtn.addEventListener('click', function() {
+                document.execCommand('italic');
+                editor.focus();
+            });
+            
+            underlineBtn.addEventListener('click', function() {
+                document.execCommand('underline');
+                editor.focus();
+            });
+            
+            headingBtn.addEventListener('click', function() {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const selectedText = range.toString();
+                    
+                    if (selectedText) {
+                        const h2 = document.createElement('h2');
+                        h2.textContent = selectedText;
+                        range.deleteContents();
+                        range.insertNode(h2);
+                    } else {
+                        const h2 = document.createElement('h2');
+                        h2.textContent = '新标题';
+                        range.insertNode(h2);
+                    }
+                }
+                editor.focus();
+                updatePreview();
+                updateSourceCode();
+            });
+            
+            paragraphBtn.addEventListener('click', function() {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const p = document.createElement('p');
+                    p.textContent = '新段落';
+                    range.insertNode(p);
+                }
+                editor.focus();
+                updatePreview();
+                updateSourceCode();
+            });
+            
+            listBtn.addEventListener('click', function() {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const ul = document.createElement('ul');
+                    const li1 = document.createElement('li');
+                    li1.textContent = '列表项 1';
+                    const li2 = document.createElement('li');
+                    li2.textContent = '列表项 2';
+                    const li3 = document.createElement('li');
+                    li3.textContent = '列表项 3';
+                    
+                    ul.appendChild(li1);
+                    ul.appendChild(li2);
+                    ul.appendChild(li3);
+                    
+                    range.insertNode(ul);
+                }
+                editor.focus();
+                updatePreview();
+                updateSourceCode();
+            });
+            
+            linkBtn.addEventListener('click', function() {
+                const url = prompt('请输入链接URL:', 'https://example.com');
+                if (url) {
+                    const text = prompt('请输入链接文本:', '示例链接');
+                    document.execCommand('createLink', false, url);
+                }
+                editor.focus();
+                updatePreview();
+                updateSourceCode();
+            });
+            
+            imageBtn.addEventListener('click', function() {
+                const url = prompt('请输入图片URL:', 'https://via.placeholder.com/300x200');
+                if (url) {
+                    const alt = prompt('请输入图片描述:', '示例图片');
+                    document.execCommand('insertImage', false, url);
+                    // 设置alt属性
+                    const images = editor.getElementsByTagName('img');
+                    if (images.length > 0) {
+                        images[images.length - 1].alt = alt;
+                        images[images.length - 1].style.maxWidth = '100%';
+                    }
+                }
+                editor.focus();
+                updatePreview();
+                updateSourceCode();
+            });
+            
+            tableBtn.addEventListener('click', function() {
+                const rows = prompt('请输入表格行数:', '3');
+                const cols = prompt('请输入表格列数:', '3');
+                
+                if (rows && cols) {
+                    const table = document.createElement('table');
+                    table.border = '1';
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    
+                    // 创建表头
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    for (let i = 0; i < cols; i++) {
+                        const th = document.createElement('th');
+                        th.textContent = `标题 ${i + 1}`;
+                        th.style.padding = '8px';
+                        headerRow.appendChild(th);
+                    }
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+                    
+                    // 创建表格主体
+                    const tbody = document.createElement('tbody');
+                    for (let i = 0; i < rows; i++) {
+                        const row = document.createElement('tr');
+                        for (let j = 0; j < cols; j++) {
+                            const td = document.createElement('td');
+                            td.textContent = `行 ${i + 1}, 列 ${j + 1}`;
+                            td.style.padding = '8px';
+                            row.appendChild(td);
+                        }
+                        tbody.appendChild(row);
+                    }
+                    table.appendChild(tbody);
+                    
+                    // 插入表格
+                    const selection = window.getSelection();
+                    if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        range.insertNode(table);
+                    }
+                }
+                editor.focus();
+                updatePreview();
+                updateSourceCode();
+            });
+            
+            resetBtn.addEventListener('click', function() {
+                if (confirm('确定要重置编辑器内容吗？所有未保存的内容将丢失。')) {
+                    editor.innerHTML = '<p>编辑器已重置。开始您的新创作吧！</p>';
+                    updatePreview();
+                    updateSourceCode();
+                    updateCounts();
+                }
+            });
+            
+            // 模式切换
+            editModeBtn.addEventListener('click', function() {
+                setEditMode(true);
+            });
+            
+            codeModeBtn.addEventListener('click', function() {
+                setEditMode(false);
+            });
+            
+            // 显示源代码按钮
+            showSourceBtn.addEventListener('click', function() {
+                if (isEditMode) {
+                    setEditMode(false);
+                } else {
+                    setEditMode(true);
+                }
+            });
+            
+            // 文件操作
+            newFileBtn.addEventListener('click', function() {
+                if (confirm('创建新文件？当前未保存的内容将丢失。')) {
+                    editor.innerHTML = '<h1>新文档</h1><p>开始编辑您的内容...</p>';
+                    updatePreview();
+                    updateSourceCode();
+                    updateCounts();
+                }
+            });
+            
+            saveFileBtn.addEventListener('click', function() {
+                const content = editor.innerHTML;
+                const blob = new Blob([content], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'html-editor-content.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert('文件已保存为 html-editor-content.html');
+            });
+            
+            loadFileBtn.addEventListener('click', function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.html,.htm,.txt';
+                
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        editor.innerHTML = e.target.result;
+                        updatePreview();
+                        updateSourceCode();
+                        updateCounts();
+                        alert('文件加载成功！');
+                    };
+                    reader.readAsText(file);
+                };
+                
+                input.click();
+            });
+            
+            // 源代码区域事件
+            sourceCode.addEventListener('input', function() {
+                editor.innerHTML = sourceCode.value;
+                updatePreview();
+                updateCounts();
+            });
+            
+            // 示例按钮事件
+            exampleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const exampleType = this.getAttribute('data-example');
+                    loadExample(exampleType);
+                });
+            });
+        }
+        
+        // 更新预览
+        function updatePreview() {
+            const content = editor.innerHTML;
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { 
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                            line-height: 1.6; 
+                            padding: 20px; 
+                            color: #333;
+                        }
+                        h1, h2, h3 { color: #2c3e50; }
+                        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        img { max-width: 100%; height: auto; }
+                        a { color: #3498db; text-decoration: none; }
+                        a:hover { text-decoration: underline; }
+                        ul, ol { padding-left: 30px; margin: 10px 0; }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
+        }
+        
+        // 更新源代码
+        function updateSourceCode() {
+            sourceCode.value = editor.innerHTML;
+        }
+        
+        // 设置编辑模式
+        function setEditMode(editMode) {
+            isEditMode = editMode;
+            
+            if (editMode) {
+                editModeBtn.classList.add('active');
+                codeModeBtn.classList.remove('active');
+                previewArea.classList.remove('hidden');
+                sourceArea.classList.add('hidden');
+                showSourceBtn.innerHTML = '<i class="fas fa-code"></i> 显示源代码';
+            } else {
+                editModeBtn.classList.remove('active');
+                codeModeBtn.classList.add('active');
+                previewArea.classList.add('hidden');
+                sourceArea.classList.remove('hidden');
+                showSourceBtn.innerHTML = '<i class="fas fa-edit"></i> 返回编辑器';
+            }
+        }
+        
+        // 更新字数统计
+        function updateCounts() {
+            const text = editor.innerText || editor.textContent;
+            const chars = text.length;
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+            
+            charCount.textContent = `字符数: ${chars}`;
+            wordCount.textContent = `字数: ${words}`;
+        }
+        
+        // 加载示例
+        function loadExample(exampleType) {
+            let content = '';
+            
+            switch(exampleType) {
+                case 'basic':
+                    content = `
+                        <h1>我的第一个网页</h1>
+                        <p>这是一个使用HTML编辑器创建的基本网页示例。</p>
+                        <h2>关于我们</h2>
+                        <p>我们致力于提供最好的HTML编辑体验。</p>
+                        <h2>服务</h2>
+                        <ul>
+                            <li>网页设计</li>
+                            <li>前端开发</li>
+                            <li>用户体验优化</li>
+                        </ul>
+                        <p>联系我们: <a href="mailto:info@example.com">info@example.com</a></p>
+                    `;
+                    break;
+                    
+                case 'article':
+                    content = `
+                        <article>
+                            <h1>如何创建一个优秀的网页</h1>
+                            <p><em>作者: 网页设计师 | 发布日期: 2023年10月15日</em></p>
+                            
+                            <p>创建一个优秀的网页需要考虑多个因素，包括设计、内容和用户体验。</p>
+                            
+                            <h2>1. 响应式设计</h2>
+                            <p>在当今多设备世界中，确保您的网页在所有屏幕尺寸上都能正常显示至关重要。</p>
+                            
+                            <h2>2. 内容质量</h2>
+                            <p>内容是网页的核心。确保您的内容有价值、相关且易于阅读。</p>
+                            
+                            <h2>3. 加载速度</h2>
+                            <p>用户不喜欢等待。优化图像和代码以确保快速加载时间。</p>
+                            
+                            <h2>结论</h2>
+                            <p>通过关注这些关键领域，您可以创建既美观又实用的网页。</p>
+                            
+                            <blockquote>
+                                <p>"好的设计是显而易见的，伟大的设计是透明的。" - 乔·斯帕诺</p>
+                            </blockquote>
+                        </article>
+                    `;
+                    break;
+                    
+                case 'form':
+                    content = `
+                        <h1>联系我们</h1>
+                        <p>请填写以下表单，我们会尽快回复您。</p>
+                        
+                        <form style="background:#f9f9f9; padding:20px; border-radius:5px;">
+                            <div style="margin-bottom:15px;">
+                                <label for="name" style="display:block; margin-bottom:5px; font-weight:bold;">姓名:</label>
+                                <input type="text" id="name" name="name" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:3px;">
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label for="email" style="display:block; margin-bottom:5px; font-weight:bold;">邮箱:</label>
+                                <input type="email" id="email" name="email" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:3px;">
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label for="subject" style="display:block; margin-bottom:5px; font-weight:bold;">主题:</label>
+                                <select id="subject" name="subject" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:3px;">
+                                    <option value="">请选择主题</option>
+                                    <option value="general">一般咨询</option>
+                                    <option value="support">技术支持</option>
+                                    <option value="feedback">反馈建议</option>
+                                </select>
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label for="message" style="display:block; margin-bottom:5px; font-weight:bold;">消息:</label>
+                                <textarea id="message" name="message" rows="5" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:3px;"></textarea>
+                            </div>
+                            
+                            <button type="submit" style="background:#3498db; color:white; border:none; padding:12px 25px; border-radius:3px; cursor:pointer; font-size:16px;">发送消息</button>
+                        </form>
+                    `;
+                    break;
+                    
+                case 'cards':
+                    content = `
+                        <h1>产品展示</h1>
+                        <p>以下是我们最受欢迎的产品：</p>
+                        
+                        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+                            <div style="flex: 1; min-width: 250px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                <div style="height: 150px; background: linear-gradient(135deg, #3498db, #2c3e50); display: flex; align-items: center; justify-content: center;">
+                                    <h3 style="color: white; margin: 0;">基础版</h3>
+                                </div>
+                                <div style="padding: 20px;">
+                                    <h3 style="margin-top: 0;">基础版</h3>
+                                    <p>适合个人用户和小型项目的基本功能。</p>
+                                    <ul>
+                                        <li>10个页面</li>
+                                        <li>基础模板</li>
+                                        <li>电子邮件支持</li>
+                                    </ul>
+                                    <p style="font-size: 24px; font-weight: bold; color: #2c3e50;">￥99/月</p>
+                                </div>
+                            </div>
+                            
+                            <div style="flex: 1; min-width: 250px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                <div style="height: 150px; background: linear-gradient(135deg, #2ecc71, #27ae60); display: flex; align-items: center; justify-content: center;">
+                                    <h3 style="color: white; margin: 0;">专业版</h3>
+                                </div>
+                                <div style="padding: 20px;">
+                                    <h3 style="margin-top: 0;">专业版</h3>
+                                    <p>适合中小型企业的全面功能。</p>
+                                    <ul>
+                                        <li>50个页面</li>
+                                        <li>高级模板</li>
+                                        <li>优先支持</li>
+                                        <li>自定义域名</li>
+                                    </ul>
+                                    <p style="font-size: 24px; font-weight: bold; color: #2c3e50;">￥299/月</p>
+                                </div>
+                            </div>
+                            
+                            <div style="flex: 1; min-width: 250px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                <div style="height: 150px; background: linear-gradient(135deg, #9b59b6, #8e44ad); display: flex; align-items: center; justify-content: center;">
+                                    <h3 style="color: white; margin: 0;">企业版</h3>
+                                </div>
+                                <div style="padding: 20px;">
+                                    <h3 style="margin-top: 0;">企业版</h3>
+                                    <p>适合大型企业的全方位解决方案。</p>
+                                    <ul>
+                                        <li>无限页面</li>
+                                        <li>定制设计</li>
+                                        <li>24/7专属支持</li>
+                                        <li>高级分析</li>
+                                        <li>团队协作</li>
+                                    </ul>
+                                    <p style="font-size: 24px; font-weight: bold; color: #2c3e50;">￥899/月</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'clean':
+                    content = '<p>编辑器已清空。开始您的新创作吧！</p>';
+                    break;
+                    
+                default:
+                    content = '<p>示例加载失败。</p>';
+            }
+            
+            editor.innerHTML = content;
+            updatePreview();
+            updateSourceCode();
+            updateCounts();
+        }
+        
+        // 初始化编辑器
+        window.onload = init;
+    </script>
+</body>
+</html>

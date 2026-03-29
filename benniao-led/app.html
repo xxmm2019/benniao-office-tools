@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手持弹幕LED生成器 - 全屏预览- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-led/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            color: #f0f0f0;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #00ffcc;
+            background: rgba(10, 10, 30, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #00ffcc;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+            background: linear-gradient(90deg, #00ffcc, #00ccff, #00ffcc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b0b0b0;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid #333366;
+            backdrop-filter: blur(10px);
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            color: #00ffcc;
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #444488;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: #00ccff;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccccff;
+            font-weight: 600;
+        }
+        
+        textarea, input, select, button {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #444488;
+            background: rgba(15, 15, 35, 0.9);
+            color: #f0f0f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: monospace;
+        }
+        
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.active {
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .color-option.active::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 3px black;
+        }
+        
+        .speed-control, .size-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .speed-value, .size-value {
+            min-width: 50px;
+            text-align: center;
+            font-weight: bold;
+            color: #00ffcc;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 4px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #00ffcc;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+        
+        .effect-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .effect-option {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px;
+            background: rgba(40, 40, 80, 0.7);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .effect-option:hover {
+            background: rgba(60, 60, 120, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .effect-option.active {
+            background: rgba(0, 255, 204, 0.2);
+            border: 1px solid #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+        }
+        
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .preset-btn {
+            padding: 12px 8px;
+            background: rgba(40, 40, 80, 0.7);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .preset-btn:hover {
+            background: rgba(60, 60, 120, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00cc99, #00ffcc);
+            color: #001a33;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #00ffcc, #33ffdd);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(60, 60, 120, 0.8);
+            color: #f0f0f0;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(80, 80, 160, 0.9);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(80, 80, 160, 0.4);
+        }
+        
+        /* LED显示屏容器 */
+        .led-display-container {
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid #333366;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .display-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .display-header h3 {
+            color: #00ffcc;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .display-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .display-btn {
+            padding: 10px 15px;
+            background: rgba(40, 40, 80, 0.7);
+            border: none;
+            border-radius: 8px;
+            color: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .display-btn:hover {
+            background: rgba(60, 60, 120, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .display-btn.fullscreen {
+            background: rgba(0, 150, 255, 0.7);
+        }
+        
+        .display-btn.fullscreen:hover {
+            background: rgba(0, 180, 255, 0.9);
+        }
+        
+        /* LED显示屏模拟 */
+        .led-display {
+            background: #000;
+            border-radius: 20px;
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                inset 0 0 50px rgba(0, 0, 0, 0.8),
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                0 0 0 1px #222,
+                0 0 0 5px #111,
+                0 0 0 6px #000;
+            position: relative;
+            overflow: hidden;
+            min-height: 300px;
+            transition: all 0.5s ease;
+        }
+        
+        .led-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background: linear-gradient(90deg, 
+                #ff0000, #ff9900, #ffff00, #00ff00, 
+                #00ffff, #0000ff, #9900ff, #ff00ff, #ff0000);
+            background-size: 800% 100%;
+            animation: ledBorder 10s linear infinite;
+            z-index: 2;
+            filter: brightness(1.5);
+        }
+        
+        .led-display::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background: linear-gradient(90deg, 
+                #ff0000, #ff9900, #ffff00, #00ff00, 
+                #00ffff, #0000ff, #9900ff, #ff00ff, #ff0000);
+            background-size: 800% 100%;
+            animation: ledBorder 10s linear infinite reverse;
+            z-index: 2;
+            filter: brightness(1.5);
+        }
+        
+        @keyframes ledBorder {
+            0% { background-position: 0% 0; }
+            100% { background-position: 800% 0; }
+        }
+        
+        #led-content {
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            overflow: hidden;
+            padding: 20px;
+            border-radius: 10px;
+            text-shadow: 0 0 10px currentColor;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 全屏模式 */
+        .led-display.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            border-radius: 0;
+            padding: 50px;
+            border: none;
+            box-shadow: none;
+            cursor: pointer;
+        }
+        
+        .led-display.fullscreen #led-content {
+            font-size: 8vw !important;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .led-display.fullscreen::before,
+        .led-display.fullscreen::after {
+            height: 25px;
+        }
+        
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+        
+        .fullscreen-instruction {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #00ffcc;
+            max-width: 600px;
+        }
+        
+        .instructions {
+            background: rgba(20, 20, 40, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 10px;
+            border: 1px solid #333366;
+            backdrop-filter: blur(10px);
+        }
+        
+        .instructions h2 {
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            line-height: 1.8;
+            color: #ccccff;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .instructions li strong {
+            color: #00ffcc;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #444488;
+            color: #8888cc;
+            font-size: 0.9rem;
+            background: rgba(10, 10, 30, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .led-display.fullscreen #led-content {
+                font-size: 10vw !important;
+                padding: 20px;
+            }
+        }
+        
+        /* 滚动动画 */
+        @keyframes scrollLeft {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+        
+        @keyframes scrollRight {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes rainbow {
+            0% { color: #ff0000; }
+            16% { color: #ff9900; }
+            33% { color: #ffff00; }
+            50% { color: #00ff00; }
+            66% { color: #0000ff; }
+            83% { color: #9900ff; }
+            100% { color: #ff0000; }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* 模拟LED点阵效果 */
+        .led-pixel-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* 效果图标 */
+        .effect-icon {
+            font-size: 1.5rem;
+        }
+        
+        .preset-icon {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-scroll"></i> 手持弹幕LED生成器</h1>
+            <p class="subtitle">专为生成手持LED显示屏上的弹幕内容而设计。通过这款工具，您可以轻松创建个性化的弹幕文字，并将其显示在手持LED设备上，用于各种场合如演唱会、体育赛事、聚会等，增加互动性和趣味性。</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="controls">
+                <div class="control-group">
+                    <h2><i class="fas fa-edit"></i> 弹幕内容</h2>
+                    <textarea id="text-input" placeholder="请输入您想显示的弹幕内容...">欢迎使用手持弹幕LED生成器！</textarea>
+                </div>
+                
+                <div class="control-group">
+                    <h2><i class="fas fa-palette"></i> 颜色设置</h2>
+                    <label>文字颜色</label>
+                    <div class="color-picker">
+                        <div class="color-option active" style="background-color: #00ffcc;" data-color="#00ffcc"></div>
+                        <div class="color-option" style="background-color: #ff3366;" data-color="#ff3366"></div>
+                        <div class="color-option" style="background-color: #3366ff;" data-color="#3366ff"></div>
+                        <div class="color-option" style="background-color: #ffff00;" data-color="#ffff00"></div>
+                        <div class="color-option" style="background-color: #ff9900;" data-color="#ff9900"></div>
+                        <div class="color-option" style="background-color: #ffffff;" data-color="#ffffff"></div>
+                        <div class="color-option" style="background: linear-gradient(90deg, #ff0000, #ff9900, #ffff00, #00ff00, #00ffff, #0000ff, #9900ff, #ff00ff);" data-color="rainbow"></div>
+                    </div>
+                    
+                    <label style="margin-top: 15px;">背景颜色</label>
+                    <div class="color-picker">
+                        <div class="color-option active" style="background-color: #000000;" data-bgcolor="#000000"></div>
+                        <div class="color-option" style="background-color: #111122;" data-bgcolor="#111122"></div>
+                        <div class="color-option" style="background-color: #001a33;" data-bgcolor="#001a33"></div>
+                        <div class="color-option" style="background-color: #330033;" data-bgcolor="#330033"></div>
+                        <div class="color-option" style="background-color: #003300;" data-bgcolor="#003300"></div>
+                        <div class="color-option" style="background-color: #330000;" data-bgcolor="#330000"></div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h2><i class="fas fa-sliders-h"></i> 显示设置</h2>
+                    
+                    <label>字体大小</label>
+                    <div class="size-control">
+                        <span class="size-value" id="size-value">24px</span>
+                        <input type="range" id="font-size" min="12" max="72" value="24">
+                    </div>
+                    
+                    <label style="margin-top: 15px;">滚动速度</label>
+                    <div class="speed-control">
+                        <span class="speed-value" id="speed-value">中速</span>
+                        <input type="range" id="scroll-speed" min="1" max="10" value="5">
+                    </div>
+                    
+                    <label style="margin-top: 15px;">显示效果</label>
+                    <div class="effect-options">
+                        <div class="effect-option active" data-effect="scroll-left">
+                            <i class="fas fa-arrow-left effect-icon"></i>
+                            <span>向左滚动</span>
+                        </div>
+                        <div class="effect-option" data-effect="scroll-right">
+                            <i class="fas fa-arrow-right effect-icon"></i>
+                            <span>向右滚动</span>
+                        </div>
+                        <div class="effect-option" data-effect="static">
+                            <i class="fas fa-pause effect-icon"></i>
+                            <span>静态显示</span>
+                        </div>
+                        <div class="effect-option" data-effect="blink">
+                            <i class="fas fa-star effect-icon"></i>
+                            <span>闪烁效果</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h2><i class="fas fa-magic"></i> 预设场景</h2>
+                    <div class="presets">
+                        <button class="preset-btn" data-preset="concert">
+                            <i class="fas fa-music preset-icon"></i>
+                            <span>演唱会</span>
+                        </button>
+                        <button class="preset-btn" data-preset="sports">
+                            <i class="fas fa-running preset-icon"></i>
+                            <span>体育赛事</span>
+                        </button>
+                        <button class="preset-btn" data-preset="birthday">
+                            <i class="fas fa-birthday-cake preset-icon"></i>
+                            <span>生日祝福</span>
+                        </button>
+                        <button class="preset-btn" data-preset="proposal">
+                            <i class="fas fa-heart preset-icon"></i>
+                            <span>求婚表白</span>
+                        </button>
+                        <button class="preset-btn" data-preset="cheer">
+                            <i class="fas fa-trophy preset-icon"></i>
+                            <span>加油助威</span>
+                        </button>
+                        <button class="preset-btn" data-preset="welcome">
+                            <i class="fas fa-hand-wave preset-icon"></i>
+                            <span>欢迎标语</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="apply-btn">
+                        <i class="fas fa-play-circle"></i> 应用设置
+                    </button>
+                    <button class="btn btn-secondary" id="reset-btn">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <div class="led-display-container">
+                    <div class="display-header">
+                        <h3><i class="fas fa-mobile-alt"></i> 手持LED显示屏预览</h3>
+                        <div class="display-actions">
+                            <button class="display-btn" id="refresh-btn">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                            <button class="display-btn fullscreen" id="fullscreen-btn">
+                                <i class="fas fa-expand"></i> 全屏预览
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="led-display" id="led-display">
+                        <div class="led-pixel-effect"></div>
+                        <div id="led-content">欢迎使用手持弹幕LED生成器！</div>
+                    </div>
+                    
+                    <p style="text-align: center; color: #aaa; font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i> 点击全屏按钮可全屏预览效果，按ESC键退出全屏
+                    </p>
+                </div>
+                
+                <div class="instructions">
+                    <h2><i class="fas fa-info-circle"></i> 使用说明</h2>
+                    <ol>
+                        <li><strong>输入内容</strong>：在"弹幕内容"框中输入您想显示的文本</li>
+                        <li><strong>选择颜色</strong>：选择文字颜色和背景颜色，支持彩虹色效果</li>
+                        <li><strong>调整设置</strong>：调整字体大小和滚动速度</li>
+                        <li><strong>选择效果</strong>：选择显示效果（滚动、静态或闪烁）</li>
+                        <li><strong>应用设置</strong>：点击"应用设置"按钮预览效果</li>
+                        <li><strong>使用预设</strong>：使用预设场景快速应用常用设置</li>
+                        <li><strong>全屏预览</strong>：点击"全屏预览"按钮查看全屏效果，按ESC退出</li>
+                        <li><strong>实际使用</strong>：将生成的内容发送到您的手持LED设备上显示</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+             
+        </footer>
+    </div>
+
+    <!-- 全屏覆盖层 -->
+    <div class="fullscreen-overlay" id="fullscreen-overlay">
+        <h2 style="color: #00ffcc; font-size: 2.5rem; margin-bottom: 20px;">全屏预览模式</h2>
+        <p style="font-size: 1.5rem; margin-bottom: 10px;">LED显示屏已进入全屏预览模式</p>
+        <p class="fullscreen-instruction">
+            <i class="fas fa-mouse-pointer"></i> 点击任意位置或按ESC键退出全屏<br>
+            <i class="fas fa-expand-arrows-alt"></i> 全屏模式下文字会自动放大以适应屏幕
+        </p>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const textInput = document.getElementById('text-input');
+        const ledContent = document.getElementById('led-content');
+        const ledDisplay = document.getElementById('led-display');
+        const colorOptions = document.querySelectorAll('.color-picker:nth-child(2) .color-option');
+        const bgColorOptions = document.querySelectorAll('.color-picker:nth-child(4) .color-option');
+        const fontSizeSlider = document.getElementById('font-size');
+        const sizeValue = document.getElementById('size-value');
+        const speedSlider = document.getElementById('scroll-speed');
+        const speedValue = document.getElementById('speed-value');
+        const effectOptions = document.querySelectorAll('.effect-option');
+        const presetButtons = document.querySelectorAll('.preset-btn');
+        const applyBtn = document.getElementById('apply-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const fullscreenOverlay = document.getElementById('fullscreen-overlay');
+        
+        // 当前设置
+        let currentSettings = {
+            text: "欢迎使用手持弹幕LED生成器！",
+            color: "#00ffcc",
+            bgColor: "#000000",
+            fontSize: 24,
+            speed: 5,
+            effect: "scroll-left"
+        };
+        
+        // 速度映射
+        const speedMap = {
+            1: "极慢",
+            2: "很慢",
+            3: "慢",
+            4: "稍慢",
+            5: "中速",
+            6: "稍快",
+            7: "快",
+            8: "很快",
+            9: "极快",
+            10: "最快"
+        };
+        
+        // 初始化
+        function init() {
+            // 设置初始值
+            updateDisplay();
+            
+            // 文本输入事件
+            textInput.addEventListener('input', function() {
+                currentSettings.text = this.value;
+                updateDisplay();
+            });
+            
+            // 颜色选择事件
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    colorOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSettings.color = this.getAttribute('data-color');
+                    updateDisplay();
+                });
+            });
+            
+            // 背景颜色选择事件
+            bgColorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    bgColorOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSettings.bgColor = this.getAttribute('data-bgcolor');
+                    updateDisplay();
+                });
+            });
+            
+            // 字体大小调整事件
+            fontSizeSlider.addEventListener('input', function() {
+                currentSettings.fontSize = parseInt(this.value);
+                sizeValue.textContent = `${currentSettings.fontSize}px`;
+                updateDisplay();
+            });
+            
+            // 速度调整事件
+            speedSlider.addEventListener('input', function() {
+                currentSettings.speed = parseInt(this.value);
+                speedValue.textContent = speedMap[currentSettings.speed];
+                updateDisplay();
+            });
+            
+            // 效果选择事件
+            effectOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    effectOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSettings.effect = this.getAttribute('data-effect');
+                    updateDisplay();
+                });
+            });
+            
+            // 预设场景事件
+            presetButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const preset = this.getAttribute('data-preset');
+                    applyPreset(preset);
+                });
+            });
+            
+            // 应用按钮事件
+            applyBtn.addEventListener('click', updateDisplay);
+            
+            // 重置按钮事件
+            resetBtn.addEventListener('click', resetSettings);
+            
+            // 刷新按钮事件
+            refreshBtn.addEventListener('click', updateDisplay);
+            
+            // 全屏按钮事件
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            
+            // LED显示屏点击事件（全屏模式下退出全屏）
+            ledDisplay.addEventListener('click', function() {
+                if (ledDisplay.classList.contains('fullscreen')) {
+                    exitFullscreen();
+                }
+            });
+            
+            // ESC键退出全屏
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && ledDisplay.classList.contains('fullscreen')) {
+                    exitFullscreen();
+                }
+            });
+            
+            // 全屏变化事件监听
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+        
+        // 更新显示
+        function updateDisplay() {
+            // 更新LED内容
+            ledContent.textContent = currentSettings.text || "请输入弹幕内容";
+            
+            // 设置样式
+            ledContent.style.color = currentSettings.color;
+            ledContent.style.fontSize = `${currentSettings.fontSize}px`;
+            ledContent.style.backgroundColor = currentSettings.bgColor;
+            
+            // 清除所有动画
+            ledContent.style.animation = 'none';
+            
+            // 根据效果设置动画
+            let animationName = '';
+            let animationDuration = '';
+            
+            switch(currentSettings.effect) {
+                case 'scroll-left':
+                    animationName = 'scrollLeft';
+                    animationDuration = `${11 - currentSettings.speed}s`;
+                    ledContent.style.whiteSpace = 'nowrap';
+                    break;
+                case 'scroll-right':
+                    animationName = 'scrollRight';
+                    animationDuration = `${11 - currentSettings.speed}s`;
+                    ledContent.style.whiteSpace = 'nowrap';
+                    break;
+                case 'blink':
+                    animationName = 'blink';
+                    animationDuration = `${1.5 - (currentSettings.speed / 10)}s`;
+                    ledContent.style.whiteSpace = 'normal';
+                    break;
+                case 'static':
+                default:
+                    ledContent.style.whiteSpace = 'normal';
+                    break;
+            }
+            
+            // 应用动画
+            if (animationName) {
+                ledContent.style.animation = `${animationName} ${animationDuration} linear infinite`;
+            }
+            
+            // 彩虹效果（特殊处理）
+            if (currentSettings.color === 'rainbow') {
+                ledContent.style.animation = `${animationName ? animationName + ', ' : ''}rainbow 3s linear infinite`;
+            }
+            
+            // 添加脉冲动画效果
+            ledDisplay.style.animation = 'pulse 0.5s ease';
+            setTimeout(() => {
+                ledDisplay.style.animation = '';
+            }, 500);
+        }
+        
+        // 应用预设
+        function applyPreset(preset) {
+            switch(preset) {
+                case 'concert':
+                    currentSettings.text = "我爱这支乐队！演唱会太棒了！";
+                    currentSettings.color = "#ff3366";
+                    currentSettings.bgColor = "#000000";
+                    currentSettings.fontSize = 28;
+                    currentSettings.speed = 6;
+                    currentSettings.effect = "scroll-left";
+                    break;
+                case 'sports':
+                    currentSettings.text = "加油！必胜！我们是冠军！";
+                    currentSettings.color = "#ffff00";
+                    currentSettings.bgColor = "#003300";
+                    currentSettings.fontSize = 32;
+                    currentSettings.speed = 5;
+                    currentSettings.effect = "blink";
+                    break;
+                case 'birthday':
+                    currentSettings.text = "生日快乐！愿所有梦想都实现！";
+                    currentSettings.color = "#ff9900";
+                    currentSettings.bgColor = "#330033";
+                    currentSettings.fontSize = 26;
+                    currentSettings.speed = 4;
+                    currentSettings.effect = "scroll-right";
+                    break;
+                case 'proposal':
+                    currentSettings.text = "你愿意嫁给我吗？我会永远爱你！";
+                    currentSettings.color = "#ffffff";
+                    currentSettings.bgColor = "#ff3366";
+                    currentSettings.fontSize = 30;
+                    currentSettings.speed = 7;
+                    currentSettings.effect = "blink";
+                    break;
+                case 'cheer':
+                    currentSettings.text = "加油！坚持就是胜利！";
+                    currentSettings.color = "#00ffcc";
+                    currentSettings.bgColor = "#001a33";
+                    currentSettings.fontSize = 24;
+                    currentSettings.speed = 5;
+                    currentSettings.effect = "scroll-left";
+                    break;
+                case 'welcome':
+                    currentSettings.text = "热烈欢迎贵宾莅临指导！";
+                    currentSettings.color = "#ffff00";
+                    currentSettings.bgColor = "#330000";
+                    currentSettings.fontSize = 28;
+                    currentSettings.speed = 1;
+                    currentSettings.effect = "static";
+                    break;
+            }
+            
+            // 更新UI
+            textInput.value = currentSettings.text;
+            fontSizeSlider.value = currentSettings.fontSize;
+            speedSlider.value = currentSettings.speed;
+            sizeValue.textContent = `${currentSettings.fontSize}px`;
+            speedValue.textContent = speedMap[currentSettings.speed];
+            
+            // 更新颜色选择
+            colorOptions.forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-color') === currentSettings.color);
+            });
+            
+            bgColorOptions.forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-bgcolor') === currentSettings.bgColor);
+            });
+            
+            // 更新效果选择
+            effectOptions.forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-effect') === currentSettings.effect);
+            });
+            
+            // 更新显示
+            updateDisplay();
+        }
+        
+        // 重置设置
+        function resetSettings() {
+            currentSettings = {
+                text: "欢迎使用手持弹幕LED生成器！",
+                color: "#00ffcc",
+                bgColor: "#000000",
+                fontSize: 24,
+                speed: 5,
+                effect: "scroll-left"
+            };
+            
+            // 更新UI
+            textInput.value = currentSettings.text;
+            fontSizeSlider.value = currentSettings.fontSize;
+            speedSlider.value = currentSettings.speed;
+            sizeValue.textContent = `${currentSettings.fontSize}px`;
+            speedValue.textContent = speedMap[currentSettings.speed];
+            
+            // 更新颜色选择
+            colorOptions.forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-color') === currentSettings.color);
+            });
+            
+            bgColorOptions.forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-bgcolor') === currentSettings.bgColor);
+            });
+            
+            // 更新效果选择
+            effectOptions.forEach(option => {
+                option.classList.toggle('active', option.getAttribute('data-effect') === currentSettings.effect);
+            });
+            
+            // 更新显示
+            updateDisplay();
+        }
+        
+        // 切换全屏
+        function toggleFullscreen() {
+            if (!ledDisplay.classList.contains('fullscreen')) {
+                enterFullscreen();
+            } else {
+                exitFullscreen();
+            }
+        }
+        
+        // 进入全屏
+        function enterFullscreen() {
+            if (ledDisplay.requestFullscreen) {
+                ledDisplay.requestFullscreen();
+            } else if (ledDisplay.webkitRequestFullscreen) {
+                ledDisplay.webkitRequestFullscreen();
+            } else if (ledDisplay.mozRequestFullScreen) {
+                ledDisplay.mozRequestFullScreen();
+            } else if (ledDisplay.msRequestFullscreen) {
+                ledDisplay.msRequestFullscreen();
+            }
+            
+            ledDisplay.classList.add('fullscreen');
+            fullscreenOverlay.classList.add('active');
+            
+            // 3秒后隐藏覆盖层
+            setTimeout(() => {
+                fullscreenOverlay.classList.remove('active');
+            }, 3000);
+            
+            // 更新全屏按钮文本
+            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> 退出全屏';
+        }
+        
+        // 退出全屏
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+            
+            ledDisplay.classList.remove('fullscreen');
+            fullscreenOverlay.classList.remove('active');
+            
+            // 更新全屏按钮文本
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> 全屏预览';
+        }
+        
+        // 处理全屏变化
+        function handleFullscreenChange() {
+            const isFullscreen = document.fullscreenElement || 
+                                document.webkitFullscreenElement || 
+                                document.mozFullScreenElement || 
+                                document.msFullscreenElement;
+            
+            if (!isFullscreen && ledDisplay.classList.contains('fullscreen')) {
+                ledDisplay.classList.remove('fullscreen');
+                fullscreenOverlay.classList.remove('active');
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> 全屏预览';
+            }
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

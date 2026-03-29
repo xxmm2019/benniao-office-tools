@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小学数学试卷生成器</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入jszip和FileSaver.js用于生成Word文档 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        /* 头部样式 */
+        header {
+            /*background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);*/
+            /*color: white;*/
+            padding: 25px;
+            border-radius: 15px;
+            /*box-shadow: 0 8px 20px rgba(30, 60, 114, 0.2);*/
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            color: #ffcc00;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* 主要内容区域 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.8fr;
+            gap: 25px;
+        }
+        
+        /* 左侧控制面板 */
+        .control-panel {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            color: #2a5298;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eef4ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .panel-title i {
+            color: #4d7cfe;
+        }
+        
+        /* 题型选择 */
+        .question-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .type-card {
+            background-color: #f8fbff;
+            border: 2px solid #e1ebff;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .type-card:hover {
+            transform: translateY(-5px);
+            border-color: #4d7cfe;
+            box-shadow: 0 5px 15px rgba(77, 124, 254, 0.1);
+        }
+        
+        .type-card.selected {
+            background-color: #eef4ff;
+            border-color: #4d7cfe;
+            box-shadow: 0 5px 15px rgba(77, 124, 254, 0.15);
+        }
+        
+        .type-icon {
+            font-size: 2rem;
+            color: #4d7cfe;
+            margin-bottom: 10px;
+        }
+        
+        .type-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2a5298;
+        }
+        
+        .type-desc {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* 试卷设置 */
+        .paper-settings {
+            margin-bottom: 25px;
+        }
+        
+        .setting-item {
+            margin-bottom: 15px;
+        }
+        
+        .setting-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .setting-item span {
+            color: #2a5298;
+            font-weight: 700;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e1ebff;
+            outline: none;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #4d7cfe, #2a5298);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(to right, #2a5298, #1e3c72);
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: #f0f5ff;
+            color: #2a5298;
+            border: 2px solid #c7d7ff;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e1ebff;
+            box-shadow: 0 5px 10px rgba(77, 124, 254, 0.1);
+        }
+        
+        /* 试卷预览区域 */
+        .preview-panel {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .paper-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eef4ff;
+        }
+        
+        .school-name {
+            font-size: 1.8rem;
+            color: #1e3c72;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .paper-title {
+            font-size: 1.5rem;
+            color: #2a5298;
+            margin-bottom: 10px;
+        }
+        
+        .paper-info {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* 试卷内容 */
+        .paper-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 600px;
+            padding-right: 10px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #2a5298;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #c7d7ff;
+        }
+        
+        .question-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f5ff;
+        }
+        
+        .question-text {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+        
+        .answer-options {
+            padding-left: 20px;
+        }
+        
+        .option-item {
+            margin-bottom: 8px;
+        }
+        
+        .answer-input {
+            width: 80px;
+            padding: 5px 10px;
+            border: 1px solid #c7d7ff;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+        
+        /* 下载区域 */
+        .download-panel {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .download-icon {
+            font-size: 2.5rem;
+            color: #4d7cfe;
+        }
+        
+        .download-text h3 {
+            color: #2a5298;
+            margin-bottom: 5px;
+        }
+        
+        .download-text p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .download-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2a5298;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .modal-body {
+            margin-bottom: 25px;
+        }
+        
+        .modal-body p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .question-types {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .question-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .download-panel {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .paper-info {
+                flex-direction: column;
+                gap: 5px;
+                align-items: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .question-types {
+                grid-template-columns: 1fr;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1d1ff;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a3baff;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e1ebff;
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #4d7cfe, #2a5298);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+       
+        
+        <div class="main-content">
+            <!-- 左侧控制面板 -->
+            <div class="control-panel">
+                <div class="panel-title"><i class="fas fa-sliders-h"></i> 试卷设置</div>
+                
+                <!-- 题型选择 -->
+                <div class="question-types">
+                    <div class="type-card selected" data-type="calculation">
+                        <div class="type-icon"><i class="fas fa-calculator"></i></div>
+                        <div class="type-name">计算题</div>
+                        <div class="type-desc">基础运算练习</div>
+                    </div>
+                    <div class="type-card selected" data-type="fillblank">
+                        <div class="type-icon"><i class="fas fa-edit"></i></div>
+                        <div class="type-name">填空题</div>
+                        <div class="type-desc">知识点填空</div>
+                    </div>
+                    <div class="type-card" data-type="choice">
+                        <div class="type-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="type-name">选择题</div>
+                        <div class="type-desc">多项选择练习</div>
+                    </div>
+                    <div class="type-card" data-type="judgement">
+                        <div class="type-icon"><i class="fas fa-balance-scale"></i></div>
+                        <div class="type-name">判断题</div>
+                        <div class="type-desc">是非判断</div>
+                    </div>
+                    <div class="type-card" data-type="geometry">
+                        <div class="type-icon"><i class="fas fa-shapes"></i></div>
+                        <div class="type-name">图形题</div>
+                        <div class="type-desc">几何图形计算</div>
+                    </div>
+                    <div class="type-card" data-type="application">
+                        <div class="type-icon"><i class="fas fa-lightbulb"></i></div>
+                        <div class="type-name">应用题</div>
+                        <div class="type-desc">实际问题解决</div>
+                    </div>
+                </div>
+                
+                <!-- 试卷设置 -->
+                <div class="paper-settings">
+                    <div class="setting-item">
+                        <label>试卷标题 <span id="titleValue">小学数学测试卷</span></label>
+                        <input type="text" id="paperTitle" value="小学数学测试卷" class="answer-input" style="width:100%">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label>题目总数 <span id="totalValue">15</span></label>
+                        <input type="range" id="totalQuestions" min="5" max="30" value="15">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label>适用年级 <span id="gradeValue">三年级</span></label>
+                        <input type="range" id="gradeLevel" min="1" max="6" value="3">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label>难度级别 <span id="difficultyValue">中等</span></label>
+                        <input type="range" id="difficulty" min="1" max="3" value="2">
+                    </div>
+                    
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="generateBtn">
+                            <i class="fas fa-magic"></i> 智能生成试卷
+                        </button>
+                        <button class="btn btn-secondary" id="resetBtn">
+                            <i class="fas fa-redo"></i> 重置设置
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 题库管理 -->
+                <div class="panel-title"><i class="fas fa-database"></i> 题库管理</div>
+                <div class="buttons">
+                    <button class="btn btn-secondary" id="importBtn">
+                        <i class="fas fa-file-import"></i> 批量导入题目
+                    </button>
+                    <button class="btn btn-secondary" id="customBtn">
+                        <i class="fas fa-plus-circle"></i> 自定义题目
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 右侧试卷预览 -->
+            <div class="preview-panel">
+                <div class="paper-header">
+                    <div class="school-name">小笨鸟小学</div>
+                    <div class="paper-title" id="previewTitle">小学数学测试卷</div>
+                    <div class="paper-info">
+                        <div>班级：__________ 姓名：__________ 学号：__________</div>
+                        <div>时间：60分钟 总分：100分</div>
+                    </div>
+                </div>
+                
+                <div class="paper-content" id="paperContent">
+                    <!-- 试卷内容将通过JavaScript动态生成 -->
+                    <div class="section-title">一、计算题（共5题，每题4分，共20分）</div>
+                    <div class="question-item">
+                        <div class="question-text">1. 25 + 38 = <input type="text" class="answer-input" placeholder="答案"></div>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-text">2. 72 - 29 = <input type="text" class="answer-input" placeholder="答案"></div>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-text">3. 15 × 6 = <input type="text" class="answer-input" placeholder="答案"></div>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-text">4. 84 ÷ 7 = <input type="text" class="answer-input" placeholder="答案"></div>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-text">5. 36 + 47 - 18 = <input type="text" class="answer-input" placeholder="答案"></div>
+                    </div>
+                    
+                    <div class="section-title">二、填空题（共5题，每题4分，共20分）</div>
+                    <div class="question-item">
+                        <div class="question-text">1. 一个正方形有 <input type="text" class="answer-input" placeholder="答案"> 条边，每条边的长度 <input type="text" class="answer-input" placeholder="答案">。</div>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-text">2. 3米 = <input type="text" class="answer-input" placeholder="答案"> 厘米，2千克 = <input type="text" class="answer-input" placeholder="答案"> 克。</div>
+                    </div>
+                    <div class="question-item">
+                        <div class="question-text">3. 一小时有 <input type="text" class="answer-input" placeholder="答案"> 分钟，一天有 <input type="text" class="answer-input" placeholder="答案"> 小时。</div>
+                    </div>
+                    
+                    <div class="section-title">三、选择题（共5题，每题4分，共20分）</div>
+                    <div class="question-item">
+                        <div class="question-text">1. 下列哪个数是质数？</div>
+                        <div class="answer-options">
+                            <div class="option-item">A. 12</div>
+                            <div class="option-item">B. 17</div>
+                            <div class="option-item">C. 21</div>
+                            <div class="option-item">D. 27</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">四、应用题（共2题，每题10分，共20分）</div>
+                    <div class="question-item">
+                        <div class="question-text">1. 小明有15个苹果，他给了小红5个，又给了小刚3个，请问小明还剩下多少个苹果？</div>
+                        <div class="answer-options">
+                            <textarea class="answer-input" placeholder="请在此处作答" style="width:100%; height:80px;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+       
+    </div>
+    
+   
+    
+    <!-- 题库管理模态框 -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">批量导入题目</div>
+                <button class="close-modal" id="closeImportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>请选择要导入的题库文件（支持.txt、.csv或.json格式）：</p>
+                <input type="file" id="fileInput" style="width:100%; padding:10px; border:2px dashed #c7d7ff; border-radius:8px; margin:15px 0;">
+                <p>或直接粘贴题目内容（每行一题）：</p>
+                <textarea id="textAreaInput" style="width:100%; height:150px; padding:10px; border:1px solid #c7d7ff; border-radius:8px;"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelImport">取消</button>
+                <button class="btn btn-primary" id="confirmImport">导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const typeCards = document.querySelectorAll('.type-card');
+        const totalQuestions = document.getElementById('totalQuestions');
+        const gradeLevel = document.getElementById('gradeLevel');
+        const difficulty = document.getElementById('difficulty');
+        const paperTitle = document.getElementById('paperTitle');
+        const generateBtn = document.getElementById('generateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const importBtn = document.getElementById('importBtn');
+        const customBtn = document.getElementById('customBtn');
+        const downloadPaperBtn = document.getElementById('downloadPaperBtn');
+        const downloadAnswerBtn = document.getElementById('downloadAnswerBtn');
+        const paperContent = document.getElementById('paperContent');
+        const previewTitle = document.getElementById('previewTitle');
+        const progressBar = document.getElementById('progressBar');
+        const progress = document.getElementById('progress');
+        
+        // 模态框相关元素
+        const downloadModal = document.getElementById('downloadModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalProgressBar = document.getElementById('modalProgressBar');
+        const modalProgress = document.getElementById('modalProgress');
+        const cancelDownload = document.getElementById('cancelDownload');
+        const importModal = document.getElementById('importModal');
+        const closeImportModal = document.getElementById('closeImportModal');
+        const cancelImport = document.getElementById('cancelImport');
+        const confirmImport = document.getElementById('confirmImport');
+        const fileInput = document.getElementById('fileInput');
+        const textAreaInput = document.getElementById('textAreaInput');
+        
+        // 显示值的元素
+        const totalValue = document.getElementById('totalValue');
+        const gradeValue = document.getElementById('gradeValue');
+        const difficultyValue = document.getElementById('difficultyValue');
+        const titleValue = document.getElementById('titleValue');
+        
+        // 年级映射
+        const gradeMap = {
+            1: "一年级",
+            2: "二年级",
+            3: "三年级",
+            4: "四年级",
+            5: "五年级",
+            6: "六年级"
+        };
+        
+        // 难度映射
+        const difficultyMap = {
+            1: "简单",
+            2: "中等",
+            3: "较难"
+        };
+        
+        // 存储答案的数据结构
+        let answers = [];
+        
+        // 初始化值显示
+        updateValueDisplays();
+        
+        // 题型选择功能
+        typeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        
+        // 更新值显示
+        function updateValueDisplays() {
+            totalValue.textContent = totalQuestions.value;
+            gradeValue.textContent = gradeMap[gradeLevel.value];
+            difficultyValue.textContent = difficultyMap[difficulty.value];
+            titleValue.textContent = paperTitle.value;
+            previewTitle.textContent = paperTitle.value;
+        }
+        
+        // 监听输入变化
+        totalQuestions.addEventListener('input', updateValueDisplays);
+        gradeLevel.addEventListener('input', updateValueDisplays);
+        difficulty.addEventListener('input', updateValueDisplays);
+        paperTitle.addEventListener('input', updateValueDisplays);
+        
+        // 生成试卷函数
+        function generatePaper() {
+            // 获取选中的题型
+            const selectedTypes = Array.from(typeCards)
+                .filter(card => card.classList.contains('selected'))
+                .map(card => card.dataset.type);
+            
+            if (selectedTypes.length === 0) {
+                alert('请至少选择一种题型！');
+                return;
+            }
+            
+            // 显示进度条
+            progressBar.style.display = 'block';
+            progress.style.width = '0%';
+            
+            // 清空试卷内容
+            paperContent.innerHTML = '';
+            
+            // 清空答案数组
+            answers = [];
+            
+            // 获取设置
+            const total = parseInt(totalQuestions.value);
+            const grade = gradeMap[gradeLevel.value];
+            const diff = difficultyMap[difficulty.value];
+            
+            // 根据题型数量分配题目
+            const questionsPerType = Math.floor(total / selectedTypes.length);
+            let remainingQuestions = total % selectedTypes.length;
+            
+            // 生成试卷内容
+            let questionNumber = 1;
+            const typeNames = {
+                calculation: "计算题",
+                fillblank: "填空题",
+                choice: "选择题",
+                judgement: "判断题",
+                geometry: "图形题",
+                application: "应用题"
+            };
+            
+            const typePoints = {
+                calculation: 4,
+                fillblank: 4,
+                choice: 4,
+                judgement: 2,
+                geometry: 6,
+                application: 10
+            };
+            
+            // 为每种题型生成题目
+            selectedTypes.forEach((type, index) => {
+                // 计算该题型题目数量
+                let typeCount = questionsPerType;
+                if (remainingQuestions > 0) {
+                    typeCount++;
+                    remainingQuestions--;
+                }
+                
+                if (typeCount === 0) return;
+                
+                // 计算该题型总分
+                const totalPoints = typeCount * typePoints[type];
+                
+                // 添加题型标题
+                const sectionTitle = document.createElement('div');
+                sectionTitle.className = 'section-title fade-in';
+                sectionTitle.innerHTML = `${String.fromCharCode(65 + index)}、${typeNames[type]}（共${typeCount}题，每题${typePoints[type]}分，共${totalPoints}分）`;
+                paperContent.appendChild(sectionTitle);
+                
+                // 生成该题型的所有题目
+                for (let i = 1; i <= typeCount; i++) {
+                    const questionItem = document.createElement('div');
+                    questionItem.className = 'question-item fade-in';
+                    
+                    // 根据题型生成不同题目
+                    const questionData = generateQuestionByType(type, questionNumber, grade, diff);
+                    questionItem.innerHTML = questionData.html;
+                    
+                    // 存储答案
+                    answers.push({
+                        number: questionNumber,
+                        question: questionData.questionText,
+                        answer: questionData.answer,
+                        type: type
+                    });
+                    
+                    paperContent.appendChild(questionItem);
+                    questionNumber++;
+                    
+                    // 更新进度
+                    const progressPercent = Math.round((questionNumber-1) / total * 100);
+                    progress.style.width = `${progressPercent}%`;
+                }
+            });
+            
+            // 添加生成动画
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.05}s`;
+            });
+            
+            // 隐藏进度条
+            setTimeout(() => {
+                progressBar.style.display = 'none';
+            }, 500);
+            
+            // 显示成功消息
+            showMessage('试卷生成成功！');
+        }
+        
+        // 根据题型生成题目
+        function generateQuestionByType(type, number, grade, difficulty) {
+            const gradeNum = parseInt(gradeLevel.value);
+            
+            switch(type) {
+                case 'calculation':
+                    return generateCalculationQuestion(number, gradeNum);
+                case 'fillblank':
+                    return generateFillBlankQuestion(number, gradeNum);
+                case 'choice':
+                    return generateChoiceQuestion(number, gradeNum);
+                case 'judgement':
+                    return generateJudgementQuestion(number, gradeNum);
+                case 'geometry':
+                    return generateGeometryQuestion(number, gradeNum);
+                case 'application':
+                    return generateApplicationQuestion(number, gradeNum);
+                default:
+                    return {html: '', questionText: '', answer: ''};
+            }
+        }
+        
+        // 生成计算题
+        function generateCalculationQuestion(number, grade) {
+            let question = '';
+            let answer = 0;
+            let maxNum = 50;
+            let operators = ['+', '-'];
+            
+            if (grade >= 3) {
+                maxNum = 100;
+                operators.push('×');
+            }
+            
+            if (grade >= 4) {
+                operators.push('÷');
+            }
+            
+            // 随机选择运算符
+            const operator = operators[Math.floor(Math.random() * operators.length)];
+            
+            // 生成数字
+            let num1, num2;
+            
+            if (operator === '+') {
+                num1 = Math.floor(Math.random() * maxNum) + 1;
+                num2 = Math.floor(Math.random() * maxNum) + 1;
+                question = `${num1} ${operator} ${num2}`;
+                answer = num1 + num2;
+            } else if (operator === '-') {
+                num1 = Math.floor(Math.random() * maxNum) + 20;
+                num2 = Math.floor(Math.random() * num1) + 1;
+                question = `${num1} ${operator} ${num2}`;
+                answer = num1 - num2;
+            } else if (operator === '×') {
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                question = `${num1} ${operator} ${num2}`;
+                answer = num1 * num2;
+            } else if (operator === '÷') {
+                num2 = Math.floor(Math.random() * 9) + 2;
+                num1 = num2 * (Math.floor(Math.random() * 9) + 2);
+                question = `${num1} ${operator} ${num2}`;
+                answer = num1 / num2;
+            }
+            
+            return {
+                html: `
+                    <div class="question-text">${number}. ${question} = <input type="text" class="answer-input" placeholder="答案"></div>
+                `,
+                questionText: `${number}. ${question} = ?`,
+                answer: answer
+            };
+        }
+        
+        // 生成填空题
+        function generateFillBlankQuestion(number, grade) {
+            const fillBlankQuestions = [
+                {
+                    question: "一个三角形有 ______ 条边和 ______ 个角。",
+                    answer: "3, 3"
+                },
+                {
+                    question: "1米 = ______ 厘米，1千克 = ______ 克。",
+                    answer: "100, 1000"
+                },
+                {
+                    question: "15分钟 = ______ 秒，2小时 = ______ 分钟。",
+                    answer: "900, 120"
+                },
+                {
+                    question: "长方形的面积 = ______ × ______。",
+                    answer: "长, 宽"
+                },
+                {
+                    question: "一个星期有 ______ 天，一年有 ______ 个月。",
+                    answer: "7, 12"
+                }
+            ];
+            
+            const idx = Math.floor(Math.random() * fillBlankQuestions.length);
+            const question = fillBlankQuestions[idx];
+            
+            // 将下划线替换为输入框
+            const html = question.question.replace(/______/g, '<input type="text" class="answer-input" placeholder="答案">');
+            
+            return {
+                html: `<div class="question-text">${number}. ${html}</div>`,
+                questionText: `${number}. ${question.question}`,
+                answer: question.answer
+            };
+        }
+        
+        // 生成选择题
+        function generateChoiceQuestion(number, grade) {
+            const choiceQuestions = [
+                {
+                    question: "下列哪个数是偶数？",
+                    options: ["A. 13", "B. 17", "C. 22", "D. 29"],
+                    answer: "C"
+                },
+                {
+                    question: "一个长方形的长是8厘米，宽是5厘米，它的周长是多少厘米？",
+                    options: ["A. 13", "B. 26", "C. 40", "D. 20"],
+                    answer: "B"
+                },
+                {
+                    question: "下列哪个图形不是四边形？",
+                    options: ["A. 正方形", "B. 长方形", "C. 三角形", "D. 梯形"],
+                    answer: "C"
+                },
+                {
+                    question: "72 ÷ 8 的结果是多少？",
+                    options: ["A. 7", "B. 8", "C. 9", "D. 10"],
+                    answer: "C"
+                },
+                {
+                    question: "下列哪个时间单位最小？",
+                    options: ["A. 年", "B. 月", "C. 日", "D. 秒"],
+                    answer: "D"
+                }
+            ];
+            
+            const idx = Math.floor(Math.random() * choiceQuestions.length);
+            const question = choiceQuestions[idx];
+            
+            let optionsHtml = '';
+            question.options.forEach(option => {
+                optionsHtml += `<div class="option-item">${option}</div>`;
+            });
+            
+            return {
+                html: `
+                    <div class="question-text">${number}. ${question.question}</div>
+                    <div class="answer-options">${optionsHtml}</div>
+                `,
+                questionText: `${number}. ${question.question}`,
+                answer: question.answer
+            };
+        }
+        
+        // 生成判断题
+        function generateJudgementQuestion(number, grade) {
+            const judgementQuestions = [
+                { statement: "0是自然数。", answer: "错误" },
+                { statement: "所有的三角形都有三个角。", answer: "正确" },
+                { statement: "1千克铁比1千克棉花重。", answer: "错误" },
+                { statement: "正方形的四条边都相等。", answer: "正确" },
+                { statement: "两位数加两位数的和一定是三位数。", answer: "错误" }
+            ];
+            
+            const idx = Math.floor(Math.random() * judgementQuestions.length);
+            const question = judgementQuestions[idx];
+            
+            return {
+                html: `
+                    <div class="question-text">${number}. ${question.statement} （ ）</div>
+                    <div class="answer-options">
+                        <div class="option-item">正确</div>
+                        <div class="option-item">错误</div>
+                    </div>
+                `,
+                questionText: `${number}. ${question.statement}`,
+                answer: question.answer
+            };
+        }
+        
+        // 生成图形题
+        function generateGeometryQuestion(number, grade) {
+            const geometryQuestions = [
+                {
+                    question: "一个长方形的长是12厘米，宽是8厘米，求这个长方形的周长和面积。",
+                    answer: "周长 = (12+8)×2 = 40厘米；面积 = 12×8 = 96平方厘米"
+                },
+                {
+                    question: "一个正方形的边长是5厘米，求这个正方形的周长和面积。",
+                    answer: "周长 = 5×4 = 20厘米；面积 = 5×5 = 25平方厘米"
+                },
+                {
+                    question: "一个圆的半径是7厘米，求这个圆的直径和周长（π取3.14）。",
+                    answer: "直径 = 7×2 = 14厘米；周长 = 2×3.14×7 = 43.96厘米"
+                },
+                {
+                    question: "一个三角形的底是10厘米，高是6厘米，求这个三角形的面积。",
+                    answer: "面积 = (10×6)÷2 = 30平方厘米"
+                },
+                {
+                    question: "一个长方体的长、宽、高分别是5厘米、4厘米、3厘米，求这个长方体的体积。",
+                    answer: "体积 = 5×4×3 = 60立方厘米"
+                }
+            ];
+            
+            const idx = Math.floor(Math.random() * geometryQuestions.length);
+            const question = geometryQuestions[idx];
+            
+            return {
+                html: `
+                    <div class="question-text">${number}. ${question.question}</div>
+                    <div class="answer-options">
+                        <textarea class="answer-input" placeholder="请在此处作答" style="width:100%; height:80px;"></textarea>
+                    </div>
+                `,
+                questionText: `${number}. ${question.question}`,
+                answer: question.answer
+            };
+        }
+        
+        // 生成应用题
+        function generateApplicationQuestion(number, grade) {
+            const applicationQuestions = [
+                {
+                    question: "小明有28元钱，他买了一个文具盒花了12元，又买了一本书花了8元，请问小明还剩下多少钱？",
+                    answer: "28 - 12 - 8 = 8元"
+                },
+                {
+                    question: "学校图书馆有345本故事书，科技书比故事书少78本，请问科技书有多少本？两种书一共有多少本？",
+                    answer: "科技书: 345 - 78 = 267本；总共: 345 + 267 = 612本"
+                },
+                {
+                    question: "一辆汽车每小时行驶60公里，从A地到B地需要4小时，请问A地到B地的距离是多少公里？",
+                    answer: "60 × 4 = 240公里"
+                },
+                {
+                    question: "一个果园里有苹果树56棵，梨树比苹果树少18棵，桃树是梨树的2倍，请问桃树有多少棵？",
+                    answer: "梨树: 56 - 18 = 38棵；桃树: 38 × 2 = 76棵"
+                },
+                {
+                    question: "妈妈买了3千克苹果，每千克8元，又买了2千克香蕉，每千克6元，妈妈一共花了多少钱？",
+                    answer: "苹果: 3×8=24元；香蕉: 2×6=12元；总共: 24+12=36元"
+                }
+            ];
+            
+            const idx = Math.floor(Math.random() * applicationQuestions.length);
+            const question = applicationQuestions[idx];
+            
+            return {
+                html: `
+                    <div class="question-text">${number}. ${question.question}</div>
+                    <div class="answer-options">
+                        <textarea class="answer-input" placeholder="请在此处作答" style="width:100%; height:80px;"></textarea>
+                    </div>
+                `,
+                questionText: `${number}. ${question.question}`,
+                answer: question.answer
+            };
+        }
+        
+        // 显示消息
+        function showMessage(message) {
+            // 移除已有的消息
+            const existingMessage = document.querySelector('.message-toast');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // 创建消息元素
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message-toast';
+            messageEl.textContent = message;
+            
+            // 样式
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4d7cfe;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(77, 124, 254, 0.3);
+                z-index: 1000;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(messageEl);
+            
+            // 3秒后移除消息
+            setTimeout(() => {
+                messageEl.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => messageEl.remove(), 300);
+            }, 3000);
+        }
+        
+        // 重置设置
+        function resetSettings() {
+            // 选中所有题型
+            typeCards.forEach(card => {
+                card.classList.add('selected');
+            });
+            
+            // 重置滑块和输入
+            totalQuestions.value = 15;
+            gradeLevel.value = 3;
+            difficulty.value = 2;
+            paperTitle.value = "小学数学测试卷";
+            
+            // 更新显示
+            updateValueDisplays();
+            
+            // 重新生成试卷
+            generatePaper();
+            
+            showMessage('设置已重置！');
+        }
+        
+        // 下载Word文档
+        function downloadWordDocument(content, filename) {
+            // 显示下载模态框
+            downloadModal.style.display = 'flex';
+            modalProgressBar.style.display = 'block';
+            modalProgress.style.width = '0%';
+            modalMessage.textContent = '正在生成Word文档，请稍候...';
+            
+            // 模拟生成进度
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 10;
+                modalProgress.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    
+                    // 使用JSZip创建Word文档
+                    const zip = new JSZip();
+                    
+                    // Word文档实际上是包含特定XML文件的ZIP文件
+                    const docProps = `
+                        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                        <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+                            <Template>Normal.dotm</Template>
+                            <TotalTime>0</TotalTime>
+                            <Pages>1</Pages>
+                            <Words>0</Words>
+                            <Characters>0</Characters>
+                            <Application>Microsoft Office Word</Application>
+                            <DocSecurity>0</DocSecurity>
+                            <Lines>0</Lines>
+                            <Paragraphs>0</Paragraphs>
+                            <ScaleCrop>false</ScaleCrop>
+                            <Company>小笨鸟小学</Company>
+                            <LinksUpToDate>false</LinksUpToDate>
+                            <CharactersWithSpaces>0</CharactersWithSpaces>
+                            <SharedDoc>false</SharedDoc>
+                            <HyperlinksChanged>false</HyperlinksChanged>
+                            <AppVersion>16.0000</AppVersion>
+                        </Properties>
+                    `;
+                    
+                    const documentXml = `
+                        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                        <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+                            <w:body>
+                                <w:p>
+                                    <w:pPr>
+                                        <w:jc w:val="center"/>
+                                        <w:rPr>
+                                            <w:b/>
+                                            <w:sz w:val="36"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r>
+                                        <w:rPr>
+                                            <w:b/>
+                                            <w:sz w:val="36"/>
+                                        </w:rPr>
+                                        <w:t>小笨鸟小学</w:t>
+                                    </w:r>
+                                </w:p>
+                                <w:p>
+                                    <w:pPr>
+                                        <w:jc w:val="center"/>
+                                        <w:rPr>
+                                            <w:b/>
+                                            <w:sz w:val="28"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r>
+                                        <w:rPr>
+                                            <w:b/>
+                                            <w:sz w:val="28"/>
+                                        </w:rPr>
+                                        <w:t>${paperTitle.value}</w:t>
+                                    </w:r>
+                                </w:p>
+                                <w:p>
+                                    <w:pPr>
+                                        <w:jc w:val="distribute"/>
+                                    </w:pPr>
+                                    <w:r>
+                                        <w:t>班级：__________    姓名：__________    学号：__________</w:t>
+                                    </w:r>
+                                </w:p>
+                                <w:p>
+                                    <w:pPr>
+                                        <w:jc w:val="distribute"/>
+                                    </w:pPr>
+                                    <w:r>
+                                        <w:t>时间：60分钟    总分：100分</w:t>
+                                    </w:r>
+                                </w:p>
+                                ${content}
+                            </w:body>
+                        </w:document>
+                    `;
+                    
+                    const rels = `
+                        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+                            <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+                            <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+                        </Relationships>
+                    `;
+                    
+                    // 添加文件到ZIP
+                    zip.file("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>');
+                    zip.file("_rels/.rels", rels);
+                    zip.file("docProps/app.xml", docProps);
+                    zip.file("word/document.xml", documentXml);
+                    
+                    // 生成ZIP文件
+                    zip.generateAsync({type:"blob"}).then(function(blob) {
+                        // 保存文件
+                        saveAs(blob, filename);
+                        
+                        // 更新模态框消息
+                        modalMessage.textContent = '文档生成完成！';
+                        
+                        // 2秒后关闭模态框
+                        setTimeout(() => {
+                            downloadModal.style.display = 'none';
+                            showMessage('文档下载完成！');
+                        }, 2000);
+                    });
+                }
+            }, 100);
+        }
+        
+        // 下载试卷
+        function downloadPaper() {
+            if (!paperContent.children.length) {
+                alert('请先生成试卷！');
+                return;
+            }
+            
+            // 生成试卷内容
+            let content = '';
+            const sections = paperContent.querySelectorAll('.section-title');
+            
+            sections.forEach(section => {
+                const sectionTitle = section.textContent;
+                content += `<w:p><w:pPr><w:rPr><w:b/></w:rPr></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>${sectionTitle}</w:t></w:r></w:p>`;
+                
+                // 获取该部分的所有题目
+                let nextElement = section.nextElementSibling;
+                while (nextElement && !nextElement.classList.contains('section-title')) {
+                    if (nextElement.classList.contains('question-item')) {
+                        const questionText = nextElement.querySelector('.question-text').textContent;
+                        // 移除输入框占位符
+                        const cleanQuestion = questionText.replace(/答案/g, '______');
+                        content += `<w:p><w:r><w:t>${cleanQuestion}</w:t></w:r></w:p>`;
+                        
+                        // 如果是选择题，添加选项
+                        const options = nextElement.querySelectorAll('.option-item');
+                        if (options.length > 0) {
+                            options.forEach(option => {
+                                content += `<w:p><w:r><w:t>${option.textContent}</w:t></w:r></w:p>`;
+                            });
+                        }
+                        
+                        // 如果是应用题或图形题，添加空白行
+                        const textarea = nextElement.querySelector('textarea');
+                        if (textarea) {
+                            content += `<w:p><w:r><w:t>答：</w:t></w:r></w:p>`;
+                            content += `<w:p><w:r><w:t> </w:t></w:r></w:p>`;
+                            content += `<w:p><w:r><w:t> </w:t></w:r></w:p>`;
+                        }
+                    }
+                    nextElement = nextElement.nextElementSibling;
+                }
+                
+                // 添加分页符（除了最后一个部分）
+                if (section !== sections[sections.length - 1]) {
+                    content += '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+                }
+            });
+            
+            // 下载Word文档
+            downloadWordDocument(content, `${paperTitle.value}.docx`);
+        }
+        
+        // 下载答案
+        function downloadAnswer() {
+            if (answers.length === 0) {
+                alert('请先生成试卷！');
+                return;
+            }
+            
+            // 生成答案内容
+            let content = '';
+            content += `<w:p><w:pPr><w:jc w:val="center"/><w:rPr><w:b/><w:sz w:val="36"/></w:rPr></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="36"/></w:rPr><w:t>参考答案</w:t></w:r></w:p>`;
+            
+            // 按题型分组答案
+            const answersByType = {};
+            answers.forEach(answer => {
+                if (!answersByType[answer.type]) {
+                    answersByType[answer.type] = [];
+                }
+                answersByType[answer.type].push(answer);
+            });
+            
+            // 添加每种题型的答案
+            const typeNames = {
+                calculation: "计算题",
+                fillblank: "填空题",
+                choice: "选择题",
+                judgement: "判断题",
+                geometry: "图形题",
+                application: "应用题"
+            };
+            
+            Object.keys(answersByType).forEach((type, index) => {
+                const typeAnswers = answersByType[type];
+                content += `<w:p><w:pPr><w:rPr><w:b/></w:rPr></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>${typeNames[type]}答案：</w:t></w:r></w:p>`;
+                
+                typeAnswers.forEach(item => {
+                    content += `<w:p><w:r><w:t>${item.number}. ${item.answer}</w:t></w:r></w:p>`;
+                });
+                
+                // 添加空行
+                content += `<w:p><w:r><w:t> </w:t></w:r></w:p>`;
+            });
+            
+            // 添加注意事项
+            content += `<w:p><w:pPr><w:rPr><w:b/></w:rPr></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>注意事项：</w:t></w:r></w:p>`;
+            content += `<w:p><w:r><w:t>1. 本答案仅供参考，部分题目可能有多种解法。</w:t></w:r></w:p>`;
+            content += `<w:p><w:r><w:t>2. 应用题答案中的计算步骤和单位请根据实际情况评分。</w:t></w:r></w:p>`;
+            content += `<w:p><w:r><w:t>3. 图形题请根据学生的作图情况和计算过程综合评分。</w:t></w:r></w:p>`;
+            
+            // 下载Word文档
+            downloadWordDocument(content, `${paperTitle.value}参考答案.docx`);
+        }
+        
+        // 模拟题库导入
+        function importQuestions() {
+            importModal.style.display = 'flex';
+        }
+        
+        // 模拟自定义题目
+        function customQuestion() {
+            showMessage('自定义题目功能已打开（演示版本）');
+            // 在实际应用中，这里会有自定义题目的界面
+        }
+        
+        // 事件监听
+        generateBtn.addEventListener('click', generatePaper);
+        resetBtn.addEventListener('click', resetSettings);
+        importBtn.addEventListener('click', importQuestions);
+        customBtn.addEventListener('click', customQuestion);
+        
+        downloadPaperBtn.addEventListener('click', downloadPaper);
+        downloadAnswerBtn.addEventListener('click', downloadAnswer);
+        
+        // 模态框事件监听
+        closeModal.addEventListener('click', () => {
+            downloadModal.style.display = 'none';
+        });
+        
+        cancelDownload.addEventListener('click', () => {
+            downloadModal.style.display = 'none';
+        });
+        
+        closeImportModal.addEventListener('click', () => {
+            importModal.style.display = 'none';
+        });
+        
+        cancelImport.addEventListener('click', () => {
+            importModal.style.display = 'none';
+        });
+        
+        confirmImport.addEventListener('click', () => {
+            if (fileInput.files.length > 0 || textAreaInput.value.trim() !== '') {
+                showMessage('题目导入成功！');
+                importModal.style.display = 'none';
+                fileInput.value = '';
+                textAreaInput.value = '';
+            } else {
+                alert('请选择文件或输入题目内容！');
+            }
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', (e) => {
+            if (e.target === downloadModal) {
+                downloadModal.style.display = 'none';
+            }
+            if (e.target === importModal) {
+                importModal.style.display = 'none';
+            }
+        });
+        
+        // 初始生成试卷
+        generatePaper();
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

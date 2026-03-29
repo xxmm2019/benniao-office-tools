@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日期时间转换器  - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-clock/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        
+        .converter-card {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .card-header h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .datetime-input-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            border-color: #4a00e0;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(74, 0, 224, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .results-section {
+            padding: 30px;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .format-card {
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            border-left: 5px solid #4a00e0;
+        }
+        
+        .format-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .format-name {
+            font-weight: 700;
+            color: #4a00e0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .format-output {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            border: 1px solid #eee;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .current-time {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #4a00e0;
+            text-align: center;
+            padding: 15px;
+            background-color: #f0f0ff;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .copy-btn {
+            background-color: #4a00e0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background-color: #3a00b0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        .instructions {
+            background-color: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #2575fc;
+        }
+        
+        .instructions h3 {
+            color: #2575fc;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .datetime-input-section {
+                padding: 20px;
+            }
+            
+            .format-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-clock"></i> 日期时间转换器</h1>
+            <p>轻松将日期和时间转换为各种不同的格式，支持UNIX时间戳、ISO、RFC格式等</p>
+        </div>
+        
+        <div class="converter-card">
+            <div class="card-header">
+                <h2><i class="fas fa-calendar-alt"></i> 日期时间输入</h2>
+                <div class="current-time" id="currentTime">
+                    当前时间: 加载中...
+                </div>
+            </div>
+            
+            <div class="datetime-input-section">
+                <div class="input-group">
+                    <label for="dateInput"><i class="fas fa-calendar-day"></i> 选择日期</label>
+                    <input type="date" id="dateInput" class="input-field">
+                </div>
+                
+                <div class="input-group">
+                    <label for="timeInput"><i class="fas fa-clock"></i> 选择时间</label>
+                    <input type="time" id="timeInput" class="input-field" step="1">
+                </div>
+                
+                <div class="input-group">
+                    <label for="timestampInput"><i class="fas fa-hashtag"></i> UNIX时间戳 (秒)</label>
+                    <input type="number" id="timestampInput" class="input-field" placeholder="输入UNIX时间戳">
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="convertNowBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i> 使用当前时间
+                    </button>
+                    <button id="convertBtn" class="btn btn-primary">
+                        <i class="fas fa-exchange-alt"></i> 转换日期时间
+                    </button>
+                    <button id="resetBtn" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+                <ul>
+                    <li>选择日期和时间，或直接在时间戳输入框中输入UNIX时间戳（秒）</li>
+                    <li>点击"使用当前时间"按钮会自动填充当前日期和时间</li>
+                    <li>点击"转换日期时间"按钮生成各种格式的结果</li>
+                    <li>点击每个结果旁边的"复制"按钮可以复制该格式的日期时间</li>
+                </ul>
+            </div>
+            
+            <div class="results-section">
+                <h2><i class="fas fa-list-alt"></i> 转换结果</h2>
+                <p style="color: #666; margin-top: 5px;">点击"复制"按钮可以复制对应格式的日期时间</p>
+                
+                <div class="results-grid" id="resultsContainer">
+                    <!-- 转换结果将动态生成在这里 -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+         
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const dateInput = document.getElementById('dateInput');
+            const timeInput = document.getElementById('timeInput');
+            const timestampInput = document.getElementById('timestampInput');
+            const convertNowBtn = document.getElementById('convertNowBtn');
+            const convertBtn = document.getElementById('convertBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const currentTimeElement = document.getElementById('currentTime');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            // 定义日期时间格式
+            const dateFormats = [
+                {
+                    name: "ISO 8601 格式",
+                    description: "国际标准格式",
+                    format: (date) => date.toISOString()
+                },
+                {
+                    name: "本地日期时间",
+                    description: "本地日期和时间",
+                    format: (date) => date.toString()
+                },
+                {
+                    name: "本地日期字符串",
+                    description: "本地日期",
+                    format: (date) => date.toDateString()
+                },
+                {
+                    name: "本地时间字符串",
+                    description: "本地时间",
+                    format: (date) => date.toLocaleTimeString()
+                },
+                {
+                    name: "完整本地化日期时间",
+                    description: "本地化完整格式",
+                    format: (date) => date.toLocaleString()
+                },
+                {
+                    name: "UTC 日期时间",
+                    description: "协调世界时",
+                    format: (date) => date.toUTCString()
+                },
+                {
+                    name: "UNIX 时间戳 (秒)",
+                    description: "从1970-01-01开始的秒数",
+                    format: (date) => Math.floor(date.getTime() / 1000).toString()
+                },
+                {
+                    name: "UNIX 时间戳 (毫秒)",
+                    description: "从1970-01-01开始的毫秒数",
+                    format: (date) => date.getTime().toString()
+                },
+                {
+                    name: "RFC 2822 格式",
+                    description: "电子邮件和HTTP日期格式",
+                    format: (date) => date.toLocaleString('en-US', {
+                        weekday: 'short',
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                        timeZoneName: 'short'
+                    })
+                },
+                {
+                    name: "年-月-日 时:分:秒",
+                    description: "常用中文格式",
+                    format: (date) => {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const hour = String(date.getHours()).padStart(2, '0');
+                        const minute = String(date.getMinutes()).padStart(2, '0');
+                        const second = String(date.getSeconds()).padStart(2, '0');
+                        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+                    }
+                },
+                {
+                    name: "月/日/年 时:分 AM/PM",
+                    description: "美国常用格式",
+                    format: (date) => date.toLocaleString('en-US')
+                },
+                {
+                    name: "日/月/年 时:分:秒",
+                    description: "欧洲常用格式",
+                    format: (date) => {
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const year = date.getFullYear();
+                        const hour = String(date.getHours()).padStart(2, '0');
+                        const minute = String(date.getMinutes()).padStart(2, '0');
+                        const second = String(date.getSeconds()).padStart(2, '0');
+                        return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
+                    }
+                }
+            ];
+            
+            // 更新当前时间显示
+            function updateCurrentTime() {
+                const now = new Date();
+                const formattedTime = now.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                currentTimeElement.textContent = `当前时间: ${formattedTime}`;
+            }
+            
+            // 使用当前时间填充输入
+            function setToCurrentTime() {
+                const now = new Date();
+                
+                // 设置日期输入
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                dateInput.value = `${year}-${month}-${day}`;
+                
+                // 设置时间输入
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                timeInput.value = `${hours}:${minutes}:${seconds}`;
+                
+                // 设置时间戳输入
+                timestampInput.value = Math.floor(now.getTime() / 1000);
+                
+                // 转换并显示结果
+                convertDateTime();
+            }
+            
+            // 从时间戳更新日期时间输入
+            function updateFromTimestamp() {
+                const timestamp = parseInt(timestampInput.value);
+                if (!isNaN(timestamp) && timestamp > 0) {
+                    const date = new Date(timestamp * 1000);
+                    
+                    // 设置日期输入
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    dateInput.value = `${year}-${month}-${day}`;
+                    
+                    // 设置时间输入
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    const seconds = String(date.getSeconds()).padStart(2, '0');
+                    timeInput.value = `${hours}:${minutes}:${seconds}`;
+                    
+                    return date;
+                }
+                return null;
+            }
+            
+            // 从日期时间输入获取日期对象
+            function getDateFromInputs() {
+                const dateValue = dateInput.value;
+                const timeValue = timeInput.value;
+                
+                if (!dateValue) {
+                    alert("请先选择日期");
+                    return null;
+                }
+                
+                // 创建日期对象
+                let date = new Date(dateValue);
+                
+                // 如果提供了时间，添加时间部分
+                if (timeValue) {
+                    const [hours, minutes, seconds = 0] = timeValue.split(':');
+                    date.setHours(parseInt(hours), parseInt(minutes), parseInt(seconds));
+                }
+                
+                return date;
+            }
+            
+            // 转换日期时间并显示结果
+            function convertDateTime() {
+                let date;
+                
+                // 如果时间戳输入框有值，优先使用时间戳
+                if (timestampInput.value && !isNaN(parseInt(timestampInput.value))) {
+                    date = updateFromTimestamp();
+                } else {
+                    date = getDateFromInputs();
+                }
+                
+                if (!date) return;
+                
+                // 更新结果容器
+                resultsContainer.innerHTML = '';
+                
+                // 为每种格式创建结果卡片
+                dateFormats.forEach(format => {
+                    try {
+                        const formattedDate = format.format(date);
+                        
+                        const card = document.createElement('div');
+                        card.className = 'format-card';
+                        
+                        card.innerHTML = `
+                            <div class="format-name">
+                                <i class="fas fa-calendar-week"></i> ${format.name}
+                            </div>
+                            <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">${format.description}</p>
+                            <div class="format-output">${formattedDate}</div>
+                            <button class="copy-btn" data-clipboard-text="${formattedDate}">
+                                <i class="far fa-copy"></i> 复制
+                            </button>
+                        `;
+                        
+                        resultsContainer.appendChild(card);
+                    } catch (error) {
+                        console.error(`格式化错误 (${format.name}):`, error);
+                    }
+                });
+                
+                // 为复制按钮添加事件监听器
+                document.querySelectorAll('.copy-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const textToCopy = this.getAttribute('data-clipboard-text');
+                        copyToClipboard(textToCopy);
+                        
+                        // 视觉反馈
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                        this.style.backgroundColor = '#28a745';
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.style.backgroundColor = '';
+                        }, 1500);
+                    });
+                });
+            }
+            
+            // 复制到剪贴板
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    console.log('已复制到剪贴板: ', text);
+                }).catch(err => {
+                    console.error('复制失败: ', err);
+                    // 降级方案
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                });
+            }
+            
+            // 重置所有输入和结果
+            function resetAll() {
+                dateInput.value = '';
+                timeInput.value = '';
+                timestampInput.value = '';
+                resultsContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">转换结果将在这里显示...</p>';
+            }
+            
+            // 事件监听器
+            convertNowBtn.addEventListener('click', setToCurrentTime);
+            convertBtn.addEventListener('click', convertDateTime);
+            resetBtn.addEventListener('click', resetAll);
+            
+            // 当时间戳输入框变化时更新日期时间
+            timestampInput.addEventListener('input', function() {
+                if (this.value) {
+                    updateFromTimestamp();
+                }
+            });
+            
+            // 初始化
+            updateCurrentTime();
+            setToCurrentTime(); // 默认显示当前时间
+            
+            // 每秒更新当前时间
+            setInterval(updateCurrentTime, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>键盘测试工具 - 在线检测键盘按键好坏 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-key/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #1a1a2e;
+            color: #e6e6e6;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b8b8d1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .instructions {
+            background-color: #16213e;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .instructions h2 {
+            color: #4cc9f0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0f3460;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .keyboard-container {
+            background-color: #16213e;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .keyboard-container h2 {
+            color: #4cc9f0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0f3460;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #0f3460;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4cc9f0;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #b8b8d1;
+        }
+        
+        .keyboard {
+            background-color: #0f3460;
+            border-radius: 10px;
+            padding: 25px;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        
+        .key {
+            background-color: #1a1a2e;
+            color: #e6e6e6;
+            border: 2px solid #2a2a4a;
+            border-radius: 8px;
+            padding: 15px 10px;
+            margin: 0 4px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            min-width: 50px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+            user-select: none;
+            cursor: pointer;
+        }
+        
+        .key.active {
+            background-color: #4361ee;
+            color: white;
+            transform: translateY(4px);
+            box-shadow: 0 0 20px rgba(67, 97, 238, 0.7);
+            border-color: #4cc9f0;
+        }
+        
+        .key.space {
+            min-width: 350px;
+        }
+        
+        .key.tab, .key.caps, .key.enter, .key.shift {
+            min-width: 90px;
+        }
+        
+        .key.backspace {
+            min-width: 110px;
+        }
+        
+        .key.ctrl, .key.alt, .key.win, .key.fn {
+            min-width: 70px;
+        }
+        
+        .key.arrow {
+            min-width: 60px;
+        }
+        
+        .key.special {
+            background-color: #2a2a4a;
+        }
+        
+        .key:hover {
+            background-color: #2a2a4a;
+        }
+        
+        .key .key-label {
+            font-size: 0.8rem;
+        }
+        
+        .key .key-sub-label {
+            font-size: 0.7rem;
+            color: #b8b8d1;
+            margin-top: 3px;
+        }
+        
+        .key.function .key-label {
+            color: #4cc9f0;
+        }
+        
+        .testing-info {
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .testing-info h3 {
+            color: #4cc9f0;
+            margin-bottom: 10px;
+        }
+        
+        .testing-info p {
+            color: #b8b8d1;
+        }
+        
+        .highlight {
+            color: #4cc9f0;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #b8b8d1;
+            font-size: 0.9rem;
+            border-top: 1px solid #0f3460;
+        }
+        
+        .footer a {
+            color: #4cc9f0;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .key-pressed-info {
+            background-color: #0f3460;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .key-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .last-key {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4cc9f0;
+        }
+        
+        .key-code {
+            font-size: 0.9rem;
+            color: #b8b8d1;
+        }
+        
+        .reset-btn {
+            background-color: #4361ee;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .reset-btn:hover {
+            background-color: #3a56d4;
+        }
+        
+        .note {
+            background-color: rgba(15, 52, 96, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #4cc9f0;
+        }
+        
+        .note h4 {
+            color: #4cc9f0;
+            margin-bottom: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .key {
+                min-width: 30px;
+                height: 50px;
+                padding: 10px 5px;
+                font-size: 0.8rem;
+                margin: 0 2px;
+            }
+            
+            .key.space {
+                min-width: 200px;
+            }
+            
+            .key.tab, .key.caps, .key.enter, .key.shift {
+                min-width: 60px;
+            }
+            
+            .key.backspace {
+                min-width: 80px;
+            }
+            
+            .key.ctrl, .key.alt, .key.win, .key.fn {
+                min-width: 50px;
+            }
+            
+            .key.arrow {
+                min-width: 45px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .key .key-label {
+                font-size: 0.7rem;
+            }
+            
+            .key .key-sub-label {
+                display: none;
+            }
+            
+            .key {
+                min-width: 25px;
+                height: 40px;
+                padding: 8px 3px;
+            }
+            
+            .key.space {
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-keyboard"></i> 键盘测试工具</h1>
+            <p class="subtitle">在线检测键盘按键好坏，每按下一个键，虚拟键盘上对应的按键会高亮显示，帮助您快速识别故障按键。</p>
+        </header>
+        
+        <div class="content">
+            <div class="instructions">
+                <h2><i class="fas fa-info-circle"></i> 使用说明</h2>
+                <p>键盘是计算机最重要的输入设备之一，长时间使用后容易出现按键失灵问题。使用本工具可以快速检测键盘上每个按键是否正常工作。</p>
+                
+                <h3>测试方法：</h3>
+                <ul>
+                    <li>点击页面任意位置激活键盘监听</li>
+                    <li>按下键盘上的任意按键</li>
+                    <li>观察虚拟键盘上对应的按键是否高亮显示</li>
+                    <li>测试所有按键，特别是您怀疑有问题的按键</li>
+                    <li>使用<span class="highlight">"重置计数"</span>按钮清除测试记录</li>
+                </ul>
+                
+                <div class="note">
+                    <h4><i class="fas fa-lightbulb"></i> 使用提示</h4>
+                    <p>1. 如果某个按键按下后没有高亮显示，可能是该按键已经损坏</p>
+                    <p>2. 部分功能键(如Fn键)可能不会被所有浏览器检测到</p>
+                    <p>3. 测试时建议关闭中文输入法，以免影响测试结果</p>
+                </div>
+            </div>
+            
+            <div class="keyboard-container">
+                <h2><i class="fas fa-keyboard"></i> 虚拟键盘</h2>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-presses">0</div>
+                        <div class="stat-label">按键总次数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="unique-keys">0</div>
+                        <div class="stat-label">已测试按键数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="active-keys">0</div>
+                        <div class="stat-label">当前高亮按键</div>
+                    </div>
+                </div>
+                
+                <div class="keyboard" id="keyboard">
+                    <!-- 键盘布局将通过JavaScript动态生成 -->
+                </div>
+                
+                <div class="key-pressed-info">
+                    <div class="key-info">
+                        <div>最后按下的键：</div>
+                        <div class="last-key" id="last-key">无</div>
+                        <div class="key-code" id="key-code">键码：-</div>
+                    </div>
+                    <button class="reset-btn" id="reset-btn">重置计数</button>
+                </div>
+                
+                <div class="testing-info">
+                    <h3><i class="fas fa-tasks"></i> 测试状态</h3>
+                    <p>当前正在监听键盘事件。请按下键盘上的任意键开始测试。</p>
+                    <p id="testing-status" class="highlight">等待按键输入...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 键盘布局定义
+            const keyboardLayout = [
+                // 第一行：功能键
+                [
+                    { id: 'Escape', label: 'Esc', subLabel: '', class: 'function' },
+                    { id: 'F1', label: 'F1', subLabel: '', class: 'function' },
+                    { id: 'F2', label: 'F2', subLabel: '', class: 'function' },
+                    { id: 'F3', label: 'F3', subLabel: '', class: 'function' },
+                    { id: 'F4', label: 'F4', subLabel: '', class: 'function' },
+                    { id: 'F5', label: 'F5', subLabel: '', class: 'function' },
+                    { id: 'F6', label: 'F6', subLabel: '', class: 'function' },
+                    { id: 'F7', label: 'F7', subLabel: '', class: 'function' },
+                    { id: 'F8', label: 'F8', subLabel: '', class: 'function' },
+                    { id: 'F9', label: 'F9', subLabel: '', class: 'function' },
+                    { id: 'F10', label: 'F10', subLabel: '', class: 'function' },
+                    { id: 'F11', label: 'F11', subLabel: '', class: 'function' },
+                    { id: 'F12', label: 'F12', subLabel: '', class: 'function' }
+                ],
+                // 第二行：数字键
+                [
+                    { id: 'Backquote', label: '`', subLabel: '~', class: '' },
+                    { id: 'Digit1', label: '1', subLabel: '!', class: '' },
+                    { id: 'Digit2', label: '2', subLabel: '@', class: '' },
+                    { id: 'Digit3', label: '3', subLabel: '#', class: '' },
+                    { id: 'Digit4', label: '4', subLabel: '$', class: '' },
+                    { id: 'Digit5', label: '5', subLabel: '%', class: '' },
+                    { id: 'Digit6', label: '6', subLabel: '^', class: '' },
+                    { id: 'Digit7', label: '7', subLabel: '&', class: '' },
+                    { id: 'Digit8', label: '8', subLabel: '*', class: '' },
+                    { id: 'Digit9', label: '9', subLabel: '(', class: '' },
+                    { id: 'Digit0', label: '0', subLabel: ')', class: '' },
+                    { id: 'Minus', label: '-', subLabel: '_', class: '' },
+                    { id: 'Equal', label: '=', subLabel: '+', class: '' },
+                    { id: 'Backspace', label: 'Backspace', subLabel: '', class: 'backspace special' }
+                ],
+                // 第三行：字母第一行
+                [
+                    { id: 'Tab', label: 'Tab', subLabel: '', class: 'tab special' },
+                    { id: 'KeyQ', label: 'Q', subLabel: '', class: '' },
+                    { id: 'KeyW', label: 'W', subLabel: '', class: '' },
+                    { id: 'KeyE', label: 'E', subLabel: '', class: '' },
+                    { id: 'KeyR', label: 'R', subLabel: '', class: '' },
+                    { id: 'KeyT', label: 'T', subLabel: '', class: '' },
+                    { id: 'KeyY', label: 'Y', subLabel: '', class: '' },
+                    { id: 'KeyU', label: 'U', subLabel: '', class: '' },
+                    { id: 'KeyI', label: 'I', subLabel: '', class: '' },
+                    { id: 'KeyO', label: 'O', subLabel: '', class: '' },
+                    { id: 'KeyP', label: 'P', subLabel: '', class: '' },
+                    { id: 'BracketLeft', label: '[', subLabel: '{', class: '' },
+                    { id: 'BracketRight', label: ']', subLabel: '}', class: '' },
+                    { id: 'Backslash', label: '\\', subLabel: '|', class: '' }
+                ],
+                // 第四行：字母第二行
+                [
+                    { id: 'CapsLock', label: 'Caps Lock', subLabel: '', class: 'caps special' },
+                    { id: 'KeyA', label: 'A', subLabel: '', class: '' },
+                    { id: 'KeyS', label: 'S', subLabel: '', class: '' },
+                    { id: 'KeyD', label: 'D', subLabel: '', class: '' },
+                    { id: 'KeyF', label: 'F', subLabel: '', class: '' },
+                    { id: 'KeyG', label: 'G', subLabel: '', class: '' },
+                    { id: 'KeyH', label: 'H', subLabel: '', class: '' },
+                    { id: 'KeyJ', label: 'J', subLabel: '', class: '' },
+                    { id: 'KeyK', label: 'K', subLabel: '', class: '' },
+                    { id: 'KeyL', label: 'L', subLabel: '', class: '' },
+                    { id: 'Semicolon', label: ';', subLabel: ':', class: '' },
+                    { id: 'Quote', label: "'", subLabel: '"', class: '' },
+                    { id: 'Enter', label: 'Enter', subLabel: '', class: 'enter special' }
+                ],
+                // 第五行：字母第三行
+                [
+                    { id: 'ShiftLeft', label: 'Shift', subLabel: '', class: 'shift special' },
+                    { id: 'KeyZ', label: 'Z', subLabel: '', class: '' },
+                    { id: 'KeyX', label: 'X', subLabel: '', class: '' },
+                    { id: 'KeyC', label: 'C', subLabel: '', class: '' },
+                    { id: 'KeyV', label: 'V', subLabel: '', class: '' },
+                    { id: 'KeyB', label: 'B', subLabel: '', class: '' },
+                    { id: 'KeyN', label: 'N', subLabel: '', class: '' },
+                    { id: 'KeyM', label: 'M', subLabel: '', class: '' },
+                    { id: 'Comma', label: ',', subLabel: '<', class: '' },
+                    { id: 'Period', label: '.', subLabel: '>', class: '' },
+                    { id: 'Slash', label: '/', subLabel: '?', class: '' },
+                    { id: 'ShiftRight', label: 'Shift', subLabel: '', class: 'shift special' }
+                ],
+                // 第六行：空格键行
+                [
+                    { id: 'ControlLeft', label: 'Ctrl', subLabel: '', class: 'ctrl special' },
+                    { id: 'MetaLeft', label: 'Win', subLabel: '', class: 'win special' },
+                    { id: 'AltLeft', label: 'Alt', subLabel: '', class: 'alt special' },
+                    { id: 'Space', label: '空格键', subLabel: '', class: 'space' },
+                    { id: 'AltRight', label: 'Alt', subLabel: '', class: 'alt special' },
+                    { id: 'MetaRight', label: 'Win', subLabel: '', class: 'win special' },
+                    { id: 'ContextMenu', label: 'Menu', subLabel: '', class: 'special' },
+                    { id: 'ControlRight', label: 'Ctrl', subLabel: '', class: 'ctrl special' }
+                ],
+                // 第七行：方向键
+                [
+                    { id: 'Insert', label: 'Insert', subLabel: '', class: 'arrow' },
+                    { id: 'Home', label: 'Home', subLabel: '', class: 'arrow' },
+                    { id: 'PageUp', label: 'Page Up', subLabel: '', class: 'arrow' },
+                    { id: 'Delete', label: 'Delete', subLabel: '', class: 'arrow' },
+                    { id: 'End', label: 'End', subLabel: '', class: 'arrow' },
+                    { id: 'PageDown', label: 'Page Down', subLabel: '', class: 'arrow' },
+                    { id: 'ArrowUp', label: '↑', subLabel: '', class: 'arrow' },
+                    { id: 'ArrowLeft', label: '←', subLabel: '', class: 'arrow' },
+                    { id: 'ArrowDown', label: '↓', subLabel: '', class: 'arrow' },
+                    { id: 'ArrowRight', label: '→', subLabel: '', class: 'arrow' }
+                ]
+            ];
+
+            // 键盘元素
+            const keyboardElement = document.getElementById('keyboard');
+            const totalPressesElement = document.getElementById('total-presses');
+            const uniqueKeysElement = document.getElementById('unique-keys');
+            const activeKeysElement = document.getElementById('active-keys');
+            const lastKeyElement = document.getElementById('last-key');
+            const keyCodeElement = document.getElementById('key-code');
+            const resetBtn = document.getElementById('reset-btn');
+            const testingStatusElement = document.getElementById('testing-status');
+
+            // 状态变量
+            let totalPresses = 0;
+            let pressedKeys = new Set();
+            let activeKeys = new Set();
+            let keyElements = {};
+
+            // 初始化虚拟键盘
+            function initKeyboard() {
+                keyboardElement.innerHTML = '';
+                
+                keyboardLayout.forEach(row => {
+                    const rowElement = document.createElement('div');
+                    rowElement.className = 'keyboard-row';
+                    
+                    row.forEach(key => {
+                        const keyElement = document.createElement('div');
+                        keyElement.className = `key ${key.class}`;
+                        keyElement.id = `key-${key.id}`;
+                        
+                        const labelElement = document.createElement('div');
+                        labelElement.className = 'key-label';
+                        labelElement.textContent = key.label;
+                        
+                        keyElement.appendChild(labelElement);
+                        
+                        if (key.subLabel) {
+                            const subLabelElement = document.createElement('div');
+                            subLabelElement.className = 'key-sub-label';
+                            subLabelElement.textContent = key.subLabel;
+                            keyElement.appendChild(subLabelElement);
+                        }
+                        
+                        // 存储键元素以便快速访问
+                        keyElements[key.id] = keyElement;
+                        
+                        // 添加鼠标点击支持（模拟按键）
+                        keyElement.addEventListener('mousedown', () => {
+                            simulateKeyPress(key.id, key.label);
+                        });
+                        
+                        keyElement.addEventListener('mouseup', () => {
+                            setTimeout(() => {
+                                keyElement.classList.remove('active');
+                                activeKeys.delete(key.id);
+                                updateActiveKeysCount();
+                            }, 200);
+                        });
+                        
+                        rowElement.appendChild(keyElement);
+                    });
+                    
+                    keyboardElement.appendChild(rowElement);
+                });
+            }
+
+            // 模拟按键按下
+            function simulateKeyPress(keyId, keyLabel) {
+                // 更新统计信息
+                totalPresses++;
+                pressedKeys.add(keyId);
+                
+                // 更新UI
+                totalPressesElement.textContent = totalPresses;
+                uniqueKeysElement.textContent = pressedKeys.size;
+                
+                // 高亮显示按键
+                if (keyElements[keyId]) {
+                    keyElements[keyId].classList.add('active');
+                    activeKeys.add(keyId);
+                    updateActiveKeysCount();
+                    
+                    // 显示按键信息
+                    lastKeyElement.textContent = keyLabel;
+                    keyCodeElement.textContent = `键码：${keyId}`;
+                    
+                    // 更新测试状态
+                    testingStatusElement.textContent = `已按下：${keyLabel}`;
+                    
+                    // 2秒后移除高亮
+                    setTimeout(() => {
+                        keyElements[keyId].classList.remove('active');
+                        activeKeys.delete(keyId);
+                        updateActiveKeysCount();
+                    }, 2000);
+                }
+            }
+
+            // 更新高亮按键计数
+            function updateActiveKeysCount() {
+                activeKeysElement.textContent = activeKeys.size;
+            }
+
+            // 键盘事件监听
+            document.addEventListener('keydown', function(event) {
+                // 阻止默认行为（如F5刷新页面）
+                if (event.key === 'F5') {
+                    event.preventDefault();
+                }
+                
+                // 更新统计信息
+                totalPresses++;
+                pressedKeys.add(event.code);
+                
+                // 更新UI
+                totalPressesElement.textContent = totalPresses;
+                uniqueKeysElement.textContent = pressedKeys.size;
+                
+                // 高亮显示按键
+                if (keyElements[event.code]) {
+                    keyElements[event.code].classList.add('active');
+                    activeKeys.add(event.code);
+                    updateActiveKeysCount();
+                    
+                    // 显示按键信息
+                    lastKeyElement.textContent = event.key;
+                    keyCodeElement.textContent = `键码：${event.code} (${event.keyCode})`;
+                    
+                    // 更新测试状态
+                    testingStatusElement.textContent = `已按下：${event.key}`;
+                } else {
+                    // 对于没有对应虚拟按键的键，显示特殊信息
+                    lastKeyElement.textContent = event.key;
+                    keyCodeElement.textContent = `键码：${event.code} (${event.keyCode})`;
+                    testingStatusElement.textContent = `已按下：${event.key} (虚拟键盘上无对应键位)`;
+                }
+            });
+
+            // 键盘释放事件监听
+            document.addEventListener('keyup', function(event) {
+                if (keyElements[event.code]) {
+                    // 延迟移除高亮，以便用户看到效果
+                    setTimeout(() => {
+                        keyElements[event.code].classList.remove('active');
+                        activeKeys.delete(event.code);
+                        updateActiveKeysCount();
+                    }, 200);
+                }
+            });
+
+            // 重置按钮点击事件
+            resetBtn.addEventListener('click', function() {
+                totalPresses = 0;
+                pressedKeys.clear();
+                activeKeys.clear();
+                
+                // 重置UI
+                totalPressesElement.textContent = '0';
+                uniqueKeysElement.textContent = '0';
+                activeKeysElement.textContent = '0';
+                lastKeyElement.textContent = '无';
+                keyCodeElement.textContent = '键码：-';
+                testingStatusElement.textContent = '已重置，等待按键输入...';
+                
+                // 移除所有高亮
+                Object.values(keyElements).forEach(keyElement => {
+                    keyElement.classList.remove('active');
+                });
+                
+                // 显示提示信息
+                setTimeout(() => {
+                    testingStatusElement.textContent = '等待按键输入...';
+                }, 2000);
+            });
+
+            // 页面点击激活键盘监听提示
+            document.body.addEventListener('click', function() {
+                testingStatusElement.textContent = '键盘监听已激活，请开始测试按键...';
+                setTimeout(() => {
+                    testingStatusElement.textContent = '等待按键输入...';
+                }, 3000);
+            });
+
+            // 初始化
+            initKeyboard();
+            
+            // 显示初始提示
+            testingStatusElement.textContent = '点击页面任意位置激活键盘监听，然后开始测试按键...';
+        });
+    </script>
+</body>
+</html>

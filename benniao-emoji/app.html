@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji符号分类整理 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-emoji/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .emoji-count {
+            font-size: 1.1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 30px;
+            background-color: #f1f3f5;
+            border-bottom: 1px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid #dee2e6;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #6a11cb;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        .category-nav {
+            display: flex;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            gap: 10px;
+        }
+        
+        .category-btn {
+            padding: 10px 20px;
+            background-color: white;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .category-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #6a11cb;
+        }
+        
+        .category-btn.active {
+            background-color: #6a11cb;
+            color: white;
+            border-color: #6a11cb;
+        }
+        
+        .emoji-container {
+            padding: 30px;
+            min-height: 600px;
+        }
+        
+        .category-section {
+            margin-bottom: 40px;
+        }
+        
+        .category-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .category-title i {
+            margin-right: 10px;
+            color: #6a11cb;
+        }
+        
+        .category-count {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: normal;
+            background-color: #f1f3f5;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
+        
+        .emoji-item {
+            background-color: white;
+            border: 2px solid #f1f3f5;
+            border-radius: 12px;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .emoji-item:hover {
+            border-color: #6a11cb;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .emoji-char {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .emoji-name {
+            font-size: 0.9rem;
+            text-align: center;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+        
+        .copy-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+            font-weight: 600;
+        }
+        
+        .copy-notification.show {
+            display: block;
+            animation: fadeInOut 2s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(10px); }
+        }
+        
+        .emoji-item.copied {
+            border-color: #28a745;
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .emoji-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            
+            .category-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .category-count {
+                margin-top: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .emoji-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+            
+            .emoji-char {
+                font-size: 2rem;
+            }
+            
+            .emoji-name {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="far fa-smile"></i> Emoji符号大全</h1>
+            <p class="subtitle">收集整理了超过500个常用的Emoji符号，按照分类整理，点击即可复制到剪贴板</p>
+            <div class="emoji-count" id="emojiCount">共加载0个Emoji</div>
+        </header>
+        
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索Emoji或名称...">
+            </div>
+            
+            <div class="category-nav" id="categoryNav">
+                <!-- 分类按钮将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="emoji-container" id="emojiContainer">
+            <!-- Emoji内容将通过JavaScript动态生成 -->
+        </div>
+        
+        <footer>
+            <p>© 2023 笨鸟办公工具集箱 - 免费Emoji符号工具</p>
+        </footer>
+    </div>
+    
+    <div class="copy-notification" id="copyNotification">
+        <i class="fas fa-check-circle"></i> Emoji已复制到剪贴板！
+    </div>
+
+    <script>
+        // Emoji数据 - 分类整理
+        const emojiData = [
+            {
+                id: "smileys",
+                name: "笑脸与情感",
+                icon: "far fa-smile",
+                emojis: [
+                    { char: "😀", name: "大笑" },
+                    { char: "😃", name: "开心" },
+                    { char: "😄", name: "微笑" },
+                    { char: "😁", name: "笑嘻嘻" },
+                    { char: "😆", name: "大笑" },
+                    { char: "😅", name: "苦笑" },
+                    { char: "😂", name: "笑哭" },
+                    { char: "🤣", name: "笑得打滚" },
+                    { char: "😊", name: "微笑脸红" },
+                    { char: "😇", name: "天使" },
+                    { char: "🙂", name: "微笑" },
+                    { char: "🙃", name: "倒脸" },
+                    { char: "😉", name: "眨眼" },
+                    { char: "😌", name: "松了口气" },
+                    { char: "😍", name: "爱心眼" },
+                    { char: "🥰", name: "笑脸爱心" },
+                    { char: "😘", name: "飞吻" },
+                    { char: "😗", name: "亲吻" },
+                    { char: "😙", name: "微笑亲吻" },
+                    { char: "😚", name: "闭眼亲吻" },
+                    { char: "😋", name: "美味" },
+                    { char: "😛", name: "吐舌" },
+                    { char: "😝", name: "搞笑吐舌" },
+                    { char: "😜", name: "眨眼吐舌" },
+                    { char: "🤪", name: "搞笑脸" },
+                    { char: "🤨", name: "挑眉" },
+                    { char: "🧐", name: "单镜片眼镜" },
+                    { char: "🤓", name: "书呆子" },
+                    { char: "😎", name: "戴太阳镜笑" },
+                    { char: "🤩", name: "星星眼" },
+                    { char: "🥳", name: "派对脸" },
+                    { char: "😏", name: "得意" },
+                    { char: "😒", name: "不高兴" },
+                    { char: "😞", name: "失望" },
+                    { char: "😔", name: "沮丧" },
+                    { char: "😟", name: "担心" },
+                    { char: "😕", name: "困惑" },
+                    { char: "🙁", name: "轻微皱眉" },
+                    { char: "☹️", name: "皱眉" },
+                    { char: "😣", name: "痛苦" },
+                    { char: "😖", name: "困惑" },
+                    { char: "😫", name: "累" },
+                    { char: "😩", name: "疲惫" },
+                    { char: "🥺", name: "恳求脸" },
+                    { char: "😢", name: "哭" },
+                    { char: "😭", name: "大哭" },
+                    { char: "😤", name: "喷气" },
+                    { char: "😠", name: "生气" },
+                    { char: "😡", name: "愤怒" },
+                    { char: "🤬", name: "说脏话" },
+                    { char: "🤯", name: "爆炸头" },
+                    { char: "😳", name: "脸红" },
+                    { char: "🥵", name: "热脸" },
+                    { char: "🥶", name: "冷脸" },
+                    { char: "😱", name: "尖叫" },
+                    { char: "😨", name: "害怕" },
+                    { char: "😰", name: "焦虑出汗" },
+                    { char: "😥", name: "失望但解脱" },
+                    { char: "😓", name: "冷汗" },
+                    { char: "🤗", name: "拥抱" },
+                    { char: "🤔", name: "思考" },
+                    { char: "🤭", name: "捂嘴" },
+                    { char: "🤫", name: "嘘" },
+                    { char: "🤥", name: "说谎" },
+                    { char: "😶", name: "无口" },
+                    { char: "😐", name: "中性" },
+                    { char: "😑", name: "面无表情" },
+                    { char: "😬", name: "龇牙咧嘴" },
+                    { char: "🙄", name: "翻白眼" },
+                    { char: "😯", name: "惊讶" },
+                    { char: "😦", name: "张开嘴皱眉" },
+                    { char: "😧", name: "痛苦" },
+                    { char: "😮", name: "张嘴" },
+                    { char: "😲", name: "震惊" },
+                    { char: "🥱", name: "打哈欠" },
+                    { char: "😴", name: "睡觉" },
+                    { char: "🤤", name: "流口水" },
+                    { char: "😪", name: "困倦" },
+                    { char: "😵", name: "头晕" },
+                    { char: "🤐", name: "拉链嘴" },
+                    { char: "🥴", name: "醉酒" },
+                    { char: "🤢", name: "恶心" },
+                    { char: "🤮", name: "呕吐" },
+                    { char: "🤧", name: "打喷嚏" },
+                    { char: "😷", name: "戴口罩" },
+                    { char: "🤒", name: "发烧" },
+                    { char: "🤕", name: "受伤" },
+                    { char: "🤑", name: "金钱脸" },
+                    { char: "🤠", name: "牛仔脸" }
+                ]
+            },
+            {
+                id: "people",
+                name: "人物与身体",
+                icon: "fas fa-user",
+                emojis: [
+                    { char: "👋", name: "挥手" },
+                    { char: "🤚", name: "抬手" },
+                    { char: "🖐️", name: "手掌" },
+                    { char: "✋", name: "举手" },
+                    { char: "🖖", name: "瓦肯手势" },
+                    { char: "👌", name: "OK手势" },
+                    { char: "🤌", name: "捏手指" },
+                    { char: "🤏", name: "捏合" },
+                    { char: "✌️", name: "胜利手势" },
+                    { char: "🤞", name: "交叉手指" },
+                    { char: "🤟", name: "爱你的手势" },
+                    { char: "🤘", name: "摇滚手势" },
+                    { char: "🤙", name: "打电话手势" },
+                    { char: "👈", name: "左指" },
+                    { char: "👉", name: "右指" },
+                    { char: "👆", name: "上指" },
+                    { char: "🖕", name: "中指" },
+                    { char: "👇", name: "下指" },
+                    { char: "👍", name: "大拇指向上" },
+                    { char: "👎", name: "大拇指向下" },
+                    { char: "✊", name: "拳头" },
+                    { char: "👊", name: "出拳" },
+                    { char: "🤛", name: "向左拳头" },
+                    { char: "🤜", name: "向右拳头" },
+                    { char: "👏", name: "鼓掌" },
+                    { char: "🙌", name: "举手庆祝" },
+                    { char: "👐", name: "张开双手" },
+                    { char: "🤲", name: "手掌并拢" },
+                    { char: "🤝", name: "握手" },
+                    { char: "🙏", name: "祈祷" },
+                    { char: "✍️", name: "写字" },
+                    { char: "💅", name: "涂指甲油" },
+                    { char: "🤳", name: "自拍" },
+                    { char: "💪", name: "肌肉" },
+                    { char: "🦾", name: "机械臂" },
+                    { char: "🦿", name: "机械腿" },
+                    { char: "🦵", name: "腿" },
+                    { char: "🦶", name: "脚" },
+                    { char: "👂", name: "耳朵" },
+                    { char: "🦻", name: "助听器" },
+                    { char: "👃", name: "鼻子" },
+                    { char: "🧠", name: "大脑" },
+                    { char: "🦷", name: "牙齿" },
+                    { char: "🦴", name: "骨头" },
+                    { char: "👀", name: "眼睛" },
+                    { char: "👁️", name: "单眼" },
+                    { char: "👅", name: "舌头" },
+                    { char: "👄", name: "嘴巴" },
+                    { char: "👶", name: "婴儿" },
+                    { char: "🧒", name: "儿童" },
+                    { char: "👦", name: "男孩" },
+                    { char: "👧", name: "女孩" },
+                    { char: "🧑", name: "成人" },
+                    { char: "👱", name: "金发人" },
+                    { char: "👨", name: "男人" },
+                    { char: "🧔", name: "胡子男" },
+                    { char: "👨‍🦰", name: "红发男人" },
+                    { char: "👨‍🦱", name: "卷发男人" },
+                    { char: "👨‍🦳", name: "白发男人" },
+                    { char: "👨‍🦲", name: "秃头男人" },
+                    { char: "👩", name: "女人" },
+                    { char: "👩‍🦰", name: "红发女人" },
+                    { char: "🧑‍🦰", name: "红发成人" },
+                    { char: "👩‍🦱", name: "卷发女人" },
+                    { char: "👩‍🦳", name: "白发女人" },
+                    { char: "👩‍🦲", name: "秃头女人" },
+                    { char: "🧓", name: "老人" },
+                    { char: "👴", name: "老爷爷" },
+                    { char: "👵", name: "老奶奶" },
+                    { char: "🙍", name: "皱眉人" },
+                    { char: "🙎", name: "撅嘴人" },
+                    { char: "🙅", name: "禁止手势" },
+                    { char: "🙆", name: "OK手势人" },
+                    { char: "💁", name: "前台" },
+                    { char: "🙋", name: "举手人" },
+                    { char: "🧏", name: "聋人" },
+                    { char: "🙇", name: "鞠躬" },
+                    { char: "🤦", name: "捂脸" },
+                    { char: "🤷", name: "耸肩" },
+                    { char: "👨‍⚕️", name: "男医生" },
+                    { char: "👩‍⚕️", name: "女医生" },
+                    { char: "👨‍🎓", name: "男学生" },
+                    { char: "👩‍🎓", name: "女学生" },
+                    { char: "👨‍🏫", name: "男教师" },
+                    { char: "👩‍🏫", name: "女教师" },
+                    { char: "👨‍⚖️", name: "男法官" },
+                    { char: "👩‍⚖️", name: "女法官" },
+                    { char: "👨‍🌾", name: "男农民" },
+                    { char: "👩‍🌾", name: "女农民" }
+                ]
+            },
+            {
+                id: "animals",
+                name: "动物与自然",
+                icon: "fas fa-paw",
+                emojis: [
+                    { char: "🐵", name: "猴脸" },
+                    { char: "🐒", name: "猴子" },
+                    { char: "🦍", name: "大猩猩" },
+                    { char: "🦧", name: "猩猩" },
+                    { char: "🐶", name: "狗脸" },
+                    { char: "🐕", name: "狗" },
+                    { char: "🦮", name: "导盲犬" },
+                    { char: "🐕‍🦺", name: "服务犬" },
+                    { char: "🐩", name: "贵宾犬" },
+                    { char: "🐺", name: "狼" },
+                    { char: "🦊", name: "狐狸" },
+                    { char: "🦝", name: "浣熊" },
+                    { char: "🐱", name: "猫脸" },
+                    { char: "🐈", name: "猫" },
+                    { char: "🐈‍⬛", name: "黑猫" },
+                    { char: "🦁", name: "狮子" },
+                    { char: "🐯", name: "老虎脸" },
+                    { char: "🐅", name: "老虎" },
+                    { char: "🐆", name: "豹子" },
+                    { char: "🐴", name: "马脸" },
+                    { char: "🐎", name: "马" },
+                    { char: "🦄", name: "独角兽" },
+                    { char: "🦓", name: "斑马" },
+                    { char: "🦌", name: "鹿" },
+                    { char: "🐮", name: "牛脸" },
+                    { char: "🐂", name: "牛" },
+                    { char: "🐃", name: "水牛" },
+                    { char: "🐄", name: "奶牛" },
+                    { char: "🐷", name: "猪脸" },
+                    { char: "🐖", name: "猪" },
+                    { char: "🐗", name: "野猪" },
+                    { char: "🐽", name: "猪鼻子" },
+                    { char: "🐏", name: "公羊" },
+                    { char: "🐑", name: "绵羊" },
+                    { char: "🐐", name: "山羊" },
+                    { char: "🐪", name: "骆驼" },
+                    { char: "🐫", name: "双峰骆驼" },
+                    { char: "🦙", name: "羊驼" },
+                    { char: "🦒", name: "长颈鹿" },
+                    { char: "🐘", name: "大象" },
+                    { char: "🦏", name: "犀牛" },
+                    { char: "🦛", name: "河马" },
+                    { char: "🐭", name: "老鼠脸" },
+                    { char: "🐁", name: "老鼠" },
+                    { char: "🐀", name: "鼠" },
+                    { char: "🐹", name: "仓鼠" },
+                    { char: "🐰", name: "兔子脸" },
+                    { char: "🐇", name: "兔子" },
+                    { char: "🐿️", name: "松鼠" },
+                    { char: "🦔", name: "刺猬" },
+                    { char: "🦇", name: "蝙蝠" },
+                    { char: "🐻", name: "熊" },
+                    { char: "🐻‍❄️", name: "北极熊" },
+                    { char: "🐨", name: "考拉" },
+                    { char: "🐼", name: "熊猫" },
+                    { char: "🦥", name: "树懒" },
+                    { char: "🦦", name: "水獭" },
+                    { char: "🦨", name: "臭鼬" },
+                    { char: "🦘", name: "袋鼠" },
+                    { char: "🦡", name: "獾" },
+                    { char: "🐾", name: "爪印" },
+                    { char: "🦃", name: "火鸡" },
+                    { char: "🐔", name: "鸡" },
+                    { char: "🐓", name: "公鸡" },
+                    { char: "🐣", name: "孵化小鸡" },
+                    { char: "🐤", name: "小鸡" },
+                    { char: "🐥", name: "正面小鸡" },
+                    { char: "🐦", name: "鸟" },
+                    { char: "🐧", name: "企鹅" },
+                    { char: "🕊️", name: "鸽子" },
+                    { char: "🦅", name: "鹰" },
+                    { char: "🦆", name: "鸭子" },
+                    { char: "🦢", name: "天鹅" },
+                    { char: "🦉", name: "猫头鹰" },
+                    { char: "🦤", name: "渡渡鸟" },
+                    { char: "🦩", name: "火烈鸟" },
+                    { char: "🦚", name: "孔雀" },
+                    { char: "🦜", name: "鹦鹉" },
+                    { char: "🐸", name: "青蛙" },
+                    { char: "🐊", name: "鳄鱼" },
+                    { char: "🐢", name: "乌龟" },
+                    { char: "🦎", name: "蜥蜴" },
+                    { char: "🐍", name: "蛇" },
+                    { char: "🐲", name: "龙脸" },
+                    { char: "🐉", name: "龙" },
+                    { char: "🦕", name: "蜥脚类恐龙" },
+                    { char: "🦖", name: "暴龙" },
+                    { char: "🐳", name: "喷水鲸鱼" },
+                    { char: "🐋", name: "鲸鱼" },
+                    { char: "🐬", name: "海豚" },
+                    { char: "🦭", name: "海豹" },
+                    { char: "🐟", name: "鱼" },
+                    { char: "🐠", name: "热带鱼" },
+                    { char: "🐡", name: "河豚" },
+                    { char: "🦈", name: "鲨鱼" },
+                    { char: "🐙", name: "章鱼" },
+                    { char: "🐚", name: "海螺" },
+                    { char: "🐌", name: "蜗牛" },
+                    { char: "🦋", name: "蝴蝶" },
+                    { char: "🐛", name: "虫子" },
+                    { char: "🐜", name: "蚂蚁" },
+                    { char: "🐝", name: "蜜蜂" },
+                    { char: "🪲", name: "甲虫" }
+                ]
+            },
+            {
+                id: "food",
+                name: "食物与饮料",
+                icon: "fas fa-utensils",
+                emojis: [
+                    { char: "🍇", name: "葡萄" },
+                    { char: "🍈", name: "甜瓜" },
+                    { char: "🍉", name: "西瓜" },
+                    { char: "🍊", name: "橙子" },
+                    { char: "🍋", name: "柠檬" },
+                    { char: "🍌", name: "香蕉" },
+                    { char: "🍍", name: "菠萝" },
+                    { char: "🥭", name: "芒果" },
+                    { char: "🍎", name: "红苹果" },
+                    { char: "🍏", name: "青苹果" },
+                    { char: "🍐", name: "梨" },
+                    { char: "🍑", name: "桃子" },
+                    { char: "🍒", name: "樱桃" },
+                    { char: "🍓", name: "草莓" },
+                    { char: "🫐", name: "蓝莓" },
+                    { char: "🥝", name: "猕猴桃" },
+                    { char: "🍅", name: "西红柿" },
+                    { char: "🫒", name: "橄榄" },
+                    { char: "🥥", name: "椰子" },
+                    { char: "🥑", name: "牛油果" },
+                    { char: "🍆", name: "茄子" },
+                    { char: "🥔", name: "土豆" },
+                    { char: "🥕", name: "胡萝卜" },
+                    { char: "🌽", name: "玉米" },
+                    { char: "🌶️", name: "辣椒" },
+                    { char: "🫑", name: "灯笼椒" },
+                    { char: "🥒", name: "黄瓜" },
+                    { char: "🥬", name: "绿叶蔬菜" },
+                    { char: "🥦", name: "西兰花" },
+                    { char: "🧄", name: "大蒜" },
+                    { char: "🧅", name: "洋葱" },
+                    { char: "🍄", name: "蘑菇" },
+                    { char: "🥜", name: "花生" },
+                    { char: "🌰", name: "栗子" },
+                    { char: "🍞", name: "面包" },
+                    { char: "🥐", name: "牛角包" },
+                    { char: "🥖", name: "法棍" },
+                    { char: "🫓", name: "扁面包" },
+                    { char: "🥨", name: "蝴蝶脆饼" },
+                    { char: "🥯", name: "贝果" },
+                    { char: "🥞", name: "松饼" },
+                    { char: "🧇", name: "华夫饼" },
+                    { char: "🧀", name: "奶酪" },
+                    { char: "🍖", name: "肉" },
+                    { char: "🍗", name: "鸡腿" },
+                    { char: "🥩", name: "牛排" },
+                    { char: "🥓", name: "培根" },
+                    { char: "🍔", name: "汉堡" },
+                    { char: "🍟", name: "薯条" },
+                    { char: "🍕", name: "披萨" },
+                    { char: "🌭", name: "热狗" },
+                    { char: "🥪", name: "三明治" },
+                    { char: "🌮", name: "墨西哥卷饼" },
+                    { char: "🌯", name: "卷饼" },
+                    { char: "🫔", name: "玉米卷" },
+                    { char: "🥙", name: "填充皮塔饼" },
+                    { char: "🧆", name: "炸豆丸子" },
+                    { char: "🥚", name: "鸡蛋" },
+                    { char: "🍳", name: "煎蛋" },
+                    { char: "🥘", name: "平底锅食物" },
+                    { char: "🍲", name: "碗装食物" },
+                    { char: "🫕", name: "奶酪火锅" },
+                    { char: "🥣", name: "带勺的碗" },
+                    { char: "🥗", name: "沙拉" },
+                    { char: "🍿", name: "爆米花" },
+                    { char: "🧈", name: "黄油" },
+                    { char: "🧂", name: "盐" },
+                    { char: "🥫", name: "罐头食品" },
+                    { char: "🍱", name: "便当盒" },
+                    { char: "🍘", name: "米饼" },
+                    { char: "🍙", name: "饭团" },
+                    { char: "🍚", name: "米饭" },
+                    { char: "🍛", name: "咖喱饭" },
+                    { char: "🍜", name: "面条" },
+                    { char: "🍝", name: "意大利面" },
+                    { char: "🍠", name: "烤红薯" },
+                    { char: "🍢", name: "关东煮" },
+                    { char: "🍣", name: "寿司" },
+                    { char: "🍤", name: "炸虾" },
+                    { char: "🍥", name: "鱼板" },
+                    { char: "🥮", name: "月饼" },
+                    { char: "🍡", name: "团子" },
+                    { char: "🥟", name: "饺子" },
+                    { char: "🥠", name: "幸运饼干" },
+                    { char: "🥡", name: "外卖盒" },
+                    { char: "🦪", name: "生蚝" },
+                    { char: "🍦", name: "软冰淇淋" },
+                    { char: "🍧", name: "刨冰" },
+                    { char: "🍨", name: "冰淇淋" },
+                    { char: "🍩", name: "甜甜圈" },
+                    { char: "🍪", name: "饼干" },
+                    { char: "🎂", name: "生日蛋糕" },
+                    { char: "🍰", name: "切片蛋糕" },
+                    { char: "🧁", name: "纸杯蛋糕" },
+                    { char: "🥧", name: "馅饼" }
+                ]
+            },
+            {
+                id: "activities",
+                name: "活动",
+                icon: "fas fa-futbol",
+                emojis: [
+                    { char: "⚽", name: "足球" },
+                    { char: "🏀", name: "篮球" },
+                    { char: "🏈", name: "橄榄球" },
+                    { char: "⚾", name: "棒球" },
+                    { char: "🥎", name: "垒球" },
+                    { char: "🏐", name: "排球" },
+                    { char: "🏉", name: "英式橄榄球" },
+                    { char: "🎾", name: "网球" },
+                    { char: "🥏", name: "飞盘" },
+                    { char: "🎳", name: "保龄球" },
+                    { char: "🏏", name: "板球" },
+                    { char: "🏑", name: "曲棍球" },
+                    { char: "🏒", name: "冰球" },
+                    { char: "🥍", name: "长曲棍球" },
+                    { char: "🏓", name: "乒乓球" },
+                    { char: "🏸", name: "羽毛球" },
+                    { char: "🥊", name: "拳击手套" },
+                    { char: "🥋", name: "武术服" },
+                    { char: "🎯", name: "正中靶心" },
+                    { char: "🪀", name: "悠悠球" },
+                    { char: "🪁", name: "风筝" },
+                    { char: "🎣", name: "钓鱼竿" },
+                    { char: "🤿", name: "潜水镜" },
+                    { char: "🎽", name: "跑步衫" },
+                    { char: "🎿", name: "滑雪" },
+                    { char: "🛷", name: "雪橇" },
+                    { char: "🥌", name: "冰壶石" },
+                    { char: "🎯", name: "靶心" },
+                    { char: "🎮", name: "游戏手柄" },
+                    { char: "🕹️", name: "操纵杆" },
+                    { char: "🎰", name: "老虎机" },
+                    { char: "🎲", name: "骰子" },
+                    { char: "🧩", name: "拼图" },
+                    { char: "♟️", name: "国际象棋" },
+                    { char: "🎭", name: "表演艺术" },
+                    { char: "🎨", name: "艺术调色板" },
+                    { char: "🧵", name: "线" },
+                    { char: "🪡", name: "缝衣针" },
+                    { char: "🧶", name: "毛线" },
+                    { char: "🪢", name: "绳结" },
+                    { char: "👓", name: "眼镜" },
+                    { char: "🕶️", name: "太阳镜" },
+                    { char: "🥽", name: "护目镜" },
+                    { char: "🥼", name: "实验服" },
+                    { char: "🦺", name: "安全背心" },
+                    { char: "👔", name: "领带" },
+                    { char: "👕", name: "T恤" },
+                    { char: "👖", name: "牛仔裤" },
+                    { char: "🧣", name: "围巾" },
+                    { char: "🧤", name: "手套" },
+                    { char: "🧥", name: "外套" },
+                    { char: "🧦", name: "袜子" },
+                    { char: "👗", name: "连衣裙" },
+                    { char: "👘", name: "和服" },
+                    { char: "🥻", name: "纱丽" },
+                    { char: "🩱", name: "连体泳衣" },
+                    { char: "🩲", name: "三角裤" },
+                    { char: "🩳", name: "短裤" },
+                    { char: "👙", name: "比基尼" },
+                    { char: "👚", name: "女装" },
+                    { char: "👛", name: "钱包" },
+                    { char: "👜", name: "手提包" },
+                    { char: "👝", name: "手拿包" },
+                    { char: "🎒", name: "背包" },
+                    { char: "👞", name: "男鞋" },
+                    { char: "👟", name: "运动鞋" },
+                    { char: "🥾", name: "登山靴" },
+                    { char: "🥿", name: "平底鞋" },
+                    { char: "👠", name: "高跟鞋" },
+                    { char: "👡", name: "女凉鞋" },
+                    { char: "🩰", name: "芭蕾舞鞋" },
+                    { char: "👢", name: "女靴" },
+                    { char: "👑", name: "王冠" },
+                    { char: "👒", name: "女帽" },
+                    { char: "🎩", name: "礼帽" },
+                    { char: "🎓", name: "毕业帽" },
+                    { char: "🧢", name: "棒球帽" },
+                    { char: "🪖", name: "军用头盔" },
+                    { char: "⛑️", name: "救援人员头盔" },
+                    { char: "💄", name: "口红" },
+                    { char: "💍", name: "戒指" },
+                    { char: "💼", name: "公文包" },
+                    { char: "🩸", name: "血滴" },
+                    { char: "💉", name: "注射器" },
+                    { char: "🦠", name: "微生物" },
+                    { char: "💊", name: "药丸" },
+                    { char: "🩹", name: "创可贴" },
+                    { char: "🩺", name: "听诊器" },
+                    { char: "🚪", name: "门" },
+                    { char: "🛏️", name: "床" },
+                    { char: "🛋️", name: "沙发和灯" },
+                    { char: "🚽", name: "马桶" },
+                    { char: "🚿", name: "淋浴" },
+                    { char: "🛁", name: "浴缸" }
+                ]
+            },
+            {
+                id: "travel",
+                name: "旅行与地点",
+                icon: "fas fa-plane",
+                emojis: [
+                    { char: "🌍", name: "地球欧洲非洲" },
+                    { char: "🌎", name: "地球美洲" },
+                    { char: "🌏", name: "地球亚洲澳洲" },
+                    { char: "🌐", name: "带子午线的地球" },
+                    { char: "🗺️", name: "世界地图" },
+                    { char: "🗾", name: "日本地图" },
+                    { char: "🏔️", name: "雪山" },
+                    { char: "⛰️", name: "山" },
+                    { char: "🌋", name: "火山" },
+                    { char: "🗻", name: "富士山" },
+                    { char: "🏕️", name: "露营" },
+                    { char: "🏖️", name: "海滩" },
+                    { char: "🏜️", name: "沙漠" },
+                    { char: "🏝️", name: "荒岛" },
+                    { char: "🏞️", name: "国家公园" },
+                    { char: "🏟️", name: "体育场" },
+                    { char: "🏛️", name: "古典建筑" },
+                    { char: "🏗️", name: "建筑施工" },
+                    { char: "🏘️", name: "房屋" },
+                    { char: "🏙️", name: "城市景观" },
+                    { char: "🏚️", name: "废弃房屋" },
+                    { char: "🏠", name: "房子" },
+                    { char: "🏡", name: "带花园的房子" },
+                    { char: "🏢", name: "办公楼" },
+                    { char: "🏣", name: "日本邮局" },
+                    { char: "🏤", name: "邮局" },
+                    { char: "🏥", name: "医院" },
+                    { char: "🏦", name: "银行" },
+                    { char: "🏨", name: "酒店" },
+                    { char: "🏩", name: "爱情酒店" },
+                    { char: "🏪", name: "便利店" },
+                    { char: "🏫", name: "学校" },
+                    { char: "🏬", name: "百货商店" },
+                    { char: "🏭", name: "工厂" },
+                    { char: "🏯", name: "日本城堡" },
+                    { char: "🏰", name: "欧洲城堡" },
+                    { char: "💒", name: "婚礼" },
+                    { char: "🗼", name: "东京塔" },
+                    { char: "🗽", name: "自由女神像" },
+                    { char: "⛪", name: "教堂" },
+                    { char: "🕌", name: "清真寺" },
+                    { char: "🛕", name: "印度教寺庙" },
+                    { char: "🕍", name: "犹太教堂" },
+                    { char: "⛩️", name: "神社" },
+                    { char: "🕋", name: "天房" },
+                    { char: "⛲", name: "喷泉" },
+                    { char: "⛺", name: "帐篷" },
+                    { char: "🌁", name: "雾天" },
+                    { char: "🌃", name: "夜晚星星" },
+                    { char: "🏙️", name: "城市天际线" },
+                    { char: "🌄", name: "日出山" },
+                    { char: "🌅", name: "日出" },
+                    { char: "🌆", name: "黄昏城市" },
+                    { char: "🌇", name: "日落" },
+                    { char: "🌉", name: "夜晚的桥" },
+                    { char: "🎠", name: "旋转木马" },
+                    { char: "🎡", name: "摩天轮" },
+                    { char: "🎢", name: "过山车" },
+                    { char: "💈", name: "理发店" },
+                    { char: "🎪", name: "马戏团帐篷" },
+                    { char: "🚂", name: "蒸汽火车" },
+                    { char: "🚃", name: "列车" },
+                    { char: "🚄", name: "高速列车" },
+                    { char: "🚅", name: "子弹头列车" },
+                    { char: "🚆", name: "火车" },
+                    { char: "🚇", name: "地铁" },
+                    { char: "🚈", name: "轻轨" },
+                    { char: "🚉", name: "车站" },
+                    { char: "🚊", name: "电车" },
+                    { char: "🚝", name: "单轨铁路" },
+                    { char: "🚞", name: "山区铁路" },
+                    { char: "🚋", name: "有轨电车" },
+                    { char: "🚌", name: "公交车" },
+                    { char: "🚍", name: "迎面而来的公交车" },
+                    { char: "🚎", name: "无轨电车" },
+                    { char: "🚐", name: "小巴" },
+                    { char: "🚑", name: "救护车" },
+                    { char: "🚒", name: "消防车" },
+                    { char: "🚓", name: "警车" },
+                    { char: "🚔", name: "迎面而来的警车" },
+                    { char: "🚕", name: "出租车" },
+                    { char: "🚖", name: "迎面而来的出租车" },
+                    { char: "🚗", name: "汽车" },
+                    { char: "🚘", name: "迎面而来的汽车" },
+                    { char: "🚙", name: "运动型多用途车" },
+                    { char: "🛻", name: "皮卡车" },
+                    { char: "🚚", name: "货车" },
+                    { char: "🚛", name: "铰接式货车" },
+                    { char: "🚜", name: "拖拉机" },
+                    { char: "🏎️", name: "赛车" },
+                    { char: "🏍️", name: "摩托车" },
+                    { char: "🛵", name: "小型摩托车" },
+                    { char: "🦽", name: "手动轮椅" },
+                    { char: "🦼", name: "电动轮椅" },
+                    { char: "🛺", name: "三轮摩托车" },
+                    { char: "🚲", name: "自行车" },
+                    { char: "🛴", name: "滑板车" },
+                    { char: "🛹", name: "滑板" },
+                    { char: "🛼", name: "轮滑鞋" }
+                ]
+            },
+            {
+                id: "objects",
+                name: "物体",
+                icon: "fas fa-lightbulb",
+                emojis: [
+                    { char: "⌚", name: "手表" },
+                    { char: "📱", name: "手机" },
+                    { char: "📲", name: "带箭头的手机" },
+                    { char: "💻", name: "笔记本电脑" },
+                    { char: "⌨️", name: "键盘" },
+                    { char: "🖥️", name: "台式电脑" },
+                    { char: "🖨️", name: "打印机" },
+                    { char: "🖱️", name: "电脑鼠标" },
+                    { char: "🖲️", name: "轨迹球" },
+                    { char: "🎮", name: "游戏手柄" },
+                    { char: "🕹️", name: "操纵杆" },
+                    { char: "🗜️", name: "夹钳" },
+                    { char: "💽", name: "迷你光盘" },
+                    { char: "💾", name: "软盘" },
+                    { char: "💿", name: "光盘" },
+                    { char: "📀", name: "DVD" },
+                    { char: "📼", name: "录像带" },
+                    { char: "📷", name: "照相机" },
+                    { char: "📸", name: "带闪光灯的相机" },
+                    { char: "📹", name: "摄像机" },
+                    { char: "🎥", name: "电影摄像机" },
+                    { char: "📽️", name: "电影放映机" },
+                    { char: "🎞️", name: "电影帧" },
+                    { char: "📞", name: "电话听筒" },
+                    { char: "☎️", name: "电话" },
+                    { char: "📟", name: "寻呼机" },
+                    { char: "📠", name: "传真机" },
+                    { char: "📺", name: "电视机" },
+                    { char: "📻", name: "收音机" },
+                    { char: "🎙️", name: "麦克风" },
+                    { char: "🎚️", name: "滑块" },
+                    { char: "🎛️", name: "控制旋钮" },
+                    { char: "🧭", name: "指南针" },
+                    { char: "⏱️", name: "秒表" },
+                    { char: "⏲️", name: "定时器" },
+                    { char: "⏰", name: "闹钟" },
+                    { char: "🕰️", name: "座钟" },
+                    { char: "⏳", name: "沙漏" },
+                    { char: "📡", name: "卫星天线" },
+                    { char: "🔋", name: "电池" },
+                    { char: "🔌", name: "电源插头" },
+                    { char: "💡", name: "灯泡" },
+                    { char: "🔦", name: "手电筒" },
+                    { char: "🕯️", name: "蜡烛" },
+                    { char: "🧯", name: "灭火器" },
+                    { char: "🛢️", name: "油桶" },
+                    { char: "💸", name: "飞走的钱" },
+                    { char: "💵", name: "美元钞票" },
+                    { char: "💴", name: "日元钞票" },
+                    { char: "💶", name: "欧元钞票" },
+                    { char: "💷", name: "英镑钞票" },
+                    { char: "💳", name: "信用卡" },
+                    { char: "🧾", name: "收据" },
+                    { char: "💎", name: "宝石" },
+                    { char: "⚖️", name: "天平" },
+                    { char: "🪜", name: "梯子" },
+                    { char: "🧰", name: "工具箱" },
+                    { char: "🧲", name: "磁铁" },
+                    { char: "🪛", name: "螺丝刀" },
+                    { char: "🔧", name: "扳手" },
+                    { char: "🔨", name: "锤子" },
+                    { char: "⚒️", name: "锤子和镐" },
+                    { char: "🛠️", name: "锤子和扳手" },
+                    { char: "⛏️", name: "镐" },
+                    { char: "🔩", name: "螺母和螺栓" },
+                    { char: "⚙️", name: "齿轮" },
+                    { char: "🧱", name: "砖块" },
+                    { char: "⛓️", name: "锁链" },
+                    { char: "📎", name: "回形针" },
+                    { char: "🖇️", name: "连接的回形针" },
+                    { char: "📏", name: "直尺" },
+                    { char: "📐", name: "三角尺" },
+                    { char: "✂️", name: "剪刀" },
+                    { char: "🗃️", name: "卡片文件盒" },
+                    { char: "🗄️", name: "文件柜" },
+                    { char: "🗑️", name: "废纸篓" },
+                    { char: "🔒", name: "锁" },
+                    { char: "🔓", name: "开锁" },
+                    { char: "🔏", name: "用笔锁" },
+                    { char: "🔐", name: "用钥匙锁" },
+                    { char: "🔑", name: "钥匙" },
+                    { char: "🗝️", name: "旧钥匙" },
+                    { char: "🔨", name: "锤子" },
+                    { char: "🪓", name: "斧头" },
+                    { char: "⛏️", name: "镐" },
+                    { char: "⚒️", name: "锤子和镐" },
+                    { char: "🛠️", name: "锤子和扳手" },
+                    { char: "🗡️", name: "匕首" },
+                    { char: "⚔️", name: "交叉剑" },
+                    { char: "🔫", name: "手枪" },
+                    { char: "🛡️", name: "盾牌" },
+                    { char: "🔧", name: "扳手" },
+                    { char: "🔩", name: "螺母和螺栓" },
+                    { char: "⚙️", name: "齿轮" },
+                    { char: "🧱", name: "砖块" },
+                    { char: "⛓️", name: "锁链" }
+                ]
+            },
+            {
+                id: "symbols",
+                name: "符号",
+                icon: "fas fa-icons",
+                emojis: [
+                    { char: "❤️", name: "红心" },
+                    { char: "🧡", name: "橙心" },
+                    { char: "💛", name: "黄心" },
+                    { char: "💚", name: "绿心" },
+                    { char: "💙", name: "蓝心" },
+                    { char: "💜", name: "紫心" },
+                    { char: "🖤", name: "黑心" },
+                    { char: "🤍", name: "白心" },
+                    { char: "🤎", name: "棕心" },
+                    { char: "💔", name: "破碎的心" },
+                    { char: "❣️", name: "心叹号" },
+                    { char: "💕", name: "两颗心" },
+                    { char: "💞", name: "旋转的心" },
+                    { char: "💓", name: "跳动的心" },
+                    { char: "💗", name: "长大的心" },
+                    { char: "💖", name: "闪烁的心" },
+                    { char: "💘", name: "带箭的心" },
+                    { char: "💝", name: "带丝带的心" },
+                    { char: "💟", name: "心形装饰" },
+                    { char: "☮️", name: "和平符号" },
+                    { char: "✝️", name: "拉丁十字" },
+                    { char: "☪️", name: "星月" },
+                    { char: "🕉️", name: "奥姆" },
+                    { char: "☸️", name: "法轮" },
+                    { char: "✡️", name: "大卫之星" },
+                    { char: "🔯", name: "六角星" },
+                    { char: "🕎", name: "烛台" },
+                    { char: "☯️", name: "阴阳" },
+                    { char: "☦️", name: "东正教十字" },
+                    { char: "🛐", name: "礼拜场所" },
+                    { char: "⛎", name: "蛇夫座" },
+                    { char: "♈", name: "白羊座" },
+                    { char: "♉", name: "金牛座" },
+                    { char: "♊", name: "双子座" },
+                    { char: "♋", name: "巨蟹座" },
+                    { char: "♌", name: "狮子座" },
+                    { char: "♍", name: "处女座" },
+                    { char: "♎", name: "天秤座" },
+                    { char: "♏", name: "天蝎座" },
+                    { char: "♐", name: "射手座" },
+                    { char: "♑", name: "摩羯座" },
+                    { char: "♒", name: "水瓶座" },
+                    { char: "♓", name: "双鱼座" },
+                    { char: "🆔", name: "ID按钮" },
+                    { char: "⚛️", name: "原子符号" },
+                    { char: "🉑", name: "接受按钮" },
+                    { char: "☢️", name: "放射性" },
+                    { char: "☣️", name: "生物危害" },
+                    { char: "📴", name: "手机关闭" },
+                    { char: "📳", name: "手机震动模式" },
+                    { char: "🈶", name: "日文" },
+                    { char: "🈚", name: "日文无" },
+                    { char: "🈸", name: "日文申请" },
+                    { char: "🈺", name: "日文营业中" },
+                    { char: "🈷️", name: "日文月" },
+                    { char: "✴️", name: "八角星" },
+                    { char: "🆚", name: "VS按钮" },
+                    { char: "💮", name: "白花" },
+                    { char: "🉐", name: "日文划算" },
+                    { char: "㊙️", name: "日文秘密" },
+                    { char: "㊗️", name: "日文祝贺" },
+                    { char: "🈴", name: "日文合格" },
+                    { char: "🈵", name: "日文满员" },
+                    { char: "🈹", name: "日文打折" },
+                    { char: "🈲", name: "日文禁止" },
+                    { char: "🅰️", name: "A型血" },
+                    { char: "🅱️", name: "B型血" },
+                    { char: "🆎", name: "AB型血" },
+                    { char: "🆑", name: "CL按钮" },
+                    { char: "🅾️", name: "O型血" },
+                    { char: "🆘", name: "SOS按钮" },
+                    { char: "❌", name: "叉号" },
+                    { char: "⭕", name: "空心圆" },
+                    { char: "🛑", name: "停止标志" },
+                    { char: "🚫", name: "禁止" },
+                    { char: "💯", name: "一百分" },
+                    { char: "💢", name: "愤怒符号" },
+                    { char: "💥", name: "碰撞" },
+                    { char: "💫", name: "眩晕" },
+                    { char: "💦", name: "汗滴" },
+                    { char: "💨", name: "快速离开" },
+                    { char: "🕳️", name: "洞" },
+                    { char: "💣", name: "炸弹" },
+                    { char: "💬", name: "对话框" },
+                    { char: "👁️‍🗨️", name: "眼睛对话框" },
+                    { char: "🗨️", name: "左侧对话框" },
+                    { char: "🗯️", name: "愤怒对话框" },
+                    { char: "💭", name: "思想泡泡" },
+                    { char: "💤", name: "睡觉符号" },
+                    { char: "🌀", name: "台风" },
+                    { char: "♨️", name: "温泉" },
+                    { char: "💠", name: "菱形圆点" },
+                    { char: "🏧", name: "ATM标志" },
+                    { char: "🚮", name: "垃圾箱标志" },
+                    { char: "🚰", name: "饮用水" },
+                    { char: "♿", name: "轮椅标志" },
+                    { char: "🚹", name: "男厕" },
+                    { char: "🚺", name: "女厕" },
+                    { char: "🚻", name: "卫生间" },
+                    { char: "🚼", name: "婴儿标志" },
+                    { char: "🚾", name: "厕所" },
+                    { char: "⚠️", name: "警告" },
+                    { char: "🚸", name: "儿童过街" },
+                    { char: "⛔", name: "禁止进入" },
+                    { char: "🚫", name: "禁止" },
+                    { char: "🚳", name: "禁止自行车" }
+                ]
+            }
+        ];
+
+        // 初始化变量
+        let currentCategory = "all";
+        let searchQuery = "";
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCategoryNav();
+            renderAllEmojis();
+            setupEventListeners();
+            updateEmojiCount();
+        });
+        
+        // 渲染分类导航
+        function renderCategoryNav() {
+            const categoryNav = document.getElementById('categoryNav');
+            
+            // 添加"全部"按钮
+            const allButton = document.createElement('button');
+            allButton.className = 'category-btn active';
+            allButton.id = 'btn-all';
+            allButton.innerHTML = '<i class="fas fa-th-large"></i> 全部';
+            allButton.dataset.category = 'all';
+            categoryNav.appendChild(allButton);
+            
+            // 添加各个分类按钮
+            emojiData.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'category-btn';
+                button.id = `btn-${category.id}`;
+                button.innerHTML = `<i class="${category.icon}"></i> ${category.name}`;
+                button.dataset.category = category.id;
+                categoryNav.appendChild(button);
+            });
+        }
+        
+        // 渲染所有Emoji
+        function renderAllEmojis() {
+            const emojiContainer = document.getElementById('emojiContainer');
+            emojiContainer.innerHTML = '';
+            
+            // 如果没有搜索结果，显示所有分类
+            if (!searchQuery) {
+                emojiData.forEach(category => {
+                    // 如果当前分类不是"全部"且不是当前选中的分类，则跳过
+                    if (currentCategory !== 'all' && currentCategory !== category.id) {
+                        return;
+                    }
+                    
+                    const categorySection = document.createElement('div');
+                    categorySection.className = 'category-section';
+                    categorySection.id = `section-${category.id}`;
+                    
+                    const categoryTitle = document.createElement('h2');
+                    categoryTitle.className = 'category-title';
+                    categoryTitle.innerHTML = `<div><i class="${category.icon}"></i> ${category.name}</div><div class="category-count">${category.emojis.length}个</div>`;
+                    
+                    const emojiGrid = document.createElement('div');
+                    emojiGrid.className = 'emoji-grid';
+                    
+                    category.emojis.forEach(emoji => {
+                        const emojiItem = createEmojiItem(emoji);
+                        emojiGrid.appendChild(emojiItem);
+                    });
+                    
+                    categorySection.appendChild(categoryTitle);
+                    categorySection.appendChild(emojiGrid);
+                    emojiContainer.appendChild(categorySection);
+                });
+            } else {
+                // 如果有搜索关键词，显示搜索结果
+                const searchResults = document.createElement('div');
+                searchResults.className = 'category-section';
+                searchResults.id = 'section-search-results';
+                
+                const searchTitle = document.createElement('h2');
+                searchTitle.className = 'category-title';
+                
+                const emojiGrid = document.createElement('div');
+                emojiGrid.className = 'emoji-grid';
+                
+                // 在所有分类中搜索匹配的Emoji
+                let foundEmojis = [];
+                emojiData.forEach(category => {
+                    category.emojis.forEach(emoji => {
+                        if (emoji.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            emoji.char.includes(searchQuery)) {
+                            foundEmojis.push(emoji);
+                        }
+                    });
+                });
+                
+                // 显示搜索结果
+                if (foundEmojis.length > 0) {
+                    foundEmojis.forEach(emoji => {
+                        const emojiItem = createEmojiItem(emoji);
+                        emojiGrid.appendChild(emojiItem);
+                    });
+                    
+                    searchTitle.innerHTML = `<div><i class="fas fa-search"></i> 搜索结果</div><div class="category-count">${foundEmojis.length}个</div>`;
+                } else {
+                    searchTitle.innerHTML = `<div><i class="fas fa-search"></i> 搜索结果</div><div class="category-count">0个</div>`;
+                    const noResults = document.createElement('p');
+                    noResults.textContent = '没有找到相关Emoji，请尝试其他搜索词';
+                    noResults.style.textAlign = 'center';
+                    noResults.style.padding = '20px';
+                    noResults.style.color = '#6c757d';
+                    noResults.style.width = '100%';
+                    noResults.style.gridColumn = '1 / -1';
+                    emojiGrid.appendChild(noResults);
+                }
+                
+                searchResults.appendChild(searchTitle);
+                searchResults.appendChild(emojiGrid);
+                emojiContainer.appendChild(searchResults);
+            }
+        }
+        
+        // 创建单个Emoji项
+        function createEmojiItem(emoji) {
+            const emojiItem = document.createElement('div');
+            emojiItem.className = 'emoji-item';
+            
+            const emojiChar = document.createElement('div');
+            emojiChar.className = 'emoji-char';
+            emojiChar.textContent = emoji.char;
+            
+            const emojiName = document.createElement('div');
+            emojiName.className = 'emoji-name';
+            emojiName.textContent = emoji.name;
+            
+            emojiItem.appendChild(emojiChar);
+            emojiItem.appendChild(emojiName);
+            
+            // 添加点击复制功能
+            emojiItem.addEventListener('click', function() {
+                copyToClipboard(emoji.char, emojiItem);
+            });
+            
+            return emojiItem;
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 分类按钮点击事件
+            document.querySelectorAll('.category-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // 更新活动按钮
+                    document.querySelectorAll('.category-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // 更新当前分类
+                    currentCategory = this.dataset.category;
+                    
+                    // 重新渲染Emoji
+                    renderAllEmojis();
+                });
+            });
+            
+            // 搜索输入事件
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                searchQuery = this.value.trim();
+                
+                // 如果有搜索词，激活"全部"分类
+                if (searchQuery) {
+                    document.querySelectorAll('.category-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.getElementById('btn-all').classList.add('active');
+                    currentCategory = 'all';
+                }
+                
+                // 重新渲染Emoji
+                renderAllEmojis();
+            });
+        }
+        
+        // 复制到剪贴板
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                // 显示复制成功提示
+                const notification = document.getElementById('copyNotification');
+                notification.classList.add('show');
+                
+                // 添加复制成功样式
+                element.classList.add('copied');
+                
+                // 3秒后移除样式
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                }, 1000);
+                
+                // 2秒后隐藏提示
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            }).catch(err => {
+                // 如果navigator.clipboard不可用，使用传统方法
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // 显示复制成功提示
+                const notification = document.getElementById('copyNotification');
+                notification.classList.add('show');
+                
+                // 添加复制成功样式
+                element.classList.add('copied');
+                
+                // 3秒后移除样式
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                }, 1000);
+                
+                // 2秒后隐藏提示
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+        }
+        
+        // 更新Emoji计数
+        function updateEmojiCount() {
+            let totalCount = 0;
+            emojiData.forEach(category => {
+                totalCount += category.emojis.length;
+            });
+            document.getElementById('emojiCount').textContent = `共 ${totalCount} 个Emoji符号`;
+        }
+    </script>
+</body>
+</html>

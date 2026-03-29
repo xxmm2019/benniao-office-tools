@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线生成网址桌面快捷方式</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+        }
+        
+        @media (min-width: 768px) {
+            .main-content {
+                flex-direction: row;
+                gap: 30px;
+            }
+        }
+        
+        .input-section {
+            flex: 1;
+            margin-bottom: 30px;
+        }
+        
+        .preview-section {
+            flex: 1;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #182848;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #4b6cb7;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input[type="url"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input[type="url"]:focus {
+            border-color: #4b6cb7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        input[type="url"].error {
+            border-color: #e74c3c;
+        }
+        
+        .icon-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .icon-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            background-color: #f8f9fa;
+        }
+        
+        .icon-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .icon-option.selected {
+            border-color: #4b6cb7;
+            background-color: #eef2ff;
+        }
+        
+        .icon-option i {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #4b6cb7;
+        }
+        
+        .icon-option span {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            transition: all 0.3s;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(75, 108, 183, 0.4);
+        }
+        
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .preview-box {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px dashed #c3cfe2;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .shortcut-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(to bottom right, #4b6cb7, #182848);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .shortcut-icon i {
+            font-size: 50px;
+            color: white;
+        }
+        
+        .shortcut-details {
+            text-align: left;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            width: 100px;
+            color: #555;
+        }
+        
+        .detail-value {
+            flex: 1;
+            word-break: break-all;
+            color: #182848;
+        }
+        
+        .instructions {
+            background-color: #f0f7ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .instructions h3 {
+            color: #182848;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .error-message {
+            background-color: #ffeaea;
+            color: #e74c3c;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #e7f7ef;
+            color: #27ae60;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            background-color: #f8f9fa;
+        }
+        
+        @media (max-width: 767px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-desktop"></i> 网址桌面快捷方式生成器</h1>
+            <p>简单快速地将您常用的网站创建为Windows桌面快捷方式，方便一键访问</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2 class="section-title"><i class="fas fa-cog"></i> 设置快捷方式</h2>
+                
+                <div class="input-group">
+                    <label for="url-input">输入网址 (URL)</label>
+                    <input type="url" id="url-input" placeholder="https://www.example.com">
+                </div>
+                
+                <div class="input-group">
+                    <label>选择快捷方式图标</label>
+                    <div class="icon-selection">
+                        <div class="icon-option selected" data-icon="globe">
+                            <i class="fas fa-globe"></i>
+                            <span>全球</span>
+                        </div>
+                        <div class="icon-option" data-icon="chrome">
+                            <i class="fab fa-chrome"></i>
+                            <span>浏览器</span>
+                        </div>
+                        <div class="icon-option" data-icon="link">
+                            <i class="fas fa-link"></i>
+                            <span>链接</span>
+                        </div>
+                        <div class="icon-option" data-icon="star">
+                            <i class="fas fa-star"></i>
+                            <span>收藏</span>
+                        </div>
+                        <div class="icon-option" data-icon="home">
+                            <i class="fas fa-home"></i>
+                            <span>主页</span>
+                        </div>
+                        <div class="icon-option" data-icon="cloud">
+                            <i class="fas fa-cloud"></i>
+                            <span>云服务</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="generate-btn" id="generate-btn">
+                    <i class="fas fa-magic"></i> 生成桌面快捷方式
+                </button>
+                
+                <div class="error-message" id="error-message">
+                    <i class="fas fa-exclamation-circle"></i> 请输入有效的网址，例如：https://www.example.com
+                </div>
+                
+                <div class="success-message" id="success-message">
+                    <i class="fas fa-check-circle"></i> 快捷方式生成成功！请点击下载按钮保存文件
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-eye"></i> 快捷方式预览</h2>
+                
+                <div class="preview-box">
+                    <div class="shortcut-icon" id="preview-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    
+                    <div class="shortcut-details">
+                        <div class="detail-row">
+                            <div class="detail-label">名称：</div>
+                            <div class="detail-value" id="preview-name">网站快捷方式</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">网址：</div>
+                            <div class="detail-value" id="preview-url">https://www.example.com</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">类型：</div>
+                            <div class="detail-value">Internet 快捷方式 (.url)</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">保存位置：</div>
+                            <div class="detail-value">Windows 桌面</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+            <ol>
+                <li>在输入框中输入完整的网址（例如：https://www.baidu.com）</li>
+                <li>选择一个您喜欢的快捷方式图标</li>
+                <li>点击"生成桌面快捷方式"按钮</li>
+                <li>下载生成的 .url 文件到您的电脑</li>
+                <li>将下载的文件移动到桌面，即可通过双击快捷方式快速访问网站</li>
+            </ol>
+        </div>
+        
+        <footer>
+            
+        </footer>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const urlInput = document.getElementById('url-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const iconOptions = document.querySelectorAll('.icon-option');
+        const previewIcon = document.getElementById('preview-icon');
+        const previewName = document.getElementById('preview-name');
+        const previewUrl = document.getElementById('preview-url');
+        
+        // 当前选中的图标
+        let selectedIcon = 'globe';
+        
+        // 图标映射
+        const iconMap = {
+            'globe': 'fas fa-globe',
+            'chrome': 'fab fa-chrome',
+            'link': 'fas fa-link',
+            'star': 'fas fa-star',
+            'home': 'fas fa-home',
+            'cloud': 'fas fa-cloud'
+        };
+        
+        // 图标选择事件
+        iconOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // 移除之前选中的图标样式
+                iconOptions.forEach(opt => opt.classList.remove('selected'));
+                // 添加当前选中样式
+                this.classList.add('selected');
+                // 更新选中的图标
+                selectedIcon = this.getAttribute('data-icon');
+                // 更新预览图标
+                updatePreviewIcon();
+            });
+        });
+        
+        // 更新预览图标
+        function updatePreviewIcon() {
+            const iconClass = iconMap[selectedIcon];
+            previewIcon.innerHTML = `<i class="${iconClass}"></i>`;
+        }
+        
+        // URL输入事件 - 实时更新预览
+        urlInput.addEventListener('input', function() {
+            const url = this.value.trim();
+            previewUrl.textContent = url || 'https://www.example.com';
+            
+            // 尝试从URL提取网站名称
+            if (url) {
+                try {
+                    const urlObj = new URL(url);
+                    let siteName = urlObj.hostname.replace('www.', '');
+                    siteName = siteName.split('.')[0];
+                    siteName = siteName.charAt(0).toUpperCase() + siteName.slice(1);
+                    previewName.textContent = siteName + ' 快捷方式';
+                } catch (e) {
+                    previewName.textContent = '网站快捷方式';
+                }
+            } else {
+                previewName.textContent = '网站快捷方式';
+            }
+        });
+        
+        // 生成快捷方式
+        generateBtn.addEventListener('click', generateShortcut);
+        
+        // 生成快捷方式函数
+        function generateShortcut() {
+            const url = urlInput.value.trim();
+            
+            // 验证URL
+            if (!isValidUrl(url)) {
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                urlInput.classList.add('error');
+                return;
+            }
+            
+            // 验证通过
+            errorMessage.style.display = 'none';
+            urlInput.classList.remove('error');
+            
+            // 生成文件名（从URL提取）
+            let fileName = 'website_shortcut';
+            try {
+                const urlObj = new URL(url);
+                fileName = urlObj.hostname.replace('www.', '').replace(/\./g, '_');
+            } catch (e) {
+                // 如果URL解析失败，使用默认文件名
+            }
+            
+            // 创建.url文件内容
+            const urlFileContent = `[InternetShortcut]
+URL=${url}
+IconIndex=0
+HotKey=0
+IDList=
+IconFile=%SystemRoot%\\System32\\SHELL32.dll
+`;
+            
+            // 创建Blob并下载
+            const blob = new Blob([urlFileContent], { type: 'text/plain' });
+            const downloadUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = `${fileName}.url`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(downloadUrl);
+            
+            // 显示成功消息
+            successMessage.style.display = 'block';
+            
+            // 3秒后隐藏成功消息
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+        
+        // URL验证函数
+        function isValidUrl(string) {
+            if (!string) return false;
+            
+            // 尝试添加协议前缀（如果用户没有输入）
+            let urlString = string;
+            if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
+                urlString = 'https://' + urlString;
+            }
+            
+            try {
+                const url = new URL(urlString);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // 页面加载时设置示例URL
+        window.addEventListener('DOMContentLoaded', function() {
+            urlInput.value = 'https://www.baidu.com';
+            urlInput.dispatchEvent(new Event('input'));
+        });
+    </script>
+</body>
+</html>

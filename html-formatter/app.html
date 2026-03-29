@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML 格式化工具 - 笨鸟办公工具箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/html-formatter/app.html">
+    <style>
+        :root {
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --bg: #0f172a;
+            --text: #1e293b;
+            --text-light: #f8fafc;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-dark: #334155;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ef4444 0%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 15px;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .label-icon {
+            color: var(--accent);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #ffffff;
+            resize: vertical;
+            transition: all 0.3s ease;
+            min-height: 280px;
+            line-height: 1.6;
+            tab-size: 4;
+            -moz-tab-size: 4;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        textarea#output {
+            background-color: #f8fafc;
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        textarea::placeholder {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .indent-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        select {
+            padding: 10px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            min-width: 140px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            flex: 2;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            background: var(--accent);
+            color: white;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .btn:active::after {
+            width: 100px;
+            height: 100px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+            box-shadow: 0 6px 20px rgba(100, 116, 139, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: var(--accent);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            font-weight: 500;
+            max-width: 400px;
+            word-break: break-word;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.error {
+            background: var(--error);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            padding: 12px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 18px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        .btn.loading {
+            pointer-events: none;
+        }
+
+        .btn.loading .loading {
+            display: block;
+        }
+
+        .btn.loading span {
+            opacity: 0;
+        }
+
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>HTML 格式化工具</h1>
+            <p>快速整理和美化 HTML 代码结构，支持自定义缩进格式</p>
+        </div>
+        
+        <div class="card">
+            <div class="grid">
+                <div class="form-group">
+                    <label for="input">
+                        <span class="label-icon">📝</span>
+                        <span>输入 HTML 代码</span>
+                        <span id="input-counter" class="char-counter">0 字符</span>
+                    </label>
+                    <textarea 
+                        id="input" 
+                        placeholder="粘贴您的 HTML 代码到这里..."
+                        spellcheck="false"
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="output">
+                        <span class="label-icon">✨</span>
+                        <span>格式化结果</span>
+                        <span id="output-counter" class="char-counter">0 字符</span>
+                    </label>
+                    <textarea 
+                        id="output" 
+                        readonly 
+                        placeholder="格式化后的 HTML 将显示在这里..."
+                        spellcheck="false"
+                    ></textarea>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-value" id="line-count">0</span>
+                    <span class="stat-label">行数</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="tag-count">0</span>
+                    <span class="stat-label">标签</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="time-taken">0ms</span>
+                    <span class="stat-label">处理时间</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="indent-selector">
+                    <label for="indent">缩进格式：</label>
+                    <select id="indent">
+                        <option value="2" selected>2 个空格</option>
+                        <option value="4">4 个空格</option>
+                        <option value="1">Tab 制表符</option>
+                    </select>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn" id="format">
+                        <div class="loading"></div>
+                        <span>格式化</span>
+                    </button>
+                    <button class="btn btn-secondary" id="clear">
+                        <span>清空</span>
+                    </button>
+                    <button class="btn btn-secondary" id="copy">
+                        <span>复制结果</span>
+                    </button>
+                    <button class="btn btn-secondary" id="download">
+                        <span>下载</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 笨鸟办公工具箱 | 
+                <a href="https://www.benniaooffice.com" target="_blank" rel="noopener">访问官网</a> | 
+                <a href="https://www.benniaooffice.com/privacy" target="_blank" rel="noopener">隐私政策</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 通知提示 -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // 主要的格式化函数 - 不使用外部库
+        function formatHTML(html, options = {}) {
+            const startTime = performance.now();
+            
+            // 默认选项
+            const defaultOptions = {
+                indentSize: 2,
+                indentChar: ' ',
+                indentWithTabs: false,
+                wrapLineLength: 0,
+                preserveNewlines: true,
+                maxPreserveNewlines: 5,
+                indentInnerHtml: true,
+                extraLiners: []
+            };
+
+            const config = { ...defaultOptions, ...options };
+            
+            // 如果使用制表符
+            if (config.indentWithTabs) {
+                config.indentChar = '\t';
+                config.indentSize = 1;
+            }
+
+            let result = '';
+            let indentLevel = 0;
+            let inTag = false;
+            let inString = false;
+            let stringChar = '';
+            let inComment = false;
+            let lastChar = '';
+            let buffer = '';
+            let lineLength = 0;
+            let preserveWhitespace = false;
+            let tagName = '';
+            
+            // 自闭合标签列表
+            const selfClosingTags = new Set([
+                'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
+                'link', 'meta', 'param', 'source', 'track', 'wbr'
+            ]);
+            
+            // 块级元素 - 需要换行
+            const blockElements = new Set([
+                'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li',
+                'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'form',
+                'section', 'article', 'aside', 'nav', 'header', 'footer',
+                'main', 'figure', 'figcaption', 'blockquote', 'pre', 'code'
+            ]);
+            
+            // 内联元素 - 通常不换行
+            const inlineElements = new Set([
+                'span', 'a', 'strong', 'em', 'b', 'i', 'u', 'mark', 'small',
+                'sub', 'sup', 'time', 'data', 'abbr', 'cite', 'q', 'dfn',
+                'samp', 'kbd', 'var', 'ruby', 'rt', 'rp', 'bdi', 'bdo'
+            ]);
+            
+            // 处理标签名
+            function getTagName(tagText) {
+                const match = tagText.match(/^<\/?([^\s/>]+)/);
+                return match ? match[1].toLowerCase() : '';
+            }
+            
+            // 添加缩进
+            function addIndent() {
+                for (let i = 0; i < indentLevel * config.indentSize; i++) {
+                    result += config.indentChar;
+                }
+            }
+            
+            // 是否需要换行
+            function shouldWrap() {
+                return config.wrapLineLength > 0 && lineLength >= config.wrapLineLength;
+            }
+            
+            // 添加新行
+            function addNewLine() {
+                result += '\n';
+                lineLength = 0;
+            }
+            
+            // 处理每个字符
+            for (let i = 0; i < html.length; i++) {
+                const char = html[i];
+                const nextChar = i < html.length - 1 ? html[i + 1] : '';
+                
+                // 处理注释
+                if (!inString && !inTag && char === '<' && nextChar === '!') {
+                    const commentStart = html.substr(i, 4);
+                    if (commentStart === '<!--') {
+                        inComment = true;
+                        if (lastChar === '>' || result.endsWith('\n')) {
+                            addNewLine();
+                            addIndent();
+                        }
+                        buffer += char;
+                        continue;
+                    }
+                }
+                
+                if (inComment) {
+                    buffer += char;
+                    if (char === '>' && buffer.endsWith('-->')) {
+                        inComment = false;
+                        result += buffer;
+                        lineLength += buffer.length;
+                        buffer = '';
+                        addNewLine();
+                    }
+                    continue;
+                }
+                
+                // 处理字符串
+                if ((char === '"' || char === "'") && (inTag || lastChar === '=')) {
+                    if (!inString) {
+                        inString = true;
+                        stringChar = char;
+                    } else if (char === stringChar && lastChar !== '\\') {
+                        inString = false;
+                    }
+                    buffer += char;
+                    continue;
+                }
+                
+                // 处理标签开始
+                if (char === '<' && !inString) {
+                    // 处理之前的文本
+                    if (buffer.trim()) {
+                        if (result && !result.endsWith('\n')) {
+                            addNewLine();
+                            addIndent();
+                        }
+                        result += buffer;
+                        lineLength += buffer.length;
+                    }
+                    buffer = '';
+                    
+                    inTag = true;
+                    buffer += char;
+                    
+                    // 如果是结束标签并且不是自闭合标签，减少缩进
+                    if (nextChar === '/') {
+                        if (indentLevel > 0) {
+                            indentLevel--;
+                        }
+                        if (result && !result.endsWith('\n')) {
+                            addNewLine();
+                        }
+                    }
+                    
+                    // 如果不是内联元素，添加缩进
+                    if (!result.endsWith('\n') && indentLevel > 0 && 
+                        !(nextChar === '/' && inlineElements.has(tagName))) {
+                        addNewLine();
+                    }
+                    
+                    if (indentLevel > 0 && !result.endsWith('\n')) {
+                        addIndent();
+                    }
+                    
+                    continue;
+                }
+                
+                // 处理标签结束
+                if (char === '>' && inTag && !inString) {
+                    buffer += char;
+                    inTag = false;
+                    
+                    // 获取标签名
+                    tagName = getTagName(buffer);
+                    
+                    // 如果不是结束标签并且不是自闭合标签，增加缩进
+                    if (!buffer.startsWith('</') && !selfClosingTags.has(tagName) && 
+                        !buffer.endsWith('/>') && blockElements.has(tagName)) {
+                        indentLevel++;
+                    }
+                    
+                    result += buffer;
+                    lineLength += buffer.length;
+                    buffer = '';
+                    
+                    // 如果是块级元素或者自闭合标签，换行
+                    if (blockElements.has(tagName) || selfClosingTags.has(tagName) || 
+                        buffer.endsWith('/>')) {
+                        addNewLine();
+                    }
+                    
+                    continue;
+                }
+                
+                // 处理其他字符
+                buffer += char;
+                
+                // 处理换行符
+                if (char === '\n' && config.preserveNewlines) {
+                    const newlines = buffer.match(/\n/g).length;
+                    if (newlines <= config.maxPreserveNewlines) {
+                        result += buffer;
+                        lineLength = 0;
+                        buffer = '';
+                    } else {
+                        // 保留最大换行数
+                        result += '\n'.repeat(config.maxPreserveNewlines);
+                        lineLength = 0;
+                        buffer = buffer.replace(/\n/g, '');
+                    }
+                }
+                
+                lastChar = char;
+            }
+            
+            // 添加剩余缓冲区内容
+            if (buffer.trim()) {
+                if (result && !result.endsWith('\n')) {
+                    addNewLine();
+                }
+                addIndent();
+                result += buffer;
+            }
+            
+            // 清理多余的空行
+            const lines = result.split('\n');
+            const cleanedLines = [];
+            let emptyLineCount = 0;
+            
+            for (const line of lines) {
+                if (line.trim() === '') {
+                    emptyLineCount++;
+                    if (emptyLineCount <= 2) { // 最多保留2个连续空行
+                        cleanedLines.push(line);
+                    }
+                } else {
+                    emptyLineCount = 0;
+                    cleanedLines.push(line);
+                }
+            }
+            
+            result = cleanedLines.join('\n');
+            
+            const endTime = performance.now();
+            const processingTime = Math.round(endTime - startTime);
+            
+            return {
+                formatted: result,
+                processingTime
+            };
+        }
+
+        // 获取DOM元素
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        const indentSelect = document.getElementById('indent');
+        const formatBtn = document.getElementById('format');
+        const clearBtn = document.getElementById('clear');
+        const copyBtn = document.getElementById('copy');
+        const downloadBtn = document.getElementById('download');
+        const notification = document.getElementById('notification');
+        const lineCount = document.getElementById('line-count');
+        const tagCount = document.getElementById('tag-count');
+        const timeTaken = document.getElementById('time-taken');
+        const inputCounter = document.getElementById('input-counter');
+        const outputCounter = document.getElementById('output-counter');
+
+        // 显示通知
+        function showNotification(message, type = 'success', duration = 3000) {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+
+        // 统计HTML信息
+        function analyzeHTML(html) {
+            const lines = html.split('\n').length;
+            const tags = (html.match(/<\/?[a-z][^>]*>/gi) || []).length;
+            return { lines, tags };
+        }
+
+        // 更新字符计数
+        function updateCharCounters() {
+            const inputLength = input.value.length;
+            const outputLength = output.value.length;
+            
+            inputCounter.textContent = `${inputLength} 字符`;
+            outputCounter.textContent = `${outputLength} 字符`;
+            
+            if (outputLength > 0) {
+                const analysis = analyzeHTML(output.value);
+                lineCount.textContent = analysis.lines;
+                tagCount.textContent = analysis.tags;
+            }
+        }
+
+        // 格式化HTML
+        async function formatHtml() {
+            const value = input.value.trim();
+            
+            if (!value) {
+                showNotification('请输入HTML代码', 'error');
+                output.value = '';
+                updateCharCounters();
+                return;
+            }
+
+            try {
+                // 显示加载状态
+                formatBtn.classList.add('loading');
+                formatBtn.disabled = true;
+                
+                // 使用 setTimeout 避免阻塞UI
+                setTimeout(() => {
+                    const indent = indentSelect.value;
+                    const useTabs = indent === '1';
+                    
+                    const options = {
+                        indentSize: useTabs ? 1 : Number(indent),
+                        indentWithTabs: useTabs,
+                        preserveNewlines: true,
+                        maxPreserveNewlines: 3
+                    };
+
+                    const result = formatHTML(value, options);
+                    
+                    output.value = result.formatted;
+                    timeTaken.textContent = `${result.processingTime}ms`;
+                    
+                    // 添加成功通知
+                    const analysis = analyzeHTML(result.formatted);
+                    showNotification(`格式化成功！共 ${analysis.lines} 行，${analysis.tags} 个标签`);
+                    
+                    // 更新统计
+                    updateCharCounters();
+                    
+                    // 恢复按钮状态
+                    formatBtn.classList.remove('loading');
+                    formatBtn.disabled = false;
+                }, 50); // 小延迟确保UI更新
+                
+            } catch (error) {
+                console.error('格式化错误:', error);
+                showNotification(`格式化失败: ${error.message}`, 'error');
+                
+                // 恢复按钮状态
+                formatBtn.classList.remove('loading');
+                formatBtn.disabled = false;
+            }
+        }
+
+        // 清空内容
+        function clearContent() {
+            input.value = '';
+            output.value = '';
+            input.focus();
+            updateCharCounters();
+            showNotification('已清空所有内容');
+            
+            // 重置统计
+            lineCount.textContent = '0';
+            tagCount.textContent = '0';
+            timeTaken.textContent = '0ms';
+        }
+
+        // 复制结果
+        async function copyToClipboard() {
+            if (!output.value.trim()) {
+                showNotification('没有内容可复制', 'error');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(output.value);
+                showNotification('复制成功！');
+            } catch (err) {
+                // 降级方案
+                output.select();
+                document.execCommand('copy');
+                showNotification('已复制到剪贴板');
+            }
+        }
+
+        // 下载结果
+        function downloadResult() {
+            if (!output.value.trim()) {
+                showNotification('没有内容可下载', 'error');
+                return;
+            }
+
+            try {
+                const blob = new Blob([output.value], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `formatted-${Date.now()}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showNotification('下载成功！');
+            } catch (error) {
+                showNotification('下载失败', 'error');
+            }
+        }
+
+        // 事件监听
+        formatBtn.addEventListener('click', formatHtml);
+        clearBtn.addEventListener('click', clearContent);
+        copyBtn.addEventListener('click', copyToClipboard);
+        downloadBtn.addEventListener('click', downloadResult);
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            // Ctrl + Enter 格式化
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                formatHtml();
+            }
+            
+            // Ctrl + L 清空
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                clearContent();
+            }
+            
+            // Ctrl + C 复制结果（当焦点不在输入框时）
+            if (e.ctrlKey && e.key === 'c' && document.activeElement !== input) {
+                e.preventDefault();
+                copyToClipboard();
+            }
+        });
+
+        // 自动调整textarea高度和更新字符计数
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 500) + 'px';
+            updateCharCounters();
+        }
+
+        input.addEventListener('input', () => autoResize(input));
+        output.addEventListener('input', () => autoResize(output));
+        input.addEventListener('input', updateCharCounters);
+
+        // 页面加载时自动调整高度
+        window.addEventListener('load', () => {
+            autoResize(input);
+            autoResize(output);
+            
+            // 示例HTML代码
+            if (!input.value.trim()) {
+                input.value = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>示例页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #333; }
+        p { line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>欢迎使用HTML格式化工具</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">首页</a></li>
+                    <li><a href="#">关于</a></li>
+                    <li><a href="#">联系</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section>
+                <h2>功能特点</h2>
+                <p>这是一段示例HTML代码，点击"格式化"按钮查看效果</p>
+                <div class="features">
+                    <article>
+                        <h3>快速格式化</h3>
+                        <p>支持多种缩进格式</p>
+                    </article>
+                    <article>
+                        <h3>语法高亮</h3>
+                        <p>清晰的代码结构</p>
+                    </article>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2023 示例公司. 保留所有权利.</p>
+        </footer>
+    </div>
+</body>
+</html>`;
+                autoResize(input);
+                updateCharCounters();
+            }
+        });
+
+        // 初始化字符计数
+        updateCharCounters();
+    </script>
+</body>
+</html>

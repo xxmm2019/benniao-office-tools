@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML 压缩器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/yaml-minifier/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #8b5cf6 0%, #8b5cf6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #8b5cf6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: #666;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 320px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+
+        .editor-textarea[readonly] {
+            background-color: #f8f9fa;
+            cursor: default;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-box.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .status-box.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .status-box.active {
+            display: block;
+        }
+
+        .status-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .status-box.error p {
+            color: #c62828;
+        }
+
+        .status-box.warning p {
+            color: #856404;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 240px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+
+            .controls {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>YAML 压缩器</h1>
+            <p>压缩 YAML 内容，移除多余空白和注释，支持多文档 YAML</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <p id="status-message"></p>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" id="convert-btn" onclick="convert()">立即转换</button>
+                    <button class="btn btn-secondary" onclick="loadSample()">示例</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">清空</button>
+                    <button class="btn btn-success" id="copy-btn" onclick="copyOutput()" disabled>复制结果</button>
+                </div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remove-comments" checked>
+                            移除注释
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="remove-empty-lines" checked>
+                            移除空行
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="preserve-structure">
+                            保留结构
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输入 YAML</span>
+                        <span class="char-count" id="input-count">0 字符</span>
+                    </div>
+                    <textarea class="editor-textarea" id="input" 
+                              placeholder="粘贴 YAML 内容..."
+                              oninput="updateCharCount()"></textarea>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输出 YAML</span>
+                        <span class="char-count" id="output-count">0 字符</span>
+                    </div>
+                    <textarea class="editor-textarea" id="output" 
+                              placeholder="压缩后的 YAML 将显示在这里..."
+                              readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 更新字符计数
+        function updateCharCount() {
+            const input = document.getElementById('input');
+            const output = document.getElementById('output');
+            const inputCount = document.getElementById('input-count');
+            const outputCount = document.getElementById('output-count');
+            
+            inputCount.textContent = `${input.value.length} 字符`;
+            outputCount.textContent = `${output.value.length} 字符`;
+        }
+
+        // 显示状态消息
+        function showStatus(message, type = 'success') {
+            const statusBox = document.getElementById('status-box');
+            const statusMessage = document.getElementById('status-message');
+            
+            statusBox.className = 'status-box active';
+            statusBox.classList.add(type);
+            statusMessage.textContent = message;
+            
+            // 3秒后自动隐藏成功消息
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusBox.classList.remove('active');
+                }, 3000);
+            }
+        }
+
+        // 隐藏状态消息
+        function hideStatus() {
+            const statusBox = document.getElementById('status-box');
+            statusBox.classList.remove('active');
+        }
+
+        // 压缩 YAML 函数
+        function minifyYAML(input, options = {}) {
+            const {
+                removeComments = true,
+                removeEmptyLines = true,
+                preserveStructure = false
+            } = options;
+            
+            let lines = input.split(/\r?\n/);
+            let result = [];
+            let inQuotes = false;
+            let quoteChar = '';
+            let inBlockScalar = false;
+            let blockScalarIndent = 0;
+            let currentDocument = [];
+            let documents = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                let trimmedLine = line.trim();
+                
+                // 处理多文档分隔符
+                if (trimmedLine === '---' || trimmedLine === '...') {
+                    if (currentDocument.length > 0) {
+                        documents.push(currentDocument.join('\n'));
+                        currentDocument = [];
+                    }
+                    if (preserveStructure) {
+                        currentDocument.push(line);
+                    }
+                    continue;
+                }
+                
+                // 检测块标量开始
+                if (!inQuotes && !inBlockScalar) {
+                    const blockScalarMatch = line.match(/^(\s*)([|>])([-+]?\d*)(\+?)/);
+                    if (blockScalarMatch && blockScalarMatch[2]) {
+                        inBlockScalar = true;
+                        blockScalarIndent = blockScalarMatch[1].length;
+                        currentDocument.push(line);
+                        continue;
+                    }
+                }
+                
+                // 处理块标量内容
+                if (inBlockScalar) {
+                    currentDocument.push(line);
+                    // 检查块标量结束（下一行缩进小于等于块标量缩进）
+                    if (i + 1 < lines.length) {
+                        const nextLine = lines[i + 1];
+                        const nextLineIndent = nextLine.match(/^\s*/)[0].length;
+                        if (nextLineIndent <= blockScalarIndent && 
+                            !nextLine.match(/^\s*$/)) {
+                            inBlockScalar = false;
+                        }
+                    } else {
+                        inBlockScalar = false;
+                    }
+                    continue;
+                }
+                
+                // 处理引号内的内容
+                if (!inBlockScalar) {
+                    for (let j = 0; j < line.length; j++) {
+                        const char = line[j];
+                        const prevChar = j > 0 ? line[j - 1] : '';
+                        
+                        if (!inQuotes && (char === '"' || char === "'") && prevChar !== '\\') {
+                            inQuotes = true;
+                            quoteChar = char;
+                        } else if (inQuotes && char === quoteChar && prevChar !== '\\') {
+                            inQuotes = false;
+                        }
+                    }
+                }
+                
+                // 移除注释（不在引号内且不在块标量内）
+                if (removeComments && !inQuotes && !inBlockScalar) {
+                    // 找到注释开始位置
+                    let commentIndex = -1;
+                    for (let j = 0; j < line.length; j++) {
+                        if (line[j] === '#' && (j === 0 || line[j-1].match(/\s/))) {
+                            let isInString = false;
+                            // 检查前面的字符是否在字符串中
+                            for (let k = 0; k < j; k++) {
+                                if ((line[k] === '"' || line[k] === "'") && 
+                                    (k === 0 || line[k-1] !== '\\')) {
+                                    isInString = !isInString;
+                                }
+                            }
+                            if (!isInString) {
+                                commentIndex = j;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (commentIndex !== -1) {
+                        line = line.substring(0, commentIndex).trimEnd();
+                    }
+                }
+                
+                // 处理空行
+                if (removeEmptyLines && line.trim() === '' && !preserveStructure) {
+                    continue;
+                }
+                
+                // 如果保留结构，保持原始缩进；否则压缩缩进
+                if (preserveStructure) {
+                    currentDocument.push(line);
+                } else {
+                    // 压缩缩进，但保持层级关系
+                    if (line.trim()) {
+                        // 保留必要的缩进
+                        const indentMatch = line.match(/^(\s*)/);
+                        const content = line.trim();
+                        const indentLevel = Math.floor(indentMatch[1].length / 2);
+                        const compressedLine = '  '.repeat(indentLevel) + content;
+                        currentDocument.push(compressedLine);
+                    }
+                }
+            }
+            
+            // 添加最后一个文档
+            if (currentDocument.length > 0) {
+                documents.push(currentDocument.join('\n'));
+            }
+            
+            // 合并文档
+            result = documents.join('\n---\n');
+            
+            // 移除多余的空行
+            if (!preserveStructure && removeEmptyLines) {
+                result = result.replace(/\n{3,}/g, '\n\n');
+            }
+            
+            return result.trim();
+        }
+
+        // 转换函数
+        function convert() {
+            const input = document.getElementById('input').value;
+            const output = document.getElementById('output');
+            const convertBtn = document.getElementById('convert-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            
+            hideStatus();
+            
+            if (!input.trim()) {
+                showStatus('请输入 YAML 内容', 'error');
+                output.value = '';
+                copyBtn.disabled = true;
+                updateCharCount();
+                return;
+            }
+            
+            try {
+                // 获取选项
+                const removeComments = document.getElementById('remove-comments').checked;
+                const removeEmptyLines = document.getElementById('remove-empty-lines').checked;
+                const preserveStructure = document.getElementById('preserve-structure').checked;
+                
+                // 禁用按钮并显示加载状态
+                convertBtn.disabled = true;
+                convertBtn.textContent = '处理中...';
+                
+                // 使用 setTimeout 避免界面卡顿
+                setTimeout(() => {
+                    const result = minifyYAML(input, {
+                        removeComments,
+                        removeEmptyLines,
+                        preserveStructure
+                    });
+                    
+                    output.value = result;
+                    
+                    // 计算压缩率
+                    const originalSize = input.length;
+                    const compressedSize = result.length;
+                    const compressionRate = originalSize > 0 ? 
+                        Math.round((1 - compressedSize / originalSize) * 100) : 0;
+                    
+                    if (compressionRate > 0) {
+                        showStatus(` 转换完成！压缩率：${compressionRate}% (${originalSize} → ${compressedSize} 字符)`, 'success');
+                    } else {
+                        showStatus(' 转换完成', 'success');
+                    }
+                    
+                    copyBtn.disabled = false;
+                    updateCharCount();
+                    
+                    // 恢复按钮状态
+                    convertBtn.disabled = false;
+                    convertBtn.textContent = '立即转换';
+                }, 100);
+                
+            } catch (error) {
+                console.error('YAML 转换错误:', error);
+                showStatus(` 转换失败: ${error.message}`, 'error');
+                output.value = '';
+                copyBtn.disabled = true;
+                updateCharCount();
+                
+                // 恢复按钮状态
+                convertBtn.disabled = false;
+                convertBtn.textContent = '立即转换';
+            }
+        }
+
+        // 复制输出结果
+        function copyOutput() {
+            const output = document.getElementById('output');
+            const copyBtn = document.getElementById('copy-btn');
+            
+            if (!output.value.trim()) {
+                showStatus('没有可复制的内容', 'warning');
+                return;
+            }
+            
+            navigator.clipboard.writeText(output.value).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '已复制！';
+                showStatus(' 结果已复制到剪贴板', 'success');
+                
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showStatus(' 复制失败，请手动复制', 'error');
+            });
+        }
+
+        // 清空所有内容
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').value = '';
+            document.getElementById('copy-btn').disabled = true;
+            hideStatus();
+            updateCharCount();
+        }
+
+        // 加载示例
+        function loadSample() {
+            document.getElementById('input').value = `# YAML 示例配置
+# 这是一个多文档 YAML 示例
+
+---
+# 应用配置
+app:
+  name: "笨鸟办公工具"
+  version: "1.0.0"
+  author: "笨鸟团队"
+  
+  # 功能设置
+  features:
+    - yaml_minifier: true
+    - json_formatter: true
+    - markdown_editor: true
+    
+  settings:
+    # 显示设置
+    display:
+      theme: "light"
+      language: "zh-CN"
+    
+    # 性能设置
+    performance:
+      cache_enabled: true
+      cache_size: "100MB"
+
+---
+# 用户数据
+users:
+  - id: 1001
+    name: "张三"
+    email: "zhangsan@example.com"
+    roles:
+      - admin
+      - editor
+    
+  - id: 1002
+    name: "李四"
+    email: "lisi@example.com"
+    roles:
+      - viewer
+
+---
+# 块标量示例
+description: |
+  这是一个多行文本示例。
+  保留格式很重要。
+  
+  空行也应该被正确处理。
+
+quotes_example: "这是一个包含 # 号的字符串 # 这不是注释"
+`;
+            
+            updateCharCount();
+            showStatus('示例已加载，点击"立即转换"开始处理', 'warning');
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCharCount();
+            
+            // 监听输入框变化
+            document.getElementById('input').addEventListener('input', updateCharCount);
+            
+            // 监听选项变化时自动转换
+            ['remove-comments', 'remove-empty-lines', 'preserve-structure'].forEach(id => {
+                document.getElementById(id).addEventListener('change', convert);
+            });
+            
+            // 添加键盘快捷键
+            document.addEventListener('keydown', (e) => {
+                // Ctrl/Cmd + Enter 转换
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    e.preventDefault();
+                    convert();
+                }
+                
+                // Ctrl/Cmd + C 复制结果
+                if ((e.ctrlKey || e.metaKey) && e.key === 'c' && 
+                    document.activeElement.id === 'output') {
+                    copyOutput();
+                }
+                
+                // Ctrl/Cmd + L 清空
+                if ((e.ctrlKey || e.metaKey) && e.key === 'l' && 
+                    document.activeElement.id === 'input') {
+                    clearAll();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 表格生成器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <!-- 修正URL拼写错误 -->
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/markdown-table-generator/app.html">
+    <style>
+        :root {
+            --accent: #0f766e;
+            --accent-soft: #0f766e33;
+            --bg-dark: #0f172a;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* 返回首页按钮 */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--accent);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .home-btn:hover {
+            background-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding-top: 20px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.3rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            font-size: 14px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        textarea {
+            min-height: 160px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        #custom-delimiter {
+            display: none;
+            min-width: 150px;
+        }
+
+        /* 当选择自定义分隔符时显示输入框 */
+        #delimiter[value="custom"] ~ #custom-delimiter {
+            display: block;
+        }
+
+        .checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--accent);
+            color: white;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 118, 110, 0.3);
+            background: #0d625b;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .output-box {
+            background: #f8fafc;
+            border: 1px dashed var(--border);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 25px;
+        }
+
+        #output {
+            background: white;
+            border: 1px solid var(--border);
+            margin-top: 8px;
+            min-height: 120px;
+        }
+
+        .meta {
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .status {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status.success {
+            color: #059669;
+        }
+
+        .status.error {
+            color: #dc2626;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .result-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card h4 {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-card div {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent);
+            word-break: break-all;
+        }
+
+        /* 示例数据样式 */
+        .example {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #0369a1;
+        }
+
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding-top: 60px;
+            }
+            
+            .home-btn {
+                top: 10px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .form-group {
+                min-width: 100%;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* 工具提示 */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+  
+    
+    <div class="container">
+        <div class="header">
+            <h1>Markdown 表格生成器</h1>
+            <p>将文本快速转换为 Markdown 表格，支持多种分隔符和自定义选项</p>
+        </div>
+        <div class="card">
+            <div>
+                <label for="input">输入文本（每行一条记录）</label>
+                <textarea id="input" placeholder="例如：
+名称,价格,库存
+苹果,10,20
+香蕉,12,8
+橙子,15,35"></textarea>
+                
+                <div class="example">
+                    <div class="example-title">示例格式：</div>
+                    <div>使用逗号分隔：产品,价格,数量,评分</div>
+                    <div>使用制表符分隔：产品(制表符)价格(制表符)数量</div>
+                    <div>使用竖线分隔：产品|价格|数量|备注</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label for="delimiter">分隔符</label>
+                    <select id="delimiter">
+                        <option value="comma" selected>逗号 (,)</option>
+                        <option value="tab">制表符</option>
+                        <option value="pipe">竖线 (|)</option>
+                        <option value="semicolon">分号 (;)</option>
+                        <option value="custom">自定义</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <input id="custom-delimiter" type="text" placeholder="自定义分隔符" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox">
+                        <input type="checkbox" id="has-header" checked>
+                        <span>首行作为表头</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn" id="generate">
+                    <span>🔄</span> 生成表格
+                </button>
+                <button class="btn btn-secondary" id="copy">
+                    <span>📋</span> 复制结果
+                </button>
+                <button class="btn btn-secondary" id="clear">
+                    <span>🗑️</span> 清空
+                </button>
+                <button class="btn btn-secondary" id="sample">
+                    <span>📝</span> 加载示例
+                </button>
+            </div>
+            
+            <div class="output-box">
+                <label for="output">Markdown 表格</label>
+                <textarea id="output" readonly placeholder="生成的 Markdown 表格将显示在这里"></textarea>
+                
+                <div class="status" id="status">
+                    <!-- 状态信息将在这里显示 -->
+                </div>
+                
+                <div class="result-grid" id="stats">
+                    <!-- 统计信息将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM 元素
+        const input = document.getElementById('input');
+        const delimiterSelect = document.getElementById('delimiter');
+        const customDelimiter = document.getElementById('custom-delimiter');
+        const hasHeader = document.getElementById('has-header');
+        const output = document.getElementById('output');
+        const status = document.getElementById('status');
+        const stats = document.getElementById('stats');
+        
+        // 分隔符映射
+        const delimiterMap = {
+            'comma': ',',
+            'tab': '\t',
+            'pipe': '|',
+            'semicolon': ';'
+        };
+        
+        // 获取当前分隔符
+        function getDelimiter() {
+            const mode = delimiterSelect.value;
+            if (mode === 'custom') {
+                return customDelimiter.value || ',';
+            }
+            return delimiterMap[mode] || ',';
+        }
+        
+        // 转义单元格内容
+        function escapeCell(value) {
+            return value.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+        }
+        
+        // 显示状态信息
+        function showStatus(message, type = 'info') {
+            status.textContent = message;
+            status.className = `status ${type}`;
+            
+            // 3秒后清除状态
+            setTimeout(() => {
+                if (status.textContent === message) {
+                    status.textContent = '';
+                    status.className = 'status';
+                }
+            }, 3000);
+        }
+        
+        // 生成表格
+        function generateTable() {
+            const value = input.value.trim();
+            if (!value) {
+                output.value = '';
+                showStatus('请输入文本内容', 'error');
+                stats.innerHTML = '';
+                return;
+            }
+            
+            const delimiter = getDelimiter();
+            const lines = value.split(/\r?\n/).filter(line => line.trim() !== '');
+            
+            if (lines.length === 0) {
+                output.value = '';
+                showStatus('没有找到有效的行', 'error');
+                return;
+            }
+            
+            try {
+                const rows = lines.map(line => line.split(delimiter).map(cell => cell.trim()));
+                const maxCols = Math.max(...rows.map(row => row.length));
+                
+                // 填充行到相同列数
+                const fillRow = row => row.concat(Array(maxCols - row.length).fill(''));
+                const filledRows = rows.map(fillRow);
+                
+                let headerRow = [];
+                let bodyRows = [];
+                
+                if (hasHeader.checked && filledRows.length > 0) {
+                    headerRow = filledRows[0];
+                    bodyRows = filledRows.slice(1);
+                } else {
+                    headerRow = Array.from({ length: maxCols }, (_, i) => `列${i + 1}`);
+                    bodyRows = filledRows;
+                }
+                
+                // 生成Markdown表格
+                const headerLine = `| ${headerRow.map(escapeCell).join(' | ')} |`;
+                const separator = `| ${headerRow.map(() => '---').join(' | ')} |`;
+                const bodyLines = bodyRows.map(row => `| ${row.map(escapeCell).join(' | ')} |`);
+                
+                output.value = [headerLine, separator, ...bodyLines].join('\n');
+                
+                // 显示统计信息
+                showStats(headerRow.length, bodyRows.length);
+                showStatus(`表格生成成功！共 ${bodyRows.length} 行 ${headerRow.length} 列`, 'success');
+                
+            } catch (error) {
+                console.error('生成表格时出错:', error);
+                showStatus('生成表格时出错，请检查输入格式', 'error');
+            }
+        }
+        
+        // 显示统计信息
+        function showStats(columns, rows) {
+            stats.innerHTML = `
+                <div class="result-card">
+                    <h4>列数</h4>
+                    <div>${columns}</div>
+                </div>
+                <div class="result-card">
+                    <h4>行数</h4>
+                    <div>${rows}</div>
+                </div>
+                <div class="result-card">
+                    <h4>分隔符</h4>
+                    <div>${getDelimiter().replace(/\t/g, 'Tab')}</div>
+                </div>
+                <div class="result-card">
+                    <h4>字符数</h4>
+                    <div>${output.value.length}</div>
+                </div>
+            `;
+        }
+        
+        // 复制到剪贴板
+        async function copyToClipboard() {
+            if (!output.value.trim()) {
+                showStatus('没有内容可复制', 'error');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(output.value);
+                showStatus('已复制到剪贴板！', 'success');
+            } catch (err) {
+                console.error('复制失败:', err);
+                // 回退方法
+                output.select();
+                document.execCommand('copy');
+                showStatus('已复制到剪贴板（使用备用方法）', 'success');
+            }
+        }
+        
+        // 清空输入
+        function clearInput() {
+            input.value = '';
+            output.value = '';
+            stats.innerHTML = '';
+            status.textContent = '';
+            status.className = 'status';
+            input.focus();
+            showStatus('已清空所有内容', 'info');
+        }
+        
+        // 加载示例
+        function loadSample() {
+            input.value = `产品名称,价格,库存,评分,备注
+苹果,3.5,120,4.8,新鲜到货
+香蕉,2.8,90,4.5,今日特价
+橙子,4.2,60,4.9,进口脐橙
+葡萄,6.8,45,4.7,无籽葡萄
+西瓜,12.5,30,4.6,冰镇西瓜`;
+            
+            delimiterSelect.value = 'comma';
+            customDelimiter.style.display = 'none';
+            customDelimiter.value = '';
+            hasHeader.checked = true;
+            
+            generateTable();
+            showStatus('示例数据已加载', 'info');
+        }
+        
+        // 事件监听器
+        document.getElementById('generate').addEventListener('click', generateTable);
+        document.getElementById('copy').addEventListener('click', copyToClipboard);
+        document.getElementById('clear').addEventListener('click', clearInput);
+        document.getElementById('sample').addEventListener('click', loadSample);
+        
+        // 分隔符选择变化时显示/隐藏自定义输入框
+        delimiterSelect.addEventListener('change', function() {
+            customDelimiter.style.display = this.value === 'custom' ? 'block' : 'none';
+            if (this.value !== 'custom') {
+                customDelimiter.value = '';
+            }
+        });
+        
+        // 实时生成表格（可选）
+        // input.addEventListener('input', function() {
+        //     if (this.value.trim()) {
+        //         generateTable();
+        //     }
+        // });
+        
+        // 页面加载时显示自定义分隔符输入框的状态
+        window.addEventListener('DOMContentLoaded', () => {
+            customDelimiter.style.display = delimiterSelect.value === 'custom' ? 'block' : 'none';
+            // 初始加载一个示例
+            loadSample();
+        });
+    </script> 
+</body>
+</html>

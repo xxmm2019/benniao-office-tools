@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字智能生成图片封面-微信公众号封面文字制作工具</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #337ecc;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #409eff;
+        }
+
+        /* 背景图片上传按钮样式优化 */
+        .upload-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #409eff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 5px;
+        }
+
+        .upload-btn:hover {
+            background-color: #337ecc;
+        }
+
+        #bgImageTip {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* 坐标设置布局优化 */
+        .coord-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .coord-item {
+            flex: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-generate {
+            background-color: #409eff;
+            color: #fff;
+        }
+
+        .btn-generate:hover {
+            background-color: #337ecc;
+        }
+
+        .btn-download {
+            background-color: #67c23a;
+            color: #fff;
+        }
+
+        .btn-download:hover {
+            background-color: #529b2e;
+        }
+
+        .preview-area {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .preview-title {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .cover-preview {
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 0 auto;
+            display: flex;
+            /* 改为相对定位，作为文字绝对定位的父容器 */
+            position: relative;
+            padding: 0;
+            background-color: #fff;
+            overflow: hidden;
+            /* 初始比例保留，可被自定义尺寸覆盖 */
+            aspect-ratio: 9/16;
+        }
+
+        .text-item {
+            margin: 0;
+            text-align: center;
+            word-break: break-all;
+            /* 文字改为绝对定位，支持坐标调整 */
+            z-index: 2;
+            position: absolute;
+            /* 初始居中定位 */
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 背景图片样式 */
+        .cover-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            display: none; /* 默认隐藏 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="title">微信公众号封面文字自定义工具 </h2>
+
+        <!-- 文字内容设置 -->
+        <div class="control-group">
+            <label for="text1">第一段文字（主标题）</label>
+            <input type="text" id="text1" placeholder="请输入主标题内容，例如：干货分享" value="微信公众号封面">
+        </div>
+
+        <div class="control-group">
+            <label for="text2">第二段文字（副标题，可选）</label>
+            <input type="text" id="text2" placeholder="请输入副标题内容，留空则不显示" value="自定义文字样式">
+        </div>
+
+        <!-- 排列结构设置 -->
+        <div class="control-group">
+            <label for="layoutType">文字排列方式</label>
+            <select id="layoutType">
+                <option value="column">垂直排列（上下分布）</option>
+                <option value="row">水平排列（左右分布）</option>
+            </select>
+        </div>
+
+        <!-- 颜色设置 -->
+        <div class="control-group">
+            <label for="textColor1">第一段文字颜色</label>
+            <input type="color" id="textColor1" value="#e53e3e">
+        </div>
+
+        <div class="control-group">
+            <label for="textColor2">第二段文字颜色</label>
+            <input type="color" id="textColor2" value="#2d3748">
+        </div>
+
+        <!-- 背景设置：颜色 + 自定义上传图片 -->
+        <div class="control-group">
+            <label>封面背景设置</label>
+            <input type="color" id="bgColor" value="#f7fafc" placeholder="封面背景颜色">
+            <div style="margin-top: 10px;">
+                <input type="file" id="bgImageUpload" accept="image/jpg, image/jpeg, image/png, image/webp" style="display: none;" onchange="previewBgImage(this)">
+                <span class="upload-btn" onclick="document.getElementById('bgImageUpload').click()">点击上传背景图片</span>
+                <p id="bgImageTip">支持JPG、PNG、WEBP格式，上传后将覆盖背景颜色</p>
+            </div>
+        </div>
+
+        <!-- 图片大小自定义设置 -->
+        <div class="control-group">
+            <label>封面图片尺寸设置（像素）</label>
+            <div class="coord-group">
+                <div class="coord-item">
+                    <label for="coverWidth">宽度</label>
+                    <input type="number" id="coverWidth" min="100" max="1920" value="450" placeholder="封面宽度">
+                </div>
+                <div class="coord-item">
+                    <label for="coverHeight">高度</label>
+                    <input type="number" id="coverHeight" min="100" max="2880" value="800" placeholder="封面高度">
+                </div>
+            </div>
+        </div>
+
+        <!-- 文字大小设置 -->
+        <div class="control-group">
+            <label for="fontSize1">第一段文字大小（px）</label>
+            <input type="number" id="fontSize1" min="12" max="60" value="28">
+        </div>
+
+        <div class="control-group">
+            <label for="fontSize2">第二段文字大小（px）</label>
+            <input type="number" id="fontSize2" min="12" max="60" value="18">
+        </div>
+
+        <!-- 新增：主标题坐标设置 -->
+        <div class="control-group">
+            <label>主标题坐标位置（相对封面，像素）</label>
+            <div class="coord-group">
+                <div class="coord-item">
+                    <label for="text1Left">左偏移（left）</label>
+                    <input type="number" id="text1Left" min="0" max="1920" value="225" placeholder="左距离">
+                </div>
+                <div class="coord-item">
+                    <label for="text1Top">上偏移（top）</label>
+                    <input type="number" id="text1Top" min="0" max="2880" value="400" placeholder="上距离">
+                </div>
+            </div>
+        </div>
+
+        <!-- 新增：副标题坐标设置 -->
+        <div class="control-group">
+            <label>副标题坐标位置（相对封面，像素）</label>
+            <div class="coord-group">
+                <div class="coord-item">
+                    <label for="text2Left">左偏移（left）</label>
+                    <input type="number" id="text2Left" min="0" max="1920" value="225" placeholder="左距离">
+                </div>
+                <div class="coord-item">
+                    <label for="text2Top">上偏移（top）</label>
+                    <input type="number" id="text2Top" min="0" max="2880" value="460" placeholder="上距离">
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="btn-group">
+            <button class="btn-generate" onclick="generateCover()">生成封面预览</button>
+            <button class="btn-download" onclick="downloadCover()">下载封面图片</button>
+        </div>
+    </div>
+
+    <!-- 预览区域 -->
+    <div class="preview-area">
+        <h3 class="preview-title">封面预览</h3>
+        <div class="cover-preview" id="coverPreview">
+            <!-- 背景图片容器 -->
+            <img class="cover-bg-image" id="coverBgImage" src="" alt="封面背景图">
+            <!-- 文字内容 -->
+            <div class="text-item" id="previewText1">微信公众号封面</div>
+            <div class="text-item" id="previewText2">自定义文字样式</div>
+        </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        // 预览背景图片
+        function previewBgImage(input) {
+            const file = input.files[0];
+            const coverBgImage = document.getElementById('coverBgImage');
+            const bgImageTip = document.getElementById('bgImageTip');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    coverBgImage.src = e.target.result;
+                    coverBgImage.style.display = 'block'; // 显示背景图片
+                    bgImageTip.innerText = `已上传：${file.name}（格式：${file.type.split('/')[1].toUpperCase()}，大小：${(file.size/1024).toFixed(2)}KB）`;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                coverBgImage.src = '';
+                coverBgImage.style.display = 'none'; // 隐藏背景图片
+                bgImageTip.innerText = '支持JPG、PNG、WEBP格式，上传后将覆盖背景颜色';
+            }
+        }
+
+        // 生成封面预览
+        function generateCover() {
+            // 获取各项配置值
+            const text1 = document.getElementById('text1').value;
+            const text2 = document.getElementById('text2').value;
+            const layoutType = document.getElementById('layoutType').value;
+            const textColor1 = document.getElementById('textColor1').value;
+            const textColor2 = document.getElementById('textColor2').value;
+            const bgColor = document.getElementById('bgColor').value;
+            const fontSize1 = document.getElementById('fontSize1').value + 'px';
+            const fontSize2 = document.getElementById('fontSize2').value + 'px';
+            // 自定义图片尺寸
+            const coverWidth = document.getElementById('coverWidth').value + 'px';
+            const coverHeight = document.getElementById('coverHeight').value + 'px';
+            // 新增：获取主标题坐标
+            const text1Left = document.getElementById('text1Left').value + 'px';
+            const text1Top = document.getElementById('text1Top').value + 'px';
+            // 新增：获取副标题坐标
+            const text2Left = document.getElementById('text2Left').value + 'px';
+            const text2Top = document.getElementById('text2Top').value + 'px';
+
+            // 获取预览元素
+            const coverPreview = document.getElementById('coverPreview');
+            const previewText1 = document.getElementById('previewText1');
+            const previewText2 = document.getElementById('previewText2');
+            const coverBgImage = document.getElementById('coverBgImage');
+
+            // 设置文字内容
+            previewText1.innerText = text1 || '';
+            previewText2.innerText = text2 || '';
+
+            // 隐藏空的副标题
+            if (!text2) {
+                previewText2.style.display = 'none';
+            } else {
+                previewText2.style.display = 'block';
+            }
+
+            // 设置排列方式（兼容原有功能，同时支持坐标精准控制）
+            if (layoutType === 'column') {
+                coverPreview.style.flexDirection = 'column';
+            } else {
+                coverPreview.style.flexDirection = 'row';
+            }
+
+            // 设置颜色
+            previewText1.style.color = textColor1;
+            previewText2.style.color = textColor2;
+            // 背景颜色（若未上传背景图则生效）
+            if (!coverBgImage.src) {
+                coverPreview.style.backgroundColor = bgColor;
+            }
+
+            // 设置文字大小
+            previewText1.style.fontSize = fontSize1;
+            previewText2.style.fontSize = fontSize2;
+
+            // 设置自定义图片尺寸（覆盖默认样式）
+            coverPreview.style.width = coverWidth;
+            coverPreview.style.height = coverHeight;
+            coverPreview.style.aspectRatio = 'unset'; // 取消默认宽高比
+
+            // 新增：设置主标题坐标（绝对定位）
+            previewText1.style.left = text1Left;
+            previewText1.style.top = text1Top;
+            previewText1.style.transform = 'translate(-50%, -50%)'; // 保持文字自身居中
+            // 新增：设置副标题坐标（绝对定位）
+            previewText2.style.left = text2Left;
+            previewText2.style.top = text2Top;
+            previewText2.style.transform = 'translate(-50%, -50%)'; // 保持文字自身居中
+        }
+
+        // 下载封面图片
+        function downloadCover() {
+            const coverPreview = document.getElementById('coverPreview');
+            // 获取自定义尺寸用于下载图片的分辨率优化
+            const coverWidth = parseInt(document.getElementById('coverWidth').value);
+            const coverHeight = parseInt(document.getElementById('coverHeight').value);
+
+            // 使用html2canvas将DOM转为图片
+            html2canvas(coverPreview, {
+                useCORS: true,
+                scale: 2, // 提高分辨率
+                width: coverWidth,
+                height: coverHeight
+            }).then(canvas => {
+                // 创建下载链接
+                const link = document.createElement('a');
+                link.download = `微信公众号封面_${coverWidth}x${coverHeight}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                link.remove();
+            });
+        }
+
+        // 页面加载时默认生成一次预览
+        window.onload = function() {
+            generateCover();
+        };
+    </script>
+</body>
+</html>

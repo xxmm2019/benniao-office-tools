@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线图片水印添加工具 - 保护您的证件安全</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-watermark/">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #834D9B, #AA4EB9, #D04ED6);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .upload-section, .preview-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .upload-box {
+            border: 3px dashed #4a6ee0;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f8f9ff;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+        }
+        
+        .upload-box:hover {
+            background-color: #eef1ff;
+            border-color: #1e3c72;
+        }
+        
+        .upload-icon {
+            font-size: 60px;
+            color: #4a6ee0;
+            margin-bottom: 15px;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .upload-btn {
+            background-color: #4a6ee0;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+        
+        .upload-btn:hover {
+            background-color: #1e3c72;
+        }
+        
+        .controls {
+            margin-top: 25px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input[type="text"], input[type="range"], input[type="color"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        
+        input[type="range"] {
+            padding: 0;
+        }
+        
+        .range-value {
+            display: inline-block;
+            width: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .preview-container {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            display: none;
+        }
+        
+        .watermark-canvas {
+            max-width: 100%;
+            max-height: 300px;
+            display: none;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .add-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .add-btn:hover {
+            background-color: #218838;
+        }
+        
+        .download-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .download-btn:hover {
+            background-color: #0069d9;
+        }
+        
+        .reset-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+        
+        .info-box {
+            background-color: #e7f3ff;
+            border-left: 5px solid #4a6ee0;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .info-box h3 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .upload-section, .preview-section {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>在线图片水印添加工具</h1>
+            <p class="subtitle">为PNG、JPG、GIF图片添加文字水印，特别适合身份证、驾照、护照等证件添加防盗用水印</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="upload-section">
+                <div class="upload-box">
+                    <div class="upload-icon"></div>
+                    <h3>上传您的图片</h3>
+                    <p>支持PNG、JPG、GIF格式，最大文件大小：5MB</p>
+                    <input type="file" id="fileInput" accept=".png,.jpg,.jpeg,.gif">
+                    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">选择图片文件</button>
+                    <p id="fileName" style="margin-top: 10px; color: #666;"></p>
+                </div>
+                
+                <div class="controls">
+                    <h2 style="margin-bottom: 20px; color: #1e3c72;">水印设置</h2>
+                    
+                    <div class="control-group">
+                        <label for="watermarkText">水印文字内容</label>
+                        <input type="text" id="watermarkText" value="仅供办理业务使用" placeholder="请输入水印文字">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="fontSize">字体大小: <span id="fontSizeValue" class="range-value">24</span>px</label>
+                        <input type="range" id="fontSize" min="12" max="60" value="24">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="fontColor">文字颜色</label>
+                        <input type="color" id="fontColor" value="#FF0000">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="opacity">透明度: <span id="opacityValue" class="range-value">0.5</span></label>
+                        <input type="range" id="opacity" min="0.1" max="1" step="0.1" value="0.5">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="spacing">水印间隔: <span id="spacingValue" class="range-value">150</span>px</label>
+                        <input type="range" id="spacing" min="50" max="400" value="150">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="angle">旋转角度: <span id="angleValue" class="range-value">30</span>°</label>
+                        <input type="range" id="angle" min="0" max="90" value="30">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 style="margin-bottom: 15px; color: #1e3c72;">预览效果</h2>
+                <div class="preview-container">
+                    <img id="imagePreview" alt="图片预览">
+                    <canvas id="watermarkCanvas" class="watermark-canvas"></canvas>
+                    <p id="previewPlaceholder" style="color: #888;">水印效果将在这里显示</p>
+                </div>
+                
+                <div class="actions">
+                    <button class="action-btn add-btn" onclick="addWatermark()">添加水印</button>
+                    <button class="action-btn download-btn" onclick="downloadImage()" id="downloadBtn" disabled>下载图片</button>
+                    <button class="action-btn reset-btn" onclick="resetAll()">重置</button>
+                </div>
+                
+                <div class="info-box">
+                    <h3>使用说明</h3>
+                    <p>1. 上传您需要添加水印的图片（身份证、驾照、护照等）</p>
+                    <p>2. 设置水印文字内容、大小、颜色、透明度和间隔</p>
+                    <p>3. 点击"添加水印"预览效果</p>
+                    <p>4. 满意后点击"下载图片"保存到本地</p>
+                    <p><strong>提示：</strong>为保护个人信息安全，建议在分享证件图片前添加"仅供XX使用"等说明性水印。</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+             
+        </footer>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const watermarkCanvas = document.getElementById('watermarkCanvas');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const fileName = document.getElementById('fileName');
+        
+        // 水印参数元素
+        const watermarkText = document.getElementById('watermarkText');
+        const fontSize = document.getElementById('fontSize');
+        const fontSizeValue = document.getElementById('fontSizeValue');
+        const fontColor = document.getElementById('fontColor');
+        const opacity = document.getElementById('opacity');
+        const opacityValue = document.getElementById('opacityValue');
+        const spacing = document.getElementById('spacing');
+        const spacingValue = document.getElementById('spacingValue');
+        const angle = document.getElementById('angle');
+        const angleValue = document.getElementById('angleValue');
+        
+        // 原始图像数据
+        let originalImage = null;
+        
+        // 更新范围输入的值显示
+        fontSize.addEventListener('input', () => fontSizeValue.textContent = fontSize.value);
+        opacity.addEventListener('input', () => opacityValue.textContent = opacity.value);
+        spacing.addEventListener('input', () => spacingValue.textContent = spacing.value);
+        angle.addEventListener('input', () => angleValue.textContent = angle.value);
+        
+        // 文件选择事件
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // 验证文件类型
+            const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('请选择PNG、JPG或GIF格式的图片文件');
+                return;
+            }
+            
+            // 验证文件大小（5MB以内）
+            if (file.size > 5 * 1024 * 1024) {
+                alert('图片文件大小不能超过5MB');
+                return;
+            }
+            
+            fileName.textContent = `已选择文件: ${file.name}`;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imagePreview.src = event.target.result;
+                imagePreview.style.display = 'block';
+                watermarkCanvas.style.display = 'none';
+                previewPlaceholder.style.display = 'none';
+                originalImage = new Image();
+                originalImage.src = event.target.result;
+                
+                // 重置下载按钮
+                downloadBtn.disabled = true;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // 添加水印函数
+        function addWatermark() {
+            if (!originalImage) {
+                alert('请先上传图片');
+                return;
+            }
+            
+            // 等待图片加载完成
+            originalImage.onload = function() {
+                // 设置canvas尺寸与图片相同
+                const canvas = watermarkCanvas;
+                canvas.width = originalImage.width;
+                canvas.height = originalImage.height;
+                
+                const ctx = canvas.getContext('2d');
+                
+                // 绘制原始图片
+                ctx.drawImage(originalImage, 0, 0);
+                
+                // 设置水印样式
+                ctx.font = `${fontSize.value}px Arial`;
+                ctx.fillStyle = fontColor.value;
+                ctx.globalAlpha = opacity.value;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // 将角度转换为弧度
+                const angleRad = parseInt(angle.value) * Math.PI / 180;
+                
+                // 保存当前画布状态
+                ctx.save();
+                
+                // 计算水印位置和间距
+                const spacingValue = parseInt(spacing.value);
+                const text = watermarkText.value || '默认水印';
+                
+                // 计算水印在旋转后的尺寸
+                const textWidth = ctx.measureText(text).width;
+                const textHeight = parseInt(fontSize.value);
+                
+                // 计算旋转后水印的边界框尺寸
+                const rotatedWidth = Math.abs(textWidth * Math.cos(angleRad)) + Math.abs(textHeight * Math.sin(angleRad));
+                const rotatedHeight = Math.abs(textWidth * Math.sin(angleRad)) + Math.abs(textHeight * Math.cos(angleRad));
+                
+                // 计算水印排列
+                const xCount = Math.ceil(canvas.width / (rotatedWidth + spacingValue)) + 1;
+                const yCount = Math.ceil(canvas.height / (rotatedHeight + spacingValue)) + 1;
+                
+                // 绘制平铺水印
+                for (let x = 0; x < xCount; x++) {
+                    for (let y = 0; y < yCount; y++) {
+                        const xPos = x * (rotatedWidth + spacingValue);
+                        const yPos = y * (rotatedHeight + spacingValue);
+                        
+                        // 保存状态，旋转绘制水印，然后恢复
+                        ctx.save();
+                        ctx.translate(xPos + rotatedWidth/2, yPos + rotatedHeight/2);
+                        ctx.rotate(angleRad);
+                        ctx.fillText(text, 0, 0);
+                        ctx.restore();
+                    }
+                }
+                
+                // 恢复画布状态
+                ctx.restore();
+                
+                // 显示canvas，隐藏原始图片
+                imagePreview.style.display = 'none';
+                canvas.style.display = 'block';
+                previewPlaceholder.style.display = 'none';
+                
+                // 启用下载按钮
+                downloadBtn.disabled = false;
+            };
+            
+            // 如果图片已经加载完成，直接触发onload
+            if (originalImage.complete) {
+                originalImage.onload();
+            }
+        }
+        
+        // 下载图片函数
+        function downloadImage() {
+            const canvas = watermarkCanvas;
+            if (!canvas.style.display || canvas.style.display === 'none') {
+                alert('请先添加水印');
+                return;
+            }
+            
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.download = `watermarked-${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // 重置所有设置
+        function resetAll() {
+            // 重置表单
+            watermarkText.value = '仅供办理业务使用';
+            fontSize.value = 24;
+            fontSizeValue.textContent = '24';
+            fontColor.value = '#FF0000';
+            opacity.value = 0.5;
+            opacityValue.textContent = '0.5';
+            spacing.value = 150;
+            spacingValue.textContent = '150';
+            angle.value = 30;
+            angleValue.textContent = '30';
+            
+            // 重置预览
+            imagePreview.style.display = 'none';
+            watermarkCanvas.style.display = 'none';
+            previewPlaceholder.style.display = 'block';
+            fileName.textContent = '';
+            fileInput.value = '';
+            originalImage = null;
+            downloadBtn.disabled = true;
+        }
+        
+        // 初始化页面时设置默认值显示
+        window.onload = function() {
+            fontSizeValue.textContent = fontSize.value;
+            opacityValue.textContent = opacity.value;
+            spacingValue.textContent = spacing.value;
+            angleValue.textContent = angle.value;
+        };
+    </script>
+</body>
+</html>

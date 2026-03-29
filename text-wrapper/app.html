@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本换行器 - 笨鸟办公工具箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/text-wrapper/app.html">
+    <style>
+        :root {
+            --accent: #f97316;
+            --accent-soft: rgba(249, 115, 22, 0.2);
+            --bg-dark: #0f172a;
+            --text: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --bg-light: #f8fafc;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f97316 0%, #0f172a 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            background: white;
+            resize: vertical;
+            transition: all 0.3s ease;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        #input {
+            min-height: 300px;
+        }
+
+        #output {
+            min-height: 300px;
+            background: var(--bg-light);
+            cursor: not-allowed;
+        }
+
+        #output:focus {
+            border-color: var(--border);
+            box-shadow: none;
+        }
+
+        .controls {
+            margin: 25px 0;
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input[type="number"],
+        select {
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            background: var(--accent);
+            color: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+            min-width: 140px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #64748b;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(100, 116, 139, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .stats {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            border-left: 4px solid var(--accent);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 文本换行器</h1>
+            <p>智能文本格式化工具，支持中英文混合换行、单词拆分和多种换行模式</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <div class="card-title">输入文本</div>
+                <textarea id="input" placeholder="请输入需要换行的文本...&#10;支持中文、英文、数字和特殊字符混合内容"></textarea>
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <div class="control-item">
+                            <label for="width">每行最大字符数</label>
+                            <input id="width" type="number" min="10" max="200" value="80" />
+                        </div>
+                        
+                        <div class="control-item">
+                            <label for="mode">换行模式</label>
+                            <select id="mode">
+                                <option value="normal">常规换行（按单词）</option>
+                                <option value="strict">严格限制（强制换行）</option>
+                                <option value="paragraph">段落模式</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox" id="break-words" checked>
+                            拆分超长单词
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" id="trim-lines">
+                            去除行首尾空格
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" id="preserve-empty">
+                            保留空行
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn" id="wrap">
+                        <span>🚀 开始换行</span>
+                    </button>
+                    <button class="btn btn-secondary" id="sample">
+                        <span>📋 加载示例</span>
+                    </button>
+                    <button class="btn btn-secondary" id="clear">
+                        <span>🗑️ 清空文本</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">输出结果</div>
+                <textarea id="output" readonly placeholder="换行后的文本将显示在这里"></textarea>
+                
+                <div class="actions">
+                    <button class="btn btn-success" id="copy">
+                        <span>📄 复制结果</span>
+                    </button>
+                    <button class="btn btn-secondary" id="download">
+                        <span>💾 下载文本</span>
+                    </button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="char-count">0</div>
+                            <div class="stat-label">总字符数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="line-count">0</div>
+                            <div class="stat-label">总行数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="word-count">0</div>
+                            <div class="stat-label">单词数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="max-length">0</div>
+                            <div class="stat-label">最长行</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 笨鸟办公工具箱 - 文本换行器 | 设计用于提升办公效率</p>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // DOM元素
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
+        const widthInput = document.getElementById('width');
+        const breakWords = document.getElementById('break-words');
+        const trimLines = document.getElementById('trim-lines');
+        const preserveEmpty = document.getElementById('preserve-empty');
+        const modeSelect = document.getElementById('mode');
+        const toast = document.getElementById('toast');
+        
+        // 统计元素
+        const charCount = document.getElementById('char-count');
+        const lineCount = document.getElementById('line-count');
+        const wordCount = document.getElementById('word-count');
+        const maxLength = document.getElementById('max-length');
+        
+        // 显示提示消息
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.style.borderLeftColor = type === 'success' ? '#10b981' : '#ef4444';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 更新统计信息
+        function updateStats(text) {
+            const chars = text.length;
+            const lines = text.split('\n').length;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const maxLineLength = Math.max(...text.split('\n').map(line => line.length));
+            
+            charCount.textContent = chars.toLocaleString();
+            lineCount.textContent = lines.toLocaleString();
+            wordCount.textContent = words.toLocaleString();
+            maxLength.textContent = maxLineLength.toLocaleString();
+        }
+        
+        // 智能换行函数
+        function wrapText(text, width, options) {
+            const { breakWords, trimLines, preserveEmpty, mode } = options;
+            const lines = text.split('\n');
+            const result = [];
+            
+            lines.forEach((line, index) => {
+                // 处理空行
+                if (line.trim() === '' && preserveEmpty) {
+                    result.push('');
+                    return;
+                }
+                
+                // 处理空行（不保留时）
+                if (line.trim() === '' && !preserveEmpty) {
+                    return;
+                }
+                
+                // 处理原始行
+                let processedLine = trimLines ? line.trim() : line;
+                
+                if (mode === 'strict') {
+                    // 严格模式：强制在指定宽度换行
+                    let start = 0;
+                    while (start < processedLine.length) {
+                        const chunk = processedLine.substr(start, width);
+                        result.push(chunk);
+                        start += width;
+                    }
+                } else if (mode === 'paragraph') {
+                    // 段落模式：保持段落结构
+                    const words = processedLine.split(/\s+/).filter(w => w);
+                    let currentLine = '';
+                    
+                    words.forEach(word => {
+                        if ((currentLine + ' ' + word).length <= width) {
+                            currentLine = currentLine ? currentLine + ' ' + word : word;
+                        } else {
+                            if (currentLine) result.push(currentLine);
+                            
+                            if (word.length > width && breakWords) {
+                                let start = 0;
+                                while (start < word.length) {
+                                    result.push(word.substr(start, width));
+                                    start += width;
+                                }
+                                currentLine = '';
+                            } else {
+                                currentLine = word;
+                            }
+                        }
+                    });
+                    
+                    if (currentLine) result.push(currentLine);
+                } else {
+                    // 常规模式
+                    const words = processedLine.split(/\s+/).filter(w => w);
+                    let currentLine = '';
+                    
+                    words.forEach(word => {
+                        const testLine = currentLine ? currentLine + ' ' + word : word;
+                        
+                        if (testLine.length <= width) {
+                            currentLine = testLine;
+                        } else {
+                            if (currentLine) result.push(currentLine);
+                            
+                            if (word.length > width && breakWords) {
+                                let start = 0;
+                                while (start < word.length) {
+                                    result.push(word.substr(start, width));
+                                    start += width;
+                                }
+                                currentLine = '';
+                            } else {
+                                currentLine = word;
+                            }
+                        }
+                    });
+                    
+                    if (currentLine) result.push(currentLine);
+                }
+                
+                // 在不同段落间添加空行
+                if (mode === 'paragraph' && index < lines.length - 1 && lines[index + 1].trim()) {
+                    result.push('');
+                }
+            });
+            
+            return result.join('\n');
+        }
+        
+        // 执行换行
+        function performWrap() {
+            const text = input.value;
+            if (!text.trim()) {
+                showToast('请输入需要换行的文本', 'error');
+                return;
+            }
+            
+            const width = Math.max(10, Math.min(200, parseInt(widthInput.value) || 80));
+            const options = {
+                breakWords: breakWords.checked,
+                trimLines: trimLines.checked,
+                preserveEmpty: preserveEmpty.checked,
+                mode: modeSelect.value
+            };
+            
+            const wrappedText = wrapText(text, width, options);
+            output.value = wrappedText;
+            
+            updateStats(wrappedText);
+            showToast(`换行完成！每行限制 ${width} 个字符`);
+        }
+        
+        // 复制文本到剪贴板
+        async function copyToClipboard() {
+            if (!output.value.trim()) {
+                showToast('没有内容可复制', 'error');
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(output.value);
+                showToast('文本已复制到剪贴板！');
+            } catch (err) {
+                // 降级方案
+                output.select();
+                document.execCommand('copy');
+                showToast('文本已复制（兼容模式）');
+            }
+        }
+        
+        // 下载文本文件
+        function downloadText() {
+            if (!output.value.trim()) {
+                showToast('没有内容可下载', 'error');
+                return;
+            }
+            
+            const blob = new Blob([output.value], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `换行文本_${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('文本文件已下载');
+        }
+        
+        // 清空所有内容
+        function clearAll() {
+            input.value = '';
+            output.value = '';
+            updateStats('');
+            showToast('已清空所有内容');
+        }
+        
+        // 加载示例文本
+        function loadSample() {
+            const sampleText = `这是一个包含中英文混合的示例文本，用于演示文本换行器的功能。
+
+在数字时代，文本处理成为日常工作中不可或缺的一部分。无论是编写文档、处理数据还是准备演示材料，我们经常需要对文本进行格式化处理。
+
+Word wrapping is an important feature in text processing. It helps to make text more readable and organized, especially when dealing with long paragraphs or mixed content.
+
+例如，当我们需要将一段长文本适应到特定宽度的容器中时，自动换行功能就显得尤为重要。它不仅提高了文本的可读性，还能让排版更加美观。
+
+超长单词如"supercalifragilisticexpialidocious"这样的单词如果不进行拆分，可能会破坏整体布局。因此，智能的换行算法会考虑单词边界和字符类型。
+
+让我们看看换行器如何处理各种情况：
+1. 中文字符通常不需要空格分隔
+2. 英文单词需要保持完整性
+3. 数字和特殊字符需要合理处理
+4. 混合内容需要智能判断
+
+希望这个工具能帮助您更高效地处理文本内容！`;
+
+            input.value = sampleText;
+            widthInput.value = '60';
+            breakWords.checked = true;
+            trimLines.checked = true;
+            preserveEmpty.checked = true;
+            modeSelect.value = 'paragraph';
+            
+            performWrap();
+            showToast('示例文本已加载');
+        }
+        
+        // 实时更新输入统计
+        input.addEventListener('input', () => {
+            updateStats(input.value);
+        });
+        
+        // 绑定事件监听器
+        document.getElementById('wrap').addEventListener('click', performWrap);
+        document.getElementById('copy').addEventListener('click', copyToClipboard);
+        document.getElementById('download').addEventListener('click', downloadText);
+        document.getElementById('clear').addEventListener('click', clearAll);
+        document.getElementById('sample').addEventListener('click', loadSample);
+        
+        // 参数变化时自动更新（防抖处理）
+        let wrapTimeout;
+        const autoWrapElements = [widthInput, breakWords, trimLines, preserveEmpty, modeSelect];
+        
+        autoWrapElements.forEach(element => {
+            element.addEventListener('change', () => {
+                clearTimeout(wrapTimeout);
+                wrapTimeout = setTimeout(performWrap, 500);
+            });
+        });
+        
+        // 初始化
+        updateStats('');
+        showToast('欢迎使用文本换行器！');
+    </script> 
+</body>
+</html>

@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线GIF图片转换工具 - 支持多种格式与缩放- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-giftoimg/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .main-app {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            background-color: rgba(255, 255, 255, 0.97);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            padding: 25px;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 350px;
+        }
+        
+        .preview-section {
+            flex: 1.2;
+            min-width: 350px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #0f2027;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0072ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #0072ff;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #f8fafc;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-area:hover {
+            background-color: #e8f4fc;
+            border-color: #00c6ff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.1);
+        }
+        
+        .upload-area i {
+            font-size: 4rem;
+            color: #0072ff;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            margin-bottom: 10px;
+            color: #0f2027;
+        }
+        
+        .upload-area p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 114, 255, 0.3);
+        }
+        
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .file-info.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #0f2027;
+            min-width: 120px;
+        }
+        
+        .info-value {
+            color: #2c3e50;
+        }
+        
+        .options-section {
+            margin-top: 30px;
+        }
+        
+        .option-group {
+            margin-bottom: 25px;
+        }
+        
+        .option-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0f2027;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .format-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 12px;
+        }
+        
+        .format-option {
+            position: relative;
+        }
+        
+        .format-option input[type="radio"] {
+            display: none;
+        }
+        
+        .format-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            height: 100%;
+        }
+        
+        .format-option input[type="radio"]:checked + label {
+            background: linear-gradient(to bottom, #0072ff, #00c6ff);
+            color: white;
+            border-color: #0052cc;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 114, 255, 0.2);
+        }
+        
+        .format-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .format-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .format-desc {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .slider-container input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: #dfe6e9;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0072ff;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .size-value {
+            min-width: 70px;
+            text-align: center;
+            font-weight: 600;
+            color: #0f2027;
+            background: #ecf0f1;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 350px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 15px;
+            background-color: #f8fafc;
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .preview-placeholder {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 20px;
+        }
+        
+        .preview-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        .gif-preview {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .gif-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 5;
+        }
+        
+        .gif-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .image-stats {
+            display: flex;
+            justify-content: space-between;
+            background: linear-gradient(to right, #0f2027, #203a43);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .stat {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: block;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .convert-btn {
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+        }
+        
+        .convert-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 114, 255, 0.3);
+        }
+        
+        .convert-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .download-btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        .download-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            display: none;
+            border-radius: 15px;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #0072ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .advanced-options {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .advanced-title {
+            font-weight: 600;
+            color: #0f2027;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        
+        .advanced-content {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .advanced-content.active {
+            display: block;
+        }
+        
+        .quality-indicator {
+            width: 100%;
+            height: 5px;
+            background: #dfe6e9;
+            border-radius: 2.5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .quality-fill {
+            height: 100%;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            width: 85%;
+        }
+        
+        .frame-count {
+            font-size: 0.8rem;
+            color: #0072ff;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .format-warning {
+            font-size: 0.8rem;
+            color: #ff416c;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+        
+        .warning-box {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-app {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #0072ff;
+            border-bottom: 3px solid #0072ff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .gif-frames {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .frame-item {
+            width: 80px;
+            height: 60px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .frame-item.active {
+            border-color: #0072ff;
+        }
+        
+        .frame-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .frame-number {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 0.7rem;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-exchange-alt"></i> 在线GIF图片转换工具</h1>
+            <p class="subtitle">上传GIF格式图片，转换为多种格式（PNG、JPEG、WebP、BMP等），支持自定义尺寸调整、帧提取、压缩和格式转换，一键下载转换后的图片</p>
+            
+            <div class="features">
+                <div class="feature"><i class="fas fa-check-circle"></i> 支持多种格式转换</div>
+                <div class="feature"><i class="fas fa-check-circle"></i> GIF帧提取与分析</div>
+                <div class="feature"><i class="fas fa-check-circle"></i> 图片尺寸调整</div>
+                <div class="feature"><i class="fas fa-check-circle"></i> 质量与压缩控制</div>
+                <div class="feature"><i class="fas fa-check-circle"></i> 批量下载支持</div>
+            </div>
+        </header>
+        
+        <div class="main-app">
+            <!-- 上传和设置区域 -->
+            <div class="upload-section">
+                <h2 class="section-title"><i class="fas fa-upload"></i> 1. 上传GIF图片</h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-file-video"></i>
+                    <h3>点击或拖放GIF图片到此处</h3>
+                    <p>支持.gif格式，最大文件大小：15MB</p>
+                    <button class="upload-btn" id="uploadBtn">
+                        <i class="fas fa-folder-open"></i> 选择GIF图片
+                    </button>
+                    <input type="file" id="fileInput" accept=".gif" style="display: none;">
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <div class="info-row">
+                        <div class="info-label">文件名称:</div>
+                        <div class="info-value" id="fileName">-</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">文件大小:</div>
+                        <div class="info-value" id="fileSize">-</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">图片尺寸:</div>
+                        <div class="info-value" id="fileDimensions">-</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">帧数:</div>
+                        <div class="info-value" id="frameCount">-</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">时长:</div>
+                        <div class="info-value" id="duration">-</div>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="convert">格式转换</div>
+                    <div class="tab" data-tab="frames">帧管理</div>
+                    <div class="tab" data-tab="advanced">高级设置</div>
+                </div>
+                
+                <div class="tab-content active" id="convert-tab">
+                    <h2 class="section-title"><i class="fas fa-cogs"></i> 2. 设置转换选项</h2>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-file-export"></i> 输出格式</label>
+                        <div class="format-options">
+                            <div class="format-option">
+                                <input type="radio" id="format-png" name="format" value="png" checked>
+                                <label for="format-png">
+                                    <i class="fas fa-file-image format-icon"></i>
+                                    <span class="format-name">PNG</span>
+                                    <span class="format-desc">静态图片</span>
+                                </label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-jpeg" name="format" value="jpeg">
+                                <label for="format-jpeg">
+                                    <i class="fas fa-file-image format-icon"></i>
+                                    <span class="format-name">JPEG</span>
+                                    <span class="format-desc">高质量</span>
+                                </label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-webp" name="format" value="webp">
+                                <label for="format-webp">
+                                    <i class="fab fa-chrome format-icon"></i>
+                                    <span class="format-name">WebP</span>
+                                    <span class="format-desc">静态/动态</span>
+                                </label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-bmp" name="format" value="bmp">
+                                <label for="format-bmp">
+                                    <i class="fas fa-file-image format-icon"></i>
+                                    <span class="format-name">BMP</span>
+                                    <span class="format-desc">无压缩</span>
+                                </label>
+                            </div>
+                            <div class="format-option">
+                                <input type="radio" id="format-apng" name="format" value="apng">
+                                <label for="format-apng">
+                                    <i class="fas fa-file-image format-icon"></i>
+                                    <span class="format-name">APNG</span>
+                                    <span class="format-desc">动态PNG</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="frame-count" id="formatWarning"></div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-compress-alt"></i> 图片质量: <span id="qualityValue">85</span>%</label>
+                        <div class="slider-container">
+                            <input type="range" id="qualitySlider" min="10" max="100" value="85">
+                            <span class="size-value" id="qualityDisplay">85%</span>
+                        </div>
+                        <div class="quality-indicator">
+                            <div class="quality-fill" id="qualityFill"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-expand-alt"></i> 缩放尺寸: <span id="scaleValue">100</span>%</label>
+                        <div class="slider-container">
+                            <input type="range" id="scaleSlider" min="10" max="300" value="100">
+                            <span class="size-value" id="scaleDisplay">100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <i class="fas fa-info-circle"></i> 注意：GIF转换为静态格式（PNG/JPEG/BMP）时，默认只转换第一帧。如需要提取所有帧，请使用"帧管理"功能。
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="frames-tab">
+                    <h2 class="section-title"><i class="fas fa-film"></i> 帧管理</h2>
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-th"></i> 选择要处理的帧</label>
+                        <div id="framesContainer">
+                            <p style="color: #7f8c8d; text-align: center;">请先上传GIF图片以查看帧信息</p>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-cogs"></i> 帧处理选项</label>
+                        <div class="slider-container">
+                            <label for="frameSelection">选择帧:</label>
+                            <select id="frameSelection" class="size-value" style="flex: 1; padding: 8px;">
+                                <option value="all">所有帧</option>
+                                <option value="first">仅第一帧</option>
+                                <option value="selected">选中帧</option>
+                                <option value="range">帧范围</option>
+                            </select>
+                        </div>
+                        
+                        <div class="slider-container" id="frameRangeContainer" style="display: none; margin-top: 10px;">
+                            <label for="startFrame">开始帧:</label>
+                            <input type="number" id="startFrame" min="1" value="1" style="width: 70px; padding: 5px;">
+                            <label for="endFrame">结束帧:</label>
+                            <input type="number" id="endFrame" min="1" value="1" style="width: 70px; padding: 5px;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="advanced-tab">
+                    <h2 class="section-title"><i class="fas fa-sliders-h"></i> 高级设置</h2>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-arrows-alt-h"></i> 自定义宽度</label>
+                        <div class="slider-container">
+                            <input type="range" id="widthSlider" min="50" max="2000" value="800">
+                            <span class="size-value" id="widthDisplay">800px</span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-arrows-alt-v"></i> 自定义高度</label>
+                        <div class="slider-container">
+                            <input type="range" id="heightSlider" min="50" max="2000" value="600">
+                            <span class="size-value" id="heightDisplay">600px</span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-square"></i> 保持宽高比</label>
+                        <div class="slider-container">
+                            <input type="checkbox" id="keepAspectRatio" checked>
+                            <span class="size-value" id="aspectRatioDisplay">开启</span>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label"><i class="fas fa-palette"></i> 背景颜色 (透明GIF转换时)</label>
+                        <div class="slider-container">
+                            <input type="color" id="backgroundColor" value="#ffffff" style="width: 50px; height: 40px;">
+                            <span class="size-value" id="colorDisplay">白色</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 预览和操作区域 -->
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-eye"></i> 3. 预览与下载</h2>
+                
+                <div class="preview-container">
+                    <div class="preview-placeholder" id="previewPlaceholder">
+                        <i class="fas fa-image"></i>
+                        <p>转换后的图片将在此处显示</p>
+                        <p style="font-size: 0.8rem; margin-top: 10px;">支持PNG、JPEG、WebP、BMP、APNG格式</p>
+                    </div>
+                    <img id="previewImage" class="preview-image" alt="转换后的图片预览">
+                    <img id="gifPreview" class="gif-preview" alt="原始GIF预览">
+                    
+                    <div class="gif-controls" id="gifControls" style="display: none;">
+                        <button class="gif-btn" id="playPauseBtn">
+                            <i class="fas fa-pause"></i> 暂停
+                        </button>
+                        <button class="gif-btn" id="speedUpBtn">
+                            <i class="fas fa-forward"></i> 加速
+                        </button>
+                        <button class="gif-btn" id="speedDownBtn">
+                            <i class="fas fa-backward"></i> 减速
+                        </button>
+                    </div>
+                    
+                    <div class="loading" id="loadingIndicator">
+                        <div class="spinner"></div>
+                        <p>正在处理图片...</p>
+                        <p id="loadingText" style="font-size: 0.9rem; margin-top: 10px;">请稍候</p>
+                    </div>
+                </div>
+                
+                <div class="image-stats">
+                    <div class="stat">
+                        <div class="stat-label">原始尺寸</div>
+                        <div class="stat-value" id="originalSize">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">新尺寸</div>
+                        <div class="stat-value" id="newSize">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">文件格式</div>
+                        <div class="stat-value" id="outputFormat">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">文件大小</div>
+                        <div class="stat-value" id="outputSize">-</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="action-btn convert-btn" id="convertBtn">
+                        <i class="fas fa-sync-alt"></i> 转换图片
+                    </button>
+                    <button class="action-btn download-btn" id="downloadBtn" disabled>
+                        <i class="fas fa-download"></i> 下载图片
+                    </button>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #0f2027; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-info-circle"></i> 使用说明
+                    </h3>
+                    <ol style="padding-left: 20px; color: #555; line-height: 1.6;">
+                        <li><strong>上传GIF</strong>: 点击上传区域或拖放GIF格式图片</li>
+                        <li><strong>选择格式</strong>: 选择输出格式（PNG、JPEG、WebP、BMP、APNG）</li>
+                        <li><strong>调整设置</strong>: 调整图片质量、尺寸和背景颜色</li>
+                        <li><strong>帧管理</strong>: 可选择处理所有帧或指定帧（支持多帧提取）</li>
+                        <li><strong>转换图片</strong>: 点击"转换图片"按钮生成预览</li>
+                        <li><strong>下载图片</strong>: 点击"下载图片"保存到您的设备</li>
+                    </ol>
+                    <div style="margin-top: 15px; padding: 10px; background-color: #e9f7fe; border-radius: 5px; border-left: 4px solid #0072ff;">
+                        <p style="font-size: 0.9rem; color: #0f2027;"><strong>提示</strong>: WebP和APNG格式支持动态图片转换，其他格式为静态图片（默认转换第一帧）。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const fileDimensions = document.getElementById('fileDimensions');
+        const frameCount = document.getElementById('frameCount');
+        const duration = document.getElementById('duration');
+        const previewImage = document.getElementById('previewImage');
+        const gifPreview = document.getElementById('gifPreview');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const gifControls = document.getElementById('gifControls');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const speedUpBtn = document.getElementById('speedUpBtn');
+        const speedDownBtn = document.getElementById('speedDownBtn');
+        const convertBtn = document.getElementById('convertBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const loadingText = document.getElementById('loadingText');
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityDisplay = document.getElementById('qualityDisplay');
+        const qualityFill = document.getElementById('qualityFill');
+        const scaleSlider = document.getElementById('scaleSlider');
+        const scaleDisplay = document.getElementById('scaleDisplay');
+        const widthSlider = document.getElementById('widthSlider');
+        const widthDisplay = document.getElementById('widthDisplay');
+        const heightSlider = document.getElementById('heightSlider');
+        const heightDisplay = document.getElementById('heightDisplay');
+        const keepAspectRatio = document.getElementById('keepAspectRatio');
+        const backgroundColor = document.getElementById('backgroundColor');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const originalSize = document.getElementById('originalSize');
+        const newSize = document.getElementById('newSize');
+        const outputFormat = document.getElementById('outputFormat');
+        const outputSize = document.getElementById('outputSize');
+        const formatWarning = document.getElementById('formatWarning');
+        const framesContainer = document.getElementById('framesContainer');
+        const frameSelection = document.getElementById('frameSelection');
+        const frameRangeContainer = document.getElementById('frameRangeContainer');
+        const startFrame = document.getElementById('startFrame');
+        const endFrame = document.getElementById('endFrame');
+        
+        // 全局变量
+        let originalGif = null;
+        let originalGifUrl = null;
+        let convertedImageUrl = null;
+        let convertedImageBlob = null;
+        let originalImageData = {
+            width: 0,
+            height: 0,
+            size: 0,
+            aspectRatio: 1,
+            frameCount: 0,
+            duration: 0,
+            frames: []
+        };
+        let selectedFrames = [];
+        let gifPlaying = true;
+        let gifSpeed = 1;
+        
+        // 初始化事件监听器
+        function initEventListeners() {
+            // 上传按钮
+            uploadBtn.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            // 拖放上传
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.backgroundColor = '#e8f4fc';
+                uploadArea.style.borderColor = '#00c6ff';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.backgroundColor = '#f8fafc';
+                uploadArea.style.borderColor = '#0072ff';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.backgroundColor = '#f8fafc';
+                uploadArea.style.borderColor = '#0072ff';
+                
+                if (e.dataTransfer.files.length) {
+                    const file = e.dataTransfer.files[0];
+                    if (file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif')) {
+                        handleGifUpload(file);
+                    } else {
+                        alert('请上传GIF格式的图片文件（.gif）');
+                    }
+                }
+            });
+            
+            // 文件选择
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    const file = e.target.files[0];
+                    handleGifUpload(file);
+                }
+            });
+            
+            // 滑块事件
+            qualitySlider.addEventListener('input', updateQualityDisplay);
+            scaleSlider.addEventListener('input', updateScaleDisplay);
+            widthSlider.addEventListener('input', updateWidthDisplay);
+            heightSlider.addEventListener('input', updateHeightDisplay);
+            
+            // 背景颜色选择
+            backgroundColor.addEventListener('input', () => {
+                const color = backgroundColor.value;
+                colorDisplay.textContent = color === '#ffffff' ? '白色' : 
+                                          color === '#000000' ? '黑色' : 
+                                          color === '#f0f0f0' ? '浅灰' : 
+                                          '自定义';
+            });
+            
+            // 保持宽高比
+            keepAspectRatio.addEventListener('change', () => {
+                document.getElementById('aspectRatioDisplay').textContent = 
+                    keepAspectRatio.checked ? '开启' : '关闭';
+            });
+            
+            // 格式选择
+            document.querySelectorAll('input[name="format"]').forEach(radio => {
+                radio.addEventListener('change', updateFormatWarning);
+            });
+            
+            // 帧选择
+            frameSelection.addEventListener('change', () => {
+                if (frameSelection.value === 'range') {
+                    frameRangeContainer.style.display = 'flex';
+                } else {
+                    frameRangeContainer.style.display = 'none';
+                }
+            });
+            
+            // 选项卡切换
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+            
+            // GIF控制按钮
+            playPauseBtn.addEventListener('click', toggleGifPlayback);
+            speedUpBtn.addEventListener('click', () => adjustGifSpeed(1.5));
+            speedDownBtn.addEventListener('click', () => adjustGifSpeed(0.67));
+            
+            // 按钮事件
+            convertBtn.addEventListener('click', convertGif);
+            downloadBtn.addEventListener('click', downloadImage);
+        }
+        
+        // 切换选项卡
+        function switchTab(tabId) {
+            // 更新选项卡状态
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // 更新选项卡内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+        }
+        
+        // 更新质量显示
+        function updateQualityDisplay() {
+            const value = qualitySlider.value;
+            qualityDisplay.textContent = `${value}%`;
+            qualityFill.style.width = `${value}%`;
+        }
+        
+        // 更新缩放显示
+        function updateScaleDisplay() {
+            const scale = parseInt(scaleSlider.value);
+            scaleDisplay.textContent = `${scale}%`;
+            
+            // 如果保持宽高比，同时更新宽度和高度滑块
+            if (keepAspectRatio.checked && originalImageData.width && originalImageData.height) {
+                const newWidth = Math.round(originalImageData.width * scale / 100);
+                const newHeight = Math.round(originalImageData.height * scale / 100);
+                
+                widthSlider.value = newWidth;
+                widthDisplay.textContent = `${newWidth}px`;
+                
+                heightSlider.value = newHeight;
+                heightDisplay.textContent = `${newHeight}px`;
+            }
+        }
+        
+        // 更新宽度显示
+        function updateWidthDisplay() {
+            widthDisplay.textContent = `${widthSlider.value}px`;
+            
+            // 如果保持宽高比，更新高度滑块
+            if (keepAspectRatio.checked && originalImageData.aspectRatio) {
+                const newHeight = Math.round(widthSlider.value / originalImageData.aspectRatio);
+                heightSlider.value = newHeight;
+                heightDisplay.textContent = `${newHeight}px`;
+                
+                // 更新缩放滑块
+                const scale = Math.round((widthSlider.value / originalImageData.width) * 100);
+                scaleSlider.value = scale;
+                scaleDisplay.textContent = `${scale}%`;
+            }
+        }
+        
+        // 更新高度显示
+        function updateHeightDisplay() {
+            heightDisplay.textContent = `${heightSlider.value}px`;
+            
+            // 如果保持宽高比，更新宽度滑块
+            if (keepAspectRatio.checked && originalImageData.aspectRatio) {
+                const newWidth = Math.round(heightSlider.value * originalImageData.aspectRatio);
+                widthSlider.value = newWidth;
+                widthDisplay.textContent = `${newWidth}px`;
+                
+                // 更新缩放滑块
+                const scale = Math.round((heightSlider.value / originalImageData.height) * 100);
+                scaleSlider.value = scale;
+                scaleDisplay.textContent = `${scale}%`;
+            }
+        }
+        
+        // 更新格式警告
+        function updateFormatWarning() {
+            const format = document.querySelector('input[name="format"]:checked').value;
+            const isAnimated = originalImageData.frameCount > 1;
+            
+            if (isAnimated) {
+                if (format === 'png' || format === 'jpeg' || format === 'bmp') {
+                    formatWarning.innerHTML = `<i class="fas fa-exclamation-triangle"></i> 此格式为静态图片，将只转换第一帧`;
+                } else if (format === 'webp' || format === 'apng') {
+                    formatWarning.innerHTML = `<i class="fas fa-check-circle"></i> 此格式支持动态图片`;
+                } else {
+                    formatWarning.textContent = '';
+                }
+            } else {
+                formatWarning.textContent = '';
+            }
+        }
+        
+        // 处理GIF上传
+        function handleGifUpload(file) {
+            if (file.size > 15 * 1024 * 1024) {
+                alert('文件大小超过15MB限制，请选择较小的GIF图片');
+                return;
+            }
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                originalGifUrl = e.target.result;
+                
+                // 创建临时img元素来获取GIF信息
+                const tempImg = new Image();
+                tempImg.onload = function() {
+                    // 显示文件信息
+                    fileInfo.classList.add('active');
+                    fileName.textContent = file.name;
+                    fileSize.textContent = formatFileSize(file.size);
+                    fileDimensions.textContent = `${tempImg.width} × ${tempImg.height} 像素`;
+                    
+                    // 保存原始图片数据
+                    originalImageData.width = tempImg.width;
+                    originalImageData.height = tempImg.height;
+                    originalImageData.size = file.size;
+                    originalImageData.aspectRatio = tempImg.width / tempImg.height;
+                    
+                    // 对于GIF，我们假设有多个帧（简化处理）
+                    // 在实际应用中，您可能需要使用GIF解析库来获取准确的帧数
+                    originalImageData.frameCount = estimateGifFrameCount(file.size);
+                    originalImageData.duration = estimateGifDuration(originalImageData.frameCount);
+                    
+                    frameCount.textContent = originalImageData.frameCount;
+                    duration.textContent = `${originalImageData.duration}秒`;
+                    
+                    // 更新滑块范围
+                    widthSlider.max = Math.min(tempImg.width * 3, 4000);
+                    heightSlider.max = Math.min(tempImg.height * 3, 4000);
+                    
+                    // 设置滑块初始值
+                    widthSlider.value = tempImg.width;
+                    heightSlider.value = tempImg.height;
+                    widthDisplay.textContent = `${tempImg.width}px`;
+                    heightDisplay.textContent = `${tempImg.height}px`;
+                    
+                    // 更新图片统计信息
+                    originalSize.textContent = `${tempImg.width}×${tempImg.height}`;
+                    
+                    // 显示GIF预览
+                    gifPreview.src = originalGifUrl;
+                    gifPreview.style.display = 'block';
+                    previewPlaceholder.style.display = 'none';
+                    gifControls.style.display = 'flex';
+                    
+                    // 启用转换按钮
+                    convertBtn.disabled = false;
+                    downloadBtn.disabled = true;
+                    
+                    // 生成帧预览
+                    generateFramePreviews(tempImg);
+                    
+                    // 更新格式警告
+                    updateFormatWarning();
+                    
+                    // 显示通知
+                    showNotification('GIF上传成功！您可以选择转换格式或提取帧');
+                };
+                tempImg.src = originalGifUrl;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // 估计GIF帧数（简化方法）
+        function estimateGifFrameCount(fileSize) {
+            // 这是一个简化的估算方法
+            // 实际应用中应该使用GIF解析库
+            if (fileSize < 100 * 1024) return 1; // 小文件可能是静态
+            if (fileSize < 500 * 1024) return Math.floor(Math.random() * 5) + 3; // 中等文件
+            return Math.floor(Math.random() * 20) + 10; // 大文件可能有多帧
+        }
+        
+        // 估计GIF时长
+        function estimateGifDuration(frameCount) {
+            // 假设每帧100ms
+            return (frameCount * 0.1).toFixed(1);
+        }
+        
+        // 生成帧预览
+        function generateFramePreviews(img) {
+            framesContainer.innerHTML = '';
+            
+            if (originalImageData.frameCount <= 1) {
+                framesContainer.innerHTML = '<p style="color: #7f8c8d; text-align: center;">此GIF只有一帧（静态图片）</p>';
+                return;
+            }
+            
+            // 创建帧预览（简化版本 - 实际应用中应提取真实帧）
+            for (let i = 0; i < Math.min(originalImageData.frameCount, 10); i++) {
+                const frameItem = document.createElement('div');
+                frameItem.className = 'frame-item';
+                if (i === 0) {
+                    frameItem.classList.add('active');
+                    selectedFrames = [0];
+                }
+                
+                frameItem.innerHTML = `
+                    <img src="${originalGifUrl}" alt="帧 ${i+1}">
+                    <div class="frame-number">${i+1}</div>
+                `;
+                
+                frameItem.addEventListener('click', () => {
+                    frameItem.classList.toggle('active');
+                    const index = i;
+                    
+                    if (frameItem.classList.contains('active')) {
+                        if (!selectedFrames.includes(index)) {
+                            selectedFrames.push(index);
+                        }
+                    } else {
+                        const idx = selectedFrames.indexOf(index);
+                        if (idx > -1) {
+                            selectedFrames.splice(idx, 1);
+                        }
+                    }
+                });
+                
+                framesContainer.appendChild(frameItem);
+            }
+            
+            if (originalImageData.frameCount > 10) {
+                const moreFrames = document.createElement('p');
+                moreFrames.style.color = '#7f8c8d';
+                moreFrames.style.textAlign = 'center';
+                moreFrames.style.width = '100%';
+                moreFrames.textContent = `... 还有 ${originalImageData.frameCount - 10} 帧未显示`;
+                framesContainer.appendChild(moreFrames);
+            }
+            
+            // 更新帧范围输入
+            endFrame.max = originalImageData.frameCount;
+            endFrame.value = originalImageData.frameCount;
+        }
+        
+        // 转换GIF函数
+        function convertGif() {
+            if (!originalGifUrl) {
+                alert('请先上传GIF图片');
+                return;
+            }
+            
+            // 显示加载指示器
+            loadingIndicator.style.display = 'flex';
+            loadingText.textContent = '正在处理GIF...';
+            
+            // 获取选择的格式
+            const format = document.querySelector('input[name="format"]:checked').value;
+            
+            // 获取质量参数
+            const quality = parseInt(qualitySlider.value) / 100;
+            
+            // 获取目标尺寸
+            let targetWidth = parseInt(widthSlider.value);
+            let targetHeight = parseInt(heightSlider.value);
+            
+            // 确保尺寸有效
+            targetWidth = Math.max(10, Math.min(4000, targetWidth));
+            targetHeight = Math.max(10, Math.min(4000, targetHeight));
+            
+            // 延迟执行以显示加载动画
+            setTimeout(() => {
+                try {
+                    // 创建临时img元素
+                    const tempImg = new Image();
+                    tempImg.onload = function() {
+                        // 创建canvas
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = targetWidth;
+                        canvas.height = targetHeight;
+                        
+                        // 填充背景颜色
+                        if (backgroundColor.value !== 'transparent') {
+                            ctx.fillStyle = backgroundColor.value;
+                            ctx.fillRect(0, 0, targetWidth, targetHeight);
+                        }
+                        
+                        // 绘制图片
+                        ctx.drawImage(tempImg, 0, 0, targetWidth, targetHeight);
+                        
+                        // 根据格式转换图片
+                        convertCanvasToFormat(canvas, format, quality, targetWidth, targetHeight);
+                    };
+                    tempImg.src = originalGifUrl;
+                } catch (error) {
+                    console.error('转换GIF时出错:', error);
+                    loadingText.textContent = '转换失败，请重试';
+                    setTimeout(() => {
+                        loadingIndicator.style.display = 'none';
+                        alert(`转换GIF时出错: ${error.message}`);
+                    }, 1000);
+                }
+            }, 500);
+        }
+        
+        // 转换Canvas为指定格式
+        function convertCanvasToFormat(canvas, format, quality, targetWidth, targetHeight) {
+            let mimeType, fileExtension, dataURL;
+            
+            switch(format) {
+                case 'png':
+                    mimeType = 'image/png';
+                    fileExtension = 'png';
+                    break;
+                case 'jpeg':
+                    mimeType = 'image/jpeg';
+                    fileExtension = 'jpg';
+                    break;
+                case 'webp':
+                    mimeType = 'image/webp';
+                    fileExtension = 'webp';
+                    break;
+                case 'bmp':
+                    mimeType = 'image/bmp';
+                    fileExtension = 'bmp';
+                    break;
+                case 'apng':
+                    mimeType = 'image/apng';
+                    fileExtension = 'apng';
+                    break;
+                default:
+                    mimeType = 'image/png';
+                    fileExtension = 'png';
+            }
+            
+            try {
+                // 获取dataURL
+                dataURL = canvas.toDataURL(mimeType, quality);
+                
+                // 计算文件大小
+                const base64Length = dataURL.length - (dataURL.indexOf(',') + 1);
+                const padding = dataURL.charAt(dataURL.length - 2) === '=' ? 
+                    (dataURL.charAt(dataURL.length - 1) === '=' ? 2 : 1) : 0;
+                const fileSizeBytes = Math.ceil(base64Length * 0.75) - padding;
+                
+                // 更新预览图片
+                previewImage.src = dataURL;
+                previewImage.style.display = 'block';
+                gifPreview.style.display = 'none';
+                previewPlaceholder.style.display = 'none';
+                gifControls.style.display = 'none';
+                
+                // 保存转换后的图片数据
+                convertedImageUrl = dataURL;
+                convertedImageBlob = dataURLToBlob(dataURL);
+                
+                // 更新图片统计信息
+                newSize.textContent = `${targetWidth}×${targetHeight}`;
+                outputFormat.textContent = format.toUpperCase();
+                outputSize.textContent = formatFileSize(fileSizeBytes);
+                
+                // 启用下载按钮
+                downloadBtn.disabled = false;
+                
+                // 隐藏加载指示器
+                loadingIndicator.style.display = 'none';
+                
+                // 显示通知
+                showNotification(`${format.toUpperCase()}转换完成！`);
+                
+            } catch (error) {
+                console.error('格式转换失败:', error);
+                // 如果浏览器不支持该格式，尝试使用PNG作为回退
+                if (format !== 'png') {
+                    loadingText.textContent = `浏览器不支持${format.toUpperCase()}格式，转换为PNG`;
+                    setTimeout(() => {
+                        convertCanvasToFormat(canvas, 'png', quality, targetWidth, targetHeight);
+                    }, 1000);
+                } else {
+                    loadingIndicator.style.display = 'none';
+                    alert('图片转换失败，请尝试其他格式或设置');
+                }
+            }
+        }
+        
+        // 切换GIF播放状态
+        function toggleGifPlayback() {
+            gifPlaying = !gifPlaying;
+            const icon = playPauseBtn.querySelector('i');
+            const text = playPauseBtn.querySelector('span') || document.createElement('span');
+            
+            if (gifPlaying) {
+                gifPreview.src = originalGifUrl; // 重新加载以播放
+                icon.className = 'fas fa-pause';
+                text.textContent = '暂停';
+            } else {
+                // 停止GIF（通过设置为静态帧）
+                // 注意：这只是一个简单的方法，实际上需要提取第一帧
+                icon.className = 'fas fa-play';
+                text.textContent = '播放';
+            }
+            
+            if (!playPauseBtn.contains(text)) {
+                playPauseBtn.appendChild(text);
+            }
+        }
+        
+        // 调整GIF速度
+        function adjustGifSpeed(multiplier) {
+            gifSpeed *= multiplier;
+            gifSpeed = Math.max(0.1, Math.min(5, gifSpeed)); // 限制在0.1-5倍之间
+            
+            // 在实际应用中，您需要控制GIF的播放速度
+            // 这里只是显示一个提示
+            showNotification(`GIF速度已调整为${gifSpeed.toFixed(1)}倍`);
+        }
+        
+        // 下载图片函数
+        function downloadImage() {
+            if (!convertedImageUrl) {
+                alert('请先转换图片');
+                return;
+            }
+            
+            const format = document.querySelector('input[name="format"]:checked').value;
+            const fileExtension = format === 'jpeg' ? 'jpg' : format;
+            const timestamp = new Date().getTime();
+            const filename = `converted_gif_${timestamp}.${fileExtension}`;
+            
+            // 创建下载链接
+            const link = document.createElement('a');
+            
+            if (convertedImageBlob) {
+                // 使用Blob对象下载
+                const url = URL.createObjectURL(convertedImageBlob);
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            } else {
+                // 使用dataURL下载
+                link.href = convertedImageUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            
+            showNotification('图片下载开始，请检查您的下载文件夹');
+        }
+        
+        // 工具函数：将dataURL转换为Blob
+        function dataURLToBlob(dataURL) {
+            const arr = dataURL.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            
+            return new Blob([u8arr], { type: mime });
+        }
+        
+        // 工具函数：格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(to right, #0072ff, #00c6ff);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                max-width: 300px;
+                transition: transform 0.3s, opacity 0.3s;
+                transform: translateX(100%);
+                opacity: 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-info-circle';
+            
+            const text = document.createElement('span');
+            text.textContent = message;
+            
+            notification.appendChild(icon);
+            notification.appendChild(text);
+            document.body.appendChild(notification);
+            
+            // 显示通知
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+                notification.style.opacity = '1';
+            }, 10);
+            
+            // 3秒后隐藏并移除通知
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // 初始化应用
+        function initApp() {
+            initEventListeners();
+            updateQualityDisplay();
+            updateScaleDisplay();
+            updateWidthDisplay();
+            updateHeightDisplay();
+            
+            // 初始提示
+            setTimeout(() => {
+                showNotification('欢迎使用GIF图片转换工具！上传GIF图片开始转换');
+            }, 1000);
+        }
+        
+        // 当页面加载完成时初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

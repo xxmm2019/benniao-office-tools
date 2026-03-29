@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本加密/解密工具 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-lock/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            margin-bottom: 10px;
+        }
+        
+        .app-description {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background-color: rgba(30, 30, 50, 0.7);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #4cc9f0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background-color: rgba(25, 25, 45, 0.9);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(100, 100, 150, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(100, 100, 150, 0.3);
+        }
+        
+        .card-header i {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            color: #4cc9f0;
+        }
+        
+        .card-header h2 {
+            font-size: 1.8rem;
+            color: #f0f0f0;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #b0b0d0;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            background-color: rgba(20, 20, 35, 0.8);
+            border: 1px solid rgba(100, 100, 150, 0.4);
+            border-radius: 10px;
+            color: #f0f0f0;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #4cc9f0;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .select-group, .key-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        select, input[type="password"] {
+            width: 100%;
+            padding: 14px 15px;
+            background-color: rgba(20, 20, 35, 0.8);
+            border: 1px solid rgba(100, 100, 150, 0.4);
+            border-radius: 10px;
+            color: #f0f0f0;
+            font-size: 1rem;
+        }
+        
+        select:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #4cc9f0;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button i {
+            font-size: 1.2rem;
+        }
+        
+        .encrypt-btn {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+            color: white;
+        }
+        
+        .encrypt-btn:hover {
+            background: linear-gradient(90deg, #009688, #8bc34a);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
+        }
+        
+        .decrypt-btn {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .decrypt-btn:hover {
+            background: linear-gradient(90deg, #e91e63, #ff3a00);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+        }
+        
+        .clear-btn {
+            background: linear-gradient(90deg, #8a2be2, #4b0082);
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background: linear-gradient(90deg, #7b1fa2, #3a0066);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        .result-container {
+            margin-top: 25px;
+        }
+        
+        .result-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .copy-btn {
+            background-color: rgba(76, 201, 240, 0.2);
+            color: #4cc9f0;
+            border: 1px solid rgba(76, 201, 240, 0.4);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background-color: rgba(76, 201, 240, 0.4);
+        }
+        
+        .result-box {
+            min-height: 100px;
+            padding: 15px;
+            background-color: rgba(20, 20, 35, 0.8);
+            border: 1px solid rgba(100, 100, 150, 0.4);
+            border-radius: 10px;
+            color: #f0f0f0;
+            font-size: 1rem;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+        
+        .algorithm-info {
+            background-color: rgba(30, 30, 50, 0.7);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+        
+        .algorithm-info h3 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: #f0f0f0;
+            border-left: 4px solid #fc00ff;
+            padding-left: 15px;
+        }
+        
+        .algorithms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .algorithm {
+            background-color: rgba(25, 25, 45, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border-top: 4px solid;
+        }
+        
+        .algorithm h4 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .algorithm p {
+            color: #b0b0d0;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .aes { border-top-color: #00dbde; }
+        .tripledes { border-top-color: #96c93d; }
+        .rabbit { border-top-color: #ff416c; }
+        .rc4 { border-top-color: #8a2be2; }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(100, 100, 150, 0.3);
+            color: #a0a0c0;
+            font-size: 0.9rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: rgba(25, 25, 45, 0.95);
+            border-left: 5px solid #4cc9f0;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.4s ease;
+            z-index: 1000;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left-color: #96c93d;
+        }
+        
+        .notification.error {
+            border-left-color: #ff416c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-lock"></i> 文本加密/解密工具</h1>
+            <p class="subtitle">使用多种加密算法保护您的文本数据</p>
+        </header>
+        
+        <div class="app-description">
+            <p>本工具使用AES、TripleDES、Rabbit和RC4加密算法对文本进行加密和解密。请确保在加密和解密时使用相同的算法和密钥。所有操作均在浏览器本地完成，您的数据不会发送到任何服务器。</p>
+        </div>
+        
+        <div class="app-grid">
+            <!-- 加密区域 -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-lock"></i>
+                    <h2>加密文本</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="plainText">输入明文：</label>
+                    <textarea id="plainText" placeholder="请输入要加密的文本...">这是一段需要加密的示例文本！</textarea>
+                </div>
+                
+                <div class="controls">
+                    <div class="select-group">
+                        <label for="encryptAlgorithm">选择加密算法：</label>
+                        <select id="encryptAlgorithm">
+                            <option value="AES">AES (高级加密标准)</option>
+                            <option value="TripleDES">TripleDES (三重数据加密)</option>
+                            <option value="Rabbit">Rabbit (流加密算法)</option>
+                            <option value="RC4">RC4 (流加密算法)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="key-group">
+                        <label for="encryptKey">加密密钥：</label>
+                        <input type="password" id="encryptKey" placeholder="请输入加密密钥" value="mySecretKey123">
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="encrypt-btn" id="encryptBtn">
+                        <i class="fas fa-key"></i> 加密文本
+                    </button>
+                    <button class="clear-btn" id="clearEncryptBtn">
+                        <i class="fas fa-eraser"></i> 清空
+                    </button>
+                </div>
+                
+                <div class="result-container">
+                    <div class="result-label">
+                        <label>加密结果：</label>
+                        <button class="copy-btn" id="copyEncryptBtn">
+                            <i class="fas fa-copy"></i> 复制
+                        </button>
+                    </div>
+                    <div class="result-box" id="encryptedResult"></div>
+                </div>
+            </div>
+            
+            <!-- 解密区域 -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-unlock"></i>
+                    <h2>解密文本</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="cipherText">输入密文：</label>
+                    <textarea id="cipherText" placeholder="请输入要解密的文本..."></textarea>
+                </div>
+                
+                <div class="controls">
+                    <div class="select-group">
+                        <label for="decryptAlgorithm">选择解密算法：</label>
+                        <select id="decryptAlgorithm">
+                            <option value="AES">AES (高级加密标准)</option>
+                            <option value="TripleDES">TripleDES (三重数据加密)</option>
+                            <option value="Rabbit">Rabbit (流加密算法)</option>
+                            <option value="RC4">RC4 (流加密算法)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="key-group">
+                        <label for="decryptKey">解密密钥：</label>
+                        <input type="password" id="decryptKey" placeholder="请输入解密密钥" value="mySecretKey123">
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="decrypt-btn" id="decryptBtn">
+                        <i class="fas fa-key"></i> 解密文本
+                    </button>
+                    <button class="clear-btn" id="clearDecryptBtn">
+                        <i class="fas fa-eraser"></i> 清空
+                    </button>
+                </div>
+                
+                <div class="result-container">
+                    <div class="result-label">
+                        <label>解密结果：</label>
+                        <button class="copy-btn" id="copyDecryptBtn">
+                            <i class="fas fa-copy"></i> 复制
+                        </button>
+                    </div>
+                    <div class="result-box" id="decryptedResult"></div>
+                </div>
+            </div>
+        </div>
+       
+        <footer> 
+        </footer>
+    </div>
+    
+    <!-- 通知框 -->
+    <div class="notification" id="notification">
+        <div id="notificationMessage">操作成功！</div>
+    </div>
+    
+    <script>
+        // 显示通知
+        function showNotification(message, isSuccess = true) {
+            const notification = document.getElementById('notification');
+            const messageElement = document.getElementById('notificationMessage');
+            
+            messageElement.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add(isSuccess ? 'success' : 'error', 'show');
+            
+            // 3秒后隐藏通知
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 加密函数
+        function encryptText() {
+            const plainText = document.getElementById('plainText').value;
+            const algorithm = document.getElementById('encryptAlgorithm').value;
+            const key = document.getElementById('encryptKey').value;
+            const resultElement = document.getElementById('encryptedResult');
+            
+            if (!plainText.trim()) {
+                showNotification('请输入要加密的文本！', false);
+                resultElement.textContent = '错误：请输入要加密的文本';
+                return;
+            }
+            
+            if (!key.trim()) {
+                showNotification('请输入加密密钥！', false);
+                resultElement.textContent = '错误：请输入加密密钥';
+                return;
+            }
+            
+            try {
+                let encrypted;
+                
+                // 根据选择的算法进行加密
+                switch (algorithm) {
+                    case 'AES':
+                        encrypted = CryptoJS.AES.encrypt(plainText, key).toString();
+                        break;
+                    case 'TripleDES':
+                        encrypted = CryptoJS.TripleDES.encrypt(plainText, key).toString();
+                        break;
+                    case 'Rabbit':
+                        encrypted = CryptoJS.Rabbit.encrypt(plainText, key).toString();
+                        break;
+                    case 'RC4':
+                        encrypted = CryptoJS.RC4.encrypt(plainText, key).toString();
+                        break;
+                    default:
+                        encrypted = CryptoJS.AES.encrypt(plainText, key).toString();
+                }
+                
+                resultElement.textContent = encrypted;
+                showNotification('文本加密成功！');
+                
+                // 自动填充解密区域的密文
+                document.getElementById('cipherText').value = encrypted;
+                document.getElementById('decryptAlgorithm').value = algorithm;
+                
+            } catch (error) {
+                console.error('加密错误:', error);
+                resultElement.textContent = '错误：加密失败，请检查密钥和文本';
+                showNotification('加密失败，请检查输入！', false);
+            }
+        }
+        
+        // 解密函数
+        function decryptText() {
+            const cipherText = document.getElementById('cipherText').value;
+            const algorithm = document.getElementById('decryptAlgorithm').value;
+            const key = document.getElementById('decryptKey').value;
+            const resultElement = document.getElementById('decryptedResult');
+            
+            if (!cipherText.trim()) {
+                showNotification('请输入要解密的文本！', false);
+                resultElement.textContent = '错误：请输入要解密的文本';
+                return;
+            }
+            
+            if (!key.trim()) {
+                showNotification('请输入解密密钥！', false);
+                resultElement.textContent = '错误：请输入解密密钥';
+                return;
+            }
+            
+            try {
+                let decrypted;
+                
+                // 根据选择的算法进行解密
+                switch (algorithm) {
+                    case 'AES':
+                        decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+                        break;
+                    case 'TripleDES':
+                        decrypted = CryptoJS.TripleDES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+                        break;
+                    case 'Rabbit':
+                        decrypted = CryptoJS.Rabbit.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+                        break;
+                    case 'RC4':
+                        decrypted = CryptoJS.RC4.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+                        break;
+                    default:
+                        decrypted = CryptoJS.AES.decrypt(cipherText, key).toString(CryptoJS.enc.Utf8);
+                }
+                
+                if (decrypted) {
+                    resultElement.textContent = decrypted;
+                    showNotification('文本解密成功！');
+                } else {
+                    resultElement.textContent = '错误：解密失败，可能是密钥或算法不正确';
+                    showNotification('解密失败，请检查密钥和算法！', false);
+                }
+                
+            } catch (error) {
+                console.error('解密错误:', error);
+                resultElement.textContent = '错误：解密失败，请检查密钥、算法和密文格式';
+                showNotification('解密失败，请检查输入！', false);
+            }
+        }
+        
+        // 复制文本函数
+        function copyToClipboard(text, elementId) {
+            if (!text.trim()) {
+                showNotification('没有内容可复制！', false);
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification(`已复制${elementId === 'encryptedResult' ? '密文' : '明文'}到剪贴板！`);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showNotification('复制失败，请手动选择文本复制', false);
+            });
+        }
+        
+        // 清空函数
+        function clearField(fieldId, resultId) {
+            document.getElementById(fieldId).value = '';
+            document.getElementById(resultId).textContent = '';
+            showNotification('内容已清空');
+        }
+        
+        // 事件监听器
+        document.getElementById('encryptBtn').addEventListener('click', encryptText);
+        document.getElementById('decryptBtn').addEventListener('click', decryptText);
+        
+        document.getElementById('clearEncryptBtn').addEventListener('click', () => {
+            clearField('plainText', 'encryptedResult');
+        });
+        
+        document.getElementById('clearDecryptBtn').addEventListener('click', () => {
+            clearField('cipherText', 'decryptedResult');
+        });
+        
+        document.getElementById('copyEncryptBtn').addEventListener('click', () => {
+            const encryptedText = document.getElementById('encryptedResult').textContent;
+            copyToClipboard(encryptedText, 'encryptedResult');
+        });
+        
+        document.getElementById('copyDecryptBtn').addEventListener('click', () => {
+            const decryptedText = document.getElementById('decryptedResult').textContent;
+            copyToClipboard(decryptedText, 'decryptedResult');
+        });
+        
+        // 同步算法选择
+        document.getElementById('encryptAlgorithm').addEventListener('change', function() {
+            document.getElementById('decryptAlgorithm').value = this.value;
+        });
+        
+        // 初始显示示例密文
+        window.addEventListener('DOMContentLoaded', () => {
+            // 使用默认值生成示例密文
+            const plainText = document.getElementById('plainText').value;
+            const key = document.getElementById('encryptKey').value;
+            const algorithm = document.getElementById('encryptAlgorithm').value;
+            
+            let encrypted;
+            try {
+                switch (algorithm) {
+                    case 'AES':
+                        encrypted = CryptoJS.AES.encrypt(plainText, key).toString();
+                        break;
+                    case 'TripleDES':
+                        encrypted = CryptoJS.TripleDES.encrypt(plainText, key).toString();
+                        break;
+                    case 'Rabbit':
+                        encrypted = CryptoJS.Rabbit.encrypt(plainText, key).toString();
+                        break;
+                    case 'RC4':
+                        encrypted = CryptoJS.RC4.encrypt(plainText, key).toString();
+                        break;
+                }
+                
+                document.getElementById('cipherText').value = encrypted;
+            } catch (error) {
+                console.error('生成示例密文失败:', error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitemap 生成器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/sitemap-generator/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ec4899 0%, #ec4899 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-field input,
+        .form-field textarea,
+        .form-field select {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #d0d7de;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-field textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #ec4899 0%, #ec4899 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .output-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .output-box label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .output-box textarea {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #d0d7de;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: none;
+            min-height: 200px;
+        }
+
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sitemap 生成器</h1>
+            <p>根据 URL 列表生成标准的 sitemap.xml 文件</p>
+        </div>
+
+        <div class="card">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="sitemap-urls">URL 列表（每行一个URL）</label>
+                    <textarea id="sitemap-urls" rows="6" placeholder="https://example.com/
+https://example.com/about
+https://example.com/contact"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="sitemap-changefreq">更新频率 (changefreq)</label>
+                    <select id="sitemap-changefreq">
+                        <option value="always">always</option>
+                        <option value="hourly">hourly</option>
+                        <option value="daily" selected>daily</option>
+                        <option value="weekly">weekly</option>
+                        <option value="monthly">monthly</option>
+                        <option value="yearly">yearly</option>
+                        <option value="never">never</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="sitemap-priority">优先级 (priority)</label>
+                    <input id="sitemap-priority" type="number" step="0.1" min="0" max="1" value="0.8">
+                    <small style="color: #666; font-size: 12px;">0.0 - 1.0，1.0为最高优先级</small>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button class="btn" onclick="generateSitemap()">生成 Sitemap</button>
+                <button class="btn btn-secondary" onclick="clearInput()">清空输入</button>
+                <button class="btn btn-success" onclick="copyToClipboard()">复制 Sitemap</button>
+            </div>
+            
+            <div id="message" class="message"></div>
+            
+            <div class="output-box">
+                <div class="output-header">
+                    <label>Sitemap 输出</label>
+                    <small>生成后可以直接复制使用</small>
+                </div>
+                <textarea id="sitemap-output" rows="10" readonly placeholder="生成的sitemap.xml将显示在这里"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateSitemap() {
+            const urlsInput = document.getElementById('sitemap-urls').value.trim();
+            
+            if (!urlsInput) {
+                showMessage('请输入至少一个URL地址', 'error');
+                return;
+            }
+            
+            // 按行分割URL，过滤空行
+            const urls = urlsInput.split(/\r?\n/).filter(url => url.trim() !== '');
+            
+            if (urls.length === 0) {
+                showMessage('请输入有效的URL地址', 'error');
+                return;
+            }
+            
+            const changefreq = document.getElementById('sitemap-changefreq').value;
+            const priority = document.getElementById('sitemap-priority').value;
+            
+            // 验证priority值
+            const priorityNum = parseFloat(priority);
+            if (isNaN(priorityNum) || priorityNum < 0 || priorityNum > 1) {
+                showMessage('优先级必须为0.0到1.0之间的数字', 'error');
+                return;
+            }
+            
+            // 生成每个URL的条目
+            const items = urls.map(url => {
+                return `  <url>
+    <loc>${escapeXml(url.trim())}</loc>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`;
+            }).join('\n');
+            
+            // 生成完整的XML
+            const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${items}
+</urlset>`;
+            
+            document.getElementById('sitemap-output').value = xml;
+            showMessage(`成功生成 ${urls.length} 个URL的sitemap`, 'success');
+        }
+        
+        function escapeXml(unsafe) {
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                    default: return c;
+                }
+            });
+        }
+        
+        function clearInput() {
+            document.getElementById('sitemap-urls').value = '';
+            document.getElementById('sitemap-output').value = '';
+            hideMessage();
+        }
+        
+        function copyToClipboard() {
+            const output = document.getElementById('sitemap-output');
+            
+            if (!output.value.trim()) {
+                showMessage('没有内容可以复制', 'error');
+                return;
+            }
+            
+            output.select();
+            output.setSelectionRange(0, 99999); // 移动端支持
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showMessage('Sitemap已复制到剪贴板', 'success');
+                } else {
+                    showMessage('复制失败，请手动选择复制', 'error');
+                }
+            } catch (err) {
+                // 使用新的Clipboard API作为备选
+                navigator.clipboard.writeText(output.value)
+                    .then(() => showMessage('Sitemap已复制到剪贴板', 'success'))
+                    .catch(() => showMessage('复制失败，请手动选择复制', 'error'));
+            }
+        }
+        
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            // 3秒后自动隐藏消息
+            setTimeout(hideMessage, 3000);
+        }
+        
+        function hideMessage() {
+            document.getElementById('message').style.display = 'none';
+        }
+        
+        // 添加示例数据
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sitemap-urls').value = 'https://www.benniaooffice.com/\nhttps://www.benniaooffice.com/bntool\nhttps://www.benniaooffice.com/bntool/tools';
+        });
+    </script>
+</body>
+</html>

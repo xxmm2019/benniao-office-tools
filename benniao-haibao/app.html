@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 基础SEO -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海报二维码生成器 - 免费在线海报制作工具 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-haibao/">
+    <meta name="description" content="免费在线海报二维码生成器,一键将链接转换为精美海报。支持自定义标题、文案、背景图,自动生成二维码,适合训练营招生、社群引流、活动报名。完全免费,无需注册,立即体验!">
+    <meta name="keywords" content="海报生成器,二维码海报,海报制作工具,在线海报设计,免费海报生成,营销海报,招生海报">
+
+    <!-- 开放图谱协议 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="海报二维码生成器 - 一键生成精美营销海报">
+    <meta property="og:description" content="免费在线海报二维码生成器,支持自定义背景、标题、文案,自动生成二维码,适合各种营销场景"> 
+
+    <!-- Twitter卡片 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="海报二维码生成器">
+    <meta name="twitter:description" content="免费在线海报制作工具,一键生成精美营销海报">
+
+    <!-- 移动端优化 -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="theme-color" content="#1e293b">
+
+    <!-- 引入更可靠的二维码库 -->
+    <script src="https://www.benniaooffice.com/tools/assets/vendor/qrcodejs/qrcode.min.js"></script>
+     
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --bg-slate-900: #0f172a;
+            --bg-slate-800: #1e293b;
+            --purple-600: #9333ea;
+            --purple-500: #a855f7;
+            --purple-400: #c084fc;
+            --pink-600: #db2777;
+            --pink-500: #ec4899;
+            --pink-400: #f472b6;
+            --blue-500: #3b82f6;
+            --green-500: #10b981;
+            --border-default: rgba(255, 255, 255, 0.1);
+            --border-hover: rgba(192, 132, 252, 0.3);
+            --shadow-default: 0 20px 40px rgba(147, 51, 234, 0.3);
+            --shadow-btn: 0 10px 30px rgba(147, 51, 234, 0.5);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+           background: linear-gradient(90deg, #FF416C, #FF4B2B);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 装饰性背景blob */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--purple-600);
+            top: -200px;
+            left: -200px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--pink-600);
+            bottom: -150px;
+            right: -150px;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--blue-500);
+            top: 50%;
+            right: 10%;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 标题区域 */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 50%, var(--blue-500) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-default);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-default);
+            border-color: var(--border-hover);
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--pink-400);
+        }
+
+        input[type="text"],
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-default);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--purple-500);
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        /* 文件上传样式 */
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px dashed var(--border-hover);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .file-upload-label:hover {
+            border-color: var(--purple-500);
+            background: rgba(147, 51, 234, 0.1);
+            color: var(--text-primary);
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-size: 0.875rem;
+            color: var(--purple-400);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            width: 100%;
+            padding: 16px 32px;
+            background: linear-gradient(90deg, #FF416C, #FF4B2B);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-btn);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 预览区域 */
+        .preview-area {
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-default);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: var(--text-tertiary);
+        }
+
+        .preview-placeholder svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        #posterCanvas {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            display: none;
+        }
+
+        .download-btn {
+            margin-top: 16px;
+            background: linear-gradient(135deg, var(--blue-500) 0%, var(--purple-600) 100%);
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 消息提示 */
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--border-default);
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            word-break: break-word;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        .message.success {
+            border-color: rgba(34, 197, 94, 0.5);
+            background: rgba(22, 163, 74, 0.2);
+        }
+
+        .message.error {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(220, 38, 38, 0.2);
+        }
+
+        /* 联系信息 */
+        .contact-info {
+            margin-top: 60px;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--border-default);
+            text-align: center;
+        }
+
+        .contact-info h3 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #c084fc 0%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .contact-items {
+                flex-direction: row;
+                justify-content: center;
+                gap: 16px;
+            }
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 10px;
+            border: 1px solid var(--border-default);
+            transition: all 0.3s ease;
+            min-width: 250px;
+        }
+
+        .contact-item:hover {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: var(--border-hover);
+        }
+
+        .contact-item p {
+            flex: 1;
+            font-size: 14px;
+            margin: 0;
+            color: var(--text-secondary);
+            text-align: left;
+        }
+
+        .contact-copy-btn {
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .contact-copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.4);
+        }
+
+        .contact-copy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .contact-info .intro {
+            font-size: 13px;
+            margin-top: 12px;
+            font-style: italic;
+            opacity: 0.7;
+            color: var(--text-tertiary);
+        }
+
+        /* 功能特点 */
+        .features {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .feature-card h3 {
+            font-size: 1.125rem;
+            margin-bottom: 8px;
+            color: var(--purple-400);
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            line-height: 1.6;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 767px) {
+            .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 14px 28px;
+            }
+            
+            .preview-area {
+                min-height: 400px;
+            }
+
+            .contact-item {
+                min-width: 100%;
+            }
+        }
+
+        /* 隐藏的二维码容器 */
+        .qr-code-temp {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 装饰性背景 -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <div class="container">
+        <header>
+            <h1> 海报二维码组合生成器</h1>
+            <p class="subtitle">一键将链接变成精美海报,适合招生引流、活动推广</p>
+        </header>
+
+        <main>
+            <article>
+                <div class="main-content">
+                    <!-- 左侧表单区 -->
+                    <div class="card">
+                        <form id="posterForm">
+                            <div class="form-group">
+                                <label for="url" class="required"> 链接地址</label>
+                                <input type="url" id="url" name="url" placeholder="https://www.benniaooffice.com 或 微信小程序链接" required value="https://www.benniaooffice.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="title"> 海报标题</label>
+                                <input type="text" id="title" name="title" placeholder="例如: 笨鸟办公工具集箱" value="笨鸟办公工具集箱">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subtitle"> 副标题</label>
+                                <input type="text" id="subtitle" name="subtitle" placeholder="例如: 并为每位爱好者提供个性化的知识和工具" value="并为每位爱好者提供个性化的知识和工具">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description"> 描述文字</label>
+                                <textarea id="description" name="description" placeholder="例如: 扫码立即加入">扫码立即加入AI 赋能编程 轻量级工具集 效率十倍提升 所有工具均为单文件，无需安装，打开即用，保护隐私，数据本地处理。并为每位爱好者提供个性化的知识和工具。</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="background"> 背景图片 (可选)</label>
+                                <div class="file-upload">
+                                    <input type="file" id="background" name="background" accept="image/jpeg, image/png, image/gif">
+                                    <div class="file-upload-label">
+                                        <span></span>
+                                        <span>点击上传或拖拽图片</span>
+                                    </div>
+                                </div>
+                                <div class="file-name" id="fileName"></div>
+                                <p style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 4px;">
+                                    建议尺寸: 1080×1920像素, 支持 JPG/PNG/GIF
+                                </p>
+                            </div>
+
+                            <button type="submit" class="btn" id="generateBtn">
+                                <span id="btnText"> 生成海报</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 右侧预览区 -->
+                    <div class="card">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 20px; color: var(--text-secondary);">预览效果</h2>
+                        <div class="preview-area" id="previewArea">
+                            <div class="preview-placeholder" id="previewPlaceholder">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <p>海报预览区域</p>
+                                <p style="font-size: 0.75rem; margin-top: 8px;">填写信息后点击生成按钮</p>
+                            </div>
+                            <canvas id="posterCanvas" width="1080" height="1920"></canvas>
+                        </div>
+                        <button class="btn download-btn" id="downloadBtn" style="display: none;">
+                             下载高清海报
+                        </button>
+                    </div>
+                </div>
+ 
+
+            
+            </article>
+        </main>
+ 
+    </div>
+
+    <!-- 隐藏的二维码容器 -->
+    <div id="qrCodeTemp" class="qr-code-temp"></div>
+
+    <script>
+        // DOM元素 - 提前缓存，避免重复查询
+        const posterForm = document.getElementById('posterForm');
+        const generateBtn = document.getElementById('generateBtn');
+        const btnText = document.getElementById('btnText');
+        const previewArea = document.getElementById('previewArea');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const posterCanvas = document.getElementById('posterCanvas');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const backgroundInput = document.getElementById('background');
+        const fileNameDiv = document.getElementById('fileName');
+        const qrCodeTemp = document.getElementById('qrCodeTemp');
+        const urlInput = document.getElementById('url');
+        const titleInput = document.getElementById('title');
+        const subtitleInput = document.getElementById('subtitle');
+        const descriptionInput = document.getElementById('description');
+        
+        // 海报生成参数 - 集中管理，便于维护
+        const posterConfig = {
+            width: 1080,
+            height: 1920,
+            title: {
+                fontSize: 82,
+                fontFamily: 'Arial, sans-serif',
+                color: '#ffffff',
+                x: 220,
+                y: 300,
+                maxWidth: 880
+            },
+            subtitle: {
+                fontSize: 36,
+                fontFamily: 'Arial, sans-serif',
+                color: '#e2e8f0',
+                x: 200,
+                y: 350,
+                maxWidth: 880
+            },
+            description: {
+                fontSize: 28,
+                fontFamily: 'Arial, sans-serif',
+                color: '#cbd5e1',
+                x: 100,
+                y: 1700,
+                maxWidth: 900,
+                lineHeight: 40
+            },
+            qrCode: {
+                size: 300,
+                x: 390,
+                y: 1300,
+                padding: 20
+            }
+        };
+
+        // 检查QRCode库是否加载成功
+        function checkQRCodeLibrary() {
+            if (typeof QRCode === 'undefined') {
+                showMessage(' 二维码库加载失败，正在尝试备用方案...', 'error');
+                return loadBackupQRCode();
+            }
+            return Promise.resolve();
+        }
+
+        // 加载备用的二维码生成方案
+        function loadBackupQRCode() {
+            return new Promise((resolve, reject) => {
+                // 避免重复加载备用脚本
+                if (document.getElementById('backup-qrcode-script')) {
+                    resolve();
+                    return;
+                }
+                const backupScript = document.createElement('script');
+                backupScript.id = 'backup-qrcode-script';
+                backupScript.src = 'https://www.benniaooffice.com/bntool/assets/vendor/qrcodejs/qrcode.min.js';
+                backupScript.onload = resolve;
+                backupScript.onerror = () => {
+                    showMessage(' 二维码库加载失败，请刷新页面重试', 'error');
+                    reject(new Error('QRCode library failed to load'));
+                };
+                document.head.appendChild(backupScript);
+            });
+        }
+
+        // 文件上传处理 - 优化文件名显示，增加大小限制提示
+        backgroundInput.addEventListener('change', function(e) {
+            fileNameDiv.textContent = '';
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                // 限制文件大小为10MB
+                const maxSize = 10 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    showMessage(` 文件过大（${(file.size/1024).toFixed(1)}KB），请选择10MB以内的图片`, 'error');
+                    this.value = '';
+                    return;
+                }
+                fileNameDiv.textContent = ` 已选择: ${file.name} (${(file.size / 1024).toFixed(1)}KB)`;
+            }
+        });
+
+        // 拖拽上传 - 修复边框样式丢失问题
+        previewArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--purple-500)';
+        });
+
+        previewArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--border-default)';
+        });
+
+        previewArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--border-default)';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                backgroundInput.files = e.dataTransfer.files;
+                // 手动触发change事件，复用文件校验逻辑
+                const changeEvent = new Event('change');
+                backgroundInput.dispatchEvent(changeEvent);
+            }
+        });
+
+        // 生成海报 - 优化逻辑，增加容错
+        posterForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const url = urlInput.value.trim();
+            const title = titleInput.value.trim() || '海报标题';
+            const subtitle = subtitleInput.value.trim() || '副标题';
+            const description = descriptionInput.value.trim() || '描述文字';
+            const backgroundFile = backgroundInput.files[0];
+
+            // 验证URL
+            if (!isValidUrl(url)) {
+                showMessage('请输入有效的链接地址（支持网址/小程序链接）', 'error');
+                return;
+            }
+
+            // 显示加载状态
+            generateBtn.disabled = true;
+            btnText.innerHTML = '<span class="loading"></span> 生成中...';
+
+            try {
+                // 检查二维码库
+                await checkQRCodeLibrary();
+                
+                // 创建Canvas上下文 - 增加容错
+                const ctx = posterCanvas.getContext('2d');
+                if (!ctx) {
+                    throw new Error('Canvas上下文创建失败，请更换浏览器重试');
+                }
+                
+                // 清空画布
+                ctx.clearRect(0, 0, posterConfig.width, posterConfig.height);
+
+                // 绘制背景
+                await drawBackground(ctx, backgroundFile);
+
+                // 绘制文字
+                drawText(ctx, title, subtitle, description);
+
+                // 生成并绘制二维码
+                await drawQRCode(ctx, url);
+
+                // 显示海报
+                posterCanvas.style.display = 'block';
+                previewPlaceholder.style.display = 'none';
+                downloadBtn.style.display = 'block';
+
+                showMessage(' 海报生成成功!', 'success');
+            } catch (error) {
+                console.error('生成海报时出错:', error);
+                showMessage(` 生成失败: ${error.message || '未知错误'}`, 'error');
+            } finally {
+                // 恢复按钮状态
+                generateBtn.disabled = false;
+                btnText.textContent = ' 生成海报';
+            }
+        });
+
+        // 绘制背景 - 优化图片裁剪逻辑，避免变形
+        async function drawBackground(ctx, backgroundFile) {
+            if (backgroundFile) {
+                // 绘制上传的背景图片
+                const img = new Image();
+                // 禁止跨域图片污染canvas
+                img.crossOrigin = 'anonymous';
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = () => reject(new Error('背景图片加载失败，请选择有效的图片文件'));
+                    img.src = URL.createObjectURL(backgroundFile);
+                });
+                
+                // 居中裁剪图片 - 优化计算，确保完全覆盖画布
+                const scale = Math.max(
+                    posterConfig.width / img.width,
+                    posterConfig.height / img.height
+                );
+                const newWidth = img.width * scale;
+                const newHeight = img.height * scale;
+                const x = (posterConfig.width - newWidth) / 2;
+                const y = (posterConfig.height - newHeight) / 2;
+                
+                ctx.drawImage(img, x, y, newWidth, newHeight);
+                // 释放URL对象，避免内存泄漏
+                URL.revokeObjectURL(img.src);
+            } else {
+                // 绘制默认渐变背景
+                const gradient = ctx.createLinearGradient(0, 0, posterConfig.width, posterConfig.height);
+                gradient.addColorStop(0, '#0f172a');
+                gradient.addColorStop(0.5, '#1e293b');
+                gradient.addColorStop(1, '#0f172a');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, posterConfig.width, posterConfig.height);
+
+                // 添加装饰性元素
+                drawBackgroundDecorations(ctx);
+            }
+        }
+
+        // 绘制背景装饰
+        function drawBackgroundDecorations(ctx) {
+            // 添加光晕效果
+            const radialGradient = ctx.createRadialGradient(
+                posterConfig.width / 2, 
+                posterConfig.height / 2, 
+                0,
+                posterConfig.width / 2, 
+                posterConfig.height / 2, 
+                posterConfig.width
+            );
+            radialGradient.addColorStop(0, 'rgba(147, 51, 234, 0.1)');
+            radialGradient.addColorStop(1, 'transparent');
+            
+            ctx.fillStyle = radialGradient;
+            ctx.fillRect(0, 0, posterConfig.width, posterConfig.height);
+        }
+
+        // 绘制文字 - 优化换行逻辑，支持中文分词
+        function drawText(ctx, title, subtitle, description) {
+            // 绘制标题
+            ctx.font = `bold ${posterConfig.title.fontSize}px ${posterConfig.title.fontFamily}`;
+            ctx.fillStyle = posterConfig.title.color;
+            ctx.textAlign = 'left';
+            
+            // 处理标题换行
+            wrapText(ctx, title, posterConfig.title.x, posterConfig.title.y, 
+                     posterConfig.title.maxWidth, posterConfig.title.fontSize + 10);
+
+            // 绘制副标题
+            ctx.font = `${posterConfig.subtitle.fontSize}px ${posterConfig.subtitle.fontFamily}`;
+            ctx.fillStyle = posterConfig.subtitle.color;
+            wrapText(ctx, subtitle, posterConfig.subtitle.x, 
+                     posterConfig.subtitle.y + posterConfig.title.fontSize + 20, 
+                     posterConfig.subtitle.maxWidth, posterConfig.subtitle.fontSize + 5);
+
+            // 绘制描述文字
+            ctx.font = `${posterConfig.description.fontSize}px ${posterConfig.description.fontFamily}`;
+            ctx.fillStyle = posterConfig.description.color;
+            
+            const lines = description.split('\n');
+            let y = posterConfig.description.y;
+            lines.forEach(line => {
+                if (line.trim()) {
+                    wrapText(ctx, line, posterConfig.description.x, y, 
+                             posterConfig.description.maxWidth, posterConfig.description.lineHeight);
+                    y += posterConfig.description.lineHeight;
+                }
+            });
+        }
+
+        // 文字换行处理 - 优化中文支持，修复单个字符溢出问题
+        function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+            if (!text) return;
+            
+            let currentText = '';
+            let lineY = y;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text.charAt(i);
+                const testText = currentText + char;
+                const testWidth = ctx.measureText(testText).width;
+                
+                if (testWidth > maxWidth && currentText !== '') {
+                    ctx.fillText(currentText, x, lineY);
+                    currentText = char;
+                    lineY += lineHeight;
+                } else {
+                    currentText = testText;
+                }
+            }
+
+            // 绘制最后一行
+            if (currentText !== '') {
+                ctx.fillText(currentText, x, lineY);
+            }
+        }
+
+        // 绘制二维码 - 增加容错，优化渲染
+        async function drawQRCode(ctx, url) {
+            return new Promise((resolve, reject) => {
+                try {
+                    // 清空临时容器
+                    qrCodeTemp.innerHTML = '';
+                    
+                    // 创建二维码
+                    const qr = new QRCode(qrCodeTemp, {
+                        text: url,
+                        width: posterConfig.qrCode.size,
+                        height: posterConfig.qrCode.size,
+                        colorDark: "#000000",
+                        colorLight: "#FFFFFF",
+                        correctLevel: QRCode.CorrectLevel.H
+                    });
+                    
+                    // 等待二维码生成 - 增加超时处理
+                    const timeoutTimer = setTimeout(() => {
+                        reject(new Error('二维码生成超时'));
+                    }, 3000);
+                    
+                    setTimeout(() => {
+                        clearTimeout(timeoutTimer);
+                        const qrCanvas = qrCodeTemp.querySelector('canvas');
+                        if (!qrCanvas) {
+                            reject(new Error('二维码生成失败'));
+                            return;
+                        }
+                        
+                        // 绘制二维码白色背景
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(
+                            posterConfig.qrCode.x - posterConfig.qrCode.padding,
+                            posterConfig.qrCode.y - posterConfig.qrCode.padding,
+                            posterConfig.qrCode.size + posterConfig.qrCode.padding * 2,
+                            posterConfig.qrCode.size + posterConfig.qrCode.padding * 2
+                        );
+                        
+                        // 绘制二维码
+                        ctx.drawImage(
+                            qrCanvas,
+                            posterConfig.qrCode.x,
+                            posterConfig.qrCode.y,
+                            posterConfig.qrCode.size,
+                            posterConfig.qrCode.size
+                        );
+                        
+                        resolve();
+                    }, 100);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+        // 下载海报 - 优化文件名，增加容错
+        downloadBtn.addEventListener('click', function() {
+            try {
+                // 检查canvas是否有效
+                if (posterCanvas.style.display !== 'block') {
+                    showMessage(' 请先生成海报再下载', 'error');
+                    return;
+                }
+                const link = document.createElement('a');
+                // 优化文件名，增加可读性
+                const posterTitle = titleInput.value.trim().replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_') || '未命名海报';
+                link.download = `${posterTitle}_${new Date().getTime()}.png`;
+                // 生成高清图片
+                link.href = posterCanvas.toDataURL('image/png', 1.0);
+                link.click();
+                showMessage(' 开始下载高清海报...', 'success');
+            } catch (error) {
+                showMessage(` 下载失败: ${error.message}`, 'error');
+            }
+        });
+
+        // URL验证 - 优化正则，支持更多链接格式（小程序/普通网址）
+        function isValidUrl(string) {
+            if (!string) return false;
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                // 匹配小程序链接、域名等非标准URL
+                return /^[a-zA-Z]+:\/\/.+/.test(string) || 
+                       /^[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[a-zA-Z]{2,}(\/.+)?$/.test(string) ||
+                       /^[wx|mp]:\/\/.+/.test(string);
+            }
+        }
+ 
+
+        // 消息提示 - 优化动画，避免消息重叠
+        function showMessage(text, type = 'success') {
+            // 移除之前的消息
+            const existingMessages = document.querySelectorAll('.message');
+            existingMessages.forEach(msg => {
+                msg.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => msg.remove(), 300);
+            });
+            
+            // 创建新消息
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
+
+            // 自动关闭
+            setTimeout(() => {
+                message.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => message.remove(), 300);
+            }, 3000);
+        }
+
+        // 初始化 - 优化逻辑，增加表单默认值
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加表单验证
+            const inputs = document.querySelectorAll('input[required], textarea[required]');
+            inputs.forEach(input => {
+                input.addEventListener('invalid', function(e) {
+                    e.preventDefault();
+                    showMessage('请填写必填字段', 'error');
+                });
+            });
+            
+            // 显示二维码库加载状态
+            if (typeof QRCode === 'undefined') {
+                console.warn('QRCode库未加载，将使用备用方案');
+            } else {
+                console.log('QRCode库已成功加载');
+            }
+        });
+    </script>
+</body>
+</html>

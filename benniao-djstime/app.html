@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全屏倒计时工具- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-djstime/">
+    <meta name="description" content="免费在线全屏倒计时工具，支持自定义时长、全屏显示、暂停/继续、重置功能。适合活动现场、演讲计时、会议控制等场景。">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-darker: #1e293b;
+            --purple: #a855f7;
+            --pink: #ec4899;
+            --blue: #60a5fa;
+            --text-light: #f1f5f9;
+            --text-gray: #94a3b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 装饰背景 */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        body::before {
+            width: 400px;
+            height: 400px;
+            background: var(--purple);
+            top: -100px;
+            left: -100px;
+        }
+        
+        body::after {
+            width: 300px;
+            height: 300px;
+            background: var(--pink);
+            bottom: -80px;
+            right: -80px;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            padding: 20px;
+        }
+        
+        /* 时间显示 */
+        .time-display {
+            font-size: 20vw;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 30px rgba(168, 85, 247, 0.3);
+            margin-bottom: 2rem;
+            text-align: center;
+            line-height: 1;
+        }
+        
+        .time-display.warning {
+            background: linear-gradient(135deg, #fbbf24 0%, #ef4444 100%);
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 设置面板 */
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            transition: right 0.3s ease;
+            z-index: 99;
+            overflow-y: auto;
+        }
+        
+        .settings-panel.open {
+            right: 0;
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .settings-header h2 {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* 时间输入 */
+        .time-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .input-group label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+        
+        .input-group input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+        
+        /* 预设按钮 */
+        .presets {
+            margin-bottom: 2rem;
+        }
+        
+        .presets h3 {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .preset-btn:hover {
+            background: rgba(168, 85, 247, 0.2);
+        }
+        
+        /* 联系信息 */
+        .contact-info {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .contact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .contact-item span {
+            color: var(--text-gray);
+        }
+        
+        /* Toast消息 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+            border-radius: 8px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .time-display {
+                font-size: 15vw;
+            }
+            
+            .btn {
+                padding: 0.75rem 1.5rem;
+                min-width: 100px;
+            }
+            
+            .settings-panel {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .preset-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .time-display {
+                font-size: 12vw;
+            }
+            
+            .controls {
+                gap: 0.5rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            
+            .preset-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 设置按钮 -->
+    <button class="settings-btn" onclick="toggleSettings()"></button>
+    
+    <!-- 主倒计时界面 -->
+    <div class="main-container">
+        <div class="time-display" id="timeDisplay">05:00</div>
+        <div class="controls">
+            <button class="btn" id="startBtn" onclick="startTimer()"> 开始</button>
+            <button class="btn" id="pauseBtn" onclick="pauseTimer()" style="display: none;"> 暂停</button>
+            <button class="btn secondary" onclick="resetTimer()"> 重置</button>
+        </div>
+    </div>
+    
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2> 设置</h2>
+            <button class="close-btn" onclick="toggleSettings()">×</button>
+        </div>
+        
+        <!-- 时间设置 -->
+        <div class="time-inputs">
+            <div class="input-group">
+                <label>分钟</label>
+                <input type="number" id="minutes" min="0" max="59" value="5" />
+            </div>
+            <div class="input-group">
+                <label>秒钟</label>
+                <input type="number" id="seconds" min="0" max="59" value="0" />
+            </div>
+            <div class="input-group">
+                <label>&nbsp;</label>
+                <button class="btn" onclick="applyTime()" style="height: 100%;">应用</button>
+            </div>
+        </div>
+        
+        <!-- 快速预设 -->
+        <div class="presets">
+            <h3>快速设置</h3>
+            <div class="preset-grid">
+                <button class="preset-btn" onclick="setTime(0, 30)">30秒</button>
+                <button class="preset-btn" onclick="setTime(1, 0)">1分钟</button>
+                <button class="preset-btn" onclick="setTime(3, 0)">3分钟</button>
+                <button class="preset-btn" onclick="setTime(5, 0)">5分钟</button>
+                <button class="preset-btn" onclick="setTime(10, 0)">10分钟</button>
+                <button class="preset-btn" onclick="setTime(15, 0)">15分钟</button>
+                <button class="preset-btn" onclick="setTime(25, 0)">25分钟</button>
+                <button class="preset-btn" onclick="setTime(30, 0)">30分钟</button>
+                <button class="preset-btn" onclick="setTime(60, 0)">60分钟</button>
+            </div>
+        </div>
+        
+    
+    </div>
+    
+    <!-- Toast消息 -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // 计时器状态
+        let totalSeconds = 300; // 默认5分钟
+        let remainingSeconds = 300;
+        let timer = null;
+        let isRunning = false;
+        
+        // 初始化
+        function init() {
+            updateDisplay();
+            // 添加键盘快捷键
+            document.addEventListener('keydown', handleKeyPress);
+        }
+        
+        // 键盘快捷键
+        function handleKeyPress(e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isRunning) pauseTimer();
+                else startTimer();
+            } else if (e.code === 'Escape') {
+                resetTimer();
+            } else if (e.code === 'KeyS') {
+                toggleSettings();
+            }
+        }
+        
+        // 设置时间
+        function setTime(minutes, seconds) {
+            if (isRunning) {
+                showToast('请先停止计时', 'error');
+                return;
+            }
+            
+            document.getElementById('minutes').value = minutes;
+            document.getElementById('seconds').value = seconds;
+            applyTime();
+        }
+        
+        // 应用时间设置
+        function applyTime() {
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+            const seconds = parseInt(document.getElementById('seconds').value) || 0;
+            
+            totalSeconds = minutes * 60 + seconds;
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+            showToast('时间已设置', 'success');
+        }
+        
+        // 更新显示
+        function updateDisplay() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            const display = document.getElementById('timeDisplay');
+            display.textContent = timeStr;
+            
+            // 警告状态
+            display.classList.remove('warning');
+            if (remainingSeconds <= 30 && remainingSeconds > 0) {
+                display.classList.add('warning');
+            }
+        }
+        
+        // 开始计时
+        function startTimer() {
+            if (isRunning) return;
+            
+            if (remainingSeconds === 0) {
+                showToast('请先设置时间', 'error');
+                return;
+            }
+            
+            isRunning = true;
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+            
+            timer = setInterval(() => {
+                remainingSeconds--;
+                updateDisplay();
+                
+                if (remainingSeconds <= 0) {
+                    finishTimer();
+                }
+            }, 1000);
+        }
+        
+        // 暂停计时
+        function pauseTimer() {
+            if (!isRunning) return;
+            
+            isRunning = false;
+            clearInterval(timer);
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+        
+        // 重置计时
+        function resetTimer() {
+            pauseTimer();
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+            showToast('已重置', 'success');
+        }
+        
+        // 完成计时
+        function finishTimer() {
+            pauseTimer();
+            remainingSeconds = 0;
+            updateDisplay();
+            
+            // 播放提示音
+            playBeep();
+            
+            // 显示完成消息
+            showToast('时间到！', 'success');
+            
+            // 自动重新开始（可选）
+            setTimeout(() => {
+                if (confirm('时间到！是否重新开始？')) {
+                    resetTimer();
+                    startTimer();
+                }
+            }, 1000);
+        }
+        
+        // 播放提示音
+        function playBeep() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.log('音频播放失败');
+            }
+        }
+        
+        // 切换设置面板
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('open');
+        }
+        
+        // 复制文本
+        async function copyText(text, label) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(`${label}已复制: ${text}`, 'success');
+            } catch (err) {
+                showToast('复制失败，请手动复制', 'error');
+            }
+        }
+        
+        // 显示Toast消息
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast';
+            
+            if (type === 'error') {
+                toast.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            }
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

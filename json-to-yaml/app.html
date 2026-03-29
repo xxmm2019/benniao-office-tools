@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 转 YAML - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/json-to-yaml/app.html">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+            min-height: 500px;
+        }
+
+        .panel {
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title .icon {
+            font-size: 1.1rem;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .action-btn.primary {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            color: #667eea;
+        }
+
+        .action-btn.primary:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        .action-btn.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #22c55e;
+        }
+
+        .action-btn.success:hover {
+            background: rgba(34, 197, 94, 0.3);
+        }
+
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #e0e0e0;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            overflow-y: auto;
+        }
+
+        textarea::placeholder {
+            color: #666;
+        }
+
+        .error {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .error.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .success {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(34, 197, 94, 0.95);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .success.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #667eea;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .json-error {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .format-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .format-option input[type="number"] {
+            width: 50px;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .format-option select {
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .main-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 30, 50, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #667eea;
+            z-index: 100;
+            display: none;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        @media (max-width: 768px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+                height: auto;
+                min-height: 800px;
+            }
+
+            .panel {
+                height: 350px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .main-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../.." class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            <span>返回 BenniaoOffice</span>
+        </a>
+
+        <div class="header">
+            <h1>JSON 转 YAML 转换器</h1>
+            <p>在左侧输入 JSON，右侧自动转换为 YAML，支持实时转换和格式化选项</p>
+        </div>
+
+        <div class="format-options">
+            <div class="format-option">
+                <label for="indent-size">缩进大小:</label>
+                <input type="number" id="indent-size" min="1" max="8" value="2">
+            </div>
+            <div class="format-option">
+                <label for="line-width">行宽:</label>
+                <input type="number" id="line-width" min="40" max="200" value="80">
+            </div>
+            <div class="format-option">
+                <label for="quote-type">字符串引号:</label>
+                <select id="quote-type">
+                    <option value="single">单引号</option>
+                    <option value="double" selected>双引号</option>
+                </select>
+            </div>
+            <div class="format-option">
+                <input type="checkbox" id="sort-keys" checked>
+                <label for="sort-keys">按键名排序</label>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">
+                        <i class="fas fa-code icon"></i>
+                        JSON 输入
+                    </span>
+                    <div class="panel-actions">
+                        <button class="action-btn primary" onclick="formatJSON()">
+                            <i class="fas fa-indent"></i> 格式化
+                        </button>
+                        <button class="action-btn" onclick="clearInput()">
+                            <i class="fas fa-trash-alt"></i> 清空
+                        </button>
+                        <button class="action-btn success" onclick="copyInput()">
+                            <i class="fas fa-copy"></i> 复制
+                        </button>
+                    </div>
+                </div>
+                <textarea id="json-input" placeholder='粘贴或输入 JSON，例如：
+{
+  "name": "张三",
+  "age": 25,
+  "hobbies": ["读书", "旅游"],
+  "address": {
+    "city": "北京",
+    "street": "长安街"
+  }
+}'></textarea>
+                <div class="stats">
+                    <span>行数: <span id="json-lines">0</span></span>
+                    <span>字符数: <span id="json-chars">0</span></span>
+                    <span id="json-status" class="json-error">等待输入...</span>
+                </div>
+                <div class="loading" id="json-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span style="margin-left: 10px;">格式化中...</span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">
+                        <i class="fas fa-file-alt icon"></i>
+                        YAML 输出
+                    </span>
+                    <div class="panel-actions">
+                        <button class="action-btn primary" onclick="convertToJSON()">
+                            <i class="fas fa-exchange-alt"></i> 反向转换
+                        </button>
+                        <button class="action-btn" onclick="clearOutput()">
+                            <i class="fas fa-trash-alt"></i> 清空
+                        </button>
+                        <button class="action-btn success" onclick="copyOutput()">
+                            <i class="fas fa-copy"></i> 复制
+                        </button>
+                    </div>
+                </div>
+                <textarea id="yaml-output" placeholder="YAML 输出将显示在这里" readonly></textarea>
+                <div class="stats">
+                    <span>行数: <span id="yaml-lines">0</span></span>
+                    <span>字符数: <span id="yaml-chars">0</span></span>
+                    <span>状态: <span id="yaml-status">等待转换</span></span>
+                </div>
+                <div class="loading" id="yaml-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span style="margin-left: 10px;">转换中...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="main-btn" onclick="loadExample()">
+                <i class="fas fa-file-code"></i> 加载示例
+            </button>
+            <button class="main-btn" onclick="convertJSONtoYAML()">
+                <i class="fas fa-sync-alt"></i> 转换 JSON 到 YAML
+            </button>
+            <button class="main-btn" onclick="downloadYAML()">
+                <i class="fas fa-download"></i> 下载 YAML 文件
+            </button>
+        </div>
+
+        <div class="error" id="error-message"></div>
+        <div class="success" id="success-message"></div>
+    </div>
+
+    <script>
+        // 默认示例 JSON
+        const defaultJSON = {
+            "app": "JSON 转 YAML 工具",
+            "version": "1.0.0",
+            "description": "一个在线 JSON 转 YAML 的转换工具",
+            "features": [
+                "实时转换",
+                "格式化选项",
+                "错误检查",
+                "支持复杂嵌套结构"
+            ],
+            "author": {
+                "name": "笨鸟办公",
+                "email": "contact@benniaooffice.com"
+            },
+            "settings": {
+                "autoConvert": true,
+                "indentSize": 2,
+                "sortKeys": true
+            },
+            "stats": {
+                "conversions": 1500,
+                "rating": 4.8,
+                "uptime": "99.9%"
+            }
+        };
+
+        // 获取DOM元素
+        const jsonInput = document.getElementById('json-input');
+        const yamlOutput = document.getElementById('yaml-output');
+        const jsonLines = document.getElementById('json-lines');
+        const jsonChars = document.getElementById('json-chars');
+        const jsonStatus = document.getElementById('json-status');
+        const yamlLines = document.getElementById('yaml-lines');
+        const yamlChars = document.getElementById('yaml-chars');
+        const yamlStatus = document.getElementById('yaml-status');
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+        const jsonLoading = document.getElementById('json-loading');
+        const yamlLoading = document.getElementById('yaml-loading');
+        
+        // 获取格式化选项
+        const indentSize = document.getElementById('indent-size');
+        const lineWidth = document.getElementById('line-width');
+        const quoteType = document.getElementById('quote-type');
+        const sortKeys = document.getElementById('sort-keys');
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认JSON
+            jsonInput.value = JSON.stringify(defaultJSON, null, 2);
+            updateStats();
+            convertJSONtoYAML();
+            
+            // 添加输入监听
+            jsonInput.addEventListener('input', function() {
+                updateStats();
+                
+                // 自动转换（如果内容有效）
+                try {
+                    JSON.parse(jsonInput.value);
+                    convertJSONtoYAML();
+                } catch (e) {
+                    // 如果JSON无效，不清除YAML输出，但更新状态
+                    yamlStatus.textContent = 'JSON 格式无效';
+                    yamlStatus.style.color = '#f87171';
+                }
+            });
+            
+            // 格式化选项变化时重新转换
+            indentSize.addEventListener('change', convertJSONtoYAML);
+            lineWidth.addEventListener('change', convertJSONtoYAML);
+            quoteType.addEventListener('change', convertJSONtoYAML);
+            sortKeys.addEventListener('change', convertJSONtoYAML);
+        });
+
+        // 更新统计信息
+        function updateStats() {
+            const jsonText = jsonInput.value;
+            const yamlText = yamlOutput.value;
+            
+            // JSON 统计
+            jsonLines.textContent = jsonText.split('\n').length;
+            jsonChars.textContent = jsonText.length;
+            
+            // 检查JSON是否有效
+            try {
+                if (jsonText.trim()) {
+                    JSON.parse(jsonText);
+                    jsonStatus.textContent = '有效 JSON';
+                    jsonStatus.style.color = '#22c55e';
+                } else {
+                    jsonStatus.textContent = '等待输入';
+                    jsonStatus.style.color = '#f87171';
+                }
+            } catch (e) {
+                jsonStatus.textContent = '无效 JSON';
+                jsonStatus.style.color = '#f87171';
+            }
+            
+            // YAML 统计
+            yamlLines.textContent = yamlText.split('\n').length;
+            yamlChars.textContent = yamlText.length;
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // 显示成功消息
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+            
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 2000);
+        }
+
+        // 加载示例
+        function loadExample() {
+            jsonInput.value = JSON.stringify(defaultJSON, null, 2);
+            updateStats();
+            convertJSONtoYAML();
+            showSuccess('示例已加载');
+        }
+
+        // 格式化 JSON
+        function formatJSON() {
+            jsonLoading.classList.add('show');
+            
+            setTimeout(() => {
+                try {
+                    const jsonObj = JSON.parse(jsonInput.value);
+                    jsonInput.value = JSON.stringify(jsonObj, null, parseInt(indentSize.value));
+                    updateStats();
+                    showSuccess('JSON 已格式化');
+                } catch (e) {
+                    showError('JSON 格式无效，无法格式化: ' + e.message);
+                } finally {
+                    jsonLoading.classList.remove('show');
+                }
+            }, 300);
+        }
+
+        // 清空输入
+        function clearInput() {
+            jsonInput.value = '';
+            updateStats();
+            jsonStatus.textContent = '等待输入';
+            jsonStatus.style.color = '#f87171';
+            showSuccess('输入已清空');
+        }
+
+        // 清空输出
+        function clearOutput() {
+            yamlOutput.value = '';
+            updateStats();
+            yamlStatus.textContent = '等待转换';
+            yamlStatus.style.color = '#aaa';
+            showSuccess('输出已清空');
+        }
+
+        // 复制输入
+        function copyInput() {
+            if (!jsonInput.value.trim()) {
+                showError('没有内容可复制');
+                return;
+            }
+            
+            jsonInput.select();
+            document.execCommand('copy');
+            showSuccess('JSON 已复制到剪贴板');
+        }
+
+        // 复制输出
+        function copyOutput() {
+            if (!yamlOutput.value.trim()) {
+                showError('没有内容可复制');
+                return;
+            }
+            
+            yamlOutput.select();
+            document.execCommand('copy');
+            showSuccess('YAML 已复制到剪贴板');
+        }
+
+        // JSON 转 YAML 的核心函数
+        function jsonToYAML(jsonObj, indent = 0) {
+            const indentStr = ' '.repeat(indent);
+            const nextIndent = indent + parseInt(indentSize.value);
+            
+            if (typeof jsonObj === 'object' && jsonObj !== null) {
+                // 如果是数组
+                if (Array.isArray(jsonObj)) {
+                    if (jsonObj.length === 0) return '[]';
+                    
+                    let result = '';
+                    for (let i = 0; i < jsonObj.length; i++) {
+                        result += indentStr + '- ' + jsonToYAML(jsonObj[i], nextIndent).trimStart() + '\n';
+                    }
+                    return result;
+                } 
+                // 如果是对象
+                else {
+                    let keys = Object.keys(jsonObj);
+                    
+                    // 按键名排序
+                    if (sortKeys.checked) {
+                        keys.sort();
+                    }
+                    
+                    if (keys.length === 0) return '{}';
+                    
+                    let result = '';
+                    for (let i = 0; i < keys.length; i++) {
+                        const key = keys[i];
+                        const value = jsonObj[key];
+                        
+                        // 处理键名
+                        const formattedKey = quoteType.value === 'single' ? `'${key}'` : `"${key}"`;
+                        
+                        // 处理值
+                        if (typeof value === 'object' && value !== null) {
+                            result += indentStr + formattedKey + ':\n';
+                            result += jsonToYAML(value, nextIndent);
+                        } else {
+                            result += indentStr + formattedKey + ': ' + jsonToYAML(value, nextIndent);
+                        }
+                    }
+                    return result;
+                }
+            } 
+            // 基本类型
+            else {
+                if (jsonObj === null) return 'null';
+                if (jsonObj === undefined) return '';
+                if (typeof jsonObj === 'string') {
+                    // 检查字符串是否需要引号
+                    const needsQuotes = jsonObj.includes(':') || jsonObj.includes('#') || 
+                                      jsonObj.includes('[') || jsonObj.includes(']') ||
+                                      jsonObj.includes('{') || jsonObj.includes('}') ||
+                                      jsonObj.trim() !== jsonObj || 
+                                      jsonObj === 'true' || jsonObj === 'false' || 
+                                      jsonObj === 'null' || /^\d+$/.test(jsonObj);
+                    
+                    if (needsQuotes) {
+                        return quoteType.value === 'single' ? `'${jsonObj}'` : `"${jsonObj}"`;
+                    }
+                    return jsonObj;
+                }
+                if (typeof jsonObj === 'number') return jsonObj.toString();
+                if (typeof jsonObj === 'boolean') return jsonObj ? 'true' : 'false';
+                return jsonObj.toString();
+            }
+        }
+
+        // 转换 JSON 到 YAML
+        function convertJSONtoYAML() {
+            yamlLoading.classList.add('show');
+            
+            setTimeout(() => {
+                try {
+                    const jsonText = jsonInput.value.trim();
+                    
+                    if (!jsonText) {
+                        yamlOutput.value = '';
+                        yamlStatus.textContent = '等待输入';
+                        yamlStatus.style.color = '#aaa';
+                        updateStats();
+                        return;
+                    }
+                    
+                    const jsonObj = JSON.parse(jsonText);
+                    const yamlText = jsonToYAML(jsonObj);
+                    
+                    // 限制行宽
+                    const maxWidth = parseInt(lineWidth.value);
+                    let formattedYaml = '';
+                    const lines = yamlText.split('\n');
+                    
+                    for (let line of lines) {
+                        if (line.length > maxWidth) {
+                            // 简单行宽限制，实际应用中可能需要更智能的断行
+                            let truncatedLine = line.substring(0, maxWidth - 3) + '...';
+                            formattedYaml += truncatedLine + '\n';
+                        } else {
+                            formattedYaml += line + '\n';
+                        }
+                    }
+                    
+                    yamlOutput.value = formattedYaml.trim();
+                    yamlStatus.textContent = '转换成功';
+                    yamlStatus.style.color = '#22c55e';
+                    
+                    updateStats();
+                    showSuccess('JSON 已成功转换为 YAML');
+                } catch (e) {
+                    yamlOutput.value = `# 转换错误: ${e.message}\n# 请检查 JSON 格式是否正确`;
+                    yamlStatus.textContent = '转换失败';
+                    yamlStatus.style.color = '#f87171';
+                    updateStats();
+                    showError('JSON 转换失败: ' + e.message);
+                } finally {
+                    yamlLoading.classList.remove('show');
+                }
+            }, 500);
+        }
+
+        // 反向转换：YAML 到 JSON（简化版）
+        function convertToJSON() {
+            try {
+                const yamlText = yamlOutput.value.trim();
+                
+                if (!yamlText) {
+                    showError('YAML 输出为空，无法反向转换');
+                    return;
+                }
+                
+                // 简化的 YAML 解析（实际项目应使用完整的 YAML 解析库）
+                // 这里只做基本演示
+                const lines = yamlText.split('\n');
+                let jsonStr = '{';
+                let inArray = false;
+                
+                for (let line of lines) {
+                    if (line.trim().startsWith('#') || line.trim() === '') continue;
+                    
+                    if (line.includes(':') && !line.trim().startsWith('-')) {
+                        const parts = line.split(':');
+                        const key = parts[0].trim().replace(/['"]/g, '');
+                        let value = parts.slice(1).join(':').trim();
+                        
+                        // 简单值解析
+                        if (value === 'true') value = true;
+                        else if (value === 'false') value = false;
+                        else if (value === 'null') value = null;
+                        else if (!isNaN(value) && value !== '') value = Number(value);
+                        else if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
+                        else if (value.startsWith("'") && value.endsWith("'")) value = value.slice(1, -1);
+                        
+                        jsonStr += `"${key}": ${JSON.stringify(value)},`;
+                    }
+                }
+                
+                jsonStr = jsonStr.replace(/,$/, '') + '}';
+                
+                // 尝试解析以验证
+                JSON.parse(jsonStr);
+                
+                // 加载到输入框
+                jsonInput.value = JSON.stringify(JSON.parse(jsonStr), null, parseInt(indentSize.value));
+                updateStats();
+                showSuccess('YAML 已反向转换为 JSON');
+            } catch (e) {
+                showError('反向转换失败: ' + e.message);
+            }
+        }
+
+        // 下载 YAML 文件
+        function downloadYAML() {
+            const yamlText = yamlOutput.value.trim();
+            
+            if (!yamlText) {
+                showError('没有 YAML 内容可下载');
+                return;
+            }
+            
+            const blob = new Blob([yamlText], { type: 'text/yaml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'converted-config.yaml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('YAML 文件已下载');
+        }
+
+        // 添加键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + Enter 转换
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                convertJSONtoYAML();
+                e.preventDefault();
+            }
+            
+            // Ctrl/Cmd + S 格式化
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                formatJSON();
+                e.preventDefault();
+            }
+            
+            // Ctrl/Cmd + E 加载示例
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                loadExample();
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

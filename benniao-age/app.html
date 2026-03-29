@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年龄计算器 - 周岁/虚岁/星座/生肖- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-age/">
+    <meta name="description" content="免费在线年龄计算器，支持公历/农历，计算周岁、虚岁、星座、生肖，精确到年月日。本地计算，隐私安全。">
+    <style>
+        :root {
+            --primary: #a855f7;
+            --secondary: #ec4899;
+            --dark: #0f172a;
+            --light: #f1f5f9;
+            --gray: #94a3b8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .badge {
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--light);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray);
+        }
+        
+        select, input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input[type="date"]:focus {
+            border-color: var(--primary);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        
+        .date-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--gray);
+        }
+        
+        .alert {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .result-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light);
+        }
+        
+        .result-sub {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .contact {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .contact-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .results {
+                grid-template-columns: 1fr;
+            }
+            
+            .date-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>年龄计算器</h1>
+            <p class="subtitle">输入出生日期，快速计算周岁、虚岁、星座、生肖</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h2 class="card-title"> 输入信息</h2>
+                
+                <div class="input-group">
+                    <label>出生日期类型</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="dateType" value="solar" checked> 公历
+                        </label>
+                        <label>
+                            <input type="radio" name="dateType" value="lunar"> 农历
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="solar-input">
+                    <div class="input-group">
+                        <label>公历出生日期</label>
+                        <div class="date-grid">
+                            <select id="year">
+                                <!-- 年份由JS动态生成 -->
+                            </select>
+                            <select id="month">
+                                <option value="1">1月</option>
+                                <option value="2">2月</option>
+                                <option value="3">3月</option>
+                                <option value="4">4月</option>
+                                <option value="5">5月</option>
+                                <option value="6">6月</option>
+                                <option value="7">7月</option>
+                                <option value="8">8月</option>
+                                <option value="9">9月</option>
+                                <option value="10">10月</option>
+                                <option value="11">11月</option>
+                                <option value="12">12月</option>
+                            </select>
+                            <select id="day">
+                                <!-- 天数由JS动态生成 -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="lunar-input" style="display: none;">
+                    <div class="input-group">
+                        <label>农历出生日期</label>
+                        <div class="date-grid">
+                            <select id="lunar-year">
+                                <!-- 年份由JS动态生成 -->
+                            </select>
+                            <select id="lunar-month">
+                                <option value="1">正月</option>
+                                <option value="2">二月</option>
+                                <option value="3">三月</option>
+                                <option value="4">四月</option>
+                                <option value="5">五月</option>
+                                <option value="6">六月</option>
+                                <option value="7">七月</option>
+                                <option value="8">八月</option>
+                                <option value="9">九月</option>
+                                <option value="10">十月</option>
+                                <option value="11">冬月</option>
+                                <option value="12">腊月</option>
+                            </select>
+                            <select id="lunar-day">
+                                <!-- 天数由JS动态生成 -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>计算截止日期</label>
+                    <input type="date" id="calc-date">
+                </div>
+                
+                <div class="alert" id="alert"></div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="calculate()">开始计算</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">重置</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"> 计算结果</h2>
+                
+                <div class="results">
+                    <div class="result-item">
+                        <div class="result-label">周岁</div>
+                        <div class="result-value" id="full-age">--</div>
+                        <div class="result-sub">实际满岁年龄</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">虚岁</div>
+                        <div class="result-value" id="nominal-age">--</div>
+                        <div class="result-sub">传统计算方式</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">星座</div>
+                        <div class="result-value" id="constellation">--</div>
+                        <div class="result-sub">公历生日对应</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">生肖</div>
+                        <div class="result-value" id="zodiac">--</div>
+                        <div class="result-sub">农历年份对应</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">精确年龄</div>
+                        <div class="result-value" id="exact-age">--</div>
+                        <div class="result-sub">年/月/日</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="result-label">已生活天数</div>
+                        <div class="result-value" id="days-lived">--</div>
+                        <div class="result-sub">从出生到今天</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+    
+    </div>
+    
+    <script>
+        // 初始化日期选择器
+        function initDates() {
+            const yearSelect = document.getElementById('year');
+            const lunarYearSelect = document.getElementById('lunar-year');
+            const today = new Date();
+            
+            // 填充年份选项 (1900-今年)
+            for (let y = 1900; y <= today.getFullYear(); y++) {
+                const option = document.createElement('option');
+                option.value = y;
+                option.textContent = y + '年';
+                yearSelect.appendChild(option);
+                
+                const lunarOption = option.cloneNode(true);
+                lunarYearSelect.appendChild(lunarOption);
+            }
+            
+            // 默认设置为2000年
+            yearSelect.value = 2000;
+            lunarYearSelect.value = 2000;
+            
+            // 初始化天数和计算日期
+            updateDays();
+            setDefaultCalcDate();
+            
+            // 绑定事件监听
+            document.querySelectorAll('input[name="dateType"]').forEach(radio => {
+                radio.addEventListener('change', toggleDateType);
+            });
+            
+            document.getElementById('year').addEventListener('change', updateDays);
+            document.getElementById('month').addEventListener('change', updateDays);
+        }
+        
+        // 更新天数选项
+        function updateDays() {
+            const year = parseInt(document.getElementById('year').value);
+            const month = parseInt(document.getElementById('month').value);
+            const daySelect = document.getElementById('day');
+            
+            // 计算该月的天数
+            const daysInMonth = new Date(year, month, 0).getDate();
+            
+            // 清空现有选项
+            daySelect.innerHTML = '';
+            
+            // 填充天数选项
+            for (let d = 1; d <= daysInMonth; d++) {
+                const option = document.createElement('option');
+                option.value = d;
+                option.textContent = d + '日';
+                daySelect.appendChild(option);
+            }
+            
+            // 同样更新农历天数选择器（固定30天）
+            const lunarDaySelect = document.getElementById('lunar-day');
+            lunarDaySelect.innerHTML = '';
+            for (let d = 1; d <= 30; d++) {
+                const option = document.createElement('option');
+                option.value = d;
+                option.textContent = d + '日';
+                lunarDaySelect.appendChild(option);
+            }
+        }
+        
+        // 设置默认计算日期为今天
+        function setDefaultCalcDate() {
+            const today = new Date();
+            const formatted = today.toISOString().split('T')[0];
+            document.getElementById('calc-date').value = formatted;
+        }
+        
+        // 切换公历/农历输入
+        function toggleDateType() {
+            const type = document.querySelector('input[name="dateType"]:checked').value;
+            document.getElementById('solar-input').style.display = type === 'solar' ? 'block' : 'none';
+            document.getElementById('lunar-input').style.display = type === 'lunar' ? 'block' : 'none';
+        }
+        
+        // 获取出生日期
+        function getBirthDate() {
+            const type = document.querySelector('input[name="dateType"]:checked').value;
+            
+            if (type === 'solar') {
+                const year = parseInt(document.getElementById('year').value);
+                const month = parseInt(document.getElementById('month').value);
+                const day = parseInt(document.getElementById('day').value);
+                return new Date(year, month - 1, day);
+            } else {
+                // 农历转公历的简化处理
+                const lunarYear = parseInt(document.getElementById('lunar-year').value);
+                const lunarMonth = parseInt(document.getElementById('lunar-month').value);
+                const lunarDay = parseInt(document.getElementById('lunar-day').value);
+                
+                // 简单农历转换（这里只是示例，真实项目需要更复杂的算法）
+                // 注意：这是一个简化的转换，实际应用中应使用专业的农历库
+                return new Date(lunarYear, lunarMonth - 1, lunarDay);
+            }
+        }
+        
+        // 计算星座
+        function getConstellation(date) {
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            const constellations = [
+                {name: "摩羯座", start: [12, 22], end: [1, 19]},
+                {name: "水瓶座", start: [1, 20], end: [2, 18]},
+                {name: "双鱼座", start: [2, 19], end: [3, 20]},
+                {name: "白羊座", start: [3, 21], end: [4, 19]},
+                {name: "金牛座", start: [4, 20], end: [5, 20]},
+                {name: "双子座", start: [5, 21], end: [6, 21]},
+                {name: "巨蟹座", start: [6, 22], end: [7, 22]},
+                {name: "狮子座", start: [7, 23], end: [8, 22]},
+                {name: "处女座", start: [8, 23], end: [9, 22]},
+                {name: "天秤座", start: [9, 23], end: [10, 23]},
+                {name: "天蝎座", start: [10, 24], end: [11, 22]},
+                {name: "射手座", start: [11, 23], end: [12, 21]}
+            ];
+            
+            for (const constellation of constellations) {
+                if ((month === constellation.start[0] && day >= constellation.start[1]) ||
+                    (month === constellation.end[0] && day <= constellation.end[1]) ||
+                    (month > constellation.start[0] && month < constellation.end[0])) {
+                    return constellation.name;
+                }
+            }
+            
+            return "未知";
+        }
+        
+        // 计算生肖
+        function getZodiac(year) {
+            const zodiacs = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
+            // 1900年是鼠年
+            return zodiacs[(year - 1900) % 12];
+        }
+        
+        // 计算精确年龄
+        function getExactAge(birthDate, calcDate) {
+            let years = calcDate.getFullYear() - birthDate.getFullYear();
+            let months = calcDate.getMonth() - birthDate.getMonth();
+            let days = calcDate.getDate() - birthDate.getDate();
+            
+            if (days < 0) {
+                months--;
+                // 获取上个月的天数
+                const lastMonth = new Date(calcDate.getFullYear(), calcDate.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            return {years, months, days};
+        }
+        
+        // 计算周岁
+        function getFullAge(birthDate, calcDate) {
+            let age = calcDate.getFullYear() - birthDate.getFullYear();
+            
+            // 如果今年的生日还没过，年龄减1
+            const thisYearBirthday = new Date(calcDate.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            if (calcDate < thisYearBirthday) {
+                age--;
+            }
+            
+            return Math.max(0, age);
+        }
+        
+        // 计算虚岁
+        function getNominalAge(birthDate, calcDate) {
+            return calcDate.getFullYear() - birthDate.getFullYear() + 1;
+        }
+        
+        // 计算已生活天数
+        function getDaysLived(birthDate, calcDate) {
+            const diff = calcDate.getTime() - birthDate.getTime();
+            return Math.floor(diff / (1000 * 60 * 60 * 24));
+        }
+        
+        // 主计算函数
+        function calculate() {
+            const alertEl = document.getElementById('alert');
+            
+            try {
+                const birthDate = getBirthDate();
+                const calcDate = new Date(document.getElementById('calc-date').value);
+                
+                if (isNaN(birthDate.getTime())) {
+                    showAlert('请输入有效的出生日期');
+                    return;
+                }
+                
+                if (isNaN(calcDate.getTime())) {
+                    showAlert('请输入有效的计算日期');
+                    return;
+                }
+                
+                if (calcDate < birthDate) {
+                    showAlert('计算日期不能早于出生日期');
+                    return;
+                }
+                
+                // 执行计算
+                const exactAge = getExactAge(birthDate, calcDate);
+                const fullAge = getFullAge(birthDate, calcDate);
+                const nominalAge = getNominalAge(birthDate, calcDate);
+                const constellation = getConstellation(birthDate);
+                const zodiac = getZodiac(birthDate.getFullYear());
+                const daysLived = getDaysLived(birthDate, calcDate);
+                
+                // 显示结果
+                document.getElementById('full-age').textContent = fullAge + ' 岁';
+                document.getElementById('nominal-age').textContent = nominalAge + ' 岁';
+                document.getElementById('constellation').textContent = constellation;
+                document.getElementById('zodiac').textContent = zodiac;
+                document.getElementById('exact-age').textContent = `${exactAge.years}年 ${exactAge.months}月 ${exactAge.days}天`;
+                document.getElementById('days-lived').textContent = daysLived + ' 天';
+                
+                // 清除警告
+                alertEl.style.display = 'none';
+                
+            } catch (error) {
+                showAlert('计算过程中出现错误：' + error.message);
+            }
+        }
+        
+        // 显示警告
+        function showAlert(message) {
+            const alertEl = document.getElementById('alert');
+            alertEl.textContent = message;
+            alertEl.style.display = 'block';
+            
+            // 清空结果
+            document.querySelectorAll('.result-value').forEach(el => {
+                el.textContent = '--';
+            });
+        }
+        
+        // 重置表单
+        function resetForm() {
+            document.getElementById('year').value = 2000;
+            document.getElementById('month').value = 1;
+            updateDays();
+            setDefaultCalcDate();
+            
+            document.querySelectorAll('input[name="dateType"]')[0].checked = true;
+            toggleDateType();
+            
+            document.getElementById('alert').style.display = 'none';
+            
+            document.querySelectorAll('.result-value').forEach(el => {
+                el.textContent = '--';
+            });
+        }
+        
+       
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', initDates);
+    </script>
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON格式化工具</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+  <style>
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+      body {
+          background-color: #f0f2f5;
+          padding: 15px;
+          color: #333;
+      }
+      .container {
+          max-width: 1200px;
+          margin: 0 auto;
+      }
+      h1 {
+          text-align: center;
+          color: #333;
+          margin-bottom: 20px;
+          font-size: 24px;
+          font-weight: 500;
+      }
+      .config-panel {
+          background: #ffffff;
+          border: 1px solid #e1e4e8;
+          border-radius: 6px;
+          padding: 15px;
+          margin-bottom: 15px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .config-options-list {
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+      }
+      .config-option-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+      }
+      input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+      }
+      label {
+          cursor: pointer;
+          user-select: none;
+          font-size: 14px;
+      }
+      .main-layout {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+          margin-bottom: 15px;
+      }
+      .panel-container {
+          background: #ffffff;
+          border: 1px solid #e1e4e8;
+          border-radius: 6px;
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .panel-header-section {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 12px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid #f0f0f0;
+      }
+      .panel-title-text {
+          font-size: 16px;
+          font-weight: 500;
+          color: #333;
+      }
+      .action-buttons {
+          display: flex;
+          gap: 8px;
+      }
+      button {
+          padding: 6px 12px;
+          border: 1px solid #d9d9d9;
+          border-radius: 4px;
+          background: #ffffff;
+          color: #333;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+      }
+      .btn-primary {
+          border-color: #1890ff;
+          background: #1890ff;
+          color: white;
+      }
+      .btn-primary:hover {
+          background: #40a9ff;
+          border-color: #40a9ff;
+      }
+      .btn-secondary {
+          border-color: #52c41a;
+          background: #52c41a;
+          color: white;
+      }
+      .btn-secondary:hover {
+          background: #73d13d;
+          border-color: #73d13d;
+      }
+      .btn-copy {
+          border-color: #fa8c16;
+          background: #fa8c16;
+          color: white;
+      }
+      .btn-copy:hover {
+          background: #faad14;
+          border-color: #faad14;
+      }
+      textarea {
+          width: 100%;
+          flex: 1;
+          padding: 10px;
+          border: 1px solid #d9d9d9;
+          border-radius: 4px;
+          font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+          font-size: 13px;
+          resize: vertical;
+          height: 500px;
+      }
+      #preFormattedOutput {
+          background-color: #fafafa;
+          padding: 10px;
+          border: 1px solid #d9d9d9;
+          border-radius: 4px;
+          height: 500px;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          word-break: break-all;
+          max-width: 100%;
+          font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+          font-size: 13px;
+          overflow-y: auto;
+      }
+      .json-object-bracket {
+          color: #006d6d;font-weight: bold;
+      }
+      .json-array-bracket {
+          color: #005cc5;font-weight: bold;
+      }
+      .json-key-name {
+          color: #d73a49;font-weight: bold;
+      }
+      .json-string-value {color: #032f62;}
+      .json-number-value {color: #9900cc;}
+      .json-boolean-value {color: #005cc5;}
+      .json-null-value {color: #005cc5;}
+      .json-comma-symbol {
+          color: #333;
+          font-weight: bold;
+      }
+      .toggle-wrapper {
+          display: inline-block;
+          vertical-align: top;
+          margin-left: 5px;
+      }
+      .toggle-icon {
+          cursor: pointer;
+          user-select: none;
+          display: inline-block;
+          width: 15px;
+          color: #1890ff;
+          font-weight: bold;
+          border: 1px solid #1890ff;
+          border-radius: 3px;
+          text-align: center;
+          font-size: 12px;
+          line-height: 13px;
+      }
+      .collapsible-content {
+          display: block;
+      }
+      .hidden {
+          display: none;
+      }
+      .brace-line {
+          line-height: 1.5;
+          white-space: nowrap;
+      }
+      select {
+          padding: 4px 8px;
+          border: 1px solid #d9d9d9;
+          border-radius: 4px;
+          background-color: #fff;
+          font-size: 13px;
+          outline: none;
+          cursor: pointer;
+      }
+      select:focus {
+          border-color: #1890ff;
+      }
+      .toast-notification {
+          position: fixed;
+          top: 15px;
+          right: 15px;
+          background-color: #52c41a;
+          color: white;
+          padding: 8px 16px;
+          border-radius: 4px;
+          z-index: 1000;
+          display: none;
+          font-size: 13px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>JSON格式化工具</h1>
+
+  <div class="config-panel">
+    <div class="config-options-list">
+      <div class="config-option-item">
+        <input type="checkbox" id="toggleQuoteKeys" checked>
+        <label for="toggleQuoteKeys">引号</label>
+      </div>
+      <div class="config-option-item">
+        <input type="checkbox" id="toggleCollapsibleView" checked>
+        <label for="toggleCollapsibleView">显示控制</label>
+      </div>
+      <div class="config-option-item">
+        <input type="checkbox" id="toggleUnicodeEscape">
+        <label for="toggleUnicodeEscape">转义Unicode</label>
+      </div>
+      <div class="config-option-item">
+        <label for="selectIndentationSize">缩进量:</label>
+        <select id="selectIndentationSize">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="panel-container">
+      <div class="panel-header-section">
+        <h2 class="panel-title-text">输入 JSON</h2>
+        <div class="action-buttons">
+          <button class="btn-primary" id="btnFormatJson">格式化</button>
+        </div>
+      </div>
+      <textarea id="textareaRawJson" placeholder="在此输入 JSON 数据..."></textarea>
+    </div>
+    <div class="panel-container">
+      <div class="panel-header-section">
+        <h2 class="panel-title-text">格式化输出</h2>
+        <div class="action-buttons">
+          <button class="btn-secondary" id="btnExpandAll">展开</button>
+          <button class="btn-copy" id="btnCopyFormatted">复制</button>
+        </div>
+      </div>
+      <pre id="preFormattedOutput"></pre>
+    </div>
+  </div>
+
+  <div id="toastNotification" class="toast-notification">已复制到剪贴板</div>
+</div>
+<script>
+  let isJsonFormatted = false;
+  let collapsibleSectionId = 0;
+  let indentationString = '  ';
+  let formattingOptions = {
+    tabSize: 2,
+    quoteKeys: true,
+    isCollapsible: true,
+    escapeUnicode: true
+  };
+
+  function generateIndentedLine(indent, data, isPropertyContent) {
+    const tabs = !isPropertyContent ? indentationString.repeat(indent) : "";
+    return tabs + (data && data.length > 0 && data.charAt(data.length - 1) !== "\n" ? data + "\n" : data);
+  }
+
+  function formatPrimitiveValue(literal, quote, comma, indent, isArray, style) {
+    if (typeof literal === 'string' && formattingOptions.escapeUnicode) {
+      literal = literal.replace(/[\u007F-\uFFFF]/g, function(chr) {
+        return "\\u" + ("0000" + chr.charCodeAt(0).toString(16)).substr(-4);
+      });
+    }
+    if (typeof literal === 'string') {
+      literal = literal.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    const str = `<span class="json-${style}-value">${quote}${literal}${quote}</span>${comma}`;
+    return isArray ? generateIndentedLine(indent, str) : str;
+  }
+
+  function formatJsonValue(obj, indent, addComma, isArray, isPropertyContent) {
+    let html = "";
+    const comma = addComma ? `<span class="json-comma-symbol">,</span>` : "";
+    const type = typeof obj;
+
+    if (Array.isArray(obj)) {
+      if (obj.length === 0) {
+        html += generateIndentedLine(indent, `<span class="json-array-bracket">[ ]</span>${comma}`, isPropertyContent);
+      } else {
+        const sectionId = collapsibleSectionId++;
+        const isCollapsible = formattingOptions.isCollapsible;
+
+        if (isCollapsible) {
+          html += generateIndentedLine(indent, `<span class="brace-line"><span class="json-array-bracket">[</span><span class="toggle-wrapper"><span class="toggle-icon" data-target="content-${sectionId}">-</span></span></span>`, isPropertyContent);
+          html += `<span id="content-${sectionId}" class="collapsible-content">`;
+        } else {
+          html += generateIndentedLine(indent, `<span class="json-array-bracket">[</span>`, isPropertyContent);
+        }
+        for (let i = 0; i < obj.length; i++) {
+          html += formatJsonValue(obj[i], indent + 1, i < (obj.length - 1), true, false);
+        }
+        if (isCollapsible) html += `</span>`;
+        html += generateIndentedLine(indent, isCollapsible ? `<span class="brace-line"><span class="json-array-bracket">]</span>${comma}</span>` : `<span class="json-array-bracket">]</span>${comma}`);
+      }
+    } else if (obj === null) {
+      html += formatPrimitiveValue("null", "", comma, indent, isArray, "null");
+    } else if (type === 'object') {
+      const keys = Object.keys(obj);
+      if (keys.length === 0) {
+        html += generateIndentedLine(indent, `<span class="json-object-bracket">{ }</span>${comma}`, isPropertyContent);
+      } else {
+        const sectionId = collapsibleSectionId++;
+        const isCollapsible = formattingOptions.isCollapsible;
+
+        if (isCollapsible) {
+          html += generateIndentedLine(indent, `<span class="brace-line"><span class="json-object-bracket">{</span><span class="toggle-wrapper"><span class="toggle-icon" data-target="content-${sectionId}">-</span></span></span>`, isPropertyContent);
+          html += `<span id="content-${sectionId}" class="collapsible-content">`;
+        } else {
+          html += generateIndentedLine(indent, `<span class="json-object-bracket">{</span>`, isPropertyContent);
+        }
+
+        for (let i = 0; i < keys.length; i++) {
+          const key = keys[i];
+          const quote = formattingOptions.quoteKeys ? '"' : '';
+          const hasMore = i < keys.length - 1;
+          html += generateIndentedLine(indent + 1, `<span class="json-key-name">${quote}${key}${quote}</span>: ${formatJsonValue(obj[key], indent + 1, hasMore, false, true)}`);
+        }
+        if (isCollapsible) html += `</span>`;
+        html += generateIndentedLine(indent, isCollapsible ? `<span class="brace-line"><span class="json-object-bracket">}</span>${comma}</span>` : `<span class="json-object-bracket">}</span>${comma}`);
+      }
+    } else if (type === 'string') {
+      html += formatPrimitiveValue(obj, '"', comma, indent, isArray, "string");
+    } else if (type === 'number') {
+      html += formatPrimitiveValue(obj, "", comma, indent, isArray, "number");
+    } else if (type === 'boolean') {
+      html += formatPrimitiveValue(obj, "", comma, indent, isArray, "boolean");
+    }
+    return html;
+  }
+
+  function performJsonFormatting(json) {
+    try {
+      let obj;
+      if (typeof json === 'object') {
+        obj = json;
+      } else {
+        if (json === "") {
+          document.getElementById('preFormattedOutput').innerHTML = "";
+          isJsonFormatted = false;
+          return;
+        }
+
+        try {
+          obj = JSON.parse(json);
+        } catch (parseError) {
+          try {
+            const tempStr = `"${json}"`;
+            const unescapedStr = JSON.parse(tempStr);
+            obj = JSON.parse(unescapedStr);
+          } catch (secondError) {
+            throw parseError;
+          }
+        }
+      }
+      document.getElementById('preFormattedOutput').innerHTML = formatJsonValue(obj, 0, false, false, false);
+      isJsonFormatted = true;
+      attachCollapseEvents();
+    } catch (e) {
+      alert("JSON数据格式不正确:\n" + e.message);
+      document.getElementById('preFormattedOutput').innerHTML = "";
+      isJsonFormatted = false;
+    }
+  }
+
+  function attachCollapseEvents() {
+    if (!isJsonFormatted) return;
+    document.querySelectorAll('.toggle-icon').forEach(function(icon) {
+      icon.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = icon.getAttribute('data-target');
+        const content = document.getElementById(targetId);
+
+        if (content.classList.contains('hidden')) {
+          content.classList.remove('hidden');
+          icon.textContent = '-';
+        } else {
+          content.classList.add('hidden');
+          icon.textContent = '+';
+        }
+      });
+    });
+  }
+
+  function expandAllSections() {
+    if (!isJsonFormatted) return;
+    document.querySelectorAll('.collapsible-content').forEach(function(c) {
+      c.classList.remove('hidden');
+    });
+    document.querySelectorAll('.toggle-icon').forEach(function(i) {
+      i.textContent = '-';
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    function collectFormattingOptions() {
+      return {
+        tabSize: parseInt(document.getElementById('selectIndentationSize').value),
+        quoteKeys: document.getElementById('toggleQuoteKeys').checked,
+        isCollapsible: document.getElementById('toggleCollapsibleView').checked,
+        escapeUnicode: document.getElementById('toggleUnicodeEscape').checked
+      };
+    }
+
+    function refreshFormattingDisplay() {
+      const jsonText = document.getElementById('textareaRawJson').value;
+      if (jsonText.trim() !== "" && isJsonFormatted) {
+        formattingOptions = collectFormattingOptions();
+        indentationString = ' '.repeat(formattingOptions.tabSize);
+        performJsonFormatting(jsonText);
+      }
+    }
+
+    document.getElementById('btnFormatJson').addEventListener('click', function() {
+      const jsonText = document.getElementById('textareaRawJson').value;
+      formattingOptions = collectFormattingOptions();
+      indentationString = ' '.repeat(formattingOptions.tabSize);
+      performJsonFormatting(jsonText);
+    });
+
+    ['toggleQuoteKeys', 'toggleCollapsibleView', 'toggleUnicodeEscape'].forEach(function(id) {
+      document.getElementById(id).addEventListener('change', refreshFormattingDisplay);
+    });
+    document.getElementById('selectIndentationSize').addEventListener('change', refreshFormattingDisplay);
+
+    document.getElementById('btnExpandAll').addEventListener('click', function(e) {
+      e.preventDefault();
+      expandAllSections();
+    });
+
+    document.getElementById('btnCopyFormatted').addEventListener('click', function() {
+      const outputElement = document.getElementById('preFormattedOutput');
+      const tempElement = document.createElement('div');
+      tempElement.innerHTML = outputElement.innerHTML;
+      tempElement.querySelectorAll('.toggle-icon, .toggle-wrapper').forEach(function(el) {
+        el.remove();
+      });
+      const textToCopy = tempElement.innerText;
+      if (!textToCopy.trim()) {
+        alert('没有可复制的内容');
+        return;
+      }
+      navigator.clipboard.writeText(textToCopy).then(function() {
+        const notification = document.getElementById('toastNotification');
+        notification.style.display = 'block';
+        setTimeout(function() {
+          notification.style.display = 'none';
+        }, 2000);
+      }).catch(function(err) {
+        console.error('复制失败:', err);
+        alert('复制失败，请手动复制');
+      });
+    });
+    document.getElementById('btnFormatJson').click();
+  });
+</script>
+</body>
+</html>

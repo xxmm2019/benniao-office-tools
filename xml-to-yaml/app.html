@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML 转 YAML - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/xml-to-yaml/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f97316 0%, #f97316 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #f97316 0%, #f97316 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 320px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: none;
+            transition: border-color 0.3s;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+
+        .editor-textarea.error {
+            border-color: #f44336;
+            background-color: #fff5f5;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .status-box.error {
+            background: #fff5f5;
+            border-left-color: #f44336;
+        }
+
+        .status-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .status-box.active {
+            display: block;
+        }
+
+        .status-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .status-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .status-text {
+            flex: 1;
+            color: #2e7d32;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .status-box.error .status-text {
+            color: #c62828;
+        }
+
+        .status-box.warning .status-text {
+            color: #e65100;
+        }
+
+        .error-details {
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+            padding-left: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .error-details.error {
+            color: #c62828;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f97316;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 240px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>XML 转 YAML</h1>
+            <p>将 XML 内容转换为 YAML</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <div class="status-content">
+                    <span class="status-icon" id="status-icon"></span>
+                    <div>
+                        <p class="status-text" id="status-message">已完成转换</p>
+                        <div class="error-details" id="error-details"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" id="convert-btn" onclick="convert()">立即转换</button>
+                    <button class="btn btn-secondary" onclick="loadSample()">示例</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">清空</button>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输入</span>
+                    </div>
+                    <div style="position: relative;">
+                        <textarea class="editor-textarea" id="input" placeholder="粘贴 XML 内容..."></textarea>
+                        <div class="loading-overlay" id="loading-overlay">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输出</span>
+                    </div>
+                    <textarea class="editor-textarea" id="output" placeholder="转换后的 YAML 将显示在这里..." readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // XML 转对象函数
+        function xmlToObject(xml) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(xml, "application/xml");
+            
+            // 检查 XML 解析错误
+            const parserError = doc.querySelector('parsererror');
+            if (parserError) {
+                const errorLines = parserError.textContent.match(/line (\d+), column (\d+)/);
+                if (errorLines) {
+                    throw new Error(`XML 格式错误: 第 ${errorLines[1]} 行, 第 ${errorLines[2]} 列`);
+                } else {
+                    throw new Error(`XML 格式错误: ${parserError.textContent.substring(0, 100)}...`);
+                }
+            }
+            
+            // 检查是否为空文档
+            if (!doc.documentElement || doc.documentElement.nodeName === "#document") {
+                throw new Error("XML 文档为空或格式不正确");
+            }
+            
+            function nodeToObject(node) {
+                // 处理文本节点
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent.trim();
+                }
+                
+                // 处理元素节点
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const obj = {};
+                    
+                    // 处理属性
+                    if (node.attributes.length > 0) {
+                        const attributes = {};
+                        Array.from(node.attributes).forEach(attr => {
+                            attributes[attr.name] = attr.value;
+                        });
+                        obj['@attributes'] = attributes;
+                    }
+                    
+                    // 处理子节点
+                    const children = Array.from(node.childNodes);
+                    const hasElementChildren = children.some(child => child.nodeType === Node.ELEMENT_NODE);
+                    
+                    if (!hasElementChildren) {
+                        // 只有文本内容
+                        const text = node.textContent.trim();
+                        return text || "";
+                    }
+                    
+                    children.forEach(child => {
+                        if (child.nodeType === Node.ELEMENT_NODE) {
+                            const key = child.nodeName;
+                            const value = nodeToObject(child);
+                            
+                            if (value !== undefined && value !== "") {
+                                if (obj[key]) {
+                                    if (!Array.isArray(obj[key])) {
+                                        obj[key] = [obj[key]];
+                                    }
+                                    obj[key].push(value);
+                                } else {
+                                    obj[key] = value;
+                                }
+                            }
+                        }
+                    });
+                    
+                    return Object.keys(obj).length > 0 ? obj : "";
+                }
+                
+                return null;
+            }
+            
+            const result = nodeToObject(doc.documentElement);
+            return result || {};
+        }
+
+        // YAML 序列化函数
+        function stringifyYAML(value, indent = 0) {
+            const pad = "  ".repeat(indent);
+            
+            if (value === null || value === undefined) {
+                return pad + "null";
+            }
+            
+            if (Array.isArray(value)) {
+                if (value.length === 0) {
+                    return pad + "[]";
+                }
+                return value.map(item => {
+                    if (typeof item === 'object' && item !== null) {
+                        return pad + "- " + stringifyYAML(item, indent + 1).trim();
+                    }
+                    return pad + "- " + item;
+                }).join("\n");
+            }
+            
+            if (typeof value === 'object') {
+                const keys = Object.keys(value);
+                if (keys.length === 0) {
+                    return pad + "{}";
+                }
+                
+                return keys.map(key => {
+                    const val = value[key];
+                    const needsQuotes = key.includes(':') || key.includes(' ') || key.includes('-');
+                    const formattedKey = needsQuotes ? `"${key}"` : key;
+                    
+                    if (val && typeof val === 'object') {
+                        return pad + formattedKey + ":\n" + stringifyYAML(val, indent + 1);
+                    }
+                    return pad + formattedKey + ": " + (val === null ? "null" : val);
+                }).join("\n");
+            }
+            
+            // 处理字符串值
+            const strVal = String(value);
+            if (strVal.includes(':') || strVal.includes('#') || strVal.includes('|') || 
+                strVal.includes('>') || strVal.includes('[') || strVal.includes(']') ||
+                strVal.includes('{') || strVal.includes('}') || strVal.includes('*') ||
+                strVal.includes('&') || strVal === 'true' || strVal === 'false' ||
+                strVal === 'null' || strVal === 'yes' || strVal === 'no' ||
+                strVal === 'on' || strVal === 'off' || /^[-+]?\d+$/.test(strVal) ||
+                strVal.includes('\n')) {
+                return pad + JSON.stringify(strVal);
+            }
+            
+            return pad + strVal;
+        }
+
+        // 转换函数
+        function transform(input) {
+            if (!input || input.trim() === '') {
+                throw new Error("XML 内容为空");
+            }
+            
+            // 检查是否是有效的 XML（基本检查）
+            const trimmedInput = input.trim();
+            if (!trimmedInput.startsWith('<') || !trimmedInput.endsWith('>')) {
+                throw new Error("这不是有效的 XML 内容");
+            }
+            
+            // 检查 XML 声明
+            if (trimmedInput.startsWith('<?xml')) {
+                const endDeclaration = trimmedInput.indexOf('?>');
+                if (endDeclaration === -1) {
+                    throw new Error("XML 声明不完整");
+                }
+            }
+            
+            const obj = xmlToObject(input);
+            return stringifyYAML(obj);
+        }
+
+        // 显示状态消息
+        function showStatus(message, type = 'success') {
+            const statusBox = document.getElementById('status-box');
+            const statusIcon = document.getElementById('status-icon');
+            const statusMessage = document.getElementById('status-message');
+            const errorDetails = document.getElementById('error-details');
+            
+            statusBox.className = `status-box active ${type}`;
+            statusMessage.textContent = message;
+            errorDetails.textContent = '';
+            errorDetails.className = 'error-details';
+            
+            switch (type) {
+                case 'success':
+                    statusIcon.textContent = '';
+                    break;
+                case 'error':
+                    statusIcon.textContent = '';
+                    break;
+                case 'warning':
+                    statusIcon.textContent = '';
+                    break;
+            }
+            
+            // 5秒后自动隐藏成功消息
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusBox.classList.remove('active');
+                }, 5000);
+            }
+        }
+
+        // 显示错误详情
+        function showErrorDetails(details) {
+            const errorDetails = document.getElementById('error-details');
+            errorDetails.textContent = details;
+            errorDetails.className = 'error-details error';
+        }
+
+        // 设置加载状态
+        function setLoading(isLoading) {
+            const convertBtn = document.getElementById('convert-btn');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const inputTextarea = document.getElementById('input');
+            
+            convertBtn.disabled = isLoading;
+            inputTextarea.classList.toggle('error', false);
+            
+            if (isLoading) {
+                loadingOverlay.classList.add('active');
+            } else {
+                loadingOverlay.classList.remove('active');
+            }
+        }
+
+        // 主转换函数
+        async function convert() {
+            const input = document.getElementById('input').value;
+            const output = document.getElementById('output');
+            const inputTextarea = document.getElementById('input');
+            
+            // 清空之前的错误状态
+            inputTextarea.classList.remove('error');
+            output.value = '';
+            
+            if (!input.trim()) {
+                inputTextarea.classList.add('error');
+                showStatus('请输入 XML 内容', 'error');
+                return;
+            }
+            
+            try {
+                setLoading(true);
+                
+                // 模拟网络延迟，实际使用时可以移除
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                const result = transform(input);
+                output.value = result;
+                showStatus('转换完成 ', 'success');
+            } catch (error) {
+                console.error('转换错误:', error);
+                inputTextarea.classList.add('error');
+                showStatus(`转换失败: ${error.message}`, 'error');
+                
+                // 如果是 XML 解析错误，显示详细错误信息
+                if (error.message.includes('XML')) {
+                    showErrorDetails(error.message);
+                }
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // 清空所有内容
+        function clearAll() {
+            document.getElementById('input').value = '';
+            document.getElementById('output').value = '';
+            document.getElementById('input').classList.remove('error');
+            document.getElementById('status-box').classList.remove('active');
+        }
+
+        // 加载示例
+        function loadSample() {
+            const sampleXML = `<?xml version="1.0" encoding="UTF-8"?>
+<users>
+    <user id="1">
+        <name>寻寻觅觅</name>
+        <age>28</age>
+        <email>zhangsan@example.com</email>
+        <roles>
+            <role>管理员</role>
+            <role>开发者</role>
+        </roles>
+        <profile>
+            <bio>热爱编程，喜欢开源</bio>
+            <website>https://benniaooffice.com</website>
+        </profile>
+    </user>
+    <user id="2">
+        <name>李四</name>
+        <age>25</age>
+        <email>lisi@example.com</email>
+        <roles>
+            <role>用户</role>
+        </roles>
+    </user>
+</users>`;
+            
+            document.getElementById('input').value = sampleXML;
+            convert();
+        }
+
+        // 添加输入框变化监听
+        document.getElementById('input').addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('status-box').classList.remove('active');
+        });
+
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                convert();
+            }
+        });
+    </script>
+</body>
+</html>

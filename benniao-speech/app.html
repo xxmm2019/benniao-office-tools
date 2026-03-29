@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>在线语音合成- 笨鸟办公工具集箱</title>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-speech/">
+    <style>
+        /* 全局样式重置 & 基础样式 - CSS3特性：变量、盒模型优化 */
+        :root {
+            --primary-color: #409eff; /* 主题色 */
+            --light-primary: #e8f4ff; /* 浅主题色 */
+            --text-color: #303133;    /* 主文本色 */
+            --light-text: #606266;    /* 次文本色 */
+            --border-color: #dcdfe6;  /* 边框色 */
+            --shadow-color: rgba(0, 0, 0, 0.1); /* 阴影色 */
+            --radius: 8px;            /* 通用圆角 */
+            --transition: all 0.3s ease; /* 通用过渡动画 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; /* CSS3盒模型 */
+        }
+
+        body {
+            font-family: "Microsoft Yahei", sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7fa;
+            padding: 20px 0;
+        }
+
+        /* 容器布局 - CSS3特性：Flex、响应式宽度 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto; /* 水平居中 */
+            padding: 0 20px;
+        }
+
+        /* 卡片样式 - CSS3特性：圆角、阴影、渐变背景 */
+        .voice-card {
+            background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 12px var(--shadow-color); /* CSS3阴影 */
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* 标题样式 */
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 8px;
+            font-style: normal;
+        }
+
+        /* 提示框样式 - CSS3特性：圆角、边框、背景色 */
+        .alert-info {
+            background-color: var(--light-primary);
+            border: 1px solid #b3d8ff;
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            color: var(--light-text);
+            font-size: 14px;
+        }
+
+        /* 表单组样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        /* 文本域样式 - CSS3特性：圆角、边框、过渡 */
+        .form-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            resize: vertical; /* 仅允许垂直调整大小 */
+            font-size: 14px;
+            transition: var(--transition); /* CSS3过渡 */
+            outline: none;
+        }
+
+        .form-textarea:focus {
+            border-color: var(--primary-color); /* 聚焦时边框变色 */
+            box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+        }
+
+        /* 下拉框样式 - CSS3特性：自定义样式、过渡 */
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 14px;
+            transition: var(--transition);
+            outline: none;
+            appearance: none; /* 移除默认下拉样式 */
+            background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23606266' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center;
+            background-color: #fff;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+        }
+
+        /* 滑块样式 - CSS3特性：自定义滑块样式 */
+        .range-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-range {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none; /* 移除默认样式 */
+            appearance: none;
+            background: #e4e7ed;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        /* 滑块轨道（Chrome/Safari） */
+        .form-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%; /* 圆形滑块 */
+            background: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* 滑块轨道（Firefox） */
+        .form-range::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+
+        .form-range::-webkit-slider-thumb:hover,
+        .form-range::-moz-range-thumb:hover {
+            transform: scale(1.1); /* 悬停放大 - CSS3变换 */
+        }
+
+        .range-value {
+            margin-left: 12px;
+            font-size: 14px;
+            color: var(--light-text);
+            min-width: 30px;
+            text-align: right;
+        }
+
+        /* 按钮组样式 - CSS3特性：Flex、圆角、过渡、阴影 */
+        .btn-group {
+            display: flex; /* Flex布局 */
+            gap: 12px; /* 按钮间距 - CSS3 gap属性 */
+            margin-top: 8px;
+        }
+
+        .btn {
+            flex: 1; /* 等分宽度 */
+            padding: 12px 0;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--radius);
+            background-color: #fff;
+            color: var(--primary-color);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(64, 158, 255, 0.3); /* 悬停阴影 */
+        }
+
+        .btn i {
+            margin-right: 6px;
+            font-style: normal;
+        }
+
+        /* 响应式适配 - CSS3媒体查询 */
+        @media (max-width: 576px) {
+            .voice-card {
+                padding: 16px;
+            }
+
+            .btn-group {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 10px 0;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <div class="voice-card">
+            <div class="card-title">
+                <i>🔊</i>在线语音合成
+            </div>
+            <div class="alert-info">
+                <i>ℹ️</i> 本地生成，由于浏览器的不同，音色会有不同
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">要合成语音的文本</label>
+                <textarea class="form-textarea" v-model="set.input"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">音色</label>
+                <select class="form-select" v-model="set.voice">
+                    <option v-for="item in set.voices" :value="item.name">{{item.name}}</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">语速</label>
+                <div class="range-wrapper">
+                    <input type="range" min="0" max="3" step="0.1" v-model="set.rate" class="form-range">
+                    <span class="range-value">{{set.rate}}</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">音高</label>
+                <div class="range-wrapper">
+                    <input type="range" min="0" max="3" step="0.1" v-model="set.pitch" class="form-range">
+                    <span class="range-value">{{set.pitch}}</span>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn" @click="play">
+                    <i>▶️</i>播放
+                </button>
+                <button class="btn" @click="cancel">
+                    <i>⏹️</i>停止
+                </button>
+                <button class="btn" @click="reset">
+                    <i>🔄</i>清空
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.webstatic.cn/ajax/libs/vue/2.6.14/vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                set: {
+                    input: '大家好我是寻寻觅觅，心悦君兮君不知。',
+                    rate: 1,
+                    pitch: 1,
+                    voice: '',
+                    voices: [],
+                },
+                synth: null,
+            },
+            created() {
+                // 兼容性检测
+                if (!window.speechSynthesis) {
+                    alert("该浏览器不支持语音生成，请更换Chrome浏览器后重试");
+                    return;
+                }
+                this.synth = window.speechSynthesis;
+                
+                // 获取语音列表
+                const getVoices = () => {
+                    this.set.voices = window.speechSynthesis.getVoices();
+                    if (this.set.voices.length > 0) {
+                        this.set.voice = this.set.voices[0].name;
+                    }
+                };
+
+                // 监听语音列表变化
+                window.speechSynthesis.onvoiceschanged = getVoices;
+                // 主动触发一次（兼容部分浏览器）
+                getVoices();
+            },
+            methods: {
+                play() {
+                    try {
+                        // 空文本判断
+                        if (!this.set.input.trim()) {
+                            alert("请输入要合成语音的文本！");
+                            return;
+                        }
+                        if (!this.synth) {
+                            alert("语音合成组件未初始化，请刷新页面重试！");
+                            return;
+                        }
+
+                        const utterThis = new SpeechSynthesisUtterance(this.set.input);
+                        // 匹配选中的音色
+                        const selectedVoice = this.set.voices.find(v => v.name === this.set.voice);
+                        if (selectedVoice) {
+                            utterThis.voice = selectedVoice;
+                        }
+                        utterThis.pitch = this.set.pitch;
+                        utterThis.rate = this.set.rate;
+                        
+                        // 先停止再播放（避免重叠）
+                        this.synth.cancel();
+                        this.synth.speak(utterThis);
+                    } catch (e) {
+                        alert("播放失败：" + e.message);
+                    }
+                },
+                reset() {
+                    this.set.input = '';
+                },
+                cancel() {
+                    if (this.synth) {
+                        this.synth.cancel();
+                    }
+                }
+            },
+        });
+    </script>
+</body>
+</html>

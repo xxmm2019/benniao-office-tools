@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线条形码生成器- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-barcode/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --light-color: #f9f9f9;
+            --dark-color: #333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: #858081; 
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        header h1 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+
+        header p {
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .preview-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-panel h2, .controls-panel h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            font-size: 1.5rem;
+        }
+
+        .barcode-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px dashed #ddd;
+            min-height: 300px;
+        }
+
+        #barcode {
+            max-width: 100%;
+            height: auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        #barcode-error {
+            color: var(--danger-color);
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .download-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(41, 128, 185, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .controls-panel {
+            flex: 1.5;
+            min-width: 300px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group h3 {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-container input[type="range"] {
+            flex-grow: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .slider-value {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .color-picker-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-picker input[type="color"] {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .toggle-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .font-style-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .font-style-btn {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .font-style-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .info-section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .info-section h2 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .barcode-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .barcode-type {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .barcode-type h4 {
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+
+        .barcode-type p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .mobile-controls {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .mobile-controls {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 20px;
+            }
+            
+            .desktop-controls {
+                display: none;
+            }
+            
+            .barcode-types {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-barcode"></i> 在线条形码生成器</h1>
+            <p>快速生成多种格式的条形码，支持自定义样式，实时预览并下载为SVG/PNG格式</p>
+        </header>
+
+        <div class="app-container">
+            <div class="preview-panel">
+                <h2><i class="fas fa-eye"></i> 条形码预览</h2>
+                <div class="barcode-container">
+                    <svg id="barcode"></svg>
+                    <div id="barcode-error">无法生成条形码，请检查输入内容</div>
+                </div>
+                <div class="download-section">
+                    <button id="download-svg" class="btn btn-primary">
+                        <i class="fas fa-download"></i> 下载SVG
+                    </button>
+                    <button id="download-png" class="btn btn-success">
+                        <i class="fas fa-download"></i> 下载PNG
+                    </button>
+                </div>
+                <div class="mobile-controls">
+                    <button id="show-controls" class="btn btn-primary">
+                        <i class="fas fa-sliders-h"></i> 显示控制面板
+                    </button>
+                </div>
+            </div>
+
+            <div class="controls-panel desktop-controls" id="controls-panel">
+                <h2><i class="fas fa-sliders-h"></i> 控制面板</h2>
+                
+                <div class="control-group">
+                    <h3><i class="fas fa-edit"></i> 条形码内容</h3>
+                    <div class="form-group">
+                        <label for="barcode-content">输入条形码内容：</label>
+                        <input type="text" id="barcode-content" class="form-control" 
+                               placeholder="例如：1234567890, benniaooffice.com" value="1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label for="barcode-type">选择条形码类型：</label>
+                        <select id="barcode-type" class="form-control">
+                            <option value="CODE128" selected>CODE128 (通用)</option>
+                            <option value="EAN13">EAN13 (商品码)</option>
+                            <option value="EAN8">EAN8 (短商品码)</option>
+                            <option value="UPC">UPC (北美商品码)</option>
+                            <option value="CODE39">CODE39 (工业码)</option>
+                            <option value="ITF14">ITF14 (物流码)</option>
+                            <option value="MSI">MSI (零售库存码)</option>
+                            <option value="pharmacode">Pharmacode (药品码)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-ruler"></i> 尺寸设置</h3>
+                    <div class="form-group">
+                        <label>条形码宽度：<span id="width-value" class="slider-value">2</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="bar-width" min="1" max="5" step="0.5" value="2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>条形码高度：<span id="height-value" class="slider-value">100</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="bar-height" min="20" max="200" step="5" value="100">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>边距大小：<span id="margin-value" class="slider-value">10</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="bar-margin" min="0" max="30" step="1" value="10">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-palette"></i> 颜色设置</h3>
+                    <div class="color-picker-container">
+                        <div class="color-picker">
+                            <label>背景色：</label>
+                            <input type="color" id="background-color" value="#FFFFFF">
+                        </div>
+                        <div class="color-picker">
+                            <label>线条颜色：</label>
+                            <input type="color" id="line-color" value="#000000">
+                        </div>
+                        <div class="color-picker">
+                            <label>文字颜色：</label>
+                            <input type="color" id="text-color" value="#000000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3><i class="fas fa-font"></i> 文字设置</h3>
+                    <div class="form-group">
+                        <label>文字显示：</label>
+                        <div class="toggle-buttons">
+                            <div class="toggle-btn active" id="text-visible">显示文字</div>
+                            <div class="toggle-btn" id="text-hidden">隐藏文字</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>文字位置：</label>
+                        <div class="toggle-buttons">
+                            <div class="toggle-btn" id="text-left">居左</div>
+                            <div class="toggle-btn active" id="text-center">居中</div>
+                            <div class="toggle-btn" id="text-right">居右</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>字体样式：</label>
+                        <div class="font-style-buttons">
+                            <div class="font-style-btn" id="font-bold">粗体</div>
+                            <div class="font-style-btn" id="font-italic">斜体</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>字体大小：<span id="font-size-value" class="slider-value">20</span></label>
+                        <div class="slider-container">
+                            <input type="range" id="bar-font-size" min="10" max="40" step="1" value="20">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+     
+        </div>
+
+        <footer>
+           
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        // 全局配置对象
+        const config = {
+            displayValue: true,
+            width: 2,
+            height: 100,
+            margin: 10,
+            background: "#FFFFFF",
+            lineColor: "#000000",
+            textColor: "#000000",
+            textAlign: "center",
+            fontSize: 20,
+            fontOptions: ""
+        };
+
+        // DOM元素
+        const barcodeElement = document.getElementById('barcode');
+        const barcodeError = document.getElementById('barcode-error');
+        const contentInput = document.getElementById('barcode-content');
+        const typeSelect = document.getElementById('barcode-type');
+        
+        // 尺寸控制
+        const widthSlider = document.getElementById('bar-width');
+        const heightSlider = document.getElementById('bar-height');
+        const marginSlider = document.getElementById('bar-margin');
+        const widthValue = document.getElementById('width-value');
+        const heightValue = document.getElementById('height-value');
+        const marginValue = document.getElementById('margin-value');
+        
+        // 颜色控制
+        const backgroundColorPicker = document.getElementById('background-color');
+        const lineColorPicker = document.getElementById('line-color');
+        const textColorPicker = document.getElementById('text-color');
+        
+        // 文字控制
+        const textVisibleBtn = document.getElementById('text-visible');
+        const textHiddenBtn = document.getElementById('text-hidden');
+        const textLeftBtn = document.getElementById('text-left');
+        const textCenterBtn = document.getElementById('text-center');
+        const textRightBtn = document.getElementById('text-right');
+        const fontBoldBtn = document.getElementById('font-bold');
+        const fontItalicBtn = document.getElementById('font-italic');
+        const fontSizeSlider = document.getElementById('bar-font-size');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        // 下载按钮
+        const downloadSvgBtn = document.getElementById('download-svg');
+        const downloadPngBtn = document.getElementById('download-png');
+        
+        // 移动端控制
+        const showControlsBtn = document.getElementById('show-controls');
+        const controlsPanel = document.getElementById('controls-panel');
+
+        // 初始化函数
+        function init() {
+            updateSliderValues();
+            setupEventListeners();
+            generateBarcode();
+            
+            // 移动端控制面板切换
+            showControlsBtn.addEventListener('click', () => {
+                controlsPanel.classList.toggle('desktop-controls');
+                controlsPanel.style.display = controlsPanel.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+
+        // 更新滑块显示值
+        function updateSliderValues() {
+            widthValue.textContent = widthSlider.value;
+            heightValue.textContent = heightSlider.value;
+            marginValue.textContent = marginSlider.value;
+            fontSizeValue.textContent = fontSizeSlider.value;
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 输入内容变化
+            contentInput.addEventListener('input', generateBarcode);
+            typeSelect.addEventListener('change', generateBarcode);
+            
+            // 尺寸控制
+            widthSlider.addEventListener('input', () => {
+                widthValue.textContent = widthSlider.value;
+                config.width = parseFloat(widthSlider.value);
+                generateBarcode();
+            });
+            
+            heightSlider.addEventListener('input', () => {
+                heightValue.textContent = heightSlider.value;
+                config.height = parseInt(heightSlider.value);
+                generateBarcode();
+            });
+            
+            marginSlider.addEventListener('input', () => {
+                marginValue.textContent = marginSlider.value;
+                config.margin = parseInt(marginSlider.value);
+                generateBarcode();
+            });
+            
+            // 颜色控制
+            backgroundColorPicker.addEventListener('change', () => {
+                config.background = backgroundColorPicker.value;
+                generateBarcode();
+            });
+            
+            lineColorPicker.addEventListener('change', () => {
+                config.lineColor = lineColorPicker.value;
+                generateBarcode();
+            });
+            
+            textColorPicker.addEventListener('change', () => {
+                config.textColor = textColorPicker.value;
+                generateBarcode();
+            });
+            
+            // 文字可见性
+            textVisibleBtn.addEventListener('click', () => {
+                textVisibleBtn.classList.add('active');
+                textHiddenBtn.classList.remove('active');
+                config.displayValue = true;
+                generateBarcode();
+            });
+            
+            textHiddenBtn.addEventListener('click', () => {
+                textHiddenBtn.classList.add('active');
+                textVisibleBtn.classList.remove('active');
+                config.displayValue = false;
+                generateBarcode();
+            });
+            
+            // 文字对齐
+            [textLeftBtn, textCenterBtn, textRightBtn].forEach(btn => {
+                btn.addEventListener('click', () => {
+                    [textLeftBtn, textCenterBtn, textRightBtn].forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    config.textAlign = btn.id.replace('text-', '');
+                    generateBarcode();
+                });
+            });
+            
+            // 字体样式
+            fontBoldBtn.addEventListener('click', () => {
+                fontBoldBtn.classList.toggle('active');
+                updateFontOptions();
+            });
+            
+            fontItalicBtn.addEventListener('click', () => {
+                fontItalicBtn.classList.toggle('active');
+                updateFontOptions();
+            });
+            
+            // 字体大小
+            fontSizeSlider.addEventListener('input', () => {
+                fontSizeValue.textContent = fontSizeSlider.value;
+                config.fontSize = parseInt(fontSizeSlider.value);
+                generateBarcode();
+            });
+            
+            // 下载功能
+            downloadSvgBtn.addEventListener('click', downloadSvg);
+            downloadPngBtn.addEventListener('click', downloadPng);
+        }
+
+        // 更新字体选项
+        function updateFontOptions() {
+            let fontOptions = "";
+            if (fontBoldBtn.classList.contains('active')) fontOptions += "bold ";
+            if (fontItalicBtn.classList.contains('active')) fontOptions += "italic ";
+            config.fontOptions = fontOptions.trim();
+            generateBarcode();
+        }
+
+        // 生成条形码
+        function generateBarcode() {
+            const content = contentInput.value.trim();
+            
+            // 验证输入
+            if (!content) {
+                barcodeError.textContent = "请输入条形码内容";
+                barcodeError.style.display = "block";
+                barcodeElement.innerHTML = "";
+                return;
+            }
+            
+            try {
+                // 清除错误信息
+                barcodeError.style.display = "none";
+                
+                // 生成条形码
+                JsBarcode(barcodeElement, content, {
+                    format: typeSelect.value,
+                    width: config.width,
+                    height: config.height,
+                    displayValue: config.displayValue,
+                    background: config.background,
+                    lineColor: config.lineColor,
+                    margin: config.margin,
+                    text: config.displayValue ? content : "",
+                    textAlign: config.textAlign,
+                    fontSize: config.fontSize,
+                    fontOptions: config.fontOptions,
+                    textMargin: 0,
+                    valid: function(valid) {
+                        if (!valid) {
+                            throw new Error("无效的条形码格式");
+                        }
+                    }
+                });
+                
+                // 应用自定义文字颜色
+                if (config.displayValue) {
+                    const textElement = barcodeElement.querySelector('text');
+                    if (textElement) {
+                        textElement.setAttribute('fill', config.textColor);
+                    }
+                }
+                
+            } catch (error) {
+                console.error("条形码生成错误:", error);
+                barcodeError.textContent = `无法生成条形码: ${error.message}`;
+                barcodeError.style.display = "block";
+                barcodeElement.innerHTML = "";
+            }
+        }
+
+        // 下载SVG
+        function downloadSvg() {
+            const content = contentInput.value.trim();
+            if (!content) {
+                alert("请先输入条形码内容");
+                return;
+            }
+            
+            const svgData = new XMLSerializer().serializeToString(barcodeElement);
+            const svgBlob = new Blob([svgData], {type: "image/svg+xml;charset=utf-8"});
+            const svgUrl = URL.createObjectURL(svgBlob);
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = svgUrl;
+            downloadLink.download = `barcode_${content.substring(0, 10)}.svg`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            URL.revokeObjectURL(svgUrl);
+        }
+
+        // 下载PNG
+        function downloadPng() {
+            const content = contentInput.value.trim();
+            if (!content) {
+                alert("请先输入条形码内容");
+                return;
+            }
+            
+            // 使用html2canvas将SVG转换为PNG
+            html2canvas(barcodeElement.parentElement, {
+                backgroundColor: config.background,
+                scale: 2,
+                useCORS: true
+            }).then(canvas => {
+                const pngUrl = canvas.toDataURL("image/png");
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pngUrl;
+                downloadLink.download = `barcode_${content.substring(0, 10)}.png`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }).catch(error => {
+                console.error("PNG转换错误:", error);
+                alert("PNG转换失败，请下载SVG格式");
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

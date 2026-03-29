@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>手写签名板 - 笨鸟办公工具集箱</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-text-handwritten/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --danger-color: #ef4444;
+      --success-color: #10b981;
+      --light-color: #f9fafb;
+      --dark-color: #1f2937;
+      --border-color: #d1d5db;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: var(--dark-color);
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(to right, var(--primary-color), #6366f1);
+      color: white;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    
+    .paper-container {
+      position: relative;
+      margin: 30px auto;
+      border: 2px dashed var(--border-color);
+      background-color: white;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    
+    .paper {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .controls {
+      padding: 0 20px 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .config-panel {
+      padding: 20px;
+      background-color: var(--light-color);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    
+    .config-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 180px;
+    }
+    
+    .config-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dark-color);
+    }
+    
+    .config-input {
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    
+    .config-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .config-range {
+      width: 100%;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #6b7280;
+      border-top: 1px solid var(--border-color);
+      background-color: var(--light-color);
+    }
+    
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .config-panel {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .config-group {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+    
+    .signature-count {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>手写签名板</h1>
+    </div>
+    
+    <div class="config-panel">
+      <div class="config-group">
+        <label class="config-label">范字内容</label>
+        <input type="text" id="charsInput" class="config-input" value="寻寻觅觅" maxlength="12">
+      </div>
+      
+      <div class="config-group">
+        <label class="config-label">笔触颜色</label>
+        <input type="color" id="colorInput" class="config-input" value="#000000">
+      </div>
+      
+      <div class="config-group">
+        <label class="config-label">笔触粗细: <span id="penSizeValue">5</span>px</label>
+        <input type="range" id="penSizeInput" class="config-range" min="1" max="20" value="5">
+      </div>
+    </div>
+    
+    <div class="paper-container" id="paperContainer">
+      <div class="signature-count" id="signatureCount">0 个签名</div>
+      <canvas id="canvas" class="paper"></canvas>
+    </div>
+    
+    <div class="controls">
+      <button id="clearBtn" class="btn btn-danger">
+        <span>清空画布</span>
+      </button>
+      <button id="undoBtn" class="btn btn-primary">
+        <span>撤销一步</span>
+      </button>
+      <button id="saveBtn" class="btn btn-success">
+        <span>保存签名</span>
+      </button>
+    </div>
+    
+    <div class="footer">
+      签名将保存在您的设备中，可随时下载使用
+    </div>
+  </div>
+
+  <script>
+    // 应用配置
+    const config = {
+      chars: '寻寻觅觅',
+      cols: 4,
+      cellSize: 180,
+      lineWidth: 2,
+      guideColor: 'rgba(180,180,180,0.5)',
+      penColor: '#000000',
+      penSize: 5,
+      maxUndoSteps: 20
+    };
+    
+    // 应用状态
+    const state = {
+      isDrawing: false,
+      lastX: 0,
+      lastY: 0,
+      undoStack: [],
+      redoStack: [],
+      signatureCount: 0
+    };
+    
+    // DOM 元素
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const paperContainer = document.getElementById('paperContainer');
+    const charsInput = document.getElementById('charsInput');
+    const colorInput = document.getElementById('colorInput');
+    const penSizeInput = document.getElementById('penSizeInput');
+    const penSizeValue = document.getElementById('penSizeValue');
+    const signatureCount = document.getElementById('signatureCount');
+    const clearBtn = document.getElementById('clearBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    
+    // 初始化画布
+    function initCanvas() {
+      // 计算画布尺寸
+      const rows = Math.ceil(config.chars.length / config.cols);
+      const width = config.cellSize * config.cols;
+      const height = config.cellSize * rows;
+      
+      // 设置画布尺寸
+      canvas.width = width;
+      canvas.height = height;
+      paperContainer.style.width = `${width}px`;
+      paperContainer.style.height = `${height}px`;
+      
+      // 绘制底稿
+      drawGuide();
+      
+      // 更新签名计数显示
+      updateSignatureCount();
+    }
+    
+    // 绘制底稿（米字格和范字）
+    function drawGuide() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.lineWidth = config.lineWidth;
+      ctx.strokeStyle = config.guideColor;
+      ctx.font = `${config.cellSize * 0.75}px 楷体, STKaiti, KaiTi, serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      for (let i = 0; i < config.chars.length; i++) {
+        const row = Math.floor(i / config.cols);
+        const col = i % config.cols;
+        const x = col * config.cellSize;
+        const y = row * config.cellSize;
+        const centerX = x + config.cellSize / 2;
+        const centerY = y + config.cellSize / 2;
+        
+        // 绘制米字格
+        ctx.beginPath();
+        ctx.rect(x, y, config.cellSize, config.cellSize); // 外框
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + config.cellSize, y + config.cellSize); // 左斜线
+        ctx.moveTo(x + config.cellSize, y);
+        ctx.lineTo(x, y + config.cellSize); // 右斜线
+        ctx.moveTo(centerX, y);
+        ctx.lineTo(centerX, y + config.cellSize); // 竖中线
+        ctx.moveTo(x, centerY);
+        ctx.lineTo(x + config.cellSize, centerY); // 横中线
+        ctx.stroke();
+        
+        // 绘制范字
+        ctx.strokeText(config.chars[i], centerX, centerY);
+      }
+      
+      // 保存底稿状态
+      saveState();
+    }
+    
+    // 保存画布状态到撤销栈
+    function saveState() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      state.undoStack.push(imageData);
+      
+      // 限制撤销栈大小
+      if (state.undoStack.length > config.maxUndoSteps) {
+        state.undoStack.shift();
+      }
+      
+      // 清空重做栈
+      state.redoStack = [];
+      
+      // 更新签名计数
+      updateSignatureCount();
+    }
+    
+    // 撤销操作
+    function undo() {
+      if (state.undoStack.length <= 1) return; // 保留底稿
+    
+      // 将当前状态移到重做栈
+      const currentState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      state.redoStack.push(currentState);
+      
+      // 恢复上一个状态
+      const prevState = state.undoStack.pop();
+      ctx.putImageData(prevState, 0, 0);
+    }
+    
+    // 重做操作
+    function redo() {
+      if (state.redoStack.length === 0) return;
+      
+      // 保存当前状态到撤销栈
+      const currentState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      state.undoStack.push(currentState);
+      
+      // 恢复重做状态
+      const redoState = state.redoStack.pop();
+      ctx.putImageData(redoState, 0, 0);
+    }
+    
+    // 更新签名计数
+    function updateSignatureCount() {
+      // 计算非空白像素数量来估计是否有签名
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let hasSignature = false;
+      
+      // 简单检测：检查是否有非底稿颜色的像素
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        // 检查是否为用户笔迹（非透明且不是底稿颜色）
+        if (imageData.data[i+3] > 200) {
+          hasSignature = true;
+          break;
+        }
+      }
+      
+      state.signatureCount = hasSignature ? 1 : 0;
+      signatureCount.textContent = `${state.signatureCount} 个签名`;
+    }
+    
+    // 获取画布上的坐标
+    function getCanvasPosition(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+    
+    // 开始绘制
+    function startDrawing(e) {
+      e.preventDefault();
+      state.isDrawing = true;
+      const {x, y} = getCanvasPosition(e);
+      
+      state.lastX = x;
+      state.lastY = y;
+      
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+    
+    // 绘制过程
+    function draw(e) {
+      if (!state.isDrawing) return;
+      e.preventDefault();
+      
+      const {x, y} = getCanvasPosition(e);
+      
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      
+      state.lastX = x;
+      state.lastY = y;
+    }
+    
+    // 结束绘制
+    function stopDrawing() {
+      if (!state.isDrawing) return;
+      state.isDrawing = false;
+      
+      // 保存状态到撤销栈
+      saveState();
+    }
+    
+    // 清空画布
+    function clearCanvas() {
+      if (!confirm('确定要清空画布吗？')) return;
+      
+      // 保存当前状态到重做栈
+      const currentState = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      state.redoStack.push(currentState);
+      
+      // 清空画布并重新绘制底稿
+      drawGuide();
+    }
+    
+    // 保存签名
+    function saveSignature() {
+      if (state.signatureCount === 0) {
+        alert('请先签名再保存！');
+        return;
+      }
+      
+      const link = document.createElement('a');
+      link.download = `签名_${new Date().toISOString().slice(0, 10)}_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    // 初始化事件监听
+    function initEventListeners() {
+      // 鼠标事件
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDrawing);
+      canvas.addEventListener('mouseout', stopDrawing);
+      
+      // 触摸事件
+      canvas.addEventListener('touchstart', startDrawing);
+      canvas.addEventListener('touchmove', draw);
+      canvas.addEventListener('touchend', stopDrawing);
+      
+      // 控制按钮事件
+      clearBtn.addEventListener('click', clearCanvas);
+      undoBtn.addEventListener('click', undo);
+      saveBtn.addEventListener('click', saveSignature);
+      
+      // 配置面板事件
+      charsInput.addEventListener('change', () => {
+        config.chars = charsInput.value || '技术小丁';
+        initCanvas();
+      });
+      
+      colorInput.addEventListener('input', () => {
+        config.penColor = colorInput.value;
+        ctx.strokeStyle = config.penColor;
+      });
+      
+      penSizeInput.addEventListener('input', () => {
+        config.penSize = parseInt(penSizeInput.value);
+        penSizeValue.textContent = config.penSize;
+        ctx.lineWidth = config.penSize;
+      });
+      
+      // 键盘快捷键
+      document.addEventListener('keydown', (e) => {
+        // Ctrl+Z 撤销
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+          e.preventDefault();
+          undo();
+        }
+        
+        // Ctrl+Shift+Z 或 Ctrl+Y 重做
+        if (((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'z') || 
+            ((e.ctrlKey || e.metaKey) && e.key === 'y')) {
+          e.preventDefault();
+          redo();
+        }
+        
+        // Delete 或 Backspace 清空
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+          e.preventDefault();
+          clearCanvas();
+        }
+      });
+    }
+    
+    // 初始化应用
+    function initApp() {
+      // 设置笔触样式
+      ctx.strokeStyle = config.penColor;
+      ctx.lineWidth = config.penSize;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      
+      // 初始化配置面板
+      colorInput.value = config.penColor;
+      penSizeInput.value = config.penSize;
+      penSizeValue.textContent = config.penSize;
+      
+      // 初始化画布
+      initCanvas();
+      
+      // 初始化事件监听
+      initEventListeners();
+    }
+    
+    // 启动应用
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>

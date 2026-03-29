@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二维码生成器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/qr-generator/app.html">
+    <!-- 引入QRCode库 -->
+    <script src="https://www.benniaooffice.com/tools/assets/vendor/qrcodejs/qrcode.min.js"></script>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .input-section {
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: #aaa;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-tab:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .category-tab.active {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .category-content {
+            display: none;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .logo-upload-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .logo-upload-area {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .logo-upload-area:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+        }
+
+        .logo-upload-area i {
+            font-size: 2rem;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+
+        .logo-preview-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        #logoPreview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            object-fit: contain;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .logo-controls input[type="range"] {
+            flex: 1;
+        }
+
+        .logo-controls button {
+            padding: 8px 16px;
+            background: rgba(255, 59, 48, 0.2);
+            border: 1px solid rgba(255, 59, 48, 0.4);
+            color: #ff3b30;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .logo-controls button:hover {
+            background: rgba(255, 59, 48, 0.3);
+        }
+
+        .color-inputs {
+            display: flex;
+            gap: 12px;
+        }
+
+        .color-input {
+            flex: 1;
+        }
+
+        .color-input input[type="color"] {
+            width: 100%;
+            height: 40px;
+            padding: 4px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-section {
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        #qrcode canvas {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .qrcode-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #10b981;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(100, 100, 255, 0.2);
+            border-color: rgba(100, 100, 255, 0.4);
+            color: #8a8aff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(100, 100, 255, 0.3);
+        }
+
+        .batch-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 193, 7, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .batch-info h3 {
+            color: #ffc107;
+            margin-bottom: 8px;
+        }
+
+        .batch-info a {
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        .batch-info a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .category-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 10px;
+            }
+            .actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>二维码生成器</h1>
+            <p>支持Logo上传、多种内容类型和自定义样式</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label>内容类型</label>
+                    <div class="category-tabs">
+                        <div class="category-tab active" data-category="url">网址</div>
+                        <div class="category-tab" data-category="text">文本</div> 
+                        <div class="category-tab" data-category="wifi">WiFi</div>
+                        <div class="category-tab" data-category="wechat">微信</div>
+                        <div class="category-tab" data-category="email">邮箱</div>
+                        <div class="category-tab" data-category="sms">短信</div>
+                        <div class="category-tab" data-category="tel">电话</div>
+                    </div>
+                </div>
+
+                <!-- 网址分类 -->
+                <div class="category-content active" id="url-content">
+                    <div class="input-group">
+                        <label>网址</label>
+                        <textarea id="url-text" placeholder="输入网址 (例如: https://www.benniaooffice.com)">https://www.benniaooffice.com</textarea>
+                    </div>
+                </div>
+
+                <!-- 文本分类 -->
+                <div class="category-content" id="text-content">
+                    <div class="input-group">
+                        <label>文本内容</label>
+                        <textarea id="text-text" placeholder="输入任意文本内容...">欢迎使用笨鸟办公二维码生成器</textarea>
+                    </div>
+                </div>
+
+              
+
+                <!-- WiFi分类 -->
+                <div class="category-content" id="wifi-content">
+                    <div class="input-group">
+                        <label>网络名称 (SSID)</label>
+                        <input type="text" id="wifi-ssid" placeholder="WiFi名称" value="MyWiFi">
+                    </div>
+                    <div class="input-group">
+                        <label>密码</label>
+                        <input type="text" id="wifi-password" placeholder="WiFi密码" value="12345678">
+                    </div>
+                    <div class="input-group">
+                        <label>加密类型</label>
+                        <select id="wifi-encryption">
+                            <option value="WPA">WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass">无密码</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 微信分类 -->
+                <div class="category-content" id="wechat-content">
+                    <div class="input-group">
+                        <label>微信号/公众号ID</label>
+                        <input type="text" id="wechat-id" placeholder="微信号或公众号ID" value="benniaooffice">
+                    </div>
+                    <div class="input-group">
+                        <label>类型</label>
+                        <select id="wechat-type">
+                            <option value="personal">个人微信</option>
+                            <option value="official">公众号</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 邮箱分类 -->
+                <div class="category-content" id="email-content">
+                    <div class="input-group">
+                        <label>收件人邮箱</label>
+                        <input type="text" id="email-to" placeholder="收件人邮箱地址" value="contact@benniaooffice.com">
+                    </div>
+                    <div class="input-group">
+                        <label>邮件主题</label>
+                        <input type="text" id="email-subject" placeholder="邮件主题" value="咨询产品信息">
+                    </div>
+                    <div class="input-group">
+                        <label>邮件内容</label>
+                        <textarea id="email-body" placeholder="邮件正文...">您好，我想了解更多关于贵公司产品的信息。</textarea>
+                    </div>
+                </div>
+
+                <!-- 短信分类 -->
+                <div class="category-content" id="sms-content">
+                    <div class="input-group">
+                        <label>电话号码</label>
+                        <input type="text" id="sms-number" placeholder="接收短信的电话号码" value="13800138000">
+                    </div>
+                    <div class="input-group">
+                        <label>短信内容</label>
+                        <textarea id="sms-body" placeholder="短信内容...">你好，这是我的联系方式。</textarea>
+                    </div>
+                </div>
+
+                <!-- 电话分类 -->
+                <div class="category-content" id="tel-content">
+                    <div class="input-group">
+                        <label>电话号码</label>
+                        <input type="text" id="tel-number" placeholder="电话号码" value="13800138000">
+                    </div>
+                </div>
+
+                <div class="options-grid">
+                    <div class="input-group">
+                        <label>尺寸</label>
+                        <select id="size">
+                            <option value="128">128 x 128</option>
+                            <option value="256" selected>256 x 256</option>
+                            <option value="384">384 x 384</option>
+                            <option value="512">512 x 512</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>容错级别</label>
+                        <select id="level">
+                            <option value="L">低 (7%)</option>
+                            <option value="M" selected>中 (15%)</option>
+                            <option value="Q">较高 (25%)</option>
+                            <option value="H">高 (30%)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>颜色</label>
+                    <div class="color-inputs">
+                        <div class="color-input">
+                            <label style="font-size: 12px;">前景色</label>
+                            <input type="color" id="color-dark" value="#000000">
+                        </div>
+                        <div class="color-input">
+                            <label style="font-size: 12px;">背景色</label>
+                            <input type="color" id="color-light" value="#ffffff">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo上传区域 -->
+                <div class="logo-upload-section">
+                    <div class="input-group">
+                        <label>Logo设置</label>
+                        <div class="logo-upload-area" id="logoUploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击上传Logo图片</p>
+                            <p style="font-size: 12px; color: #aaa;">建议使用透明背景的PNG图片</p>
+                        </div>
+                        <input type="file" id="logoInput" accept="image/*" style="display: none;">
+                    </div>
+
+                    <div class="logo-preview-container" id="logoPreviewContainer" style="display: none;">
+                        <img id="logoPreview" src="" alt="Logo预览">
+                    </div>
+
+                    <div class="logo-controls" id="logoControls" style="display: none;">
+                        <input type="range" id="logoSize" min="10" max="50" value="25" style="width: 100%;">
+                        <span id="logoSizeValue">25%</span>
+                        <button id="removeLogo">移除Logo</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div id="qrcode"></div>
+                <div class="actions">
+                    <button class="btn" onclick="downloadQR('png')">
+                        <i class="fas fa-download"></i> 下载 PNG
+                    </button>
+                    <button class="btn" onclick="downloadQR('svg')">
+                        <i class="fas fa-download"></i> 下载 SVG
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareQR()">
+                        <i class="fas fa-share-alt"></i> 分享
+                    </button>
+                </div>
+                
+                <div class="batch-info">
+                    <h3><i class="fas fa-layer-group"></i> 批量生码功能</h3>
+                    <p>需要批量生成多个二维码？请访问我们的 <a href="#">批量二维码生成工具</a>，支持Excel/CSV数据导入，一次性生成数百个二维码。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const categoryContents = document.querySelectorAll('.category-content');
+        const textInputs = {
+            url: document.getElementById('url-text'),
+            text: document.getElementById('text-text'),
+            contact: {
+                name: document.getElementById('contact-name'),
+                title: document.getElementById('contact-title'),
+                company: document.getElementById('contact-company'),
+                phone: document.getElementById('contact-phone'),
+                email: document.getElementById('contact-email')
+            },
+            wifi: {
+                ssid: document.getElementById('wifi-ssid'),
+                password: document.getElementById('wifi-password'),
+                encryption: document.getElementById('wifi-encryption')
+            },
+            wechat: {
+                id: document.getElementById('wechat-id'),
+                type: document.getElementById('wechat-type')
+            },
+            email: {
+                to: document.getElementById('email-to'),
+                subject: document.getElementById('email-subject'),
+                body: document.getElementById('email-body')
+            },
+            sms: {
+                number: document.getElementById('sms-number'),
+                body: document.getElementById('sms-body')
+            },
+            tel: {
+                number: document.getElementById('tel-number')
+            }
+        };
+        
+        const sizeSelect = document.getElementById('size');
+        const levelSelect = document.getElementById('level');
+        const colorDarkInput = document.getElementById('color-dark');
+        const colorLightInput = document.getElementById('color-light');
+        const qrContainer = document.getElementById('qrcode');
+        
+        // Logo相关元素
+        const logoUploadArea = document.getElementById('logoUploadArea');
+        const logoInput = document.getElementById('logoInput');
+        const logoPreviewContainer = document.getElementById('logoPreviewContainer');
+        const logoPreview = document.getElementById('logoPreview');
+        const logoControls = document.getElementById('logoControls');
+        const logoSizeSlider = document.getElementById('logoSize');
+        const logoSizeValue = document.getElementById('logoSizeValue');
+        const removeLogoBtn = document.getElementById('removeLogo');
+        
+        let qrCode = null;
+        let currentLogo = null;
+        let logoScale = 0.25; // Logo默认大小为二维码的25%
+
+        // 初始化事件监听
+        function initEventListeners() {
+            // 分类标签切换
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const category = tab.getAttribute('data-category');
+                    switchCategory(category);
+                });
+            });
+            
+            // 内容输入监听
+            textInputs.url.addEventListener('input', generateQR);
+            textInputs.text.addEventListener('input', generateQR);
+            
+            // 名片字段监听
+            Object.values(textInputs.contact).forEach(input => {
+                input.addEventListener('input', generateQR);
+            });
+            
+            // WiFi字段监听
+            Object.values(textInputs.wifi).forEach(input => {
+                input.addEventListener('input', generateQR);
+            });
+            
+            // 微信字段监听
+            Object.values(textInputs.wechat).forEach(input => {
+                input.addEventListener('input', generateQR);
+            });
+            
+            // 邮箱字段监听
+            Object.values(textInputs.email).forEach(input => {
+                input.addEventListener('input', generateQR);
+            });
+            
+            // 短信字段监听
+            Object.values(textInputs.sms).forEach(input => {
+                input.addEventListener('input', generateQR);
+            });
+            
+            // 电话字段监听
+            Object.values(textInputs.tel).forEach(input => {
+                input.addEventListener('input', generateQR);
+            });
+            
+            // 二维码参数监听
+            sizeSelect.addEventListener('change', generateQR);
+            levelSelect.addEventListener('change', generateQR);
+            colorDarkInput.addEventListener('input', generateQR);
+            colorLightInput.addEventListener('input', generateQR);
+            
+            // Logo上传
+            logoUploadArea.addEventListener('click', () => logoInput.click());
+            logoInput.addEventListener('change', handleLogoUpload);
+            
+            // Logo大小控制
+            logoSizeSlider.addEventListener('input', function() {
+                logoScale = this.value / 100;
+                logoSizeValue.textContent = `${this.value}%`;
+                generateQR();
+            });
+            
+            // 移除Logo
+            removeLogoBtn.addEventListener('click', removeLogo);
+        }
+        
+        // 切换分类
+        function switchCategory(category) {
+            // 更新激活的标签
+            categoryTabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-category') === category) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // 显示对应的内容区域
+            categoryContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `${category}-content`) {
+                    content.classList.add('active');
+                }
+            });
+            
+            generateQR();
+        }
+        
+        // 处理Logo上传
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.match('image.*')) {
+                alert('请选择图片文件！');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentLogo = e.target.result;
+                logoPreview.src = currentLogo;
+                logoPreviewContainer.style.display = 'block';
+                logoControls.style.display = 'flex';
+                generateQR();
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // 移除Logo
+        function removeLogo() {
+            currentLogo = null;
+            logoPreview.src = '';
+            logoPreviewContainer.style.display = 'none';
+            logoControls.style.display = 'none';
+            logoInput.value = '';
+            generateQR();
+        }
+        
+        // 获取当前分类的内容
+        function getCurrentContent() {
+            const activeTab = document.querySelector('.category-tab.active');
+            const category = activeTab.getAttribute('data-category');
+            
+            switch(category) {
+                case 'url':
+                    return textInputs.url.value;
+                    
+                case 'text':
+                    return textInputs.text.value;
+                    
+                case 'contact':
+                    // 生成vCard格式的名片
+                    return `BEGIN:VCARD
+VERSION:3.0
+FN:${textInputs.contact.name.value}
+TITLE:${textInputs.contact.title.value}
+ORG:${textInputs.contact.company.value}
+TEL:${textInputs.contact.phone.value}
+EMAIL:${textInputs.contact.email.value}
+END:VCARD`;
+                    
+                case 'wifi':
+                    // 生成WiFi连接字符串
+                    return `WIFI:S:${textInputs.wifi.ssid.value};T:${textInputs.wifi.encryption.value};P:${textInputs.wifi.password.value};;`;
+                    
+                case 'wechat':
+                    // 生成微信二维码内容
+                    const type = textInputs.wechat.type.value;
+                    if (type === 'personal') {
+                        return `weixin://dl/chat?${textInputs.wechat.id.value}`;
+                    } else {
+                        return `https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=${textInputs.wechat.id.value}#wechat_redirect`;
+                    }
+                    
+                case 'email':
+                    // 生成邮件二维码
+                    return `mailto:${textInputs.email.to.value}?subject=${encodeURIComponent(textInputs.email.subject.value)}&body=${encodeURIComponent(textInputs.email.body.value)}`;
+                    
+                case 'sms':
+                    // 生成短信二维码
+                    return `smsto:${textInputs.sms.number.value}:${textInputs.sms.body.value}`;
+                    
+                case 'tel':
+                    // 生成电话二维码
+                    return `tel:${textInputs.tel.number.value}`;
+                    
+                default:
+                    return textInputs.url.value;
+            }
+        }
+        
+        // 生成二维码
+        function generateQR() {
+            const text = getCurrentContent();
+            const size = parseInt(sizeSelect.value);
+            const level = levelSelect.value;
+            const colorDark = colorDarkInput.value;
+            const colorLight = colorLightInput.value;
+            
+            qrContainer.innerHTML = '';
+            
+            if (!text) {
+                qrContainer.innerHTML = '<p style="color: #888;">请输入内容</p>';
+                return;
+            }
+            
+            try {
+                // 创建二维码
+                qrCode = new QRCode(qrContainer, {
+                    text: text,
+                    width: size,
+                    height: size,
+                    colorDark: colorDark,
+                    colorLight: colorLight,
+                    correctLevel: QRCode.CorrectLevel[level]
+                });
+                
+                // 如果有Logo，添加到二维码中间
+                if (currentLogo) {
+                    setTimeout(() => {
+                        addLogoToQR();
+                    }, 100);
+                }
+            } catch (e) {
+                qrContainer.innerHTML = '<p style="color: #f87171;">生成失败: ' + e.message + '</p>';
+            }
+        }
+        
+        // 添加Logo到二维码
+        function addLogoToQR() {
+            const canvas = qrContainer.querySelector('canvas');
+            if (!canvas || !currentLogo) return;
+            
+            const ctx = canvas.getContext('2d');
+            const logoSize = canvas.width * logoScale;
+            const logoX = (canvas.width - logoSize) / 2;
+            const logoY = (canvas.height - logoSize) / 2;
+            
+            // 创建Logo图片
+            const logoImg = new Image();
+            logoImg.onload = function() {
+                // 保存二维码状态
+                ctx.save();
+                
+                // 绘制白色圆角矩形背景
+                ctx.fillStyle = '#ffffff';
+                const borderRadius = logoSize * 0.1;
+                roundRect(ctx, logoX - 5, logoY - 5, logoSize + 10, logoSize + 10, borderRadius);
+                ctx.fill();
+                
+                // 绘制Logo
+                ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+                
+                // 恢复状态
+                ctx.restore();
+                
+                // 更新预览中的Logo
+                updateQRLogoPreview(logoImg, logoSize);
+            };
+            logoImg.src = currentLogo;
+        }
+        
+        // 绘制圆角矩形
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+        
+        // 更新二维码预览中的Logo
+        function updateQRLogoPreview(logoImg, logoSize) {
+            // 移除现有的Logo预览
+            const existingLogo = qrContainer.querySelector('.qrcode-logo');
+            if (existingLogo) {
+                existingLogo.remove();
+            }
+            
+            // 创建新的Logo预览
+            const logoElement = document.createElement('img');
+            logoElement.src = currentLogo;
+            logoElement.className = 'qrcode-logo';
+            logoElement.style.width = `${logoSize}px`;
+            logoElement.style.height = `${logoSize}px`;
+            qrContainer.appendChild(logoElement);
+        }
+        
+        // 下载二维码
+        function downloadQR(format = 'png') {
+            const canvas = qrContainer.querySelector('canvas');
+            if (!canvas) {
+                alert('请先生成二维码！');
+                return;
+            }
+            
+            let dataUrl, filename;
+            
+            if (format === 'png') {
+                dataUrl = canvas.toDataURL('image/png');
+                filename = 'qrcode.png';
+            } else if (format === 'svg') {
+                // 简单实现SVG下载（实际项目中可以使用更复杂的SVG生成）
+                const svgData = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+                    <image href="${canvas.toDataURL('image/png')}" width="${canvas.width}" height="${canvas.height}"/>
+                </svg>`;
+                dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
+                filename = 'qrcode.svg';
+            }
+            
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            link.click();
+        }
+        
+        // 分享二维码
+        function shareQR() {
+            const canvas = qrContainer.querySelector('canvas');
+            if (!canvas) {
+                alert('请先生成二维码！');
+                return;
+            }
+            
+            canvas.toBlob(blob => {
+                if (navigator.share && navigator.canShare) {
+                    const file = new File([blob], 'qrcode.png', { type: 'image/png' });
+                    
+                    if (navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: '二维码分享',
+                            text: '我生成了一个二维码，扫描看看吧！'
+                        });
+                    } else {
+                        // 如果不支持分享文件，则分享图片URL
+                        const dataUrl = canvas.toDataURL('image/png');
+                        navigator.share({
+                            title: '二维码分享',
+                            text: '我生成了一个二维码，扫描看看吧！',
+                            url: dataUrl
+                        });
+                    }
+                } else {
+                    // 如果不支持Web Share API，则提供下载
+                    alert('您的浏览器不支持分享功能，已自动下载二维码图片');
+                    downloadQR('png');
+                }
+            });
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initEventListeners();
+            generateQR();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>色轮调色板 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-color-wheel/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1bdee4 0%, #c3cfe2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .color-wheel-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .palette-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #3498db;
+        }
+        
+        .color-wheel-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        #color-wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .wheel-center {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #555;
+            text-align: center;
+            padding: 5px;
+        }
+        
+        .selected-color {
+            width: 100%;
+            height: 100px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+            transition: transform 0.3s;
+        }
+        
+        .selected-color:hover {
+            transform: scale(1.02);
+        }
+        
+        .color-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .color-value {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: white;
+            border-radius: 5px;
+        }
+        
+        .harmony-controls {
+            margin-top: 25px;
+        }
+        
+        .harmony-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .harmony-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .harmony-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .harmony-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .palette-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .color-card {
+            height: 120px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 10px;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .color-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+        }
+        
+        .color-card.dark-text {
+            color: #333;
+        }
+        
+        .color-code {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-family: monospace;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .color-card.dark-text .color-code {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .save-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .export-btn {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
+        }
+        
+        .color-history {
+            margin-top: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .history-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .history-color {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .history-color:hover {
+            transform: scale(1.1);
+        }
+        
+        .history-color::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 10px;
+            border: 2px solid white;
+            pointer-events: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .harmony-buttons {
+                flex-direction: column;
+            }
+            
+            .harmony-btn {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-palette"></i> 色轮调色板</h1>
+            <p class="subtitle">发现美丽的色彩和谐。使用色轮创建出色的调色板，探索互补色、类似色、三色组等色彩方案，为您的设计项目找到完美配色。</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="color-wheel-section">
+                <h2 class="section-title"><i class="fas fa-brush"></i> 色轮选择器</h2>
+                
+                <div class="color-wheel-container">
+                    <canvas id="color-wheel" width="400" height="400"></canvas>
+                    <div class="wheel-center">点击色轮<br>选择颜色</div>
+                </div>
+                
+                <div class="selected-color" id="selected-color">
+                    <span id="selected-color-text">点击色轮选择颜色</span>
+                </div>
+                
+                <div class="color-info">
+                    <h3>颜色信息</h3>
+                    <div class="color-value">
+                        <span>HEX:</span>
+                        <span id="hex-value">#3498db</span>
+                    </div>
+                    <div class="color-value">
+                        <span>RGB:</span>
+                        <span id="rgb-value">rgb(52, 152, 219)</span>
+                    </div>
+                    <div class="color-value">
+                        <span>HSL:</span>
+                        <span id="hsl-value">hsl(204, 70%, 53%)</span>
+                    </div>
+                </div>
+                
+                <div class="harmony-controls">
+                    <h3>色彩和谐类型</h3>
+                    <div class="harmony-buttons">
+                        <button class="harmony-btn active" data-harmony="complementary">
+                            <i class="fas fa-exchange-alt"></i> 互补色
+                        </button>
+                        <button class="harmony-btn" data-harmony="analogous">
+                            <i class="fas fa-arrows-alt-h"></i> 类似色
+                        </button>
+                        <button class="harmony-btn" data-harmony="triadic">
+                            <i class="fas fa-play"></i> 三色组
+                        </button>
+                        <button class="harmony-btn" data-harmony="split-complementary">
+                            <i class="fas fa-code-branch"></i> 分裂互补色
+                        </button>
+                        <button class="harmony-btn" data-harmony="tetradic">
+                            <i class="fas fa-square"></i> 四色组
+                        </button>
+                        <button class="harmony-btn" data-harmony="monochromatic">
+                            <i class="fas fa-tint"></i> 单色系
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="palette-section">
+                <h2 class="section-title"><i class="fas fa-swatchbook"></i> 生成的调色板</h2>
+                <p>基于所选颜色和和谐类型生成的调色板：</p>
+                
+                <div class="palette-container" id="palette-container">
+                    <!-- 颜色卡片将通过JavaScript动态生成 -->
+                </div>
+                
+                <div class="actions">
+                    <button class="action-btn save-btn" id="save-btn">
+                        <i class="fas fa-save"></i> 保存调色板
+                    </button>
+                    <button class="action-btn export-btn" id="export-btn">
+                        <i class="fas fa-download"></i> 导出为CSS
+                    </button>
+                    <button class="action-btn reset-btn" id="reset-btn">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
+            </section>
+        </div>
+        
+        <section class="color-history">
+            <h2 class="section-title"><i class="fas fa-history"></i> 最近使用的颜色</h2>
+            <p>点击下方颜色可重新选择：</p>
+            <div class="history-colors" id="color-history">
+                <!-- 历史颜色将通过JavaScript动态生成 -->
+            </div>
+        </section>
+        
+        <footer>
+　
+　
+        </footer>
+    </div>
+    
+    <div class="notification" id="notification">
+        调色板已复制到剪贴板！
+    </div>
+    
+    <script>
+        // 初始化变量
+        let selectedHue = 204; // 默认蓝色
+        let selectedSaturation = 70;
+        let selectedLightness = 53;
+        let currentHarmony = 'complementary';
+        let colorHistory = [];
+        
+        // DOM元素
+        const colorWheel = document.getElementById('color-wheel');
+        const ctx = colorWheel.getContext('2d');
+        const selectedColorElement = document.getElementById('selected-color');
+        const selectedColorText = document.getElementById('selected-color-text');
+        const hexValue = document.getElementById('hex-value');
+        const rgbValue = document.getElementById('rgb-value');
+        const hslValue = document.getElementById('hsl-value');
+        const paletteContainer = document.getElementById('palette-container');
+        const harmonyButtons = document.querySelectorAll('.harmony-btn');
+        const colorHistoryContainer = document.getElementById('color-history');
+        const saveBtn = document.getElementById('save-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const notification = document.getElementById('notification');
+        
+        // 初始化
+        function init() {
+            drawColorWheel();
+            updateSelectedColor();
+            generatePalette();
+            updateColorHistory();
+            
+            // 添加事件监听器
+            colorWheel.addEventListener('click', handleColorWheelClick);
+            
+            harmonyButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    harmonyButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentHarmony = this.dataset.harmony;
+                    generatePalette();
+                });
+            });
+            
+            saveBtn.addEventListener('click', savePalette);
+            exportBtn.addEventListener('click', exportAsCSS);
+            resetBtn.addEventListener('click', resetColor);
+        }
+        
+        // 绘制色轮
+        function drawColorWheel() {
+            const width = colorWheel.width;
+            const height = colorWheel.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+            
+            // 清除画布
+            ctx.clearRect(0, 0, width, height);
+            
+            // 绘制色轮
+            for (let angle = 0; angle < 360; angle += 1) {
+                const startAngle = (angle - 1) * Math.PI / 180;
+                const endAngle = (angle + 1) * Math.PI / 180;
+                
+                for (let r = 0; r < radius; r += 1) {
+                    const saturation = r / radius;
+                    const lightness = 0.5;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, r, startAngle, endAngle);
+                    ctx.closePath();
+                    
+                    const hue = angle;
+                    ctx.fillStyle = `hsl(${hue}, ${saturation * 100}%, ${lightness * 100}%)`;
+                    ctx.fill();
+                }
+            }
+            
+            // 绘制中心白色圆圈
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 40, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        // 处理色轮点击事件
+        function handleColorWheelClick(event) {
+            const rect = colorWheel.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const centerX = colorWheel.width / 2;
+            const centerY = colorWheel.height / 2;
+            
+            const dx = x - centerX;
+            const dy = y - centerY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const radius = Math.min(centerX, centerY) - 10;
+            
+            if (distance > radius) return;
+            
+            // 计算角度和饱和度
+            let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            if (angle < 0) angle += 360;
+            
+            const saturation = Math.min(distance / radius, 1) * 100;
+            const lightness = 50;
+            
+            selectedHue = Math.round(angle);
+            selectedSaturation = Math.round(saturation);
+            selectedLightness = lightness;
+            
+            updateSelectedColor();
+            generatePalette();
+            addToHistory(selectedHue, selectedSaturation, selectedLightness);
+        }
+        
+        // 更新选择的颜色显示
+        function updateSelectedColor() {
+            const hslColor = `hsl(${selectedHue}, ${selectedSaturation}%, ${selectedLightness}%)`;
+            const rgbColor = hslToRgb(selectedHue, selectedSaturation, selectedLightness);
+            const hexColor = rgbToHex(rgbColor.r, rgbColor.g, rgbColor.b);
+            
+            selectedColorElement.style.backgroundColor = hslColor;
+            selectedColorText.textContent = hslColor;
+            
+            // 根据亮度调整文字颜色
+            if (selectedLightness > 60) {
+                selectedColorElement.classList.add('dark-text');
+                selectedColorText.style.color = '#333';
+            } else {
+                selectedColorElement.classList.remove('dark-text');
+                selectedColorText.style.color = 'white';
+            }
+            
+            // 更新颜色值显示
+            hexValue.textContent = hexColor;
+            rgbValue.textContent = `rgb(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b})`;
+            hslValue.textContent = `hsl(${selectedHue}, ${selectedSaturation}%, ${selectedLightness}%)`;
+        }
+        
+        // 根据和谐类型生成调色板
+        function generatePalette() {
+            paletteContainer.innerHTML = '';
+            
+            const baseColor = {
+                h: selectedHue,
+                s: selectedSaturation,
+                l: selectedLightness
+            };
+            
+            let paletteColors = [];
+            
+            switch(currentHarmony) {
+                case 'complementary':
+                    // 互补色：基色 + 基色对面180度的颜色
+                    paletteColors = [
+                        baseColor,
+                        {h: (baseColor.h + 180) % 360, s: baseColor.s, l: baseColor.l}
+                    ];
+                    break;
+                    
+                case 'analogous':
+                    // 类似色：基色 + 基色两侧30度的颜色
+                    paletteColors = [
+                        {h: (baseColor.h - 30 + 360) % 360, s: baseColor.s, l: baseColor.l},
+                        baseColor,
+                        {h: (baseColor.h + 30) % 360, s: baseColor.s, l: baseColor.l}
+                    ];
+                    break;
+                    
+                case 'triadic':
+                    // 三色组：基色 + 基色两侧120度的颜色
+                    paletteColors = [
+                        baseColor,
+                        {h: (baseColor.h + 120) % 360, s: baseColor.s, l: baseColor.l},
+                        {h: (baseColor.h + 240) % 360, s: baseColor.s, l: baseColor.l}
+                    ];
+                    break;
+                    
+                case 'split-complementary':
+                    // 分裂互补色：基色 + 互补色两侧30度的颜色
+                    paletteColors = [
+                        baseColor,
+                        {h: (baseColor.h + 180 - 30 + 360) % 360, s: baseColor.s, l: baseColor.l},
+                        {h: (baseColor.h + 180 + 30) % 360, s: baseColor.s, l: baseColor.l}
+                    ];
+                    break;
+                    
+                case 'tetradic':
+                    // 四色组：两组互补色（矩形）
+                    paletteColors = [
+                        baseColor,
+                        {h: (baseColor.h + 60) % 360, s: baseColor.s, l: baseColor.l},
+                        {h: (baseColor.h + 180) % 360, s: baseColor.s, l: baseColor.l},
+                        {h: (baseColor.h + 240) % 360, s: baseColor.s, l: baseColor.l}
+                    ];
+                    break;
+                    
+                case 'monochromatic':
+                    // 单色系：相同色相，不同亮度
+                    paletteColors = [
+                        {h: baseColor.h, s: baseColor.s, l: Math.max(baseColor.l - 30, 10)},
+                        {h: baseColor.h, s: baseColor.s, l: Math.max(baseColor.l - 15, 10)},
+                        baseColor,
+                        {h: baseColor.h, s: baseColor.s, l: Math.min(baseColor.l + 15, 90)},
+                        {h: baseColor.h, s: baseColor.s, l: Math.min(baseColor.l + 30, 90)}
+                    ];
+                    break;
+            }
+            
+            // 为每种和谐类型添加一些变体（调整饱和度）
+            if (currentHarmony !== 'monochromatic') {
+                paletteColors = paletteColors.flatMap(color => [
+                    {h: color.h, s: Math.max(color.s - 20, 20), l: color.l},
+                    color,
+                    {h: color.h, s: Math.min(color.s + 20, 100), l: color.l}
+                ]);
+            }
+            
+            // 创建颜色卡片
+            paletteColors.forEach(color => {
+                const hslColor = `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
+                const rgbColor = hslToRgb(color.h, color.s, color.l);
+                const hexColor = rgbToHex(rgbColor.r, rgbColor.g, rgbColor.b);
+                
+                const colorCard = document.createElement('div');
+                colorCard.className = 'color-card';
+                colorCard.style.backgroundColor = hslColor;
+                
+                // 根据亮度决定文字颜色
+                if (color.l > 60) {
+                    colorCard.classList.add('dark-text');
+                }
+                
+                colorCard.innerHTML = `
+                    <div class="color-code">${hexColor}</div>
+                `;
+                
+                // 点击复制颜色代码
+                colorCard.addEventListener('click', () => {
+                    copyToClipboard(hexColor);
+                    showNotification(`已复制 ${hexColor} 到剪贴板`);
+                });
+                
+                paletteContainer.appendChild(colorCard);
+            });
+        }
+        
+        // 添加颜色到历史记录
+        function addToHistory(h, s, l) {
+            const color = {h, s, l};
+            
+            // 检查是否已存在相同颜色
+            const exists = colorHistory.some(c => 
+                c.h === h && c.s === s && c.l === l
+            );
+            
+            if (!exists) {
+                colorHistory.unshift(color);
+                
+                // 限制历史记录数量
+                if (colorHistory.length > 12) {
+                    colorHistory.pop();
+                }
+                
+                updateColorHistory();
+            }
+        }
+        
+        // 更新颜色历史显示
+        function updateColorHistory() {
+            colorHistoryContainer.innerHTML = '';
+            
+            colorHistory.forEach(color => {
+                const hslColor = `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
+                const historyColor = document.createElement('div');
+                historyColor.className = 'history-color';
+                historyColor.style.backgroundColor = hslColor;
+                historyColor.title = hslColor;
+                
+                historyColor.addEventListener('click', () => {
+                    selectedHue = color.h;
+                    selectedSaturation = color.s;
+                    selectedLightness = color.l;
+                    updateSelectedColor();
+                    generatePalette();
+                });
+                
+                colorHistoryContainer.appendChild(historyColor);
+            });
+        }
+        
+        // 保存调色板
+        function savePalette() {
+            const paletteName = prompt('请输入调色板名称：', '我的调色板');
+            if (paletteName) {
+                const paletteData = {
+                    name: paletteName,
+                    baseColor: {h: selectedHue, s: selectedSaturation, l: selectedLightness},
+                    harmony: currentHarmony,
+                    date: new Date().toISOString()
+                };
+                
+                // 在实际应用中，这里可以保存到本地存储或发送到服务器
+                showNotification(`调色板 "${paletteName}" 已保存！`);
+            }
+        }
+        
+        // 导出为CSS
+        function exportAsCSS() {
+            const cssVariables = [];
+            const colorCards = document.querySelectorAll('.color-card');
+            
+            colorCards.forEach((card, index) => {
+                const hexColor = card.querySelector('.color-code').textContent;
+                cssVariables.push(`  --color-${index + 1}: ${hexColor};`);
+            });
+            
+            const cssCode = `:root {\n${cssVariables.join('\n')}\n}`;
+            
+            copyToClipboard(cssCode);
+            showNotification('CSS变量已复制到剪贴板！');
+        }
+        
+        // 重置颜色
+        function resetColor() {
+            selectedHue = 204;
+            selectedSaturation = 70;
+            selectedLightness = 53;
+            currentHarmony = 'complementary';
+            
+            // 更新活动按钮
+            harmonyButtons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.harmony === currentHarmony) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            updateSelectedColor();
+            generatePalette();
+            showNotification('颜色已重置为默认值');
+        }
+        
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 颜色转换函数
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            
+            let r, g, b;
+            
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+        
+        function rgbToHex(r, g, b) {
+            return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+        
+        // 添加一些示例颜色到历史记录
+        setTimeout(() => {
+            addToHistory(0, 85, 50); // 红色
+            addToHistory(120, 85, 50); // 绿色
+            addToHistory(240, 85, 50); // 蓝色
+            addToHistory(60, 85, 50); // 黄色
+            addToHistory(300, 85, 50); // 紫色
+        }, 500);
+    </script>
+</body>
+</html>

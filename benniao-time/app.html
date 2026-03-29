@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页定时自动刷新工具 - 压力测试</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to right, #182848, #3498db);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+        }
+        
+        .control-panel {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #4b6cb7;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #182848;
+            font-size: 1.05rem;
+        }
+        
+        input[type="url"], input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input[type="url"]:focus, input[type="number"]:focus {
+            border-color: #4b6cb7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .start-btn {
+            background-color: #2ecc71;
+            color: white;
+            flex-grow: 1;
+        }
+        
+        .start-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .stop-btn {
+            background-color: #e74c3c;
+            color: white;
+            flex-grow: 1;
+        }
+        
+        .stop-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .stop-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .status-panel {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .status-info {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .status-item {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .status-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #182848;
+            margin: 10px 0;
+        }
+        
+        .status-label {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+        
+        .preview-container {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 5px solid #9b59b6;
+        }
+        
+        .preview-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .preview-title h3 {
+            color: #182848;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 350px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+        }
+        
+        .warning-panel {
+            background-color: #fff8e1;
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 5px solid #f1c40f;
+        }
+        
+        .warning-panel h3 {
+            color: #e67e22;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-panel ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .warning-panel li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .note {
+            font-style: italic;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            font-size: 0.95rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .status-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .status-item {
+                min-width: 100%;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .icon {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-sync-alt icon"></i> 网页定时自动刷新工具</h1>
+            <p class="subtitle">用于在线测试网页压力 - 请负责任地使用本工具</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="control-panel">
+                
+                <div class="form-group">
+                    <label for="url-input"><i class="fas fa-link icon"></i> 目标网页URL</label>
+                    <input type="url" id="url-input" placeholder="请输入完整的网页地址 (例如: https://www.benniaooffice.com/)" value="https://www.benniaooffice.com/">
+                </div>
+                
+                <div class="form-group">
+                    <label for="interval-input"><i class="fas fa-clock icon"></i> 刷新间隔时间 (秒)</label>
+                    <input type="number" id="interval-input" min="1" max="3600" value="10">
+                    <small style="color: #7f8c8d; display: block; margin-top: 5px;">设置范围: 1秒到1小时 (3600秒)</small>
+                </div>
+                
+                <div class="button-group">
+                    <button class="start-btn" id="start-btn">
+                        <i class="fas fa-play icon"></i> 开始自动刷新
+                    </button>
+                    <button class="stop-btn" id="stop-btn" disabled>
+                        <i class="fas fa-stop icon"></i> 停止刷新
+                    </button>
+                </div>
+            </div>
+            
+            <div class="status-panel">
+                <h2><i class="fas fa-chart-line icon"></i> 状态监控</h2>
+                <div class="status-info">
+                    <div class="status-item">
+                        <div class="status-label">当前状态</div>
+                        <div class="status-value" id="status-indicator">已停止</div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">剩余时间</div>
+                        <div class="status-value" id="countdown">--</div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <div class="status-label">已刷新次数</div>
+                        <div class="status-value" id="refresh-count">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-container">
+                <div class="preview-title">
+                    <h3><i class="fas fa-eye icon"></i> 网页预览</h3>
+                    <small id="preview-url">https://www.benniaooffice.com/</small>
+                </div>
+                <iframe id="preview-frame" src="https://www.benniaooffice.com/" title="网页预览"></iframe>
+            </div>
+            
+            <div class="warning-panel">
+                <h3><i class="fas fa-exclamation-triangle icon"></i> 重要提示与使用条款</h3>
+                <ul>
+                    <li>本工具旨在帮助开发者测试自己网站的承载能力和稳定性。</li>
+                    <li><strong>请勿恶意刷新他人网站</strong>，这可能构成拒绝服务攻击，违反相关法律法规。</li>
+                    <li>过短的刷新间隔可能会对目标网站产生较大压力，请谨慎设置时间间隔。</li>
+                    <li>请确保您有权测试目标网站，建议仅测试您自己拥有或管理的网站。</li>
+                    <li>使用本工具产生的所有责任由使用者自行承担。</li>
+                </ul>
+                <div class="note">
+                    <i class="fas fa-info-circle"></i> 提示：默认示例网站为httpbin.org，这是一个用于HTTP测试的公共服务。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let refreshInterval = null;
+        let countdownTimer = null;
+        let refreshCount = 0;
+        let currentInterval = 10;
+        let remainingTime = 10;
+        
+        // DOM元素
+        const urlInput = document.getElementById('url-input');
+        const intervalInput = document.getElementById('interval-input');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const statusIndicator = document.getElementById('status-indicator');
+        const countdownElement = document.getElementById('countdown');
+        const refreshCountElement = document.getElementById('refresh-count');
+        const previewFrame = document.getElementById('preview-frame');
+        const previewUrlElement = document.getElementById('preview-url');
+        
+        // 初始化
+        function init() {
+            // 设置事件监听器
+            startBtn.addEventListener('click', startRefreshing);
+            stopBtn.addEventListener('click', stopRefreshing);
+            urlInput.addEventListener('change', updatePreviewUrl);
+            intervalInput.addEventListener('change', validateInterval);
+            
+            // 设置默认值
+            updatePreviewUrl();
+        }
+        
+        // 验证间隔时间
+        function validateInterval() {
+            let value = parseInt(intervalInput.value);
+            
+            if (isNaN(value) || value < 1) {
+                intervalInput.value = 1;
+                value = 1;
+            } else if (value > 3600) {
+                intervalInput.value = 3600;
+                value = 3600;
+            }
+            
+            // 如果正在刷新，更新倒计时
+            if (refreshInterval) {
+                currentInterval = value;
+                remainingTime = Math.min(remainingTime, value);
+                updateCountdown();
+            }
+            
+            return value;
+        }
+        
+        // 更新预览URL
+        function updatePreviewUrl() {
+            let url = urlInput.value.trim();
+            
+            // 确保URL格式正确
+            if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+                urlInput.value = url;
+            }
+            
+            previewUrlElement.textContent = url || '未设置URL';
+            
+            // 更新iframe（如果URL有效）
+            if (url) {
+                previewFrame.src = url;
+            }
+        }
+        
+        // 开始刷新
+        function startRefreshing() {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                alert('请输入有效的网页URL');
+                urlInput.focus();
+                return;
+            }
+            
+            // 验证URL格式
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                alert('URL必须以http://或https://开头');
+                urlInput.focus();
+                return;
+            }
+            
+            // 获取并验证间隔时间
+            currentInterval = validateInterval();
+            remainingTime = currentInterval;
+            
+            // 更新状态
+            statusIndicator.textContent = '运行中';
+            statusIndicator.style.color = '#27ae60';
+            statusIndicator.classList.add('pulse');
+            
+            // 启用/禁用按钮
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+            // 设置倒计时
+            updateCountdown();
+            countdownTimer = setInterval(updateCountdown, 1000);
+            
+            // 设置刷新定时器
+            refreshInterval = setInterval(refreshPage, currentInterval * 1000);
+            
+            // 立即刷新一次
+            refreshPage();
+        }
+        
+        // 停止刷新
+        function stopRefreshing() {
+            // 清除定时器
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+            
+            if (countdownTimer) {
+                clearInterval(countdownTimer);
+                countdownTimer = null;
+            }
+            
+            // 更新状态
+            statusIndicator.textContent = '已停止';
+            statusIndicator.style.color = '#182848';
+            statusIndicator.classList.remove('pulse');
+            
+            countdownElement.textContent = '--';
+            
+            // 启用/禁用按钮
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+        
+        // 更新倒计时
+        function updateCountdown() {
+            remainingTime--;
+            
+            if (remainingTime <= 0) {
+                remainingTime = currentInterval;
+            }
+            
+            // 格式化时间显示
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            
+            if (minutes > 0) {
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                countdownElement.textContent = `${seconds}秒`;
+            }
+        }
+        
+        // 刷新页面
+        function refreshPage() {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                stopRefreshing();
+                return;
+            }
+            
+            // 增加刷新计数
+            refreshCount++;
+            refreshCountElement.textContent = refreshCount;
+            
+            // 刷新iframe
+            previewFrame.src = url;
+            
+            // 添加一个时间戳以避免缓存
+            const timestamp = new Date().getTime();
+            const separator = url.includes('?') ? '&' : '?';
+            const newUrl = url + separator + '_t=' + timestamp;
+            
+            // 更新iframe（带时间戳避免缓存）
+            previewFrame.src = newUrl;
+            
+            // 更新预览URL显示
+            previewUrlElement.textContent = url;
+            
+            // 显示刷新通知
+            showRefreshNotification();
+        }
+        
+        // 显示刷新通知
+        function showRefreshNotification() {
+            // 创建一个临时通知元素
+            const notification = document.createElement('div');
+            notification.textContent = `页面已刷新 (${refreshCount}次)`;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #2ecc71;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 1000;
+                font-weight: 600;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: fadeInOut 2s ease-in-out;
+            `;
+            
+            // 添加动画关键帧
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateY(20px); }
+                    15% { opacity: 1; transform: translateY(0); }
+                    85% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // 2秒后移除通知
+            setTimeout(() => {
+                document.body.removeChild(notification);
+                document.head.removeChild(style);
+            }, 2000);
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

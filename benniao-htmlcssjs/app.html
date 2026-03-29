@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所见即所得View编辑器</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/dracula.min.css">
+    <style>
+        /* 保持所有之前的CSS样式不变 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        header {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 32px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.85;
+            line-height: 1.5;
+            max-width: 800px;
+        }
+        
+        .editor-wrapper {
+            display: flex;
+            gap: 20px;
+            height: 75vh;
+        }
+        
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 25px;
+            background: rgba(30, 41, 59, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .panel-title i {
+            color: #00dbde;
+        }
+        
+        .panel-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #4776E6, #8E54E9);
+            border: none;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(142, 84, 233, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 7px 14px rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-success {
+            background: linear-gradient(90deg, #00b09b, #96c93d);
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 7px 14px rgba(0, 176, 155, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 7px 14px rgba(255, 65, 108, 0.3);
+        }
+        
+        .code-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .code-tabs {
+            display: flex;
+            background: rgba(30, 41, 59, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .code-tab {
+            padding: 14px 24px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .code-tab:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .code-tab.active {
+            color: white;
+            background: rgba(71, 118, 230, 0.2);
+        }
+        
+        .code-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4776E6, #8E54E9);
+        }
+        
+        .code-editor {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .CodeMirror {
+            height: 100% !important;
+            font-size: 14px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+        
+        .preview-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .preview-area {
+            flex: 1;
+            background: white;
+            position: relative;
+            overflow: auto;
+        }
+        
+        #previewFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .live-preview-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 219, 222, 0.9);
+            color: #0f172a;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+        
+        .live-preview-indicator i {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .component-library {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .component-library h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #00dbde;
+        }
+        
+        .component-categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .category-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .category-btn:hover {
+            background: rgba(71, 118, 230, 0.2);
+            color: white;
+        }
+        
+        .category-btn.active {
+            background: rgba(71, 118, 230, 0.3);
+            color: white;
+            border-color: rgba(71, 118, 230, 0.5);
+        }
+        
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .component-item {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .component-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(71, 118, 230, 0.5);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .component-item i {
+            font-size: 24px;
+            color: #00dbde;
+        }
+        
+        .component-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .component-desc {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+        
+        .status-info {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-item i {
+            color: #00dbde;
+        }
+        
+        .resize-handle {
+            width: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: col-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .resize-handle:hover {
+            background: rgba(71, 118, 230, 0.5);
+        }
+        
+        .resize-handle::after {
+            content: '';
+            width: 2px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 22px;
+            color: #00dbde;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: white;
+        }
+        
+        .modal-body {
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4776E6;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        @media (max-width: 1200px) {
+            .editor-wrapper {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .resize-handle {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .components-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+            
+            .panel-actions {
+                flex-wrap: wrap;
+            }
+            
+            .status-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> 所见即所得View编辑器</h1>
+            <p class="subtitle">功能丰富的在线View编辑器，支持HTML、CSS、JavaScript实时编辑与预览，立即获取内容的源代码。拖拽组件快速构建界面，支持响应式预览和代码导出。</p>
+        </header>
+        
+        <div class="editor-wrapper">
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-edit"></i> 代码编辑器
+                    </div>
+                    <div class="panel-actions">
+                        <button class="btn btn-secondary" id="formatCode">
+                            <i class="fas fa-indent"></i> 格式化
+                        </button>
+                        <button class="btn btn-success" id="runCode">
+                            <i class="fas fa-play"></i> 运行代码
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="code-container">
+                    <div class="code-tabs">
+                        <button class="code-tab active" data-tab="html">
+                            <i class="fab fa-html5"></i> HTML
+                        </button>
+                        <button class="code-tab" data-tab="css">
+                            <i class="fab fa-css3-alt"></i> CSS
+                        </button>
+                        <button class="code-tab" data-tab="js">
+                            <i class="fab fa-js"></i> JavaScript
+                        </button>
+                    </div>
+                    
+                    <div class="code-editor">
+                        <textarea id="htmlCode" class="code-area" style="display: none;">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的网页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <h1>欢迎使用View编辑器</h1>
+            <p>这是一个功能强大的所见即所得编辑器，可帮助您快速构建现代化网页界面。</p>
+            <a href="#features" class="btn">探索功能</a>
+        </div>
+    </header>
+    
+    <section id="features" class="features">
+        <div class="container">
+            <h2>核心功能</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-code"></i>
+                    <h3>实时编辑</h3>
+                    <p>在编辑代码的同时实时预览效果，所见即所得。</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-palette"></i>
+                    <h3>组件库</h3>
+                    <p>丰富的预置组件，拖拽即可使用。</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>响应式设计</h3>
+                    <p>自动适配不同屏幕尺寸，移动端友好。</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-download"></i>
+                    <h3>代码导出</h3>
+                    <p>一键导出完整项目代码，包含HTML、CSS和JS。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 View编辑器 | 所见即所得编辑体验</p>
+        </div>
+    </footer>
+</body>
+</html>
+                        </textarea>
+                        <textarea id="cssCode" class="code-area" style="display: none;">
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 英雄区域 */
+.hero {
+    background: linear-gradient(135deg, #4776E6, #8E54E9);
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero p {
+    font-size: 1.3rem;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    opacity: 0.9;
+}
+
+.btn {
+    display: inline-block;
+    background: white;
+    color: #4776E6;
+    padding: 15px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* 功能区域 */
+.features {
+    padding: 100px 0;
+    background: white;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+    color: #333;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background: #f5f5f5;
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s;
+    border: 1px solid #e0e0e0;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #4776E6;
+}
+
+.feature-card i {
+    font-size: 3rem;
+    color: #4776E6;
+    margin-bottom: 20px;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.7;
+}
+
+/* 页脚 */
+footer {
+    background: #333;
+    color: white;
+    padding: 40px 0;
+    text-align: center;
+}
+
+footer p {
+    opacity: 0.8;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+                        </textarea>
+                        <textarea id="jsCode" class="code-area" style="display: none;">
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('页面加载完成');
+    
+    // 为功能卡片添加点击效果
+    const featureCards = document.querySelectorAll('.feature-card');
+    
+    featureCards.forEach(card => {
+        card.addEventListener('click', function() {
+            this.style.backgroundColor = '#f0f0f0';
+            
+            setTimeout(() => {
+                this.style.backgroundColor = '';
+            }, 300);
+        });
+    });
+    
+    // 平滑滚动到功能区域
+    const exploreBtn = document.querySelector('.btn');
+    if (exploreBtn) {
+        exploreBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    }
+    
+    // 添加当前年份到页脚
+    const currentYear = new Date().getFullYear();
+    const footerParagraph = document.querySelector('footer p');
+    
+    if (footerParagraph) {
+        footerParagraph.innerHTML = footerParagraph.innerHTML.replace('2023', currentYear);
+    }
+    
+    // 动态问候语
+    const heroHeading = document.querySelector('.hero h1');
+    if (heroHeading) {
+        const hour = new Date().getHours();
+        let greeting;
+        
+        if (hour < 12) {
+            greeting = '早上好';
+        } else if (hour < 18) {
+            greeting = '下午好';
+        } else {
+            greeting = '晚上好';
+        }
+        
+        heroHeading.innerHTML = `${greeting}，欢迎使用View编辑器`;
+    }
+});
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="resize-handle" id="resizeHandle"></div>
+            
+            <div class="preview-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-eye"></i> 实时预览
+                    </div>
+                    <div class="panel-actions">
+                        <button class="btn btn-secondary" id="refreshPreview">
+                            <i class="fas fa-redo"></i> 刷新预览
+                        </button>
+                        <button class="btn" id="exportCode">
+                            <i class="fas fa-download"></i> 导出代码
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="preview-container">
+                    <div class="preview-area">
+                        <div class="live-preview-indicator">
+                            <i class="fas fa-circle"></i> 实时预览
+                        </div>
+                        <iframe id="previewFrame"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="component-library">
+            <h3><i class="fas fa-th-large"></i> 组件库</h3>
+            
+            <div class="component-categories">
+                <button class="category-btn active" data-category="all">
+                    <i class="fas fa-layer-group"></i> 全部组件
+                </button>
+                <button class="category-btn" data-category="layout">
+                    <i class="fas fa-grip-horizontal"></i> 布局
+                </button>
+                <button class="category-btn" data-category="ui">
+                    <i class="fas fa-square"></i> UI元素
+                </button>
+                <button class="category-btn" data-category="forms">
+                    <i class="fas fa-edit"></i> 表单
+                </button>
+                <button class="category-btn" data-category="navigation">
+                    <i class="fas fa-bars"></i> 导航
+                </button>
+            </div>
+            
+            <div class="components-grid">
+                <div class="component-item" data-component="header" data-category="layout">
+                    <i class="fas fa-heading"></i>
+                    <div class="component-name">页头</div>
+                    <div class="component-desc">网站标题和导航</div>
+                </div>
+                <div class="component-item" data-component="hero" data-category="layout">
+                    <i class="fas fa-star"></i>
+                    <div class="component-name">英雄区域</div>
+                    <div class="component-desc">吸引人的顶部区域</div>
+                </div>
+                <div class="component-item" data-component="card" data-category="ui">
+                    <i class="fas fa-id-card"></i>
+                    <div class="component-name">卡片</div>
+                    <div class="component-desc">信息展示卡片</div>
+                </div>
+                <div class="component-item" data-component="button" data-category="ui">
+                    <i class="fas fa-hand-pointer"></i>
+                    <div class="component-name">按钮</div>
+                    <div class="component-desc">多种样式按钮</div>
+                </div>
+                <div class="component-item" data-component="form" data-category="forms">
+                    <i class="fas fa-list-alt"></i>
+                    <div class="component-name">表单</div>
+                    <div class="component-desc">用户输入表单</div>
+                </div>
+                <div class="component-item" data-component="navbar" data-category="navigation">
+                    <i class="fas fa-bars"></i>
+                    <div class="component-name">导航栏</div>
+                    <div class="component-desc">网站导航菜单</div>
+                </div>
+                <div class="component-item" data-component="footer" data-category="layout">
+                    <i class="fas fa-shoe-prints"></i>
+                    <div class="component-name">页脚</div>
+                    <div class="component-desc">网站底部信息</div>
+                </div>
+                <div class="component-item" data-component="grid" data-category="layout">
+                    <i class="fas fa-th"></i>
+                    <div class="component-name">网格布局</div>
+                    <div class="component-desc">响应式网格系统</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-info">
+                <div class="status-item">
+                    <i class="fas fa-code"></i>
+                    <span>HTML: <span id="htmlLines">0</span> 行</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-paint-brush"></i>
+                    <span>CSS: <span id="cssLines">0</span> 行</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-cogs"></i>
+                    <span>JS: <span id="jsLines">0</span> 行</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-memory"></i>
+                    <span>状态: <span id="editorStatus">就绪</span></span>
+                </div>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-clock"></i>
+                <span id="currentTime">--:--:--</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 导出代码模态框 -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">导出代码</h3>
+                <button class="close-modal" id="closeExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">项目名称</label>
+                    <input type="text" class="form-input" id="projectName" value="my-project">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">包含文件</label>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked id="includeHTML"> HTML文件 (index.html)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked id="includeCSS"> CSS文件 (style.css)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked id="includeJS"> JavaScript文件 (script.js)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">预览代码</label>
+                    <textarea class="form-input" id="exportPreview" rows="6" readonly style="font-family: monospace;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="copyCode">
+                    <i class="fas fa-copy"></i> 复制代码
+                </button>
+                <button class="btn btn-success" id="downloadCode">
+                    <i class="fas fa-download"></i> 下载文件
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CodeMirror库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetag.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/matchtags.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/selection/active-line.min.js"></script>
+    <!-- JSZip库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <script>
+        // 初始化变量
+        let htmlEditor, cssEditor, jsEditor;
+        let currentTab = 'html';
+        let isResizing = false;
+        
+        // 初始化CodeMirror编辑器
+        function initCodeEditors() {
+            // HTML编辑器
+            htmlEditor = CodeMirror.fromTextArea(document.getElementById('htmlCode'), {
+                mode: 'htmlmixed',
+                theme: 'dracula',
+                lineNumbers: true,
+                autoCloseTags: true,
+                styleActiveLine: true,
+                lineWrapping: true,
+                tabSize: 2
+            });
+            
+            // CSS编辑器
+            cssEditor = CodeMirror.fromTextArea(document.getElementById('cssCode'), {
+                mode: 'css',
+                theme: 'dracula',
+                lineNumbers: true,
+                styleActiveLine: true,
+                lineWrapping: true,
+                tabSize: 2
+            });
+            
+            // JavaScript编辑器
+            jsEditor = CodeMirror.fromTextArea(document.getElementById('jsCode'), {
+                mode: 'javascript',
+                theme: 'dracula',
+                lineNumbers: true,
+                styleActiveLine: true,
+                lineWrapping: true,
+                tabSize: 2
+            });
+            
+            // 默认显示HTML编辑器
+            showEditor('html');
+            
+            // 监听编辑器变化
+            htmlEditor.on('change', updatePreview);
+            cssEditor.on('change', updatePreview);
+            jsEditor.on('change', updatePreview);
+            
+            // 初始更新预览
+            updatePreview();
+        }
+        
+        // 显示指定编辑器
+        function showEditor(tabName) {
+            currentTab = tabName;
+            
+            // 更新选项卡
+            document.querySelectorAll('.code-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // 显示对应编辑器
+            const editors = [
+                { name: 'html', editor: htmlEditor },
+                { name: 'css', editor: cssEditor },
+                { name: 'js', editor: jsEditor }
+            ];
+            
+            editors.forEach(item => {
+                const display = item.name === tabName ? 'block' : 'none';
+                item.editor.display.wrapper.style.display = display;
+            });
+            
+            // 更新状态
+            updateStatus();
+        }
+        
+        // 更新实时预览
+        function updatePreview() {
+            const htmlCode = htmlEditor.getValue();
+            const cssCode = cssEditor.getValue();
+            const jsCode = jsEditor.getValue();
+            
+            // 创建完整的HTML文档
+            const fullHtml = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                    <style>${cssCode}</style>
+                </head>
+                <body>
+                    ${htmlCode}
+                    <script>${jsCode}<\/script>
+                </body>
+                </html>
+            `;
+            
+            // 更新预览iframe
+            const previewFrame = document.getElementById('previewFrame');
+            const iframeDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            
+            iframeDoc.open();
+            iframeDoc.write(fullHtml);
+            iframeDoc.close();
+            
+            // 更新状态信息
+            updateStatus();
+        }
+        
+        // 更新状态信息
+        function updateStatus() {
+            // 更新代码行数
+            document.getElementById('htmlLines').textContent = htmlEditor.lineCount();
+            document.getElementById('cssLines').textContent = cssEditor.lineCount();
+            document.getElementById('jsLines').textContent = jsEditor.lineCount();
+            
+            // 更新编辑器状态
+            const statusMap = {
+                'html': '编辑HTML',
+                'css': '编辑CSS',
+                'js': '编辑JavaScript'
+            };
+            
+            document.getElementById('editorStatus').textContent = statusMap[currentTab] || '就绪';
+        }
+        
+        // 初始化组件库
+        function initComponentLibrary() {
+            // 组件分类筛选
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const category = this.dataset.category;
+                    
+                    // 更新活动按钮
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 筛选组件
+                    document.querySelectorAll('.component-item').forEach(item => {
+                        if (category === 'all' || item.dataset.category === category) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // 组件点击插入功能
+            document.querySelectorAll('.component-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const componentType = this.dataset.component;
+                    insertComponent(componentType);
+                });
+            });
+        }
+        
+        // 插入组件
+        function insertComponent(type) {
+            let htmlSnippet = '';
+            let cssSnippet = '';
+            
+            switch(type) {
+                case 'header':
+                    htmlSnippet = `
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="container">
+        <div class="nav-brand">我的网站</div>
+        <ul class="nav-menu">
+            <li><a href="#">首页</a></li>
+            <li><a href="#">产品</a></li>
+            <li><a href="#">关于</a></li>
+            <li><a href="#">联系</a></li>
+        </ul>
+    </div>
+</nav>`;
+                    
+                    cssSnippet = `
+/* 导航栏样式 */
+.navbar {
+    background: #333;
+    color: white;
+    padding: 20px 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #4776E6;
+}`;
+                    break;
+                    
+                case 'card':
+                    htmlSnippet = `
+<!-- 卡片组件 -->
+<div class="card">
+    <div class="card-image">
+        <img src="https://via.placeholder.com/400x250" alt="卡片图片">
+    </div>
+    <div class="card-content">
+        <h3 class="card-title">卡片标题</h3>
+        <p class="card-text">这是一张卡片的内容描述，可以展示各种信息。</p>
+        <a href="#" class="card-btn">了解更多</a>
+    </div>
+</div>`;
+                    
+                    cssSnippet = `
+/* 卡片样式 */
+.card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.card-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 25px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.card-text {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.card-btn {
+    display: inline-block;
+    background: #4776E6;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.card-btn:hover {
+    background: #3a63c4;
+}`;
+                    break;
+                    
+                case 'button':
+                    htmlSnippet = `
+<!-- 按钮组件 -->
+<div class="buttons-container">
+    <button class="btn-primary">主要按钮</button>
+    <button class="btn-secondary">次要按钮</button>
+    <button class="btn-success">成功按钮</button>
+    <button class="btn-danger">危险按钮</button>
+</div>`;
+                    
+                    cssSnippet = `
+/* 按钮样式 */
+.buttons-container {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.buttons-container button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: #4776E6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3a63c4;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(71, 118, 230, 0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}`;
+                    break;
+                    
+                default:
+                    htmlSnippet = `
+<!-- 组件占位符 -->
+<div class="component-placeholder">
+    <h3>${type.charAt(0).toUpperCase() + type.slice(1)} 组件</h3>
+    <p>这是一个 ${type} 组件，您可以自定义其内容和样式。</p>
+</div>`;
+                    
+                    cssSnippet = `
+/* 组件占位符样式 */
+.component-placeholder {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.component-placeholder h3 {
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.component-placeholder p {
+    color: #adb5bd;
+}`;
+            }
+            
+            // 插入到HTML编辑器中
+            const cursor = htmlEditor.getCursor();
+            htmlEditor.replaceRange(htmlSnippet, cursor);
+            
+            // 插入到CSS编辑器中
+            const cssCursor = cssEditor.getCursor();
+            cssEditor.replaceRange(cssSnippet, cssCursor);
+            
+            // 更新预览
+            updatePreview();
+            
+            // 显示成功提示
+            showNotification(`已插入 ${type} 组件`);
+        }
+        
+        // 显示通知
+        function showNotification(message, type = 'success') {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                font-weight: 500;
+                animation: slideIn 0.3s, fadeOut 0.3s 2.7s;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后移除
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // 初始化导出功能
+        function initExportFunctionality() {
+            const exportModal = document.getElementById('exportModal');
+            const exportBtn = document.getElementById('exportCode');
+            const closeModalBtn = document.getElementById('closeExportModal');
+            const copyCodeBtn = document.getElementById('copyCode');
+            const downloadCodeBtn = document.getElementById('downloadCode');
+            const exportPreview = document.getElementById('exportPreview');
+            
+            // 打开导出模态框
+            exportBtn.addEventListener('click', function() {
+                updateExportPreview();
+                exportModal.style.display = 'flex';
+            });
+            
+            // 关闭导出模态框
+            closeModalBtn.addEventListener('click', function() {
+                exportModal.style.display = 'none';
+            });
+            
+            // 点击模态框外部关闭
+            exportModal.addEventListener('click', function(e) {
+                if (e.target === exportModal) {
+                    exportModal.style.display = 'none';
+                }
+            });
+            
+            // 复制代码
+            copyCodeBtn.addEventListener('click', function() {
+                exportPreview.select();
+                document.execCommand('copy');
+                showNotification('代码已复制到剪贴板');
+            });
+            
+            // 下载代码
+            downloadCodeBtn.addEventListener('click', function() {
+                const projectName = document.getElementById('projectName').value || 'my-project';
+                const includeHTML = document.getElementById('includeHTML').checked;
+                const includeCSS = document.getElementById('includeCSS').checked;
+                const includeJS = document.getElementById('includeJS').checked;
+                
+                // 创建ZIP文件
+                const zip = new JSZip();
+                
+                if (includeHTML) {
+                    zip.file(`${projectName}/index.html`, htmlEditor.getValue());
+                }
+                
+                if (includeCSS) {
+                    zip.file(`${projectName}/style.css`, cssEditor.getValue());
+                }
+                
+                if (includeJS) {
+                    zip.file(`${projectName}/script.js`, jsEditor.getValue());
+                }
+                
+                // 生成ZIP并下载
+                zip.generateAsync({type: "blob"})
+                    .then(function(content) {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(content);
+                        link.download = `${projectName}.zip`;
+                        link.click();
+                        URL.revokeObjectURL(link.href);
+                        
+                        showNotification('代码已成功下载');
+                        exportModal.style.display = 'none';
+                    })
+                    .catch(function(error) {
+                        console.error('下载失败:', error);
+                        showNotification('下载失败，请重试', 'error');
+                    });
+            });
+            
+            // 监听输入变化，更新预览
+            document.getElementById('projectName').addEventListener('input', updateExportPreview);
+            document.getElementById('includeHTML').addEventListener('change', updateExportPreview);
+            document.getElementById('includeCSS').addEventListener('change', updateExportPreview);
+            document.getElementById('includeJS').addEventListener('change', updateExportPreview);
+        }
+        
+        // 更新导出预览
+        function updateExportPreview() {
+            const projectName = document.getElementById('projectName').value || 'my-project';
+            const includeHTML = document.getElementById('includeHTML').checked;
+            const includeCSS = document.getElementById('includeCSS').checked;
+            const includeJS = document.getElementById('includeJS').checked;
+            
+            let previewText = `项目: ${projectName}\n包含文件:\n`;
+            
+            if (includeHTML) previewText += "- index.html\n";
+            if (includeCSS) previewText += "- style.css\n";
+            if (includeJS) previewText += "- script.js\n";
+            
+            previewText += "\n文件结构:\n";
+            previewText += `${projectName}/\n`;
+            
+            if (includeHTML) previewText += `  ├── index.html\n`;
+            if (includeCSS) previewText += `  ├── style.css\n`;
+            if (includeJS) previewText += `  └── script.js\n`;
+            
+            document.getElementById('exportPreview').value = previewText;
+        }
+        
+        // 初始化事件监听
+        function initEventListeners() {
+            // 选项卡切换
+            document.querySelectorAll('.code-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    showEditor(this.dataset.tab);
+                });
+            });
+            
+            // 运行代码按钮
+            document.getElementById('runCode').addEventListener('click', updatePreview);
+            
+            // 刷新预览按钮
+            document.getElementById('refreshPreview').addEventListener('click', updatePreview);
+            
+            // 格式化代码按钮
+            document.getElementById('formatCode').addEventListener('click', function() {
+                if (currentTab === 'html') {
+                    // 简单的HTML格式化
+                    const html = htmlEditor.getValue();
+                    // 简单的格式化：添加换行和缩进
+                    const formatted = html
+                        .replace(/>\s*</g, '>\n<')
+                        .replace(/<\/\w+>/g, '\n$&')
+                        .replace(/<(\w+)([^>]*)>/g, '<$1$2>');
+                    htmlEditor.setValue(formatted);
+                    showNotification('HTML代码已格式化');
+                } else if (currentTab === 'css') {
+                    // 简单的CSS格式化
+                    const css = cssEditor.getValue();
+                    // 简单的格式化：添加换行和缩进
+                    const formatted = css
+                        .replace(/\{/g, ' {\n  ')
+                        .replace(/\}/g, '\n}\n')
+                        .replace(/;/g, ';\n  ')
+                        .replace(/\n\s*\n/g, '\n');
+                    cssEditor.setValue(formatted);
+                    showNotification('CSS代码已格式化');
+                } else if (currentTab === 'js') {
+                    // 简单的JS格式化
+                    const js = jsEditor.getValue();
+                    // 简单的格式化：添加换行和缩进
+                    const formatted = js
+                        .replace(/\{/g, ' {\n  ')
+                        .replace(/\}/g, '\n}\n')
+                        .replace(/;/g, ';\n  ')
+                        .replace(/,/g, ',\n  ')
+                        .replace(/\n\s*\n/g, '\n');
+                    jsEditor.setValue(formatted);
+                    showNotification('JavaScript代码已格式化');
+                }
+            });
+            
+            // 面板大小调整
+            const resizeHandle = document.getElementById('resizeHandle');
+            const editorPanel = document.querySelector('.editor-panel');
+            const previewPanel = document.querySelector('.preview-panel');
+            
+            resizeHandle.addEventListener('mousedown', function(e) {
+                isResizing = true;
+                document.body.style.cursor = 'col-resize';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', function(e) {
+                if (!isResizing) return;
+                
+                const containerWidth = document.querySelector('.editor-wrapper').offsetWidth;
+                const newEditorWidth = (e.clientX / containerWidth) * 100;
+                
+                if (newEditorWidth > 20 && newEditorWidth < 80) {
+                    editorPanel.style.flex = `0 0 ${newEditorWidth}%`;
+                    previewPanel.style.flex = `0 0 ${100 - newEditorWidth}%`;
+                }
+            });
+            
+            document.addEventListener('mouseup', function() {
+                isResizing = false;
+                document.body.style.cursor = 'default';
+            });
+            
+            // 更新时间
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('zh-CN', { hour12: false });
+                document.getElementById('currentTime').textContent = timeString;
+            }
+            
+            setInterval(updateTime, 1000);
+            updateTime();
+        }
+        
+        // 初始化应用
+        function initApp() {
+            initCodeEditors();
+            initComponentLibrary();
+            initExportFunctionality();
+            initEventListeners();
+            
+            // 初始状态更新
+            updateStatus();
+            
+            // 添加CSS动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            console.log('View编辑器已初始化');
+        }
+        
+        // 当页面加载完成后初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

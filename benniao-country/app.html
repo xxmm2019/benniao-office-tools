@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界各国首都查询工具</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 30px;
+        }
+        
+        .left-panel {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 30px;
+        }
+        
+        .right-panel {
+            flex: 2;
+            min-width: 400px;
+            border-left: 1px solid #eee;
+            padding-left: 30px;
+        }
+        
+        .search-section {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .search-type {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #4a6491;
+        }
+        
+        .search-type-btn {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background-color: #f1f3f5;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .search-type-btn.active {
+            background-color: #4a6491;
+            color: white;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #4a6491;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .search-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, #2c3e50, #4a6491);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .search-btn:hover {
+            background: linear-gradient(to right, #4a6491, #2c3e50);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-count {
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+        
+        .country-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            padding: 5px;
+        }
+        
+        .country-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        
+        .country-item:hover {
+            background-color: #f0f5ff;
+        }
+        
+        .country-item.active {
+            background-color: #e8f0fe;
+            border-left: 5px solid #4a6491;
+        }
+        
+        .flag {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .country-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .capital-name {
+            color: #666;
+            margin-left: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .detail-section {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            min-height: 500px;
+        }
+        
+        .detail-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .detail-flag {
+            font-size: 3.5rem;
+            margin-right: 25px;
+        }
+        
+        .detail-title h2 {
+            font-size: 2.2rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .detail-subtitle {
+            color: #4a6491;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .detail-content {
+            margin-top: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+            min-width: 140px;
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: #555;
+        }
+        
+        .detail-description {
+            line-height: 1.8;
+            margin-top: 25px;
+            color: #444;
+            font-size: 1.05rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #777;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #666;
+            font-size: 0.9rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .left-panel, .right-panel {
+                width: 100%;
+                padding: 0;
+                border: none;
+            }
+            
+            .right-panel {
+                margin-top: 30px;
+            }
+            
+            .detail-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .detail-flag {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .search-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-globe-americas"></i> 世界各国首都查询工具</h1>
+            <p class="subtitle">为您提供世界各国首都查询表，哪些城市是首都查询，世界各国首都大全，世界各国首都是哪个城市，世界各国首都查询表，全世界各国首都在线查询工具等。</p>
+        </header>
+        
+        <div class="content">
+            <div class="left-panel">
+                <div class="search-section">
+                    <div class="search-type">
+                        <div class="search-type-btn active" id="country-to-capital">国家查首都</div>
+                        <div class="search-type-btn" id="capital-to-country">首都查国家</div>
+                    </div>
+                    
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="search-input" placeholder="输入国家名称查询首都...">
+                    </div>
+                    
+                    <button class="search-btn" id="search-btn">查询首都信息</button>
+                    
+                    <div class="result-count" id="result-count">共收录 197 个国家和地区的首都信息</div>
+                </div>
+                
+                <div class="country-list" id="country-list">
+                    <!-- 国家列表将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="detail-section">
+                    <div class="empty-state" id="empty-state">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h3>选择国家查看详细信息</h3>
+                        <p>从左侧列表中选择一个国家或使用搜索功能，查看该国的首都及详细信息</p>
+                    </div>
+                    
+                    <div id="detail-content" style="display: none;">
+                        <div class="detail-header">
+                            <div class="detail-flag" id="detail-flag">🇨🇳</div>
+                            <div class="detail-title">
+                                <h2 id="detail-country">中国</h2>
+                                <div class="detail-subtitle" id="detail-capital">北京</div>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-content">
+                            <div class="detail-row">
+                                <div class="detail-label">所属大洲：</div>
+                                <div class="detail-value" id="detail-continent">亚洲</div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">官方语言：</div>
+                                <div class="detail-value" id="detail-language">中文</div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">人口数量：</div>
+                                <div class="detail-value" id="detail-population">约14亿</div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">国土面积：</div>
+                                <div class="detail-value" id="detail-area">约960万平方公里</div>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <div class="detail-label">货币单位：</div>
+                                <div class="detail-value" id="detail-currency">人民币 (CNY)</div>
+                            </div>
+                            
+                            <div class="detail-description" id="detail-description">
+                                北京，简称"京"，古称燕京、北平，是中华人民共和国首都、省级行政区、直辖市、国家中心城市、超大城市，国务院批复确定的中国政治中心、文化中心、国际交往中心、科技创新中心。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+    </div>
+
+    <script>
+        // 世界各国首都数据
+        const capitalsData = [
+            {
+                country: "中国",
+                capital: "北京",
+                continent: "亚洲",
+                language: "中文",
+                population: "约14亿",
+                area: "约960万平方公里",
+                currency: "人民币 (CNY)",
+                flag: "🇨🇳",
+                description: "北京，简称'京'，古称燕京、北平，是中华人民共和国首都、省级行政区、直辖市、国家中心城市、超大城市，国务院批复确定的中国政治中心、文化中心、国际交往中心、科技创新中心。"
+            },
+            {
+                country: "美国",
+                capital: "华盛顿特区",
+                continent: "北美洲",
+                language: "英语",
+                population: "约3.3亿",
+                area: "约937万平方公里",
+                currency: "美元 (USD)",
+                flag: "🇺🇸",
+                description: "华盛顿哥伦比亚特区，简称华盛顿特区，是美利坚合众国的首都，位于美国的东北部、中大西洋地区，是1790年作为首都而设置、由美国国会直接管辖的特别行政区划，因此不属于美国的任何一州。"
+            },
+            {
+                country: "日本",
+                capital: "东京",
+                continent: "亚洲",
+                language: "日语",
+                population: "约1.26亿",
+                area: "约37.8万平方公里",
+                currency: "日元 (JPY)",
+                flag: "🇯🇵",
+                description: "东京，日本首都，位于日本关东平原中部，是面向东京湾的国际大都市，日本三大都市圈之一东京都市圈的中心城市。东京是日本的政治、经济、文化和交通中心，也是世界经济发展度与富裕程度最高的都市之一。"
+            },
+            {
+                country: "法国",
+                capital: "巴黎",
+                continent: "欧洲",
+                language: "法语",
+                population: "约6700万",
+                area: "约55万平方公里",
+                currency: "欧元 (EUR)",
+                flag: "🇫🇷",
+                description: "巴黎，是法兰西共和国的首都和最大城市，也是法国的政治、经济、文化和商业中心，世界五个国际大都市之一。巴黎建都已有1400多年的历史，它不仅是法国，也是西欧的政治、经济和文化中心。"
+            },
+            {
+                country: "英国",
+                capital: "伦敦",
+                continent: "欧洲",
+                language: "英语",
+                population: "约6700万",
+                area: "约24.4万平方公里",
+                currency: "英镑 (GBP)",
+                flag: "🇬🇧",
+                description: "伦敦，是大不列颠及北爱尔兰联合王国首都，世界金融中心，与纽约和香港并称为'纽伦港'。伦敦是英国的政治、经济、文化、金融中心和世界著名的旅游胜地，有数量众多的名胜景点与博物馆。"
+            },
+            {
+                country: "德国",
+                capital: "柏林",
+                continent: "欧洲",
+                language: "德语",
+                population: "约8300万",
+                area: "约35.7万平方公里",
+                currency: "欧元 (EUR)",
+                flag: "🇩🇪",
+                description: "柏林，是德意志联邦共和国首都，也是德国最大的城市，政治、经济中心，有居民约340万人。柏林位于德国东北部，四面被勃兰登堡州环绕，施普雷河和哈弗尔河流经该市。"
+            },
+            {
+                country: "俄罗斯",
+                capital: "莫斯科",
+                continent: "欧洲/亚洲",
+                language: "俄语",
+                population: "约1.46亿",
+                area: "约1710万平方公里",
+                currency: "俄罗斯卢布 (RUB)",
+                flag: "🇷🇺",
+                description: "莫斯科，是俄罗斯联邦首都、莫斯科州首府。莫斯科是俄罗斯的政治、经济、文化、金融、交通中心以及最大的综合性城市，是一座国际化大都市。莫斯科沿莫斯科河而建，由1147年的莫斯科大公国时代开始，到沙皇俄国、苏联及俄罗斯联邦政权都一直担任着国家首都的角色。"
+            },
+            {
+                country: "印度",
+                capital: "新德里",
+                continent: "亚洲",
+                language: "印地语、英语",
+                population: "约13.8亿",
+                area: "约298万平方公里",
+                currency: "印度卢比 (INR)",
+                flag: "🇮🇳",
+                description: "新德里，是印度共和国首都，是全国政治、经济和文化中心。新德里位于印度的西北部，恒河支流亚穆纳河从城东缓缓流过，河对岸是广阔的恒河平原。新德里是在古老的德里城基础上扩建而成。"
+            },
+            {
+                country: "澳大利亚",
+                capital: "堪培拉",
+                continent: "大洋洲",
+                language: "英语",
+                population: "约2569万",
+                area: "约769万平方公里",
+                currency: "澳大利亚元 (AUD)",
+                flag: "🇦🇺",
+                description: "堪培拉，是澳大利亚联邦的首都，位于澳大利亚东南部山脉区的开阔谷地上。作为澳大利亚政治中心，堪培拉是澳大利亚国会、澳大利亚高等法院以及众多政府部门和外交机构的所在地。"
+            },
+            {
+                country: "巴西",
+                capital: "巴西利亚",
+                continent: "南美洲",
+                language: "葡萄牙语",
+                population: "约2.13亿",
+                area: "约851万平方公里",
+                currency: "巴西雷亚尔 (BRL)",
+                flag: "🇧🇷",
+                description: "巴西利亚，是巴西联邦共和国首都，是巴西第四大城市。巴西利亚的城市规划被联合国教科文组织列为世界文化遗产，历史上以大胆设计的建筑物及快速增长的人口而著名。"
+            },
+            {
+                country: "加拿大",
+                capital: "渥太华",
+                continent: "北美洲",
+                language: "英语、法语",
+                population: "约3800万",
+                area: "约998万平方公里",
+                currency: "加拿大元 (CAD)",
+                flag: "🇨🇦",
+                description: "渥太华，是加拿大的首都，全国第四大城市。渥太华是水、陆、空交通枢纽，水力资源丰富，以轻工业为主，有造纸、木材加工、食品、机械制造等工业。"
+            },
+            {
+                country: "意大利",
+                capital: "罗马",
+                continent: "欧洲",
+                language: "意大利语",
+                population: "约5900万",
+                area: "约30.1万平方公里",
+                currency: "欧元 (EUR)",
+                flag: "🇮🇹",
+                description: "罗马，是意大利共和国的首都和最大的城市，也是全国政治、经济、文化和交通中心，已有2500余年历史，是世界著名的历史文化名城，古罗马帝国的发祥地，因建城历史悠久而被称为'永恒之城'。"
+            },
+            {
+                country: "韩国",
+                capital: "首尔",
+                continent: "亚洲",
+                language: "韩语",
+                population: "约5174万",
+                area: "约10万平方公里",
+                currency: "韩元 (KRW)",
+                flag: "🇰🇷",
+                description: "首尔，全称首尔特别市，是大韩民国首都，也是韩国政治、经济、文化中心。首尔位于韩国西北部的汉江流域，朝鲜半岛的中部，是朝鲜半岛最大的城市，亚洲主要金融城市之一。"
+            },
+            {
+                country: "墨西哥",
+                capital: "墨西哥城",
+                continent: "北美洲",
+                language: "西班牙语",
+                population: "约1.28亿",
+                area: "约196万平方公里",
+                currency: "墨西哥比索 (MXN)",
+                flag: "🇲🇽",
+                description: "墨西哥城，是墨西哥合众国首都，位于墨西哥中南部高原的山谷中，海拔2240米。墨西哥城是美洲人口最多的都市区，也是世界上海拔最高的都市区。"
+            },
+            {
+                country: "埃及",
+                capital: "开罗",
+                continent: "非洲",
+                language: "阿拉伯语",
+                population: "约1.04亿",
+                area: "约100万平方公里",
+                currency: "埃及镑 (EGP)",
+                flag: "🇪🇬",
+                description: "开罗，是阿拉伯埃及共和国首都，是埃及及阿拉伯世界最大的城市，也是世界上最古老的城市之一。开罗横跨尼罗河，气魄雄伟，风貌壮观，是整个中东地区的政治、经济、文化和交通中心。"
+            },
+            {
+                country: "南非",
+                capital: "比勒陀利亚",
+                continent: "非洲",
+                language: "英语、南非荷兰语等11种官方语言",
+                population: "约5931万",
+                area: "约122万平方公里",
+                currency: "南非兰特 (ZAR)",
+                flag: "🇿🇦",
+                description: "南非有三个首都：行政首都为比勒陀利亚，立法首都为开普敦，司法首都为布隆方丹。比勒陀利亚是南非的行政首都，也是豪登省的主要城市，位于南非东北部高原上的马加利山麓谷地。"
+            }
+        ];
+
+        // DOM元素
+        const countryToCapitalBtn = document.getElementById('country-to-capital');
+        const capitalToCountryBtn = document.getElementById('capital-to-country');
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const resultCount = document.getElementById('result-count');
+        const countryList = document.getElementById('country-list');
+        const emptyState = document.getElementById('empty-state');
+        const detailContent = document.getElementById('detail-content');
+        
+        // 详情元素
+        const detailFlag = document.getElementById('detail-flag');
+        const detailCountry = document.getElementById('detail-country');
+        const detailCapital = document.getElementById('detail-capital');
+        const detailContinent = document.getElementById('detail-continent');
+        const detailLanguage = document.getElementById('detail-language');
+        const detailPopulation = document.getElementById('detail-population');
+        const detailArea = document.getElementById('detail-area');
+        const detailCurrency = document.getElementById('detail-currency');
+        const detailDescription = document.getElementById('detail-description');
+        
+        // 当前查询模式
+        let searchMode = 'country-to-capital'; // 'country-to-capital' 或 'capital-to-country'
+        let currentCountry = capitalsData[0]; // 默认显示中国
+        let filteredData = [...capitalsData]; // 当前过滤后的数据
+        
+        // 初始化页面
+        function init() {
+            // 设置初始查询模式
+            updateSearchMode();
+            
+            // 生成国家列表
+            renderCountryList();
+            
+            // 显示默认国家（中国）的详细信息
+            showCountryDetail(currentCountry);
+            
+            // 更新结果计数
+            updateResultCount();
+            
+            // 添加事件监听器
+            setupEventListeners();
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 查询模式切换
+            countryToCapitalBtn.addEventListener('click', () => {
+                if (searchMode !== 'country-to-capital') {
+                    searchMode = 'country-to-capital';
+                    updateSearchMode();
+                    searchInput.placeholder = "输入国家名称查询首都...";
+                    renderCountryList();
+                    updateResultCount();
+                }
+            });
+            
+            capitalToCountryBtn.addEventListener('click', () => {
+                if (searchMode !== 'capital-to-country') {
+                    searchMode = 'capital-to-country';
+                    updateSearchMode();
+                    searchInput.placeholder = "输入首都名称查询国家...";
+                    renderCountryList();
+                    updateResultCount();
+                }
+            });
+            
+            // 搜索按钮
+            searchBtn.addEventListener('click', performSearch);
+            
+            // 回车键搜索
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // 实时搜索
+            searchInput.addEventListener('input', performSearch);
+        }
+        
+        // 更新查询模式UI
+        function updateSearchMode() {
+            if (searchMode === 'country-to-capital') {
+                countryToCapitalBtn.classList.add('active');
+                capitalToCountryBtn.classList.remove('active');
+                searchBtn.textContent = '查询首都信息';
+            } else {
+                capitalToCountryBtn.classList.add('active');
+                countryToCapitalBtn.classList.remove('active');
+                searchBtn.textContent = '查询国家信息';
+            }
+        }
+        
+        // 执行搜索
+        function performSearch() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            
+            if (!searchTerm) {
+                // 如果搜索框为空，显示所有数据
+                filteredData = [...capitalsData];
+            } else {
+                // 根据搜索模式和关键词过滤数据
+                if (searchMode === 'country-to-capital') {
+                    // 按国家名称搜索
+                    filteredData = capitalsData.filter(item => 
+                        item.country.toLowerCase().includes(searchTerm)
+                    );
+                } else {
+                    // 按首都名称搜索
+                    filteredData = capitalsData.filter(item => 
+                        item.capital.toLowerCase().includes(searchTerm)
+                    );
+                }
+            }
+            
+            // 重新渲染列表
+            renderCountryList();
+            
+            // 更新结果计数
+            updateResultCount();
+            
+            // 如果有搜索结果，显示第一个结果
+            if (filteredData.length > 0) {
+                showCountryDetail(filteredData[0]);
+            } else {
+                // 没有结果，显示空状态
+                emptyState.style.display = 'block';
+                detailContent.style.display = 'none';
+            }
+        }
+        
+        // 渲染国家列表
+        function renderCountryList() {
+            countryList.innerHTML = '';
+            
+            filteredData.forEach((item, index) => {
+                const countryItem = document.createElement('div');
+                countryItem.className = 'country-item';
+                if (index === 0) {
+                    countryItem.classList.add('active');
+                }
+                
+                countryItem.innerHTML = `
+                    <div class="flag">${item.flag}</div>
+                    <div>
+                        <div class="country-name">${item.country}</div>
+                        <div class="capital-name">${item.capital}</div>
+                    </div>
+                `;
+                
+                countryItem.addEventListener('click', () => {
+                    // 移除所有项目的active类
+                    document.querySelectorAll('.country-item').forEach(el => {
+                        el.classList.remove('active');
+                    });
+                    
+                    // 为当前项目添加active类
+                    countryItem.classList.add('active');
+                    
+                    // 显示详情
+                    showCountryDetail(item);
+                });
+                
+                countryList.appendChild(countryItem);
+            });
+        }
+        
+        // 显示国家详情
+        function showCountryDetail(countryData) {
+            // 隐藏空状态
+            emptyState.style.display = 'none';
+            detailContent.style.display = 'block';
+            
+            // 更新详情内容
+            detailFlag.textContent = countryData.flag;
+            detailCountry.textContent = countryData.country;
+            detailCapital.textContent = countryData.capital;
+            detailContinent.textContent = countryData.continent;
+            detailLanguage.textContent = countryData.language;
+            detailPopulation.textContent = countryData.population;
+            detailArea.textContent = countryData.area;
+            detailCurrency.textContent = countryData.currency;
+            detailDescription.textContent = countryData.description;
+        }
+        
+        // 更新结果计数
+        function updateResultCount() {
+            const totalCount = capitalsData.length;
+            const filteredCount = filteredData.length;
+            
+            if (filteredCount === totalCount) {
+                resultCount.textContent = `共收录 ${totalCount} 个国家和地区的首都信息`;
+            } else {
+                resultCount.textContent = `找到 ${filteredCount} 个结果 (共 ${totalCount} 个国家和地区)`;
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

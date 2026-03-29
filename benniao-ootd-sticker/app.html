@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 贴纸生成器 - 将您的OOTD变成可爱贴纸！ - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-ootd-sticker/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffccd5 0%, #b5e6ff 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 8px solid white;
+            position: relative;
+        }
+        
+        .sticker-decoration {
+            position: absolute;
+            z-index: 1;
+            opacity: 0.7;
+        }
+        
+        .sticker-1 {
+            top: 20px;
+            left: 20px;
+            transform: rotate(-15deg);
+            width: 80px;
+            height: 80px;
+            background: #ff9e9e;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+        
+        .sticker-2 {
+            bottom: 40px;
+            right: 30px;
+            transform: rotate(10deg);
+            width: 100px;
+            height: 100px;
+            background: #9effb3;
+            border-radius: 50% 50% 50% 0;
+        }
+        
+        .sticker-3 {
+            top: 120px;
+            right: 50px;
+            width: 70px;
+            height: 70px;
+            background: #ffd79e;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+        
+        header {
+            background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+        
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            margin-top: 15px;
+            backdrop-filter: blur(5px);
+            border: 2px dashed white;
+        }
+        
+        .header-stickers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .floating-sticker {
+            position: absolute;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .upload-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 40px;
+            background-color: #f9f7ff;
+        }
+        
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 40px;
+            background-color: #fff9fb;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #ff6b8b;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-title i {
+            background-color: #ff6b8b;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .upload-area {
+            border: 4px dashed #ff9a9e;
+            border-radius: 20px;
+            padding: 50px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-area:hover {
+            border-color: #ff6b8b;
+            background-color: #fff0f3;
+            transform: translateY(-5px);
+        }
+        
+        .upload-area.active {
+            border-color: #4cd964;
+            background-color: #f0fff4;
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: #ff9a9e;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover .upload-icon {
+            color: #ff6b8b;
+            transform: scale(1.1);
+        }
+        
+        .upload-text {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .upload-note {
+            color: #888;
+            font-size: 1rem;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .style-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .style-option {
+            background-color: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .style-option:hover {
+            transform: translateY(-5px);
+            border-color: #ff9a9e;
+            box-shadow: 0 10px 20px rgba(255, 154, 158, 0.2);
+        }
+        
+        .style-option.selected {
+            border-color: #ff6b8b;
+            background-color: #fff0f3;
+            transform: scale(1.05);
+        }
+        
+        .style-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff6b8b;
+        }
+        
+        .style-name {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        
+        .style-desc {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
+        .preview-container {
+            flex: 1;
+            border: 3px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 25px;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preview-placeholder {
+            text-align: center;
+            color: #aaa;
+        }
+        
+        .preview-placeholder i {
+            font-size: 5rem;
+            color: #ffccd5;
+            margin-bottom: 20px;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .sticker-result {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .stickers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .sticker-item {
+            border-radius: 15px;
+            overflow: hidden;
+            background-color: white;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .sticker-item:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sticker-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 18px 35px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 220px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #ff9a9e, #ff6b8b);
+            color: white;
+            box-shadow: 0 7px 15px rgba(255, 107, 139, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(255, 107, 139, 0.4);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #ff6b8b;
+            border: 3px solid #ff9a9e;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #fff0f3;
+        }
+        
+        .btn-disabled {
+            background-color: #e0e0e0;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .processing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            z-index: 10;
+            display: none;
+        }
+        
+        .processing-spinner {
+            width: 70px;
+            height: 70px;
+            border: 8px solid #f0f0f0;
+            border-top: 8px solid #ff6b8b;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .processing-text {
+            font-size: 1.3rem;
+            color: #ff6b8b;
+            font-weight: 600;
+        }
+        
+        .ai-thinking {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .download-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        
+        .download-btn {
+            padding: 12px 20px;
+            background-color: #4cd964;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .download-btn:hover {
+            background-color: #3ac754;
+            transform: translateY(-3px);
+        }
+        
+        .footer-note {
+            text-align: center;
+            padding: 25px;
+            color: #888;
+            font-size: 0.9rem;
+            border-top: 2px dashed #ffccd5;
+            background-color: #fff9fb;
+        }
+        
+        .how-it-works {
+            padding: 40px;
+            background-color: #f0f9ff;
+            border-top: 2px dashed #b5e6ff;
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 25px 15px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: #ff9a9e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+        
+        .step-icon {
+            font-size: 2.5rem;
+            color: #ff6b8b;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .style-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+            
+            .steps {
+                flex-direction: column;
+            }
+            
+            .sticker-decoration {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sticker-decoration sticker-1"></div>
+        <div class="sticker-decoration sticker-2"></div>
+        <div class="sticker-decoration sticker-3"></div>
+        
+        <header>
+            <div class="header-stickers">
+                <div class="floating-sticker" style="top: 20%; left: 10%; width: 60px; height: 60px; background: #ffd79e; border-radius: 50%;"></div>
+                <div class="floating-sticker" style="top: 60%; right: 15%; width: 80px; height: 80px; background: #9effb3; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);"></div>
+                <div class="floating-sticker" style="top: 30%; right: 20%; width: 50px; height: 50px; background: #9eb8ff; border-radius: 20% 50% 20% 50%;"></div>
+            </div>
+            <div class="header-content">
+                <h1><i class="fas fa-robot"></i> AI 贴纸生成器</h1>
+                <p class="tagline">上传您的 OOTD 照片，看它变成可爱的贴纸！</p>
+                <div class="ai-badge">
+                    <i class="fas fa-magic"></i>
+                    <span>AI驱动 · 一键转换 · 完全免费</span>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <section class="upload-section">
+                <h2 class="section-title">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>上传您的OOTD照片</span>
+                </h2>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <p class="upload-text">点击或拖放您的穿搭照片</p>
+                    <p class="upload-note">支持 JPG、PNG 格式，最大 10MB</p>
+                </div>
+                <input type="file" id="photoFileInput" accept="image/*" class="hidden">
+                
+                <div class="style-options">
+                    <div class="style-option selected" data-style="cute">
+                        <div class="style-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="style-name">可爱风</div>
+                        <div class="style-desc">萌萌的卡通贴纸</div>
+                    </div>
+                    
+                    <div class="style-option" data-style="cartoon">
+                        <div class="style-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="style-name">卡通风</div>
+                        <div class="style-desc">动画片风格贴纸</div>
+                    </div>
+                    
+                    <div class="style-option" data-style="line">
+                        <div class="style-icon">
+                            <i class="fas fa-pen-nib"></i>
+                        </div>
+                        <div class="style-name">线条风</div>
+                        <div class="style-desc">简洁线条描边贴纸</div>
+                    </div>
+                    
+                    <div class="style-option" data-style="pop">
+                        <div class="style-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="style-name">波普风</div>
+                        <div class="style-desc">鲜艳色彩艺术贴纸</div>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" id="generateBtn">
+                        <i class="fas fa-magic"></i> AI生成贴纸
+                    </button>
+                    <button class="btn btn-secondary" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
+                </div>
+            </section>
+            
+            <section class="preview-section">
+                <h2 class="section-title">
+                    <i class="fas fa-sticky-note"></i>
+                    <span>您的可爱贴纸</span>
+                </h2>
+                
+                <div class="preview-container">
+                    <div class="preview-placeholder" id="previewPlaceholder">
+                        <i class="fas fa-sticky-note"></i>
+                        <p>您的贴纸将在这里生成</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">上传照片并选择风格后，点击"AI生成贴纸"</p>
+                    </div>
+                    
+                    <img id="previewImage" class="preview-image" alt="上传的OOTD照片">
+                    <img id="stickerResult" class="sticker-result" alt="生成的贴纸">
+                    
+                    <div class="processing-overlay" id="processingOverlay">
+                        <div class="processing-spinner"></div>
+                        <p class="processing-text">AI正在创作中...</p>
+                        <p class="ai-thinking" id="aiThinkingText">分析照片风格中...</p>
+                    </div>
+                </div>
+                
+                <div class="download-options" id="downloadOptions" style="display: none;">
+                    <button class="download-btn" id="downloadPNG">
+                        <i class="fas fa-download"></i> 下载PNG贴纸
+                    </button>
+                    <button class="download-btn" id="downloadJPG">
+                        <i class="fas fa-download"></i> 下载JPG贴纸
+                    </button>
+                    <button class="download-btn" id="shareSticker">
+                        <i class="fas fa-share-alt"></i> 分享贴纸
+                    </button>
+                </div>
+                
+                <div class="stickers-grid" id="stickersGrid" style="display: none;">
+                    <div class="sticker-item">
+                        <img src="" alt="贴纸1" class="generated-sticker" data-index="0">
+                    </div>
+                    <div class="sticker-item">
+                        <img src="" alt="贴纸2" class="generated-sticker" data-index="1">
+                    </div>
+                    <div class="sticker-item">
+                        <img src="" alt="贴纸3" class="generated-sticker" data-index="2">
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <section class="how-it-works">
+            <h2 class="section-title" style="text-align: center; justify-content: center;">
+                <i class="fas fa-question-circle"></i>
+                <span>如何使用AI贴纸生成器</span>
+            </h2>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3>上传照片</h3>
+                    <p>上传您的OOTD（今日穿搭）照片或任何想要转换成贴纸的图片</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
+                    <h3>选择风格</h3>
+                    <p>从可爱、卡通、线条或波普风格中选择您喜欢的贴纸效果</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI生成</h3>
+                    <p>点击生成按钮，AI将自动分析并转换您的照片为可爱贴纸</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>下载分享</h3>
+                    <p>下载您喜欢的贴纸，分享到社交媒体或消息应用</p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="footer-note">
+            <p><i class="fas fa-info-circle"></i> 本工具使用AI技术模拟贴纸生成效果，所有处理均在您的设备上完成，保护您的隐私安全。</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const photoFileInput = document.getElementById('photoFileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const previewImage = document.getElementById('previewImage');
+        const stickerResult = document.getElementById('stickerResult');
+        const generateBtn = document.getElementById('generateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const styleOptions = document.querySelectorAll('.style-option');
+        const processingOverlay = document.getElementById('processingOverlay');
+        const aiThinkingText = document.getElementById('aiThinkingText');
+        const downloadOptions = document.getElementById('downloadOptions');
+        const stickersGrid = document.getElementById('stickersGrid');
+        const downloadPNG = document.getElementById('downloadPNG');
+        const downloadJPG = document.getElementById('downloadJPG');
+        const shareSticker = document.getElementById('shareSticker');
+        const generatedStickers = document.querySelectorAll('.generated-sticker');
+        
+        // 全局变量
+        let uploadedImage = null;
+        let selectedStyle = 'cute';
+        let generatedStickerDataURL = null;
+        let generatedStickersArray = [];
+        let processingMessages = [
+            "分析照片中的人物轮廓...",
+            "提取主要颜色方案...",
+            "应用卡通化算法...",
+            "添加贴纸特效...",
+            "优化边缘平滑度...",
+            "正在生成最终贴纸..."
+        ];
+        
+        // 初始化事件监听器
+        function initEventListeners() {
+            // 文件上传区域点击事件
+            uploadArea.addEventListener('click', () => photoFileInput.click());
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#ff6b8b';
+                uploadArea.style.backgroundColor = '#fff0f3';
+                uploadArea.classList.add('active');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = '#ff9a9e';
+                uploadArea.style.backgroundColor = 'white';
+                uploadArea.classList.remove('active');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#ff9a9e';
+                uploadArea.style.backgroundColor = 'white';
+                uploadArea.classList.remove('active');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    const file = e.dataTransfer.files[0];
+                    if (file.type.startsWith('image/')) {
+                        handleImageFile(file);
+                    } else {
+                        alert('请上传图片文件（JPG、PNG格式）');
+                    }
+                }
+            });
+            
+            // 图片文件选择事件
+            photoFileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleImageFile(e.target.files[0]);
+                }
+            });
+            
+            // 风格选择事件
+            styleOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    styleOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedStyle = option.getAttribute('data-style');
+                });
+            });
+            
+            // 生成贴纸按钮事件
+            generateBtn.addEventListener('click', generateSticker);
+            
+            // 重置按钮事件
+            resetBtn.addEventListener('click', resetApp);
+            
+            // 下载按钮事件
+            downloadPNG.addEventListener('click', () => downloadSticker('png'));
+            downloadJPG.addEventListener('click', () => downloadSticker('jpg'));
+            shareSticker.addEventListener('click', shareStickerImage);
+            
+            // 贴纸网格点击事件
+            generatedStickers.forEach(sticker => {
+                sticker.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    if (generatedStickersArray[index]) {
+                        stickerResult.src = generatedStickersArray[index];
+                        stickerResult.style.display = 'block';
+                        previewImage.style.display = 'none';
+                        previewPlaceholder.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // 处理图片文件
+        function handleImageFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('请上传图片文件（JPG、PNG格式）');
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                alert('文件大小不能超过10MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImage = new Image();
+                uploadedImage.onload = function() {
+                    // 显示预览图片
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    previewPlaceholder.style.display = 'none';
+                    stickerResult.style.display = 'none';
+                    
+                    // 隐藏之前的贴纸结果
+                    downloadOptions.style.display = 'none';
+                    stickersGrid.style.display = 'none';
+                    
+                    // 启用生成按钮
+                    generateBtn.classList.remove('btn-disabled');
+                    generateBtn.disabled = false;
+                    
+                    // 更新上传区域状态
+                    uploadArea.classList.add('active');
+                    uploadArea.innerHTML = `
+                        <div class="upload-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <p class="upload-text">照片已上传！</p>
+                        <p class="upload-note">${file.name} (${Math.round(file.size/1024)}KB)</p>
+                    `;
+                };
+                uploadedImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // 生成贴纸
+        function generateSticker() {
+            if (!uploadedImage) {
+                alert('请先上传照片');
+                return;
+            }
+            
+            // 显示处理中覆盖层
+            processingOverlay.style.display = 'flex';
+            generateBtn.disabled = true;
+            generateBtn.classList.add('btn-disabled');
+            
+            // 模拟AI处理过程
+            let messageIndex = 0;
+            const messageInterval = setInterval(() => {
+                aiThinkingText.textContent = processingMessages[messageIndex];
+                messageIndex++;
+                if (messageIndex >= processingMessages.length) {
+                    clearInterval(messageInterval);
+                    finishStickerGeneration();
+                }
+            }, 800);
+        }
+        
+        // 完成贴纸生成
+        function finishStickerGeneration() {
+            // 模拟AI处理时间
+            setTimeout(() => {
+                // 创建画布处理图片
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 设置画布尺寸（保持比例）
+                const maxSize = 500;
+                let width = uploadedImage.width;
+                let height = uploadedImage.height;
+                
+                if (width > height) {
+                    if (width > maxSize) {
+                        height = (height / width) * maxSize;
+                        width = maxSize;
+                    }
+                } else {
+                    if (height > maxSize) {
+                        width = (width / height) * maxSize;
+                        height = maxSize;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                // 绘制原始图片
+                ctx.drawImage(uploadedImage, 0, 0, width, height);
+                
+                // 根据选择的风格应用不同的滤镜效果
+                applyStyleFilter(ctx, width, height);
+                
+                // 转换为数据URL
+                generatedStickerDataURL = canvas.toDataURL('image/png');
+                
+                // 生成多个贴纸变体
+                generateStickerVariants(canvas, ctx, width, height);
+                
+                // 显示结果
+                stickerResult.src = generatedStickerDataURL;
+                stickerResult.style.display = 'block';
+                previewImage.style.display = 'none';
+                previewPlaceholder.style.display = 'none';
+                
+                // 隐藏处理中覆盖层
+                processingOverlay.style.display = 'none';
+                
+                // 显示下载选项和贴纸网格
+                downloadOptions.style.display = 'flex';
+                stickersGrid.style.display = 'grid';
+                
+                // 更新贴纸网格
+                updateStickersGrid();
+                
+                // 启用生成按钮
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('btn-disabled');
+            }, 1500);
+        }
+        
+        // 应用风格滤镜
+        function applyStyleFilter(ctx, width, height) {
+            // 获取图像数据
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            
+            // 根据选择的风格应用不同的效果
+            switch(selectedStyle) {
+                case 'cute':
+                    applyCuteStyle(data, width, height);
+                    break;
+                case 'cartoon':
+                    applyCartoonStyle(data);
+                    break;
+                case 'line':
+                    applyLineStyle(ctx, width, height, data);
+                    break;
+                case 'pop':
+                    applyPopStyle(data);
+                    break;
+            }
+            
+            // 将处理后的数据放回画布
+            ctx.putImageData(imageData, 0, 0);
+            
+            // 添加贴纸边框
+            addStickerBorder(ctx, width, height);
+        }
+        
+        // 可爱风格滤镜
+        function applyCuteStyle(data, width, height) {
+            // 提高饱和度，使颜色更鲜艳
+            for (let i = 0; i < data.length; i += 4) {
+                // 获取RGB值
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                
+                // 转换为HSL调整饱和度
+                const hsl = rgbToHsl(r, g, b);
+                hsl[1] = Math.min(hsl[1] * 1.5, 1); // 提高饱和度
+                
+                // 稍微提高亮度
+                hsl[2] = Math.min(hsl[2] * 1.1, 1);
+                
+                // 转换回RGB
+                const rgb = hslToRgb(hsl[0], hsl[1], hsl[2]);
+                
+                data[i] = rgb[0];
+                data[i + 1] = rgb[1];
+                data[i + 2] = rgb[2];
+            }
+            
+            // 添加粉色调
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = Math.min(data[i] * 1.1, 255); // 增加红色
+            }
+        }
+        
+        // 卡通风格滤镜
+        function applyCartoonStyle(data) {
+            // 简化颜色，增加对比度
+            for (let i = 0; i < data.length; i += 4) {
+                // 增加对比度
+                data[i] = data[i] < 128 ? Math.max(data[i] - 30, 0) : Math.min(data[i] + 30, 255);
+                data[i + 1] = data[i + 1] < 128 ? Math.max(data[i + 1] - 30, 0) : Math.min(data[i + 1] + 30, 255);
+                data[i + 2] = data[i + 2] < 128 ? Math.max(data[i + 2] - 30, 0) : Math.min(data[i + 2] + 30, 255);
+                
+                // 简化颜色（减少颜色数量）
+                data[i] = Math.round(data[i] / 50) * 50;
+                data[i + 1] = Math.round(data[i + 1] / 50) * 50;
+                data[i + 2] = Math.round(data[i + 2] / 50) * 50;
+            }
+        }
+        
+        // 线条风格滤镜
+        function applyLineStyle(ctx, width, height, data) {
+            // 边缘检测（简单实现）
+            const edgeData = new Uint8ClampedArray(data.length);
+            
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    const idx = (y * width + x) * 4;
+                    
+                    // 计算梯度
+                    let gx = 0, gy = 0;
+                    
+                    for (let ky = -1; ky <= 1; ky++) {
+                        for (let kx = -1; kx <= 1; kx++) {
+                            const kidx = ((y + ky) * width + (x + kx)) * 4;
+                            const gray = 0.3 * data[kidx] + 0.59 * data[kidx + 1] + 0.11 * data[kidx + 2];
+                            
+                            // Sobel算子
+                            if (kx === -1) gx -= gray;
+                            if (kx === 1) gx += gray;
+                            if (ky === -1) gy -= gray;
+                            if (ky === 1) gy += gray;
+                        }
+                    }
+                    
+                    const magnitude = Math.sqrt(gx * gx + gy * gy);
+                    const edgeValue = magnitude > 50 ? 255 : 0;
+                    
+                    edgeData[idx] = edgeValue;
+                    edgeData[idx + 1] = edgeValue;
+                    edgeData[idx + 2] = edgeValue;
+                    edgeData[idx + 3] = 255;
+                }
+            }
+            
+            // 将边缘数据复制到原始数据
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = edgeData[i];
+                data[i + 1] = edgeData[i + 1];
+                data[i + 2] = edgeData[i + 2];
+            }
+        }
+        
+        // 波普风格滤镜
+        function applyPopStyle(data) {
+            // 高对比度，鲜艳色彩
+            for (let i = 0; i < data.length; i += 4) {
+                // 极高的对比度
+                data[i] = data[i] < 128 ? 0 : 255;
+                data[i + 1] = data[i + 1] < 128 ? 0 : 255;
+                data[i + 2] = data[i + 2] < 128 ? 0 : 255;
+                
+                // 随机替换为鲜艳颜色
+                if (Math.random() > 0.7) {
+                    const colors = [
+                        [255, 0, 0],    // 红色
+                        [255, 255, 0],  // 黄色
+                        [0, 255, 0],    // 绿色
+                        [0, 255, 255],  // 青色
+                        [0, 0, 255],    // 蓝色
+                        [255, 0, 255]   // 紫色
+                    ];
+                    
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    data[i] = color[0];
+                    data[i + 1] = color[1];
+                    data[i + 2] = color[2];
+                }
+            }
+        }
+        
+        // 添加贴纸边框
+        function addStickerBorder(ctx, width, height) {
+            // 添加白色边框
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 15;
+            ctx.strokeRect(0, 0, width, height);
+            
+            // 添加虚线外边框
+            ctx.setLineDash([10, 5]);
+            ctx.strokeStyle = '#ff6b8b';
+            ctx.lineWidth = 5;
+            ctx.strokeRect(0, 0, width, height);
+            ctx.setLineDash([]);
+        }
+        
+        // 生成贴纸变体
+        function generateStickerVariants(canvas, ctx, width, height) {
+            generatedStickersArray = [];
+            
+            // 主贴纸
+            generatedStickersArray.push(canvas.toDataURL('image/png'));
+            
+            // 创建变体1：添加爱心效果
+            const variant1Canvas = document.createElement('canvas');
+            variant1Canvas.width = width;
+            variant1Canvas.height = height;
+            const variant1Ctx = variant1Canvas.getContext('2d');
+            variant1Ctx.drawImage(canvas, 0, 0);
+            
+            // 添加爱心
+            variant1Ctx.fillStyle = 'rgba(255, 107, 139, 0.3)';
+            for (let i = 0; i < 5; i++) {
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                const size = Math.random() * 30 + 20;
+                drawHeart(variant1Ctx, x, y, size);
+            }
+            
+            generatedStickersArray.push(variant1Canvas.toDataURL('image/png'));
+            
+            // 创建变体2：添加文字效果
+            const variant2Canvas = document.createElement('canvas');
+            variant2Canvas.width = width;
+            variant2Canvas.height = height;
+            const variant2Ctx = variant2Canvas.getContext('2d');
+            variant2Ctx.drawImage(canvas, 0, 0);
+            
+            // 添加文字
+            variant2Ctx.font = 'bold 40px Comic Sans MS';
+            variant2Ctx.fillStyle = '#ff6b8b';
+            variant2Ctx.textAlign = 'center';
+            variant2Ctx.strokeStyle = 'white';
+            variant2Ctx.lineWidth = 3;
+            variant2Ctx.strokeText('OOTD', width/2, 50);
+            variant2Ctx.fillText('OOTD', width/2, 50);
+            
+            generatedStickersArray.push(variant2Canvas.toDataURL('image/png'));
+        }
+        
+        // 更新贴纸网格
+        function updateStickersGrid() {
+            generatedStickers.forEach((sticker, index) => {
+                if (generatedStickersArray[index]) {
+                    sticker.src = generatedStickersArray[index];
+                }
+            });
+        }
+        
+        // 绘制爱心
+        function drawHeart(ctx, x, y, size) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            ctx.beginPath();
+            const topCurveHeight = size * 0.3;
+            ctx.moveTo(0, size/4);
+            
+            // 左上方曲线
+            ctx.bezierCurveTo(
+                0, -size/4,
+                -size/2, -size/4,
+                -size/2, size/4
+            );
+            
+            // 左下方曲线
+            ctx.bezierCurveTo(
+                -size/2, size/2,
+                0, size,
+                0, size * 0.75
+            );
+            
+            // 右下方曲线
+            ctx.bezierCurveTo(
+                0, size,
+                size/2, size/2,
+                size/2, size/4
+            );
+            
+            // 右上方曲线
+            ctx.bezierCurveTo(
+                size/2, -size/4,
+                0, -size/4,
+                0, size/4
+            );
+            
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        // RGB转HSL
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0; // 灰色
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                
+                h /= 6;
+            }
+            
+            return [h, s, l];
+        }
+        
+        // HSL转RGB
+        function hslToRgb(h, s, l) {
+            let r, g, b;
+            
+            if (s === 0) {
+                r = g = b = l; // 灰色
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            
+            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+        
+        // 下载贴纸
+        function downloadSticker(format) {
+            if (!generatedStickerDataURL) return;
+            
+            const link = document.createElement('a');
+            const timestamp = new Date().getTime();
+            const filename = `ootd_sticker_${timestamp}.${format}`;
+            
+            if (format === 'png') {
+                link.href = generatedStickerDataURL;
+            } else {
+                // 转换为JPG
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                    link.download = filename;
+                    link.click();
+                };
+                
+                img.src = generatedStickerDataURL;
+                return;
+            }
+            
+            link.download = filename;
+            link.click();
+        }
+        
+        // 分享贴纸
+        function shareStickerImage() {
+            if (!generatedStickerDataURL) return;
+            
+            if (navigator.share) {
+                // 转换数据URL为Blob
+                fetch(generatedStickerDataURL)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        const file = new File([blob], 'ootd_sticker.png', { type: 'image/png' });
+                        navigator.share({
+                            title: '我的OOTD贴纸',
+                            text: '看看我的AI生成的OOTD贴纸！',
+                            files: [file]
+                        });
+                    });
+            } else {
+                alert('分享功能在您的浏览器中不可用。您可以下载贴纸后手动分享。');
+            }
+        }
+        
+        // 重置应用
+        function resetApp() {
+            // 重置UI
+            uploadArea.innerHTML = `
+                <div class="upload-icon">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <p class="upload-text">点击或拖放您的穿搭照片</p>
+                <p class="upload-note">支持 JPG、PNG 格式，最大 10MB</p>
+            `;
+            uploadArea.classList.remove('active');
+            
+            previewImage.style.display = 'none';
+            stickerResult.style.display = 'none';
+            previewPlaceholder.style.display = 'block';
+            
+            downloadOptions.style.display = 'none';
+            stickersGrid.style.display = 'none';
+            
+            // 重置变量
+            uploadedImage = null;
+            generatedStickerDataURL = null;
+            generatedStickersArray = [];
+            
+            // 重置文件输入
+            photoFileInput.value = '';
+            
+            // 重置按钮状态
+            generateBtn.disabled = true;
+            generateBtn.classList.add('btn-disabled');
+            
+            // 重置样式选择
+            styleOptions.forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('.style-option[data-style="cute"]').classList.add('selected');
+            selectedStyle = 'cute';
+        }
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', function() {
+            initEventListeners();
+            
+            // 初始禁用生成按钮
+            generateBtn.disabled = true;
+            generateBtn.classList.add('btn-disabled');
+            
+            // 添加一些示例图片用于演示
+            const demoImages = [
+                'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+            ];
+            
+            // 随机选择一个示例图片作为演示
+            const randomDemoImage = demoImages[Math.floor(Math.random() * demoImages.length)];
+            
+            // 创建一个演示按钮
+            const demoBtn = document.createElement('button');
+            demoBtn.className = 'btn btn-secondary';
+            demoBtn.style.marginTop = '15px';
+            demoBtn.innerHTML = '<i class="fas fa-eye"></i> 查看示例效果';
+            demoBtn.onclick = function() {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                    uploadedImage = img;
+                    previewImage.src = randomDemoImage;
+                    previewImage.style.display = 'block';
+                    previewPlaceholder.style.display = 'none';
+                    
+                    uploadArea.innerHTML = `
+                        <div class="upload-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <p class="upload-text">示例照片已加载</p>
+                        <p class="upload-note">点击"AI生成贴纸"查看效果</p>
+                    `;
+                    uploadArea.classList.add('active');
+                    
+                    generateBtn.disabled = false;
+                    generateBtn.classList.remove('btn-disabled');
+                };
+                img.src = randomDemoImage;
+            };
+            
+            document.querySelector('.upload-section .button-group').appendChild(demoBtn);
+        });
+    </script>
+</body>
+</html>

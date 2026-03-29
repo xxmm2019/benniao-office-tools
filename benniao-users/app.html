@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息批量生成工具（表格格式）- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-users/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+        }
+
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --secondary-dark: #059669;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .title i {
+            color: var(--primary);
+            font-size: 2.2rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .control-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .control-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-3px);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            color: var(--text-primary);
+            background-color: white;
+            transition: var(--transition);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 18px 25px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(to right, var(--secondary), #34d399);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(to right, var(--secondary-dark), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* 表格样式优化 */
+        .table-container {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .info-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .info-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 18px 15px;
+            text-align: left;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .info-table th:last-child {
+            border-right: none;
+        }
+
+        .info-table th i {
+            margin-right: 8px;
+        }
+
+        .info-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid var(--border-color);
+            word-break: break-word;
+        }
+
+        .info-table tr {
+            transition: var(--transition);
+        }
+
+        .info-table tbody tr:nth-child(even) {
+            background-color: rgba(248, 250, 252, 0.6);
+        }
+
+        .info-table tbody tr:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+            transform: translateX(2px);
+        }
+
+        .serial-col {
+            width: 70px;
+            text-align: center;
+        }
+
+        .name-col {
+            width: 130px;
+        }
+
+        .gender-col {
+            width: 80px;
+        }
+
+        .age-col {
+            width: 80px;
+        }
+
+        .idcard-col {
+            width: 200px;
+        }
+
+        .phone-col {
+            width: 140px;
+        }
+
+        .address-col {
+            width: auto;
+        }
+
+        .gender-male {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .gender-female {
+            color: #ec4899;
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 18px 25px;
+            background-color: var(--success);
+            color: white;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.error {
+            background-color: #ef4444;
+        }
+
+        .notification.warning {
+            background-color: var(--warning);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .stats-card {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .table-container {
+                max-height: 500px;
+            }
+            
+            .info-table th, .info-table td {
+                padding: 12px 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title"><i class="fas fa-users-cog"></i> 个人信息批量生成工具</h1>
+            <p class="subtitle">快速生成模拟个人信息数据，支持自定义城市与批量导出功能</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="control-card">
+                <h3 class="card-title"><i class="fas fa-city"></i> 自定义城市设置</h3>
+                <div class="form-group">
+                    <label for="cityInput">所在城市</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input type="text" id="cityInput" placeholder="请输入城市名称，如：北京、上海、广州" value="北京">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="batchNum">生成数量 (1-20)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-list-ol input-icon"></i>
+                        <input type="number" id="batchNum" min="1" max="20" value="5" placeholder="请输入1-20之间的数字">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-card">
+                <h3 class="card-title"><i class="fas fa-sliders-h"></i> 高级选项</h3>
+                <div class="form-group">
+                    <label for="ageRange">年龄范围</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-clock input-icon"></i>
+                        <input type="text" id="ageRange" value="18-60" placeholder="例如: 18-60">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="genderRatio">性别比例</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-venus-mars input-icon"></i>
+                        <input type="text" id="genderRatio" value="50:50" placeholder="男:女比例，例如: 50:50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stat">
+                <div class="stat-value" id="totalGenerated">0</div>
+                <div class="stat-label">已生成总数</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="maleCount">0</div>
+                <div class="stat-label">男性数量</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="femaleCount">0</div>
+                <div class="stat-label">女性数量</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="avgAge">0</div>
+                <div class="stat-label">平均年龄</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" id="generateBtn">
+                <i class="fas fa-bolt"></i> 批量生成个人信息
+            </button>
+            <button class="btn-success" id="exportBtn">
+                <i class="fas fa-download"></i> 导出表格数据
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="info-table" id="infoTable">
+                <thead>
+                    <tr>
+                        <th class="serial-col"><i class="fas fa-hashtag"></i> 序号</th>
+                        <th class="name-col"><i class="fas fa-user"></i> 姓名</th>
+                        <th class="gender-col"><i class="fas fa-venus-mars"></i> 性别</th>
+                        <th class="age-col"><i class="fas fa-birthday-cake"></i> 年龄</th>
+                        <th class="idcard-col"><i class="fas fa-address-card"></i> 身份证号</th>
+                        <th class="phone-col"><i class="fas fa-phone-alt"></i> 手机号</th>
+                        <th class="address-col"><i class="fas fa-home"></i> 家庭住址</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">
+                            <i class="fas fa-table" style="font-size: 3rem; margin-bottom: 15px; display: block; color: #cbd5e1;"></i>
+                            <h3 style="font-weight: 600; margin-bottom: 10px;">无数据</h3>
+                            <p>请设置城市和生成数量，然后点击"批量生成个人信息"按钮</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+         
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">操作成功完成！</span>
+    </div>
+
+    <script>
+        // 存储批量生成的个人信息列表
+        let personInfoList = [];
+
+        // 统计数据
+        let totalGenerated = 0;
+        let maleCount = 0;
+        let femaleCount = 0;
+        let totalAge = 0;
+
+        // 中文姓氏库
+        const familyNames = [
+            "赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈",
+            "褚", "卫", "蒋", "沈", "韩", "杨", "朱", "秦", "尤", "许",
+            "何", "吕", "施", "张", "孔", "曹", "严", "华", "金", "魏"
+        ];
+
+        // 中文名字库（男/女）
+        const maleNames = ["伟", "强", "军", "明", "刚", "勇", "涛", "杰", "磊", "鹏", "超", "飞", "浩", "宇", "鑫", "亮", "峰", "阳", "帅", "龙"];
+        const femaleNames = ["丽", "娟", "敏", "静", "芳", "燕", "娜", "婷", "玲", "佳", "悦", "雯", "雪", "颖", "慧", "琳", "洁", "梅", "莹", "雨"];
+
+        // 身份证号地区编码（前6位）
+        const idCardAreaCodes = [
+            "110100", "120100", "310100", "440100", "440300",
+            "330100", "320500", "320100", "510100", "500000",
+            "420100", "340100", "350100", "610100", "530100"
+        ];
+
+        // 地区对应省份
+        const areaToProvince = {
+            "110100": "北京市", "120100": "天津市", "310100": "上海市", 
+            "440100": "广东省广州市", "440300": "广东省深圳市",
+            "330100": "浙江省杭州市", "320500": "江苏省苏州市", 
+            "320100": "江苏省南京市", "510100": "四川省成都市",
+            "500000": "重庆市", "420100": "湖北省武汉市", 
+            "340100": "安徽省合肥市", "350100": "福建省福州市",
+            "610100": "陕西省西安市", "530100": "云南省昆明市"
+        };
+
+        // 生成随机整数
+        function getRandomNum(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // 显示通知
+        function showNotification(message, type = "success") {
+            const notification = document.getElementById("notification");
+            const notificationText = document.getElementById("notification-text");
+            
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add("show");
+            
+            setTimeout(() => {
+                notification.classList.remove("show");
+            }, 3000);
+        }
+
+        // 更新统计数据
+        function updateStats() {
+            document.getElementById("totalGenerated").textContent = totalGenerated;
+            document.getElementById("maleCount").textContent = maleCount;
+            document.getElementById("femaleCount").textContent = femaleCount;
+            document.getElementById("avgAge").textContent = totalGenerated > 0 ? Math.round(totalAge / totalGenerated) : 0;
+        }
+
+        // 生成姓名
+        function generateName(gender) {
+            const familyName = familyNames[getRandomNum(0, familyNames.length - 1)];
+            let givenName = "";
+            if (gender === "男") {
+                givenName = maleNames[getRandomNum(0, maleNames.length - 1)];
+                if (getRandomNum(0, 1)) {
+                    givenName += maleNames[getRandomNum(0, maleNames.length - 1)];
+                }
+            } else {
+                givenName = femaleNames[getRandomNum(0, femaleNames.length - 1)];
+                if (getRandomNum(0, 1)) {
+                    givenName += femaleNames[getRandomNum(0, femaleNames.length - 1)];
+                }
+            }
+            return familyName + givenName;
+        }
+
+        // 生成身份证号
+        function generateIdCard(gender, age) {
+            // 前6位：地区编码
+            const areaCode = idCardAreaCodes[getRandomNum(0, idCardAreaCodes.length - 1)];
+            // 中间8位：出生年月日（基于年龄计算）
+            const currentYear = new Date().getFullYear();
+            const birthYear = currentYear - age;
+            const birthMonth = String(getRandomNum(1, 12)).padStart(2, "0");
+            const birthDay = String(getRandomNum(1, 28)).padStart(2, "0");
+            const birthDate = birthYear + birthMonth + birthDay;
+            // 后4位：顺序码（第17位奇数为男，偶数为女） + 校验码
+            const seqCodePrefix = String(getRandomNum(0, 99)).padStart(2, "0");
+            let genderCode;
+            if (gender === "男") {
+                genderCode = String(getRandomNum(1, 9));
+                // 确保是奇数
+                if (genderCode % 2 === 0) genderCode = String(parseInt(genderCode) + 1);
+            } else {
+                genderCode = String(getRandomNum(0, 8));
+                // 确保是偶数
+                if (genderCode % 2 !== 0) genderCode = String(parseInt(genderCode) + 1);
+            }
+            const checkCode = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "X"][getRandomNum(0, 10)];
+            return areaCode + birthDate + seqCodePrefix + genderCode + checkCode;
+        }
+
+        // 生成手机号
+        function generatePhone() {
+            // 国内手机号段
+            const phoneSegments = ["130", "131", "132", "133", "134", "135", "136", "137", "138", "139", "150", "151", "152", "153", "155", "156", "157", "158", "159", "180", "181", "182", "183", "184", "185", "186", "187", "188", "189"];
+            const segment = phoneSegments[getRandomNum(0, phoneSegments.length - 1)];
+            const suffix = String(getRandomNum(10000000, 99999999));
+            return segment + suffix;
+        }
+
+        // 生成家庭住址（基于自定义城市）
+        function generateAddress(city, areaCode) {
+            const districts = ["朝阳区", "海淀区", "浦东新区", "天河区", "南山区", "西湖区", "工业园区", "玄武区", "锦江区", "渝中区", "思明区", "包河区", "雁塔区", "五华区", "洪山区"];
+            const roads = ["人民路", "建设路", "解放路", "中山路", "西湖路", "科技园路", "珠江路", "长江路", "天府路", "嘉陵江路", "湖滨路", "徽州大道", "长安路", "东风路", "珞瑜路"];
+            const communityTypes = ["花园", "小区", "公寓", "大厦", "别墅", "新村", "广场", "家园", "苑", "湾"];
+            const communityNames = ["阳光", "幸福", "和谐", "美丽", "温馨", "锦绣", "彩虹", "蓝天", "金色", "东方", "华庭", "国际", "现代", "中央", "世纪"];
+            
+            const district = districts[getRandomNum(0, districts.length - 1)];
+            const road = roads[getRandomNum(0, roads.length - 1)];
+            const buildingNum = getRandomNum(1, 99);
+            const unitNum = getRandomNum(1, 10);
+            const roomNum = getRandomNum(101, 3000);
+            const communityType = communityTypes[getRandomNum(0, communityTypes.length - 1)];
+            const communityName = communityNames[getRandomNum(0, communityNames.length - 1)];
+            
+            // 50%的地址包含小区名
+            if (getRandomNum(0, 1)) {
+                return `${city}${district}${communityName}${communityType}${buildingNum}号楼${unitNum}单元${roomNum}室`;
+            } else {
+                return `${city}${district}${road}${buildingNum}号${unitNum}单元${roomNum}室`;
+            }
+        }
+
+        // 生成单个个人信息
+        function generateSinglePersonInfo(city, ageRange, genderRatio) {
+            // 解析性别比例
+            const [maleRatio, femaleRatio] = genderRatio.split(":").map(Number);
+            const totalRatio = maleRatio + femaleRatio;
+            const genderRandom = getRandomNum(1, totalRatio);
+            
+            // 根据比例确定性别
+            let gender;
+            if (genderRandom <= maleRatio) {
+                gender = "男";
+                maleCount++;
+            } else {
+                gender = "女";
+                femaleCount++;
+            }
+            
+            // 解析年龄范围
+            const [minAge, maxAge] = ageRange.split("-").map(Number);
+            const age = getRandomNum(minAge, maxAge);
+            totalAge += age;
+            
+            // 生成各项信息
+            const name = generateName(gender);
+            const idCard = generateIdCard(gender, age);
+            const phone = generatePhone();
+            
+            // 从身份证获取地区编码
+            const areaCode = idCard.substring(0, 6);
+            const address = generateAddress(city, areaCode);
+
+            return {
+                name,
+                gender,
+                age,
+                idCard,
+                address,
+                phone,
+                city
+            };
+        }
+
+        // 批量生成个人信息（表格展示）
+        function batchGeneratePersonInfo() {
+            // 获取自定义城市和生成数量
+            const city = document.getElementById("cityInput").value.trim();
+            let batchNum = parseInt(document.getElementById("batchNum").value);
+            const ageRange = document.getElementById("ageRange").value.trim();
+            const genderRatio = document.getElementById("genderRatio").value.trim();
+            const tableBody = document.getElementById("tableBody");
+
+            // 验证输入有效性
+            if (!city) {
+                showNotification("请输入城市名称！", "error");
+                return;
+            }
+            
+            if (isNaN(batchNum) || batchNum < 1 || batchNum > 20) {
+                showNotification("请输入1-20之间的有效数字作为生成数量！", "error");
+                document.getElementById("batchNum").value = 5;
+                batchNum = 5;
+                return;
+            }
+            
+            // 验证年龄范围
+            if (!ageRange.match(/^\d+-\d+$/)) {
+                showNotification("年龄范围格式不正确，请使用'最小-最大'格式，例如'18-60'", "warning");
+                document.getElementById("ageRange").value = "18-60";
+                return;
+            }
+            
+            // 验证性别比例
+            if (!genderRatio.match(/^\d+:\d+$/)) {
+                showNotification("性别比例格式不正确，请使用'男:女'格式，例如'50:50'", "warning");
+                document.getElementById("genderRatio").value = "50:50";
+                return;
+            }
+
+            // 重置统计数据
+            maleCount = 0;
+            femaleCount = 0;
+            totalAge = 0;
+
+            // 清空原有信息列表和表格内容
+            personInfoList = [];
+            tableBody.innerHTML = "";
+
+            // 批量生成指定数量的个人信息并插入表格
+            for (let i = 0; i < batchNum; i++) {
+                const personInfo = generateSinglePersonInfo(city, ageRange, genderRatio);
+                personInfoList.push(personInfo);
+
+                // 创建表格行
+                const tr = document.createElement("tr");
+
+                // 创建表格单元格（序号、姓名、性别、年龄、身份证号、手机号、地址）
+                const tdSerial = document.createElement("td");
+                tdSerial.textContent = i + 1;
+
+                const tdName = document.createElement("td");
+                tdName.textContent = personInfo.name;
+
+                const tdGender = document.createElement("td");
+                tdGender.textContent = personInfo.gender;
+                tdGender.className = personInfo.gender === "男" ? "gender-male" : "gender-female";
+
+                const tdAge = document.createElement("td");
+                tdAge.textContent = personInfo.age;
+
+                const tdIdCard = document.createElement("td");
+                tdIdCard.textContent = personInfo.idCard;
+
+                const tdPhone = document.createElement("td");
+                tdPhone.textContent = personInfo.phone;
+
+                const tdAddress = document.createElement("td");
+                tdAddress.textContent = personInfo.address;
+
+                // 将单元格插入行
+                tr.appendChild(tdSerial);
+                tr.appendChild(tdName);
+                tr.appendChild(tdGender);
+                tr.appendChild(tdAge);
+                tr.appendChild(tdIdCard);
+                tr.appendChild(tdPhone);
+                tr.appendChild(tdAddress);
+
+                // 将行插入表格主体
+                tableBody.appendChild(tr);
+            }
+            
+            // 更新统计数据
+            totalGenerated += batchNum;
+            updateStats();
+            
+            // 显示成功通知
+            showNotification(`成功生成 ${batchNum} 条个人信息！`);
+        }
+
+        // 导出表格格式个人信息（CSV格式）
+        function exportTablePersonInfo() {
+            if (personInfoList.length === 0) {
+                showNotification("请先生成个人信息再导出！", "error");
+                return;
+            }
+
+            // CSV头部
+            let csvContent = "序号,姓名,性别,年龄,身份证号,手机号,家庭住址\n";
+            
+            // CSV内容
+            personInfoList.forEach((info, index) => {
+                csvContent += `${index+1},${info.name},${info.gender},${info.age},${info.idCard},${info.phone},"${info.address}"\n`;
+            });
+
+            // 创建Blob对象（UTF-8编码，防止中文乱码）
+            const blob = new Blob(['\ufeff' + csvContent], { type: "text/csv; charset=utf-8" });
+            
+            // 创建下载链接
+            const a = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            a.href = url;
+            a.download = `个人信息_${document.getElementById("cityInput").value}_${new Date().toISOString().slice(0,10)}.csv`;
+            
+            // 触发下载
+            document.body.appendChild(a);
+            a.click();
+            
+            // 释放资源并移除元素
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 100);
+            
+            showNotification(`成功导出 ${personInfoList.length} 条个人信息到CSV文件！`);
+        }
+
+        // 绑定按钮点击事件
+        document.getElementById("generateBtn").addEventListener("click", batchGeneratePersonInfo);
+        document.getElementById("exportBtn").addEventListener("click", exportTablePersonInfo);
+        
+        // 初始化时生成一些数据
+        window.addEventListener("DOMContentLoaded", function() {
+            batchGeneratePersonInfo();
+        });
+    </script>
+</body>
+</html>

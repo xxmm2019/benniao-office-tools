@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token 生成器 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-token/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3a8c, #3a4a9c);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #00b4db, #0083b0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #4fc3f7;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .option-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .option label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #bbdefb;
+        }
+        
+        .length-control {
+            display: flex;
+            align-items: center;
+        }
+        
+        .length-control input {
+            flex: 1;
+            margin-right: 15px;
+        }
+        
+        input[type="range"] {
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #4fc3f7;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.8);
+        }
+        
+        .length-value {
+            background-color: rgba(79, 195, 247, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+            border: 1px solid #4fc3f7;
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .checkbox-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .checkbox-item input {
+            margin-right: 10px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        
+        .checkbox-item.checked {
+            background-color: rgba(79, 195, 247, 0.2);
+            border: 1px solid #4fc3f7;
+        }
+        
+        .token-display {
+            margin-bottom: 30px;
+        }
+        
+        .token-box {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem;
+            word-break: break-all;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.5;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(to right, #00b4db, #0083b0);
+            color: white;
+            flex: 2;
+            min-width: 200px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 180, 219, 0.4);
+        }
+        
+        .copy-btn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .reset-btn {
+            background: linear-gradient(to right, #f44336, #c62828);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .reset-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(244, 67, 54, 0.4);
+        }
+        
+        button i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .history {
+            margin-top: 20px;
+        }
+        
+        .history h3 {
+            margin-bottom: 15px;
+            color: #bbdefb;
+        }
+        
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .history-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #4fc3f7;
+        }
+        
+        .history-item .time {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            white-space: nowrap;
+            margin-left: 15px;
+        }
+        
+        .history-item .copy-small {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.8rem;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .token-box {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(79, 195, 247, 0.5);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 195, 247, 0.8);
+        }
+        
+        .strength-meter {
+            margin-top: 20px;
+        }
+        
+        .strength-indicator {
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.5s, background-color 0.5s;
+        }
+        
+        .strength-weak {
+            background-color: #f44336;
+            width: 25%;
+        }
+        
+        .strength-medium {
+            background-color: #ff9800;
+            width: 50%;
+        }
+        
+        .strength-strong {
+            background-color: #4CAF50;
+            width: 75%;
+        }
+        
+        .strength-very-strong {
+            background-color: #00b4db;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-key"></i> Token 生成器</h1>
+            <p>使用您想要的字符、大写或小写字母、数字和/或符号生成随机字符串。自定义设置后点击生成按钮，安全可靠的Token随时生成。</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>生成设置</span>
+                </div>
+                
+                <div class="option-group">
+                    <div class="option">
+                        <label for="length">Token 长度: <span id="length-value" class="length-value">16</span></label>
+                        <div class="length-control">
+                            <input type="range" id="length" min="4" max="128" value="16">
+                        </div>
+                    </div>
+                    
+                    <div class="option">
+                        <label>字符类型选择:</label>
+                        <div class="checkbox-group" id="character-types">
+                            <div class="checkbox-item checked" data-type="uppercase">
+                                <input type="checkbox" id="uppercase" checked>
+                                <label for="uppercase">大写字母 (A-Z)</label>
+                            </div>
+                            <div class="checkbox-item checked" data-type="lowercase">
+                                <input type="checkbox" id="lowercase" checked>
+                                <label for="lowercase">小写字母 (a-z)</label>
+                            </div>
+                            <div class="checkbox-item checked" data-type="numbers">
+                                <input type="checkbox" id="numbers" checked>
+                                <label for="numbers">数字 (0-9)</label>
+                            </div>
+                            <div class="checkbox-item" data-type="symbols">
+                                <input type="checkbox" id="symbols">
+                                <label for="symbols">符号 (!@#$%等)</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="strength-meter">
+                    <label>安全强度:</label>
+                    <div class="strength-indicator">
+                        <div class="strength-bar" id="strength-bar"></div>
+                    </div>
+                    <div id="strength-text" style="margin-top: 5px; font-size: 0.9rem;">中等</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-lock"></i>
+                    <span>生成的 Token</span>
+                </div>
+                
+                <div class="token-display">
+                    <div class="token-box" id="token-output">
+                        点击"生成 Token"按钮创建随机字符串
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="generate-btn" id="generate-btn">
+                            <i class="fas fa-bolt"></i> 生成 Token
+                        </button>
+                        <button class="copy-btn" id="copy-btn">
+                            <i class="far fa-copy"></i> 复制 Token
+                        </button>
+                        <button class="reset-btn" id="reset-btn">
+                            <i class="fas fa-redo"></i> 重置设置
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="history">
+                    <h3><i class="fas fa-history"></i> 生成历史</h3>
+                    <div class="history-list" id="history-list">
+                        <!-- 历史记录将在这里显示 -->
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+          
+        </footer>
+    </div>
+
+    <script>
+        // DOM元素
+        const tokenOutput = document.getElementById('token-output');
+        const generateBtn = document.getElementById('generate-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const lengthSlider = document.getElementById('length');
+        const lengthValue = document.getElementById('length-value');
+        const historyList = document.getElementById('history-list');
+        const strengthBar = document.getElementById('strength-bar');
+        const strengthText = document.getElementById('strength-text');
+        
+        // 字符集
+        const characterSets = {
+            uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            lowercase: 'abcdefghijklmnopqrstuvwxyz',
+            numbers: '0123456789',
+            symbols: '!@#$%^&*()_+-=[]{}|;:,.<>?'
+        };
+        
+        // 初始化历史记录
+        let tokenHistory = JSON.parse(localStorage.getItem('tokenHistory')) || [];
+        
+        // 更新历史记录显示
+        function updateHistoryDisplay() {
+            historyList.innerHTML = '';
+            
+            if (tokenHistory.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">暂无生成历史</div>';
+                return;
+            }
+            
+            // 只显示最近10条记录
+            const recentHistory = tokenHistory.slice(-10).reverse();
+            
+            recentHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                const tokenSpan = document.createElement('span');
+                tokenSpan.textContent = item.token;
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.style.display = 'flex';
+                infoDiv.style.alignItems = 'center';
+                
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'time';
+                timeSpan.textContent = item.time;
+                
+                const copyBtnSmall = document.createElement('button');
+                copyBtnSmall.className = 'copy-small';
+                copyBtnSmall.innerHTML = '<i class="far fa-copy"></i>';
+                copyBtnSmall.title = '复制';
+                copyBtnSmall.addEventListener('click', () => {
+                    copyToClipboard(item.token);
+                    // 显示复制成功反馈
+                    copyBtnSmall.innerHTML = '<i class="fas fa-check"></i>';
+                    copyBtnSmall.style.background = '#4CAF50';
+                    setTimeout(() => {
+                        copyBtnSmall.innerHTML = '<i class="far fa-copy"></i>';
+                        copyBtnSmall.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }, 1500);
+                });
+                
+                infoDiv.appendChild(timeSpan);
+                infoDiv.appendChild(copyBtnSmall);
+                
+                historyItem.appendChild(tokenSpan);
+                historyItem.appendChild(infoDiv);
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // 更新强度指示器
+        function updateStrengthIndicator(length, selectedTypes) {
+            // 计算可能的组合数
+            let charsetLength = 0;
+            selectedTypes.forEach(type => {
+                charsetLength += characterSets[type].length;
+            });
+            
+            // 计算熵值（近似的比特数）
+            const entropy = Math.log2(Math.pow(charsetLength, length));
+            
+            // 根据熵值确定强度
+            let strengthClass = 'strength-weak';
+            let strengthLabel = '弱';
+            
+            if (entropy > 80) {
+                strengthClass = 'strength-very-strong';
+                strengthLabel = '非常强';
+            } else if (entropy > 60) {
+                strengthClass = 'strength-strong';
+                strengthLabel = '强';
+            } else if (entropy > 40) {
+                strengthClass = 'strength-medium';
+                strengthLabel = '中等';
+            }
+            
+            // 更新UI
+            strengthBar.className = 'strength-bar ' + strengthClass;
+            strengthText.textContent = `强度: ${strengthLabel} (熵值: ~${Math.round(entropy)} 比特)`;
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置初始长度显示
+            lengthValue.textContent = lengthSlider.value;
+            updateStrengthIndicator(parseInt(lengthSlider.value), ['uppercase', 'lowercase', 'numbers']);
+            updateHistoryDisplay();
+            
+            // 为复选框添加点击事件
+            document.querySelectorAll('.checkbox-item').forEach(item => {
+                const checkbox = item.querySelector('input');
+                
+                item.addEventListener('click', function(e) {
+                    // 如果点击的是checkbox本身，不切换（因为浏览器会自动切换）
+                    if (e.target.tagName !== 'INPUT') {
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    
+                    // 更新UI状态
+                    if (checkbox.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                    
+                    // 检查是否至少选择了一个字符类型
+                    const checkedBoxes = document.querySelectorAll('.checkbox-item input:checked');
+                    if (checkedBoxes.length === 0) {
+                        // 如果没有选择任何类型，重新选中当前点击的
+                        checkbox.checked = true;
+                        item.classList.add('checked');
+                    }
+                    
+                    // 更新强度指示器
+                    updateStrengthIndicator(parseInt(lengthSlider.value), getSelectedCharacterTypes());
+                });
+            });
+            
+            // 长度滑块事件
+            lengthSlider.addEventListener('input', function() {
+                lengthValue.textContent = this.value;
+                updateStrengthIndicator(parseInt(this.value), getSelectedCharacterTypes());
+            });
+            
+            // 生成Token按钮事件
+            generateBtn.addEventListener('click', generateToken);
+            
+            // 复制按钮事件
+            copyBtn.addEventListener('click', function() {
+                const token = tokenOutput.textContent;
+                if (token && !token.includes('点击"生成 Token"')) {
+                    copyToClipboard(token);
+                    
+                    // 显示复制成功反馈
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> 已复制!';
+                    copyBtn.style.background = 'linear-gradient(to right, #2E7D32, #1B5E20)';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.style.background = 'linear-gradient(to right, #4CAF50, #2E7D32)';
+                    }, 2000);
+                }
+            });
+            
+            // 重置按钮事件
+            resetBtn.addEventListener('click', function() {
+                // 重置长度
+                lengthSlider.value = 16;
+                lengthValue.textContent = '16';
+                
+                // 重置复选框
+                document.querySelectorAll('.checkbox-item').forEach(item => {
+                    const checkbox = item.querySelector('input');
+                    checkbox.checked = true;
+                    item.classList.add('checked');
+                });
+                
+                // 重置强度指示器
+                updateStrengthIndicator(16, ['uppercase', 'lowercase', 'numbers']);
+                
+                // 清空当前token显示
+                tokenOutput.textContent = '点击"生成 Token"按钮创建随机字符串';
+                
+                // 显示重置成功反馈
+                const originalText = resetBtn.innerHTML;
+                resetBtn.innerHTML = '<i class="fas fa-check"></i> 已重置!';
+                resetBtn.style.background = 'linear-gradient(to right, #388E3C, #1B5E20)';
+                
+                setTimeout(() => {
+                    resetBtn.innerHTML = originalText;
+                    resetBtn.style.background = 'linear-gradient(to right, #f44336, #c62828)';
+                }, 2000);
+            });
+            
+            // 初始生成一个Token
+            generateToken();
+        });
+        
+        // 获取选中的字符类型
+        function getSelectedCharacterTypes() {
+            const selectedTypes = [];
+            document.querySelectorAll('.checkbox-item input:checked').forEach(checkbox => {
+                selectedTypes.push(checkbox.id);
+            });
+            return selectedTypes;
+        }
+        
+        // 生成Token
+        function generateToken() {
+            const length = parseInt(lengthSlider.value);
+            const selectedTypes = getSelectedCharacterTypes();
+            
+            // 如果未选择任何字符类型，则使用所有类型
+            if (selectedTypes.length === 0) {
+                selectedTypes.push('uppercase', 'lowercase', 'numbers');
+                // 更新UI
+                document.querySelectorAll('.checkbox-item').forEach(item => {
+                    const checkbox = item.querySelector('input');
+                    if (selectedTypes.includes(checkbox.id)) {
+                        checkbox.checked = true;
+                        item.classList.add('checked');
+                    }
+                });
+            }
+            
+            // 合并字符集
+            let charset = '';
+            selectedTypes.forEach(type => {
+                charset += characterSets[type];
+            });
+            
+            // 生成随机Token
+            let token = '';
+            const randomValues = new Uint32Array(length);
+            window.crypto.getRandomValues(randomValues);
+            
+            for (let i = 0; i < length; i++) {
+                token += charset[randomValues[i] % charset.length];
+            }
+            
+            // 显示Token
+            tokenOutput.textContent = token;
+            
+            // 更新强度指示器
+            updateStrengthIndicator(length, selectedTypes);
+            
+            // 保存到历史记录
+            const now = new Date();
+            const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            tokenHistory.push({
+                token: token,
+                time: timeString,
+                length: length,
+                types: selectedTypes
+            });
+            
+            // 保存到localStorage
+            localStorage.setItem('tokenHistory', JSON.stringify(tokenHistory));
+            
+            // 更新历史记录显示
+            updateHistoryDisplay();
+            
+            // 显示生成成功反馈
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i class="fas fa-check"></i> 已生成!';
+            generateBtn.style.background = 'linear-gradient(to right, #0083b0, #006994)';
+            
+            setTimeout(() => {
+                generateBtn.innerHTML = originalText;
+                generateBtn.style.background = 'linear-gradient(to right, #00b4db, #0083b0)';
+            }, 1500);
+        }
+        
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            // 使用现代剪贴板API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text);
+            } else {
+                // 回退方法
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                } catch (err) {
+                    console.error('复制失败:', err);
+                }
+                
+                document.body.removeChild(textArea);
+            }
+        }
+    </script>
+</body>
+</html>

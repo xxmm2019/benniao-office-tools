@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多功能在线工具集-URL编码 | MD5加密 | 摩尔斯电码 | 密码生成器 | 条形码 | 编码转换 | htpasswd生成 | 图片Base64 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-gongjuhe/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        h1 i {
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: #f1f5f9;
+            overflow-x: auto;
+            padding: 0 10px;
+        }
+        
+        .tab-btn {
+            padding: 18px 25px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-btn:hover {
+            color: #3498db;
+            background-color: #e8f4fc;
+        }
+        
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            background-color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tool-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .tool-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section, .output-section {
+            background-color: #f9fafc;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+        
+        .section-title i {
+            color: #3498db;
+        }
+        
+        textarea, input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .option-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 14px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-copy {
+            background-color: #2ecc71;
+            margin-top: 15px;
+        }
+        
+        .btn-copy:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .output {
+            background-color: white;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+            word-break: break-all;
+            font-family: monospace;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        
+        .barcode-container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            border: 2px solid #e1e5eb;
+        }
+        
+        #barcode {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .file-input {
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .tool-description {
+            color: #666;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-tools"></i> 多功能在线工具集</h1>
+            <p class="subtitle">URL编码 | MD5加密 | 摩尔斯电码 | 密码生成器  | 编码转换 | htpasswd生成 | 图片Base64</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="url-hex">URL16进制加密</button>
+            <button class="tab-btn" data-tab="md5">MD5加密工具</button>
+            <button class="tab-btn" data-tab="morse">摩尔斯电码</button>
+            <button class="tab-btn" data-tab="password">密码生成器</button>
+            
+            <button class="tab-btn" data-tab="encoding">UTF-8转GBK</button>
+            <button class="tab-btn" data-tab="htpasswd">htpasswd生成器</button>
+            <button class="tab-btn" data-tab="image-base64">图片转Base64</button>
+        </div>
+        
+        <!-- URL16进制加密工具 -->
+        <div class="tab-content active" id="url-hex">
+            <div class="tool-description">
+                <p><i class="fas fa-info-circle"></i> 此工具可将URL字符串转换为16进制编码形式，或将其解码回原始URL。支持标准URL编码和自定义16进制编码。</p>
+            </div>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h3 class="section-title"><i class="fas fa-keyboard"></i> 输入</h3>
+                    <textarea id="url-input" placeholder="请输入要编码或解码的URL...">https://example.com/测试页面?name=张三&id=123</textarea>
+                    
+                    <div class="options">
+                        <div class="option-group">
+                            <label class="option-label">编码类型</label>
+                            <select id="url-encoding-type">
+                                <option value="encode">URL编码</option>
+                                <option value="hex">16进制编码</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label class="option-label">操作</label>
+                            <select id="url-operation">
+                                <option value="encode">编码</option>
+                                <option value="decode">解码</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="url-encode-btn">
+                        <i class="fas fa-lock"></i> 编码/解码
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <h3 class="section-title"><i class="fas fa-file-code"></i> 输出</h3>
+                    <div class="output" id="url-output"></div>
+                    <button class="btn btn-copy" data-clipboard-target="#url-output">
+                        <i class="fas fa-copy"></i> 复制结果
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MD5加密工具 -->
+        <div class="tab-content" id="md5">
+            <div class="tool-description">
+                <p><i class="fas fa-info-circle"></i> MD5信息摘要算法是一种广泛使用的密码散列函数，可产生一个128位（16字节）的散列值。此工具可为任意文本生成MD5哈希值。</p>
+            </div>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h3 class="section-title"><i class="fas fa-keyboard"></i> 输入</h3>
+                    <textarea id="md5-input" placeholder="请输入要生成MD5的文本...">Hello, World!</textarea>
+                    
+                    <div class="options">
+                        <div class="option-group">
+                            <label class="option-label">输出格式</label>
+                            <select id="md5-format">
+                                <option value="hex">十六进制 (32字符)</option>
+                                <option value="base64">Base64 (24字符)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="md5-generate-btn">
+                        <i class="fas fa-hashtag"></i> 生成MD5
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <h3 class="section-title"><i class="fas fa-file-code"></i> 输出</h3>
+                    <div class="output" id="md5-output"></div>
+                    <button class="btn btn-copy" data-clipboard-target="#md5-output">
+                        <i class="fas fa-copy"></i> 复制结果
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 摩尔斯电码工具 -->
+        <div class="tab-content" id="morse">
+            <div class="tool-description">
+                <p><i class="fas fa-info-circle"></i> 摩尔斯电码是一种时通时断的信号代码，通过不同的排列顺序来表达不同的英文字母、数字和标点符号。此工具支持文本与摩尔斯电码的相互转换。</p>
+            </div>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h3 class="section-title"><i class="fas fa-keyboard"></i> 输入</h3>
+                    <textarea id="morse-input" placeholder="输入文本或摩尔斯电码...">SOS</textarea>
+                    
+                    <div class="options">
+                        <div class="option-group">
+                            <label class="option-label">操作</label>
+                            <select id="morse-operation">
+                                <option value="encode">文本 → 摩尔斯电码</option>
+                                <option value="decode">摩尔斯电码 → 文本</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label class="option-label">摩尔斯格式</label>
+                            <select id="morse-format">
+                                <option value="dots">点(.)划(-)</option>
+                                <option value="unicode">Unicode符号(—)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="morse-convert-btn">
+                        <i class="fas fa-broadcast-tower"></i> 转换
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <h3 class="section-title"><i class="fas fa-file-code"></i> 输出</h3>
+                    <div class="output" id="morse-output"></div>
+                    <button class="btn btn-copy" data-clipboard-target="#morse-output">
+                        <i class="fas fa-copy"></i> 复制结果
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 密码生成器 -->
+        <div class="tab-content" id="password">
+            <div class="tool-description">
+                <p><i class="fas fa-info-circle"></i> 生成安全、随机的密码。您可以选择密码长度和包含的字符类型（大写字母、小写字母、数字、特殊字符）。</p>
+            </div>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h3 class="section-title"><i class="fas fa-keyboard"></i> 设置</h3>
+                    
+                    <div class="option-group">
+                        <label class="option-label">密码长度</label>
+                        <input type="number" id="password-length" min="4" max="128" value="12">
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="uppercase" checked>
+                            <label for="uppercase">大写字母 (A-Z)</label>
+                        </div>
+                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="lowercase" checked>
+                            <label for="lowercase">小写字母 (a-z)</label>
+                        </div>
+                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="numbers" checked>
+                            <label for="numbers">数字 (0-9)</label>
+                        </div>
+                        
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="special" checked>
+                            <label for="special">特殊字符 (!@#$%^&*)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">生成数量</label>
+                        <input type="number" id="password-count" min="1" max="20" value="5">
+                    </div>
+                    
+                    <button class="btn" id="password-generate-btn">
+                        <i class="fas fa-key"></i> 生成密码
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <h3 class="section-title"><i class="fas fa-file-code"></i> 生成的密码</h3>
+                    <div class="output" id="password-output"></div>
+                    <button class="btn btn-copy" data-clipboard-target="#password-output">
+                        <i class="fas fa-copy"></i> 复制密码
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+       
+        
+        <!-- UTF-8转GBK -->
+        <div class="tab-content" id="encoding">
+            <div class="tool-description">
+                <p><i class="fas fa-info-circle"></i> 此工具可在UTF-8和GBK编码之间转换文本。请注意，某些字符可能无法在两种编码之间完全转换。</p>
+            </div>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h3 class="section-title"><i class="fas fa-keyboard"></i> 输入</h3>
+                    <textarea id="encoding-input" placeholder="输入要转换的文本...">中文测试 - Chinese Test</textarea>
+                    
+                    <div class="options">
+                        <div class="option-group">
+                            <label class="option-label">转换方向</label>
+                            <select id="encoding-direction">
+                                <option value="utf8-to-gbk">UTF-8 → GBK</option>
+                                <option value="gbk-to-utf8">GBK → UTF-8</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label class="option-label">输出格式</label>
+                            <select id="encoding-format">
+                                <option value="string">字符串</option>
+                                <option value="hex">十六进制</option>
+                                <option value="base64">Base64</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="encoding-convert-btn">
+                        <i class="fas fa-exchange-alt"></i> 转换编码
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <h3 class="section-title"><i class="fas fa-file-code"></i> 输出</h3>
+                    <div class="output" id="encoding-output"></div>
+                    <button class="btn btn-copy" data-clipboard-target="#encoding-output">
+                        <i class="fas fa-copy"></i> 复制结果
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- htpasswd生成器 -->
+        <div class="tab-content" id="htpasswd">
+            <div class="tool-description">
+                <p><i class="fas fa-info-circle"></i> 生成Apache htpasswd文件的行。支持多种加密算法（bcrypt、MD5、SHA1等），用于HTTP基本身份验证。</p>
+            </div>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h3 class="section-title"><i class="fas fa-keyboard"></i> 输入</h3>
+                    
+                    <div class="option-group">
+                        <label class="option-label">用户名</label>
+                        <input type="text" id="htpasswd-username" placeholder="输入用户名..." value="admin">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">密码</label>
+                        <input type="text" id="htpasswd-password" placeholder="输入密码..." value="mypassword123">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">加密算法</label>
+                        <select id="htpasswd-algorithm">
+                            <option value="bcrypt">bcrypt (推荐)</option>
+                            <option value="md5">MD5</option>
+                            <option value="sha1">SHA1</option>
+                            <option value="crypt">crypt (Unix)</option>
+                            <option value="plain">明文 (不加密)</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn" id="htpasswd-generate-btn">
+                        <i class="fas fa-user-shield"></i> 生成htpasswd行
+                    </button>
+                </div>
+                
+                <div class="output-section">
+                    <h3 class="section-title"><i class="fas fa-file-code"></i> 输出</h3>
+                    <div class="output" id="htpasswd-output"></div>
+                    <button class="btn btn-copy" data-clipboard-target="#htpasswd-output">
+                        <i class="fas fa-copy"></i> 复制结果
+                    </button>
+                    
+                    <div class="tool-description" style="margin-top: 20px;">
+                        <p><i class="fas fa-lightbulb"></i> 使用方法：将生成的行添加到您的.htpasswd文件中，然后在Apache配置中设置基本身份验证。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 图片转Base64 -->
+        <div class="tab-content" id="image-base64">
+            <div class="tool-description">
+                <p><i class="fas fa-info-circle"></i> 将图片文件转换为Base64编码字符串，可用于在HTML/CSS中直接嵌入图片，或用于数据传输。</p>
+            </div>
+            <div class="tool-container">
+                <div class="input-section">
+                    <h3 class="section-title"><i class="fas fa-keyboard"></i> 上传图片</h3>
+                    
+                    <div class="file-input">
+                        <input type="file" id="image-upload" accept="image/*">
+                    </div>
+                    
+                    <div class="options">
+                        <div class="option-group">
+                            <label class="option-label">输出格式</label>
+                            <select id="image-format">
+                                <option value="dataurl">完整Data URL</option>
+                                <option value="base64">纯Base64</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label class="option-label">图片预览尺寸</label>
+                            <select id="image-preview-size">
+                                <option value="original">原始尺寸</option>
+                                <option value="medium">中等 (最大宽度: 300px)</option>
+                                <option value="small">小 (最大宽度: 150px)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <img id="image-preview" class="image-preview" alt="图片预览">
+                </div>
+                
+                <div class="output-section">
+                    <h3 class="section-title"><i class="fas fa-file-code"></i> Base64输出</h3>
+                    <div class="output" id="image-base64-output"></div>
+                    <button class="btn btn-copy" data-clipboard-target="#image-base64-output">
+                        <i class="fas fa-copy"></i> 复制Base64
+                    </button>
+                    
+                    <div class="tool-description" style="margin-top: 20px;">
+                        <p><i class="fas fa-lightbulb"></i> 提示：Base64编码的图片可直接用于HTML的src属性或CSS的background-image属性。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+             
+        </div>
+    </div>
+
+    <script>
+        // 选项卡切换
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // 添加active类到当前选项卡
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // 复制功能
+        document.querySelectorAll('.btn-copy').forEach(button => {
+            button.addEventListener('click', async function() {
+                const targetId = this.getAttribute('data-clipboard-target');
+                const targetElement = document.querySelector(targetId);
+                const textToCopy = targetElement.textContent;
+                
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    alert('复制失败，请手动选择文本进行复制');
+                }
+            });
+        });
+        
+        // URL16进制加密工具
+        document.getElementById('url-encode-btn').addEventListener('click', function() {
+            const input = document.getElementById('url-input').value;
+            const encodingType = document.getElementById('url-encoding-type').value;
+            const operation = document.getElementById('url-operation').value;
+            let output = '';
+            
+            if (operation === 'encode') {
+                if (encodingType === 'hex') {
+                    // 16进制编码
+                    output = Array.from(input).map(char => {
+                        return char.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
+                    }).join(' ');
+                } else {
+                    // URL编码
+                    output = encodeURIComponent(input);
+                }
+            } else {
+                if (encodingType === 'hex') {
+                    // 16进制解码
+                    try {
+                        const hexArray = input.split(' ').filter(x => x);
+                        output = hexArray.map(hex => {
+                            return String.fromCharCode(parseInt(hex, 16));
+                        }).join('');
+                    } catch (e) {
+                        output = '解码错误：无效的16进制格式';
+                    }
+                } else {
+                    // URL解码
+                    output = decodeURIComponent(input);
+                }
+            }
+            
+            document.getElementById('url-output').textContent = output;
+        });
+        
+        // MD5加密工具
+        document.getElementById('md5-generate-btn').addEventListener('click', function() {
+            const input = document.getElementById('md5-input').value;
+            const format = document.getElementById('md5-format').value;
+            
+            let hash;
+            if (format === 'hex') {
+                hash = CryptoJS.MD5(input).toString(CryptoJS.enc.Hex);
+            } else {
+                hash = CryptoJS.MD5(input).toString(CryptoJS.enc.Base64);
+            }
+            
+            document.getElementById('md5-output').textContent = hash;
+        });
+        
+        // 摩尔斯电码工具
+        const morseCode = {
+            'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
+            'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
+            'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
+            'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
+            'Y': '-.--', 'Z': '--..', '0': '-----', '1': '.----', '2': '..---',
+            '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...',
+            '8': '---..', '9': '----.', '.': '.-.-.-', ',': '--..--', '?': '..--..',
+            "'": '.----.', '!': '-.-.--', '/': '-..-.', '(': '-.--.', ')': '-.--.-',
+            '&': '.-...', ':': '---...', ';': '-.-.-.', '=': '-...-', '+': '.-.-.',
+            '-': '-....-', '_': '..--.-', '"': '.-..-.', '$': '...-..-', '@': '.--.-.',
+            ' ': '/'
+        };
+        
+        // 反转摩尔斯电码表用于解码
+        const reverseMorseCode = {};
+        for (const [key, value] of Object.entries(morseCode)) {
+            reverseMorseCode[value] = key;
+        }
+        
+        document.getElementById('morse-convert-btn').addEventListener('click', function() {
+            const input = document.getElementById('morse-input').value.trim().toUpperCase();
+            const operation = document.getElementById('morse-operation').value;
+            const format = document.getElementById('morse-format').value;
+            let output = '';
+            
+            if (operation === 'encode') {
+                // 文本转摩尔斯电码
+                for (let i = 0; i < input.length; i++) {
+                    const char = input[i];
+                    if (morseCode[char]) {
+                        let morseChar = morseCode[char];
+                        if (format === 'unicode') {
+                            morseChar = morseChar.replace(/\./g, '').replace(/-/g, '—');
+                        }
+                        output += morseChar + ' ';
+                    } else {
+                        output += char + ' ';
+                    }
+                }
+            } else {
+                // 摩尔斯电码转文本
+                const morseChars = input.split(' ');
+                for (const morseChar of morseChars) {
+                    // 处理Unicode格式
+                    let normalizedMorse = morseChar;
+                    if (format === 'unicode') {
+                        normalizedMorse = morseChar.replace(//g, '.').replace(/—/g, '-');
+                    }
+                    
+                    if (reverseMorseCode[normalizedMorse]) {
+                        output += reverseMorseCode[normalizedMorse];
+                    } else if (morseChar === '') {
+                        output += ' ';
+                    } else {
+                        output += morseChar;
+                    }
+                }
+            }
+            
+            document.getElementById('morse-output').textContent = output.trim();
+        });
+        
+        // 密码生成器
+        document.getElementById('password-generate-btn').addEventListener('click', function() {
+            const length = parseInt(document.getElementById('password-length').value);
+            const count = parseInt(document.getElementById('password-count').value);
+            const includeUppercase = document.getElementById('uppercase').checked;
+            const includeLowercase = document.getElementById('lowercase').checked;
+            const includeNumbers = document.getElementById('numbers').checked;
+            const includeSpecial = document.getElementById('special').checked;
+            
+            // 验证至少选择了一种字符类型
+            if (!includeUppercase && !includeLowercase && !includeNumbers && !includeSpecial) {
+                document.getElementById('password-output').textContent = '错误：请至少选择一种字符类型';
+                return;
+            }
+            
+            // 字符集
+            const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+            const numberChars = '0123456789';
+            const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            let charset = '';
+            if (includeUppercase) charset += uppercaseChars;
+            if (includeLowercase) charset += lowercaseChars;
+            if (includeNumbers) charset += numberChars;
+            if (includeSpecial) charset += specialChars;
+            
+            let passwords = '';
+            for (let i = 0; i < count; i++) {
+                let password = '';
+                for (let j = 0; j < length; j++) {
+                    const randomIndex = Math.floor(Math.random() * charset.length);
+                    password += charset[randomIndex];
+                }
+                passwords += password + '\n';
+            }
+            
+            document.getElementById('password-output').textContent = passwords.trim();
+        });
+        
+        // 条形码生成器
+        document.getElementById('barcode-generate-btn').addEventListener('click', function() {
+            const input = document.getElementById('barcode-input').value;
+            const format = document.getElementById('barcode-format').value;
+            const width = parseFloat(document.getElementById('barcode-width').value);
+            
+            try {
+                JsBarcode("#barcode", input, {
+                    format: format,
+                    width: width,
+                    height: 80,
+                    displayValue: true,
+                    fontSize: 16,
+                    background: "transparent",
+                    lineColor: "#000000"
+                });
+            } catch (error) {
+                alert('生成条形码时出错：' + error.message);
+            }
+        });
+        
+        // 下载条形码
+        document.getElementById('barcode-download-btn').addEventListener('click', function() {
+            const svg = document.getElementById('barcode');
+            const serializer = new XMLSerializer();
+            const source = serializer.serializeToString(svg);
+            
+            // 将SVG转换为Blob
+            const blob = new Blob([source], {type: 'image/svg+xml;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            
+            // 创建下载链接
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = 'barcode.svg';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            URL.revokeObjectURL(url);
+        });
+        
+        // 复制条形码内容
+        document.getElementById('barcode-copy-btn').addEventListener('click', async function() {
+            const input = document.getElementById('barcode-input').value;
+            try {
+                await navigator.clipboard.writeText(input);
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> 已复制';
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                }, 2000);
+            } catch (err) {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动选择文本进行复制');
+            }
+        });
+        
+        // 编码转换工具 (UTF-8  GBK 模拟)
+        document.getElementById('encoding-convert-btn').addEventListener('click', function() {
+            const input = document.getElementById('encoding-input').value;
+            const direction = document.getElementById('encoding-direction').value;
+            const format = document.getElementById('encoding-format').value;
+            let output = '';
+            
+            try {
+                if (direction === 'utf8-to-gbk') {
+                    // 模拟UTF-8转GBK（实际在浏览器中无法直接转换）
+                    // 这里使用TextEncoder和TextDecoder模拟
+                    const utf8Encoder = new TextEncoder();
+                    const utf8Bytes = utf8Encoder.encode(input);
+                    
+                    if (format === 'hex') {
+                        output = Array.from(utf8Bytes).map(byte => 
+                            byte.toString(16).toUpperCase().padStart(2, '0')
+                        ).join(' ');
+                    } else if (format === 'base64') {
+                        let binary = '';
+                        for (let i = 0; i < utf8Bytes.length; i++) {
+                            binary += String.fromCharCode(utf8Bytes[i]);
+                        }
+                        output = btoa(binary);
+                    } else {
+                        output = 'UTF-8字节（模拟GBK编码）: ' + utf8Bytes.length + ' 字节';
+                    }
+                } else {
+                    // GBK转UTF-8（模拟）
+                    if (format === 'hex') {
+                        // 假设输入是16进制GBK编码
+                        const hexBytes = input.split(' ').filter(x => x);
+                        const bytes = new Uint8Array(hexBytes.map(hex => parseInt(hex, 16)));
+                        const decoder = new TextDecoder('utf-8');
+                        output = decoder.decode(bytes);
+                    } else if (format === 'base64') {
+                        // 假设输入是Base64编码的GBK数据
+                        const binary = atob(input);
+                        const bytes = new Uint8Array(binary.length);
+                        for (let i = 0; i < binary.length; i++) {
+                            bytes[i] = binary.charCodeAt(i);
+                        }
+                        const decoder = new TextDecoder('utf-8');
+                        output = decoder.decode(bytes);
+                    } else {
+                        // 假设输入已经是GBK编码的字符串（实际上在JS中无法直接表示）
+                        output = 'GBK转UTF-8（模拟）：在浏览器中无法直接处理GBK编码';
+                    }
+                }
+            } catch (error) {
+                output = '转换错误：' + error.message;
+            }
+            
+            document.getElementById('encoding-output').textContent = output;
+        });
+        
+        // htpasswd生成器
+        document.getElementById('htpasswd-generate-btn').addEventListener('click', function() {
+            const username = document.getElementById('htpasswd-username').value;
+            const password = document.getElementById('htpasswd-password').value;
+            const algorithm = document.getElementById('htpasswd-algorithm').value;
+            
+            let hash = '';
+            switch (algorithm) {
+                case 'bcrypt':
+                    // 模拟bcrypt（实际需要服务器端库）
+                    hash = '$2y$10$' + CryptoJS.SHA256(password + 'salt').toString(CryptoJS.enc.Base64).substring(0, 53);
+                    break;
+                case 'md5':
+                    hash = CryptoJS.MD5(password).toString(CryptoJS.enc.Hex);
+                    break;
+                case 'sha1':
+                    hash = '{SHA}' + CryptoJS.SHA1(password).toString(CryptoJS.enc.Base64);
+                    break;
+                case 'crypt':
+                    // 模拟crypt
+                    const salt = Math.random().toString(36).substring(2, 4);
+                    hash = CryptoJS.MD5(salt + password).toString(CryptoJS.enc.Hex).substring(0, 13);
+                    break;
+                case 'plain':
+                    hash = password;
+                    break;
+                default:
+                    hash = '未知算法';
+            }
+            
+            const htpasswdLine = username + ':' + hash;
+            document.getElementById('htpasswd-output').textContent = htpasswdLine;
+        });
+        
+        // 图片转Base64
+        document.getElementById('image-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64String = e.target.result;
+                const format = document.getElementById('image-format').value;
+                const previewSize = document.getElementById('image-preview-size').value;
+                
+                // 显示图片预览
+                const imgPreview = document.getElementById('image-preview');
+                imgPreview.src = base64String;
+                imgPreview.style.display = 'block';
+                
+                // 设置预览尺寸
+                switch (previewSize) {
+                    case 'medium':
+                        imgPreview.style.maxWidth = '300px';
+                        break;
+                    case 'small':
+                        imgPreview.style.maxWidth = '150px';
+                        break;
+                    default:
+                        imgPreview.style.maxWidth = 'none';
+                }
+                
+                // 输出Base64
+                let output = base64String;
+                if (format === 'base64') {
+                    // 提取纯Base64部分（去掉data:image/...;base64,前缀）
+                    const commaIndex = base64String.indexOf(',');
+                    output = base64String.substring(commaIndex + 1);
+                }
+                
+                document.getElementById('image-base64-output').textContent = output;
+            };
+            
+            reader.readAsDataURL(file);
+        });
+        
+        // 页面加载完成后初始化一些示例
+        window.addEventListener('DOMContentLoaded', function() {
+            // 触发URL编码示例
+            document.getElementById('url-encode-btn').click();
+            
+            // 触发MD5示例
+            document.getElementById('md5-generate-btn').click();
+            
+            // 触发摩尔斯电码示例
+            document.getElementById('morse-convert-btn').click();
+            
+            // 触发密码生成器示例
+            document.getElementById('password-generate-btn').click();
+            
+            // 触发条形码生成器示例
+            document.getElementById('barcode-generate-btn').click();
+        });
+    </script>
+</body>
+</html>

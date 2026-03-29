@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSV 转 JSON - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/tsv-to-json/app.html">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0ea5e9 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0ea5e9 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .editor-panel {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .editor-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .stats {
+            font-size: 0.85rem;
+            color: #666;
+            background: #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 320px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            transition: border-color 0.3s;
+            tab-size: 4;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: #0ea5e9;
+        }
+
+        .editor-textarea:read-only {
+            background-color: #f1f5f9;
+            cursor: default;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-box.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .status-box.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .status-box.active {
+            display: block;
+        }
+
+        .status-box p {
+            color: #2e7d32;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .status-box.error p {
+            color: #c62828;
+        }
+
+        .status-box.warning p {
+            color: #856404;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .control-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 900px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+
+            .editor-textarea {
+                min-height: 240px;
+            }
+
+            .action-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TSV 转 JSON</h1>
+            <p>将 TSV (制表符分隔值) 表格数据转换为 JSON 格式</p>
+        </div>
+
+        <div class="card">
+            <div class="status-box" id="status-box">
+                <p id="status-message">已完成转换</p>
+            </div>
+
+            <div class="action-bar">
+                <div class="btn-group">
+                    <button class="btn" id="convert-btn" onclick="convert()">立即转换</button>
+                    <button class="btn btn-secondary" onclick="loadSample()">示例</button>
+                    <button class="btn btn-secondary" onclick="clearAll()">清空</button>
+                    <button class="btn btn-success" onclick="copyOutput()">复制结果</button>
+                </div>
+                <div class="controls">
+                    <div class="control-group">
+                        <input type="checkbox" id="auto-convert" checked>
+                        <label for="auto-convert">自动转换</label>
+                    </div>
+                    <div class="stats" id="input-stats">0 行</div>
+                    <div class="stats" id="output-stats">0 项</div>
+                </div>
+            </div>
+
+            <div class="editor-container">
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输入 (TSV)</span>
+                        <span class="stats" id="input-info">0 行 × 0 列</span>
+                    </div>
+                    <textarea class="editor-textarea" id="input" placeholder="粘贴 TSV 数据... 例如：
+名称	年龄	城市
+张三	25	北京
+李四	30	上海"></textarea>
+                </div>
+
+                <div class="editor-panel">
+                    <div class="editor-header">
+                        <span class="editor-title">输出 (JSON)</span>
+                        <span class="stats" id="output-info">0 个对象</span>
+                    </div>
+                    <textarea class="editor-textarea" id="output" placeholder="转换后的 JSON 将显示在这里..." readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM 元素引用
+        const inputElement = document.getElementById('input');
+        const outputElement = document.getElementById('output');
+        const statusBox = document.getElementById('status-box');
+        const statusMessage = document.getElementById('status-message');
+        const convertBtn = document.getElementById('convert-btn');
+        const autoConvertCheckbox = document.getElementById('auto-convert');
+        const inputStats = document.getElementById('input-stats');
+        const outputStats = document.getElementById('output-stats');
+        const inputInfo = document.getElementById('input-info');
+        const outputInfo = document.getElementById('output-info');
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+        });
+
+        // 自动转换监听
+        autoConvertCheckbox.addEventListener('change', () => {
+            if (autoConvertCheckbox.checked && inputElement.value.trim()) {
+                convert();
+            }
+        });
+
+        // 输入监听（用于自动转换）
+        inputElement.addEventListener('input', () => {
+            updateStats();
+            if (autoConvertCheckbox.checked) {
+                clearTimeout(window.autoConvertTimeout);
+                window.autoConvertTimeout = setTimeout(convert, 500);
+            }
+        });
+
+        // 更新统计信息
+        function updateStats() {
+            const inputText = inputElement.value.trim();
+            const outputText = outputElement.value.trim();
+            
+            // 输入统计
+            if (inputText) {
+                const lines = inputText.split('\n').filter(line => line.trim() !== '');
+                const firstLine = lines[0] || '';
+                const columns = firstLine.split('\t').length;
+                inputStats.textContent = `${lines.length} 行`;
+                inputInfo.textContent = `${lines.length} 行 × ${columns} 列`;
+            } else {
+                inputStats.textContent = '0 行';
+                inputInfo.textContent = '0 行 × 0 列';
+            }
+            
+            // 输出统计
+            if (outputText) {
+                try {
+                    const data = JSON.parse(outputText);
+                    const count = Array.isArray(data) ? data.length : 1;
+                    outputStats.textContent = `${count} 项`;
+                    outputInfo.textContent = `${count} 个对象`;
+                } catch (e) {
+                    outputStats.textContent = '0 项';
+                    outputInfo.textContent = '0 个对象';
+                }
+            } else {
+                outputStats.textContent = '0 项';
+                outputInfo.textContent = '0 个对象';
+            }
+        }
+
+        // 解析 TSV
+        function parseTSV(input) {
+            if (!input || !input.trim()) {
+                throw new Error('请输入 TSV 数据');
+            }
+
+            const lines = input.trim().split(/\r?\n/).filter(line => line.trim() !== '');
+            
+            if (lines.length === 0) {
+                throw new Error('未找到有效数据');
+            }
+
+            // 解析表头
+            const headers = lines[0].split('\t').map(header => {
+                const trimmed = header.trim();
+                if (!trimmed) {
+                    throw new Error('表头不能包含空列');
+                }
+                return trimmed;
+            });
+
+            // 检查表头重复
+            const headerCount = {};
+            headers.forEach(header => {
+                headerCount[header] = (headerCount[header] || 0) + 1;
+            });
+            
+            const duplicateHeaders = Object.keys(headerCount).filter(header => headerCount[header] > 1);
+            if (duplicateHeaders.length > 0) {
+                showWarning(`表头包含重复列名: ${duplicateHeaders.join(', ')}。建议修改以避免JSON键名冲突。`);
+            }
+
+            // 解析数据行
+            const data = [];
+            const warnings = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                const values = line.split('\t');
+                
+                // 处理列数不一致的情况
+                const rowData = {};
+                headers.forEach((header, index) => {
+                    rowData[header] = values[index] !== undefined ? values[index].trim() : '';
+                });
+                
+                // 检查是否有额外的列
+                if (values.length > headers.length) {
+                    warnings.push(`第 ${i + 1} 行有 ${values.length - headers.length} 个额外的列被忽略`);
+                }
+                
+                data.push(rowData);
+            }
+
+            return { headers, data, warnings };
+        }
+
+        // 转换函数
+        function convert() {
+            const input = inputElement.value;
+            
+            if (!input.trim()) {
+                showError('请输入 TSV 数据');
+                outputElement.value = '';
+                updateStats();
+                return;
+            }
+
+            try {
+                convertBtn.disabled = true;
+                convertBtn.textContent = '转换中...';
+                
+                const result = parseTSV(input);
+                
+                // 构建 JSON
+                const json = JSON.stringify(result.data, null, 2);
+                outputElement.value = json;
+                
+                // 显示成功消息
+                showSuccess(`成功转换 ${result.data.length} 行数据`);
+                
+                // 显示警告（如果有）
+                if (result.warnings.length > 0) {
+                    showWarning(result.warnings.join('; '));
+                }
+                
+            } catch (error) {
+                showError(`转换失败: ${error.message}`);
+                outputElement.value = '';
+            } finally {
+                convertBtn.disabled = false;
+                convertBtn.textContent = '立即转换';
+                updateStats();
+            }
+        }
+
+        // 显示成功消息
+        function showSuccess(message) {
+            statusBox.className = 'status-box active';
+            statusMessage.textContent = ` ${message}`;
+            statusBox.style.display = 'block';
+            
+            // 3秒后自动隐藏成功消息
+            setTimeout(() => {
+                if (!statusBox.classList.contains('error') && !statusBox.classList.contains('warning')) {
+                    statusBox.classList.remove('active');
+                }
+            }, 3000);
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            statusBox.className = 'status-box error active';
+            statusMessage.textContent = ` ${message}`;
+            statusBox.style.display = 'block';
+        }
+
+        // 显示警告消息
+        function showWarning(message) {
+            statusBox.className = 'status-box warning active';
+            statusMessage.textContent = ` ${message}`;
+            statusBox.style.display = 'block';
+        }
+
+        // 清空所有
+        function clearAll() {
+            inputElement.value = '';
+            outputElement.value = '';
+            statusBox.classList.remove('active');
+            updateStats();
+            inputElement.focus();
+        }
+
+        // 加载示例
+        function loadSample() {
+            inputElement.value = `姓名	年龄	城市	职业
+张三	25	北京	工程师
+李四	30	上海	设计师
+王五	28	广州	产品经理
+赵六	35	深圳	项目经理`;
+            convert();
+        }
+
+        // 复制输出结果
+        function copyOutput() {
+            const output = outputElement.value;
+            if (!output.trim()) {
+                showError('没有内容可复制');
+                return;
+            }
+            
+            navigator.clipboard.writeText(output).then(() => {
+                const originalText = convertBtn.textContent;
+                convertBtn.textContent = '已复制!';
+                setTimeout(() => {
+                    convertBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                showError('复制失败，请手动选择复制');
+            });
+        }
+
+        // 初始加载示例
+        window.onload = () => {
+            // 可选：页面加载时自动加载示例
+            // loadSample();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本比较工具 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <!-- 修正URL拼写错误 -->
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-dmdiff/">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* 返回首页按钮 */
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #4a6ee0;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .home-btn:hover {
+            background-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .home-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 玻璃态效果的主容器 */
+        .main-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .description {
+            color: #546e7a;
+            font-size: 1.1rem;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .text-input-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .text-input-container h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.3rem;
+        }
+        
+        .text-input {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 2px solid rgba(209, 217, 230, 0.8);
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.3s;
+            background-color: rgba(255, 255, 255, 0.9);
+            font-family: 'Consolas', 'Monaco', monospace;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #4a6ee0;
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.2), inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .compare-type {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .compare-type label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid rgba(209, 217, 230, 0.8);
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #4a6ee0;
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.2);
+        }
+        
+        .button-container {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .compare-btn {
+            background: linear-gradient(135deg, #4a6ee0 0%, #3a5ed0 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 17px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 5px 15px rgba(74, 110, 224, 0.3);
+        }
+        
+        .compare-btn:hover {
+            background: linear-gradient(135deg, #3a5ed0 0%, #2a4ec0 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 110, 224, 0.4);
+        }
+        
+        .compare-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result-section {
+            margin-top: 10px;
+        }
+        
+        .result-section h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .comparison-result {
+            width: 100%;
+            min-height: 250px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: white;
+            border: 2px solid rgba(225, 228, 232, 0.8);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 15px;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .diff-added {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 2px 4px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .diff-removed {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 2px 4px;
+            text-decoration: line-through;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .diff-changed {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .diff-html-tag {
+            background-color: #e7f1ff;
+            color: #0d47a1;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .diff-html-attr {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .diff-js-keyword {
+            background-color: #f3e5f5;
+            color: #4a148c;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .diff-js-string {
+            background-color: #fff3e0;
+            color: #e65100;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .diff-view-component {
+            background-color: #e0f7fa;
+            color: #006064;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            background-color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .instructions {
+            background-color: rgba(232, 244, 252, 0.8);
+            border-left: 4px solid #4a6ee0;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .comparison-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .stat-item {
+            background-color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            font-size: 15px;
+            font-weight: 500;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #4a6ee0;
+            margin-left: 5px;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .input-section {
+                flex-direction: column;
+            }
+            
+            .text-input {
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .home-btn {
+                top: 10px;
+                left: 10px;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+            
+            .main-container {
+                padding: 20px;
+            }
+        }
+        
+        .icon {
+            font-size: 1.2em;
+        }
+        
+        /* 装饰性元素 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -80px;
+            left: -80px;
+        }
+        
+        .circle-3 {
+            width: 150px;
+            height: 150px;
+            top: 50%;
+            left: 10%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 装饰性背景元素 -->
+    <div class="bg-decoration">
+        <div class="bg-circle circle-1"></div>
+        <div class="bg-circle circle-2"></div>
+        <div class="bg-circle circle-3"></div>
+    </div>
+    
+    <!-- 返回首页按钮 - 已取消注释 -->
+ 
+    
+    <div class="main-container">
+        <header>
+            <h1>📝 文本比较工具</h1>
+            <p class="description">一款实用的在线工具，专为比较两个文本内容的差异而设计。通过这款工具，您可以轻松输入或上传两个文本，快速找出它们之间的不同之处，包括新增、删除和修改的部分，帮助您更好地进行文档校对、代码审查和内容对比。</p>
+        </header>
+        
+        <div class="container">
+            <section class="input-section">
+                <div class="text-input-container">
+                    <h3><span class="icon">📄</span> 文本一 (原始文本)</h3>
+                    <textarea id="text1" class="text-input" placeholder="在此输入或粘贴第一个文本内容...">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;示例页面&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;欢迎来到示例页面&lt;/h1&gt;
+        &lt;p&gt;这是一个简单的示例HTML页面。&lt;/p&gt;
+        &lt;button onclick="showAlert()"&gt;点击这里&lt;/button&gt;
+    &lt;/div&gt;
+    
+    &lt;script&gt;
+        function showAlert() {
+            alert('Hello, World!');
+        }
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+                </div>
+                
+                <div class="text-input-container">
+                    <h3><span class="icon">📄</span> 文本二 (对比文本)</h3>
+                    <textarea id="text2" class="text-input" placeholder="在此输入或粘贴第二个文本内容...">&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;示例页面 - 修改版&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;header&gt;
+            &lt;h1&gt;欢迎来到增强版示例页面&lt;/h1&gt;
+            &lt;p&gt;这是一个改进的示例HTML页面。&lt;/p&gt;
+        &lt;/header&gt;
+        &lt;button id="alertBtn"&gt;点击这里&lt;/button&gt;
+        &lt;div id="output"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    
+    &lt;script&gt;
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('alertBtn');
+            const output = document.getElementById('output');
+            
+            btn.addEventListener('click', function() {
+                output.innerHTML = '&lt;p&gt;您点击了按钮!&lt;/p&gt;';
+                alert('欢迎访问我们的页面!');
+            });
+            
+            // 新功能：显示当前时间
+            function updateTime() {
+                const now = new Date();
+                output.innerHTML += '&lt;p&gt;当前时间: ' + now.toLocaleTimeString() + '&lt;/p&gt;';
+            }
+            
+            setInterval(updateTime, 1000);
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+                </div>
+            </section>
+            
+            <section class="controls">
+                <div class="compare-type">
+                    <label for="compareType"><span class="icon">⚙️</span> 选择比较类型</label>
+                    <select id="compareType">
+                        <option value="text">文本比较 (逐字符)</option>
+                        <option value="paragraph">段落比较 (逐段落)</option>
+                        <option value="word">词汇比较 (逐词)</option>
+                        <option value="line">行比较 (逐行)</option>
+                        <option value="html" selected>HTML语法比较</option>
+                        <option value="javascript">JavaScript语法比较</option>
+                        <option value="view">视图组件比较</option>
+                        <option value="css">CSS语法比较</option>
+                    </select>
+                </div>
+                
+                <div class="button-container">
+                    <button id="compareBtn" class="compare-btn">
+                        <span class="icon">🔍</span> 开始对比
+                    </button>
+                </div>
+            </section>
+            
+            <section class="result-section">
+                <h3><span class="icon">📊</span> 对比结果</h3>
+                <div id="comparisonResult" class="comparison-result">
+                    对比结果将在此显示...
+                </div>
+                
+                <div id="comparisonStats" class="comparison-stats">
+                    <!-- 统计信息将通过JavaScript动态生成 -->
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #d4edda;"></div>
+                        <span>新增的内容</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f8d7da;"></div>
+                        <span>删除的内容</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #fff3cd;"></div>
+                        <span>修改的内容</span>
+                    </div>
+                    <div id="htmlLegend" class="legend-item">
+                        <div class="legend-color" style="background-color: #e7f1ff;"></div>
+                        <span>HTML标签差异</span>
+                    </div>
+                    <div id="jsLegend" class="legend-item" style="display:none;">
+                        <div class="legend-color" style="background-color: #f3e5f5;"></div>
+                        <span>JS关键字差异</span>
+                    </div>
+                    <div id="viewLegend" class="legend-item" style="display:none;">
+                        <div class="legend-color" style="background-color: #e0f7fa;"></div>
+                        <span>视图组件差异</span>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 添加使用说明 -->
+            <section class="instructions">
+                <h3><span class="icon">📖</span> 使用说明</h3>
+                <ol>
+                    <li>在左侧文本框中输入或粘贴原始文本</li>
+                    <li>在右侧文本框中输入或粘贴要对比的文本</li>
+                    <li>选择适合的比较类型（推荐使用HTML语法比较来对比HTML代码）</li>
+                    <li>点击"开始对比"按钮查看差异结果</li>
+                    <li>根据颜色标识查看新增、删除和修改的内容</li>
+                    <li>可尝试不同的比较类型以获得最佳对比效果</li>
+                </ol>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // 文本比较功能
+        document.getElementById('compareBtn').addEventListener('click', compareTexts);
+        
+        function compareTexts() {
+            const text1 = document.getElementById('text1').value;
+            const text2 = document.getElementById('text2').value;
+            const compareType = document.getElementById('compareType').value;
+            const resultElement = document.getElementById('comparisonResult');
+            const statsElement = document.getElementById('comparisonStats');
+            
+            // 隐藏特定类型的图例
+            document.getElementById('htmlLegend').style.display = 'none';
+            document.getElementById('jsLegend').style.display = 'none';
+            document.getElementById('viewLegend').style.display = 'none';
+            
+            if (!text1.trim() || !text2.trim()) {
+                resultElement.innerHTML = '<span style="color:#dc3545;">⚠️ 请输入两个文本内容以进行比较。</span>';
+                statsElement.innerHTML = '';
+                return;
+            }
+            
+            // 根据比较类型选择不同的比较方法
+            let result;
+            let stats = { added: 0, removed: 0, changed: 0 };
+            
+            switch (compareType) {
+                case 'paragraph':
+                    result = compareByParagraph(text1, text2, stats);
+                    break;
+                case 'word':
+                    result = compareByWord(text1, text2, stats);
+                    break;
+                case 'line':
+                    result = compareByLine(text1, text2, stats);
+                    break;
+                case 'html':
+                    document.getElementById('htmlLegend').style.display = 'flex';
+                    result = compareHTML(text1, text2, stats);
+                    break;
+                case 'javascript':
+                    document.getElementById('jsLegend').style.display = 'flex';
+                    result = compareJavaScript(text1, text2, stats);
+                    break;
+                case 'view':
+                    document.getElementById('viewLegend').style.display = 'flex';
+                    result = compareView(text1, text2, stats);
+                    break;
+                case 'css':
+                    result = compareCSS(text1, text2, stats);
+                    break;
+                default: // 'text'
+                    result = compareByCharacter(text1, text2, stats);
+            }
+            
+            resultElement.innerHTML = result;
+            updateStats(stats);
+        }
+        
+        // 更新统计信息
+        function updateStats(stats) {
+            const statsElement = document.getElementById('comparisonStats');
+            const totalChanges = stats.added + stats.removed + stats.changed;
+            statsElement.innerHTML = `
+                <div class="stat-item">新增内容: <span class="stat-value">${stats.added} 处</span></div>
+                <div class="stat-item">删除内容: <span class="stat-value">${stats.removed} 处</span></div>
+                <div class="stat-item">修改内容: <span class="stat-value">${stats.changed} 处</span></div>
+                <div class="stat-item">总差异: <span class="stat-value">${totalChanges} 处</span></div>
+            `;
+            
+            // 如果总差异为0，添加一个特殊效果
+            if (totalChanges === 0) {
+                statsElement.innerHTML += `<div class="stat-item" style="background-color:#d4edda;color:#155724;flex-basis:100%;margin-top:10px;">🎉 两个文本完全一致！</div>`;
+            }
+        }
+        
+        // 逐字符比较
+        function compareByCharacter(text1, text2, stats) {
+            let result = '';
+            let i = 0, j = 0;
+            
+            while (i < text1.length || j < text2.length) {
+                if (i < text1.length && j < text2.length && text1[i] === text2[j]) {
+                    result += escapeHtml(text1[i]);
+                    i++;
+                    j++;
+                } else {
+                    // 查找最长的公共子序列
+                    let found = false;
+                    for (let k = 1; k <= 10; k++) {
+                        if (j + k < text2.length && text1[i] === text2[j + k]) {
+                            // text2中有新增内容
+                            result += `<span class="diff-added">${escapeHtml(text2.substring(j, j + k))}</span>`;
+                            stats.added += k;
+                            j += k;
+                            found = true;
+                            break;
+                        }
+                        if (i + k < text1.length && text1[i + k] === text2[j]) {
+                            // text1中有删除内容
+                            result += `<span class="diff-removed">${escapeHtml(text1.substring(i, i + k))}</span>`;
+                            stats.removed += k;
+                            i += k;
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!found) {
+                        // 修改的内容
+                        if (i < text1.length && j < text2.length) {
+                            result += `<span class="diff-changed">${escapeHtml(text2[j])}</span>`;
+                            stats.changed++;
+                            i++;
+                            j++;
+                        } else if (i < text1.length) {
+                            result += `<span class="diff-removed">${escapeHtml(text1[i])}</span>`;
+                            stats.removed++;
+                            i++;
+                        } else if (j < text2.length) {
+                            result += `<span class="diff-added">${escapeHtml(text2[j])}</span>`;
+                            stats.added++;
+                            j++;
+                        }
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
+        // 逐段落比较
+        function compareByParagraph(text1, text2, stats) {
+            const paragraphs1 = text1.split(/\n\s*\n/);
+            const paragraphs2 = text2.split(/\n\s*\n/);
+            
+            let result = '';
+            const maxLength = Math.max(paragraphs1.length, paragraphs2.length);
+            
+            for (let i = 0; i < maxLength; i++) {
+                const p1 = i < paragraphs1.length ? paragraphs1[i].trim() : '';
+                const p2 = i < paragraphs2.length ? paragraphs2[i].trim() : '';
+                
+                if (p1 === p2) {
+                    result += escapeHtml(p1) + '\n\n';
+                } else if (p1 === '') {
+                    result += `<span class="diff-added">${escapeHtml(p2)}</span>\n\n`;
+                    stats.added++;
+                } else if (p2 === '') {
+                    result += `<span class="diff-removed">${escapeHtml(p1)}</span>\n\n`;
+                    stats.removed++;
+                } else {
+                    result += `<span class="diff-changed">${escapeHtml(p2)}</span>\n\n`;
+                    stats.changed++;
+                }
+            }
+            
+            return result;
+        }
+        
+        // 逐词比较
+        function compareByWord(text1, text2, stats) {
+            const words1 = text1.split(/\s+/);
+            const words2 = text2.split(/\s+/);
+            
+            let result = '';
+            let i = 0, j = 0;
+            
+            while (i < words1.length || j < words2.length) {
+                if (i < words1.length && j < words2.length && words1[i] === words2[j]) {
+                    result += escapeHtml(words1[i]) + ' ';
+                    i++;
+                    j++;
+                } else {
+                    // 查找匹配的单词
+                    let found = false;
+                    for (let k = 1; k <= 5; k++) {
+                        if (j + k < words2.length && words1[i] === words2[j + k]) {
+                            // text2中有新增单词
+                            result += `<span class="diff-added">${escapeHtml(words2.slice(j, j + k).join(' '))}</span> `;
+                            stats.added += k;
+                            j += k;
+                            found = true;
+                            break;
+                        }
+                        if (i + k < words1.length && words1[i + k] === words2[j]) {
+                            // text1中有删除单词
+                            result += `<span class="diff-removed">${escapeHtml(words1.slice(i, i + k).join(' '))}</span> `;
+                            stats.removed += k;
+                            i += k;
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!found) {
+                        // 修改的单词
+                        if (i < words1.length && j < words2.length) {
+                            result += `<span class="diff-changed">${escapeHtml(words2[j])}</span> `;
+                            stats.changed++;
+                            i++;
+                            j++;
+                        } else if (i < words1.length) {
+                            result += `<span class="diff-removed">${escapeHtml(words1[i])}</span> `;
+                            stats.removed++;
+                            i++;
+                        } else if (j < words2.length) {
+                            result += `<span class="diff-added">${escapeHtml(words2[j])}</span> `;
+                            stats.added++;
+                            j++;
+                        }
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
+        // 逐行比较
+        function compareByLine(text1, text2, stats) {
+            const lines1 = text1.split('\n');
+            const lines2 = text2.split('\n');
+            
+            let result = '';
+            const maxLength = Math.max(lines1.length, lines2.length);
+            
+            for (let i = 0; i < maxLength; i++) {
+                const line1 = i < lines1.length ? lines1[i] : '';
+                const line2 = i < lines2.length ? lines2[i] : '';
+                
+                if (line1 === line2) {
+                    result += escapeHtml(line1) + '\n';
+                } else if (line1 === '') {
+                    result += `<span class="diff-added">${escapeHtml(line2)}</span>\n`;
+                    stats.added++;
+                } else if (line2 === '') {
+                    result += `<span class="diff-removed">${escapeHtml(line1)}</span>\n`;
+                    stats.removed++;
+                } else {
+                    result += `<span class="diff-changed">${escapeHtml(line2)}</span>\n`;
+                    stats.changed++;
+                }
+            }
+            
+            return result;
+        }
+        
+        // HTML语法比较
+        function compareHTML(text1, text2, stats) {
+            // 提取HTML标签、属性和内容
+            const tagRegex = /(<\/?[a-zA-Z][^>]*>)/g;
+            const parts1 = text1.split(tagRegex);
+            const parts2 = text2.split(tagRegex);
+            
+            let result = '';
+            let i = 0, j = 0;
+            
+            while (i < parts1.length || j < parts2.length) {
+                const p1 = i < parts1.length ? parts1[i] : '';
+                const p2 = j < parts2.length ? parts2[j] : '';
+                
+                // 检查是否是HTML标签
+                const isTag1 = /^<[^>]+>$/.test(p1);
+                const isTag2 = /^<[^>]+>$/.test(p2);
+                
+                if (p1 === p2) {
+                    result += escapeHtml(p1);
+                    i++;
+                    j++;
+                } else if (isTag1 && isTag2) {
+                    // 比较HTML标签
+                    const tagComparison = compareHTMLTags(p1, p2, stats);
+                    result += tagComparison;
+                    i++;
+                    j++;
+                } else if (isTag1 && !isTag2) {
+                    // 删除了HTML标签
+                    result += `<span class="diff-removed diff-html-tag">${escapeHtml(p1)}</span>`;
+                    stats.removed++;
+                    i++;
+                } else if (!isTag1 && isTag2) {
+                    // 新增了HTML标签
+                    result += `<span class="diff-added diff-html-tag">${escapeHtml(p2)}</span>`;
+                    stats.added++;
+                    j++;
+                } else {
+                    // 普通文本内容比较
+                    const textComparison = compareByCharacter(p1, p2, stats);
+                    result += textComparison;
+                    i++;
+                    j++;
+                }
+            }
+            
+            return result || 'HTML比较结果将在这里显示...';
+        }
+        
+        // 比较HTML标签
+        function compareHTMLTags(tag1, tag2, stats) {
+            // 提取标签名和属性
+            const tagNameRegex = /<\/?([a-zA-Z][^\s/>]*)/;
+            const attrRegex = /([a-zA-Z-]+)="([^"]*)"/g;
+            
+            const name1 = (tag1.match(tagNameRegex) || [])[1] || '';
+            const name2 = (tag2.match(tagNameRegex) || [])[1] || '';
+            
+            if (name1 !== name2) {
+                stats.changed++;
+                return `<span class="diff-changed diff-html-tag">${escapeHtml(tag2)}</span>`;
+            }
+            
+            // 提取属性
+            const attrs1 = {};
+            let match;
+            while ((match = attrRegex.exec(tag1)) !== null) {
+                attrs1[match[1]] = match[2];
+            }
+            
+            const attrs2 = {};
+            while ((match = attrRegex.exec(tag2)) !== null) {
+                attrs2[match[1]] = match[2];
+            }
+            
+            // 比较属性
+            let allAttrsSame = true;
+            const allAttrNames = new Set([...Object.keys(attrs1), ...Object.keys(attrs2)]);
+            
+            for (const attr of allAttrNames) {
+                if (attrs1[attr] !== attrs2[attr]) {
+                    allAttrsSame = false;
+                    break;
+                }
+            }
+            
+            if (allAttrsSame) {
+                return escapeHtml(tag2);
+            } else {
+                stats.changed++;
+                // 高亮显示属性差异
+                let highlightedTag = tag2.replace(/([a-zA-Z-]+)="([^"]*)"/g, (match, attr, value) => {
+                    if (attrs1[attr] !== value) {
+                        return `<span class="diff-changed diff-html-attr">${match}</span>`;
+                    }
+                    return match;
+                });
+                
+                return highlightedTag;
+            }
+        }
+        
+        // JavaScript语法比较
+        function compareJavaScript(text1, text2, stats) {
+            // JS关键字列表
+            const jsKeywords = ['function', 'const', 'let', 'var', 'if', 'else', 'for', 'while', 'return', 'class', 'import', 'export', 'default', 'async', 'await', 'try', 'catch', 'finally', 'throw', 'new', 'this', 'typeof', 'instanceof'];
+            
+            // 分割代码为 tokens (简单实现)
+            const tokenRegex = /(\b\w+\b|[{}();=+\-*/<>!&|^~%?:,[\]]|".*?"|'.*?'|\/\*[\s\S]*?\*\/|\/\/.*|\s+)/g;
+            
+            const tokens1 = text1.match(tokenRegex) || [''];
+            const tokens2 = text2.match(tokenRegex) || [''];
+            
+            let result = '';
+            let i = 0, j = 0;
+            
+            while (i < tokens1.length || j < tokens2.length) {
+                const t1 = i < tokens1.length ? tokens1[i] : '';
+                const t2 = j < tokens2.length ? tokens2[j] : '';
+                
+                const isKeyword1 = jsKeywords.includes(t1.trim());
+                const isKeyword2 = jsKeywords.includes(t2.trim());
+                const isString1 = /^["'].*["']$/.test(t1);
+                const isString2 = /^["'].*["']$/.test(t2);
+                
+                if (t1 === t2) {
+                    result += escapeHtml(t1);
+                    i++;
+                    j++;
+                } else if (isKeyword1 && isKeyword2) {
+                    // 都是关键字但不同
+                    result += `<span class="diff-changed diff-js-keyword">${escapeHtml(t2)}</span>`;
+                    stats.changed++;
+                    i++;
+                    j++;
+                } else if (isKeyword1 && !isKeyword2) {
+                    // 删除了关键字
+                    result += `<span class="diff-removed diff-js-keyword">${escapeHtml(t1)}</span>`;
+                    stats.removed++;
+                    i++;
+                } else if (!isKeyword1 && isKeyword2) {
+                    // 新增了关键字
+                    result += `<span class="diff-added diff-js-keyword">${escapeHtml(t2)}</span>`;
+                    stats.added++;
+                    j++;
+                } else if (isString1 && isString2) {
+                    // 都是字符串但不同
+                    result += `<span class="diff-changed diff-js-string">${escapeHtml(t2)}</span>`;
+                    stats.changed++;
+                    i++;
+                    j++;
+                } else {
+                    // 普通文本比较
+                    const textComparison = compareByCharacter(t1, t2, stats);
+                    result += textComparison;
+                    i++;
+                    j++;
+                }
+            }
+            
+            return result || 'JavaScript比较结果将在这里显示...';
+        }
+        
+        // 视图组件比较
+        function compareView(text1, text2, stats) {
+            // 视图组件识别 (简单实现)
+            const componentRegex = /(div|span|button|input|form|table|ul|ol|li|header|footer|nav|section|article|aside|main|h[1-6]|p|a|img|video|audio|canvas|svg|textarea|select|option)/gi;
+            const styleRegex = /(style|class|id|width|height|margin|padding|color|background|font|border|display|position|flex|grid)/gi;
+            
+            // 按行比较，但高亮组件和样式
+            const lines1 = text1.split('\n');
+            const lines2 = text2.split('\n');
+            
+            let result = '';
+            const maxLength = Math.max(lines1.length, lines2.length);
+            
+            for (let i = 0; i < maxLength; i++) {
+                const line1 = i < lines1.length ? lines1[i] : '';
+                const line2 = i < lines2.length ? lines2[i] : '';
+                
+                if (line1 === line2) {
+                    result += escapeHtml(line2) + '\n';
+                } else if (line1 === '') {
+                    // 高亮新增的组件
+                    const highlighted = highlightComponents(line2);
+                    result += `<span class="diff-added">${highlighted}</span>\n`;
+                    stats.added++;
+                } else if (line2 === '') {
+                    // 高亮删除的组件
+                    const highlighted = highlightComponents(line1);
+                    result += `<span class="diff-removed">${highlighted}</span>\n`;
+                    stats.removed++;
+                } else {
+                    // 比较两行内容
+                    const lineComparison = compareViewLines(line1, line2, stats);
+                    result += lineComparison + '\n';
+                }
+            }
+            
+            return result || '视图组件比较结果将在这里显示...';
+        }
+        
+        // 高亮视图组件
+        function highlightComponents(line) {
+            return escapeHtml(line)
+                .replace(/(&lt;\/?)(div|span|button|input|form|table|ul|ol|li|header|footer|nav|section|article|aside|main|h[1-6]|p|a|img|video|audio|canvas|svg|textarea|select|option)([^&]*&gt;)/gi, 
+                    (match, start, component, end) => {
+                        return `${start}<span class="diff-view-component">${component}</span>${end}`;
+                    })
+                .replace(/(style|class|id|width|height|margin|padding|color|background|font|border|display|position|flex|grid)="/gi,
+                    (match, attr) => {
+                        return `<span class="diff-html-attr">${attr}</span>="`;
+                    });
+        }
+        
+        // 比较视图行
+        function compareViewLines(line1, line2, stats) {
+            // 检查是否是组件行
+            const isComponentLine1 = /<(div|span|button|input|form|table|ul|ol|li|header|footer|nav|section|article|aside|main|h[1-6]|p|a|img)/i.test(line1);
+            const isComponentLine2 = /<(div|span|button|input|form|table|ul|ol|li|header|footer|nav|section|article|aside|main|h[1-6]|p|a|img)/i.test(line2);
+            
+            if (isComponentLine1 && isComponentLine2) {
+                // 都是组件行
+                stats.changed++;
+                const highlighted = highlightComponents(line2);
+                return `<span class="diff-changed">${highlighted}</span>`;
+            } else if (isComponentLine1 && !isComponentLine2) {
+                // 从组件行变为非组件行
+                stats.changed++;
+                return `<span class="diff-changed">${escapeHtml(line2)}</span>`;
+            } else if (!isComponentLine1 && isComponentLine2) {
+                // 从非组件行变为组件行
+                stats.changed++;
+                const highlighted = highlightComponents(line2);
+                return `<span class="diff-changed">${highlighted}</span>`;
+            } else {
+                // 都不是组件行
+                stats.changed++;
+                return `<span class="diff-changed">${escapeHtml(line2)}</span>`;
+            }
+        }
+        
+        // CSS语法比较（简化版本）
+        function compareCSS(text1, text2, stats) {
+            // 简单实现：将CSS按规则分割后比较
+            const rules1 = text1.split('}');
+            const rules2 = text2.split('}');
+            
+            let result = '';
+            const maxLength = Math.max(rules1.length, rules2.length);
+            
+            for (let i = 0; i < maxLength; i++) {
+                const rule1 = i < rules1.length ? rules1[i].trim() + (i < rules1.length - 1 ? '}' : '') : '';
+                const rule2 = i < rules2.length ? rules2[i].trim() + (i < rules2.length - 1 ? '}' : '') : '';
+                
+                if (rule1 === rule2) {
+                    result += escapeHtml(rule1) + '\n';
+                } else if (rule1 === '') {
+                    result += `<span class="diff-added">${escapeHtml(rule2)}</span>\n`;
+                    stats.added++;
+                } else if (rule2 === '') {
+                    result += `<span class="diff-removed">${escapeHtml(rule1)}</span>\n`;
+                    stats.removed++;
+                } else {
+                    // 尝试比较规则内容
+                    const selector1 = rule1.split('{')[0];
+                    const selector2 = rule2.split('{')[0];
+                    
+                    if (selector1 === selector2) {
+                        result += escapeHtml(selector2) + `{<span class="diff-changed">...修改的CSS属性...</span>}` + '\n';
+                        stats.changed++;
+                    } else {
+                        result += `<span class="diff-changed">${escapeHtml(rule2)}</span>\n`;
+                        stats.changed++;
+                    }
+                }
+            }
+            
+            return result || 'CSS比较结果将在这里显示...';
+        }
+        
+        // 辅助函数：转义HTML特殊字符
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // 页面加载时自动比较示例文本
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                compareTexts();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

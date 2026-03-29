@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux/Windows服务器常用端口解释- 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-port/">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: #4cc9f0;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            color: #a5b4cb;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 15px;
+        }
+        
+        .port-range-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .port-range {
+            background: rgba(76, 201, 240, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #a5b4cb;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            background: rgba(30, 30, 60, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4cc9f0;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 2px #4cc9f0;
+        }
+        
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(76, 201, 240, 0.2);
+            color: #a5b4cb;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .filter-btn:hover {
+            background: rgba(76, 201, 240, 0.3);
+            color: #ffffff;
+        }
+        
+        .filter-btn.active {
+            background: #4cc9f0;
+            color: #1a1a2e;
+        }
+        
+        .ports-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .port-category {
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .category-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .unix { background: rgba(240, 84, 84, 0.2); }
+        .registered { background: rgba(72, 187, 120, 0.2); }
+        .ddp { background: rgba(147, 51, 234, 0.2); }
+        .kerberos { background: rgba(251, 191, 36, 0.2); }
+        .unregistered { background: rgba(148, 163, 184, 0.2); }
+        .common { background: rgba(76, 201, 240, 0.2); }
+        .web { background: rgba(59, 130, 246, 0.2); }
+        .database { background: rgba(139, 92, 246, 0.2); }
+        .remote { background: rgba(236, 72, 153, 0.2); }
+        .file { background: rgba(245, 158, 11, 0.2); }
+        .mail { background: rgba(34, 197, 94, 0.2); }
+        
+        .category-header:hover {
+            opacity: 0.9;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .unix .category-icon { background: #f05454; color: white; }
+        .registered .category-icon { background: #48bb78; color: white; }
+        .ddp .category-icon { background: #9333ea; color: white; }
+        .kerberos .category-icon { background: #fbbf24; color: #1a1a2e; }
+        .unregistered .category-icon { background: #94a3b8; color: white; }
+        .common .category-icon { background: #4cc9f0; color: #1a1a2e; }
+        .web .category-icon { background: #3b82f6; color: white; }
+        .database .category-icon { background: #8b5cf6; color: white; }
+        .remote .category-icon { background: #ec4899; color: white; }
+        .file .category-icon { background: #f59e0b; color: white; }
+        .mail .category-icon { background: #22c55e; color: white; }
+        
+        .port-count {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a2e;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .ports-table {
+            width: 100%;
+            border-collapse: collapse;
+            display: none;
+        }
+        
+        .ports-table.active {
+            display: table;
+        }
+        
+        .ports-table th {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 10px;
+            text-align: left;
+            color: #4cc9f0;
+            font-weight: 600;
+        }
+        
+        .ports-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .ports-table tr:hover {
+            background: rgba(76, 201, 240, 0.1);
+        }
+        
+        .port-number {
+            font-weight: bold;
+            color: #f72585;
+            text-align: center;
+            width: 80px;
+        }
+        
+        .protocol {
+            width: 80px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .tcp {
+            color: #4361ee;
+        }
+        
+        .udp {
+            color: #4cc9f0;
+        }
+        
+        .both {
+            color: #f72585;
+        }
+        
+        .service-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+        
+        .security-high {
+            border-left: 4px solid #4ade80;
+        }
+        
+        .security-medium {
+            border-left: 4px solid #fbbf24;
+        }
+        
+        .security-low {
+            border-left: 4px solid #f87171;
+        }
+        
+        .description {
+            color: #a5b4cb;
+        }
+        
+        .os-icons {
+            display: flex;
+            gap: 10px;
+            width: 100px;
+        }
+        
+        .os-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .linux {
+            background: #fbbf24;
+            color: #1a1a2e;
+        }
+        
+        .windows {
+            background: #4cc9f0;
+            color: #1a1a2e;
+        }
+        
+        .unix-os {
+            background: #f05454;
+            color: white;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a5b4cb;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 1100px) {
+            .filter-options {
+                justify-content: center;
+            }
+            
+            .filter-btn {
+                padding: 8px 14px;
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .ports-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .category-title {
+                font-size: 1.2rem;
+            }
+            
+            .category-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+            }
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+        
+        .category-description {
+            font-size: 0.9rem;
+            color: #a5b4cb;
+            margin-left: 46px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-server"></i> 服务器常用端口解释</h1>
+            <p class="subtitle">Linux、Windows和UNIX服务器常用网络端口及其用途、协议和安全级别参考指南</p>
+            
+            <div class="port-range-info">
+                <div class="port-range">知名端口: 0-1023</div>
+                <div class="port-range">注册端口: 1024-49151</div>
+                <div class="port-range">动态/私有端口: 49152-65535</div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #4ade80;"></div>
+                    <span>安全 (通常安全)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #fbbf24;"></div>
+                    <span>中等 (需要配置)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #f87171;"></div>
+                    <span>风险 (需要保护)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #4361ee;"></div>
+                    <span>TCP协议</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #4cc9f0;"></div>
+                    <span>UDP协议</span>
+                </div>
+            </div>
+        </header>
+        
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索端口号、服务名称或描述...">
+            </div>
+            
+            <div class="filter-options">
+                <button class="filter-btn active" data-filter="all">全部端口</button>
+                <button class="filter-btn" data-filter="common">常用端口</button>
+                <button class="filter-btn" data-filter="web">Web服务</button>
+                <button class="filter-btn" data-filter="database">数据库</button>
+                <button class="filter-btn" data-filter="remote">远程访问</button>
+                <button class="filter-btn" data-filter="file">文件共享</button>
+                <button class="filter-btn" data-filter="mail">邮件服务</button>
+                <button class="filter-btn" data-filter="unix">UNIX特有</button>
+                <button class="filter-btn" data-filter="registered">注册端口</button>
+                <button class="filter-btn" data-filter="ddp">DDP端口</button>
+                <button class="filter-btn" data-filter="kerberos">Kerberos</button>
+                <button class="filter-btn" data-filter="unregistered">未注册端口</button>
+            </div>
+        </div>
+        
+        <div class="ports-container" id="portsContainer">
+            <!-- 端口分类将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="footer">
+             
+        </div>
+    </div>
+
+    <script>
+        // 端口数据
+        const portsData = [
+            // 常用端口
+            { port: 20, protocol: "TCP", service: "FTP Data", description: "文件传输协议 - 数据端口", security: "low", category: "common", linux: true, windows: true, unix: true },
+            { port: 21, protocol: "TCP", service: "FTP Control", description: "文件传输协议 - 控制端口", security: "low", category: "common", linux: true, windows: true, unix: true },
+            { port: 22, protocol: "TCP", service: "SSH", description: "安全Shell协议 - 远程安全登录", security: "high", category: "remote", linux: true, windows: false, unix: true },
+            { port: 23, protocol: "TCP", service: "Telnet", description: "远程登录协议 (不加密)", security: "low", category: "remote", linux: true, windows: true, unix: true },
+            { port: 25, protocol: "TCP", service: "SMTP", description: "简单邮件传输协议", security: "medium", category: "mail", linux: true, windows: true, unix: true },
+            
+            // Web服务
+            { port: 80, protocol: "TCP", service: "HTTP", description: "超文本传输协议", security: "medium", category: "web", linux: true, windows: true, unix: true },
+            { port: 443, protocol: "TCP", service: "HTTPS", description: "安全超文本传输协议", security: "high", category: "web", linux: true, windows: true, unix: true },
+            { port: 8080, protocol: "TCP", service: "HTTP-Alt", description: "常用于Web代理和缓存服务器", security: "medium", category: "web", linux: true, windows: true, unix: true },
+            { port: 8443, protocol: "TCP", service: "HTTPS-Alt", description: "HTTPS的替代端口", security: "high", category: "web", linux: true, windows: true, unix: true },
+            
+            // 数据库
+            { port: 53, protocol: "Both", service: "DNS", description: "域名系统服务", security: "medium", category: "common", linux: true, windows: true, unix: true },
+            { port: 3306, protocol: "TCP", service: "MySQL", description: "MySQL数据库服务", security: "medium", category: "database", linux: true, windows: true, unix: true },
+            { port: 5432, protocol: "TCP", service: "PostgreSQL", description: "PostgreSQL数据库服务", security: "medium", category: "database", linux: true, windows: true, unix: true },
+            { port: 27017, protocol: "TCP", service: "MongoDB", description: "MongoDB数据库服务", security: "medium", category: "database", linux: true, windows: true, unix: true },
+            { port: 6379, protocol: "TCP", service: "Redis", description: "Redis数据库服务", security: "medium", category: "database", linux: true, windows: true, unix: true },
+            { port: 1433, protocol: "TCP", service: "MSSQL", description: "Microsoft SQL Server", security: "medium", category: "database", linux: false, windows: true, unix: false },
+            
+            // 远程访问
+            { port: 3389, protocol: "TCP", service: "RDP", description: "远程桌面协议 (Windows)", security: "medium", category: "remote", linux: false, windows: true, unix: false },
+            { port: 5900, protocol: "TCP", service: "VNC", description: "虚拟网络计算 - 远程桌面", security: "low", category: "remote", linux: true, windows: true, unix: true },
+            { port: 22, protocol: "TCP", service: "SSH", description: "安全Shell协议 (Linux/Unix)", security: "high", category: "remote", linux: true, windows: false, unix: true },
+            
+            // 文件共享
+            { port: 137, protocol: "UDP", service: "NetBIOS", description: "NetBIOS名称服务", security: "low", category: "file", linux: false, windows: true, unix: false },
+            { port: 138, protocol: "UDP", service: "NetBIOS", description: "NetBIOS数据报服务", security: "low", category: "file", linux: false, windows: true, unix: false },
+            { port: 139, protocol: "TCP", service: "NetBIOS", description: "NetBIOS会话服务", security: "low", category: "file", linux: false, windows: true, unix: false },
+            { port: 445, protocol: "TCP", service: "SMB", description: "服务器消息块 (Windows文件共享)", security: "low", category: "file", linux: true, windows: true, unix: false },
+            { port: 2049, protocol: "TCP", service: "NFS", description: "网络文件系统 (Linux/Unix文件共享)", security: "medium", category: "file", linux: true, windows: false, unix: true },
+            
+            // 邮件服务
+            { port: 110, protocol: "TCP", service: "POP3", description: "邮局协议版本3", security: "medium", category: "mail", linux: true, windows: true, unix: true },
+            { port: 143, protocol: "TCP", service: "IMAP", description: "互联网消息访问协议", security: "medium", category: "mail", linux: true, windows: true, unix: true },
+            { port: 465, protocol: "TCP", service: "SMTPS", description: "SMTP over SSL", security: "high", category: "mail", linux: true, windows: true, unix: true },
+            { port: 587, protocol: "TCP", service: "SMTP", description: "邮件提交端口 (加密)", security: "high", category: "mail", linux: true, windows: true, unix: true },
+            { port: 993, protocol: "TCP", service: "IMAPS", description: "IMAP over SSL", security: "high", category: "mail", linux: true, windows: true, unix: true },
+            { port: 995, protocol: "TCP", service: "POP3S", description: "POP3 over SSL", security: "high", category: "mail", linux: true, windows: true, unix: true },
+            
+            // 其他重要服务
+            { port: 67, protocol: "UDP", service: "DHCP Server", description: "动态主机配置协议服务器", security: "medium", category: "common", linux: true, windows: true, unix: true },
+            { port: 68, protocol: "UDP", service: "DHCP Client", description: "动态主机配置协议客户端", security: "medium", category: "common", linux: true, windows: true, unix: true },
+            { port: 69, protocol: "UDP", service: "TFTP", description: "简单文件传输协议", security: "low", category: "file", linux: true, windows: true, unix: true },
+            { port: 123, protocol: "UDP", service: "NTP", description: "网络时间协议", security: "medium", category: "common", linux: true, windows: true, unix: true },
+            { port: 161, protocol: "UDP", service: "SNMP", description: "简单网络管理协议", security: "low", category: "common", linux: true, windows: true, unix: true },
+            { port: 389, protocol: "TCP", service: "LDAP", description: "轻量级目录访问协议", security: "medium", category: "common", linux: true, windows: true, unix: true },
+            { port: 636, protocol: "TCP", service: "LDAPS", description: "LDAP over SSL", security: "high", category: "common", linux: true, windows: true, unix: true },
+            { port: 902, protocol: "TCP", service: "VMware Server", description: "VMware服务器控制台", security: "medium", category: "common", linux: true, windows: true, unix: true },
+            { port: 2701, protocol: "TCP", service: "RADIUS", description: "远程用户拨号认证服务", security: "high", category: "common", linux: true, windows: true, unix: true },
+            
+            // UNIX特有端口
+            { port: 512, protocol: "TCP", service: "exec", description: "UNIX远程执行服务", security: "low", category: "unix", linux: true, windows: false, unix: true },
+            { port: 513, protocol: "TCP", service: "login", description: "UNIX远程登录服务", security: "low", category: "unix", linux: true, windows: false, unix: true },
+            { port: 514, protocol: "TCP", service: "shell", description: "UNIX远程shell服务", security: "low", category: "unix", linux: true, windows: false, unix: true },
+            { port: 515, protocol: "TCP", service: "printer", description: "UNIX打印服务 (LPD)", security: "medium", category: "unix", linux: true, windows: false, unix: true },
+            { port: 540, protocol: "TCP", service: "uucp", description: "UNIX到UNIX复制协议", security: "low", category: "unix", linux: true, windows: false, unix: true },
+            { port: 601, protocol: "TCP", service: "syslog-conn", description: "系统日志连接协议", security: "medium", category: "unix", linux: true, windows: false, unix: true },
+            { port: 660, protocol: "TCP", service: "mac-srvr-admin", description: "MacOS服务器管理", security: "medium", category: "unix", linux: false, windows: false, unix: true },
+            { port: 2040, protocol: "TCP", service: "dls", description: "目录定位服务 (DLS)", security: "medium", category: "unix", linux: true, windows: false, unix: true },
+            
+            // 注册端口 (由IANA正式注册)
+            { port: 1812, protocol: "UDP", service: "RADIUS", description: "RADIUS认证协议", security: "high", category: "registered", linux: true, windows: true, unix: true },
+            { port: 1813, protocol: "UDP", service: "RADIUS Accounting", description: "RADIUS计费协议", security: "high", category: "registered", linux: true, windows: true, unix: true },
+            { port: 1645, protocol: "UDP", service: "RADIUS (旧)", description: "旧版RADIUS认证协议", security: "medium", category: "registered", linux: true, windows: true, unix: true },
+            { port: 1646, protocol: "UDP", service: "RADIUS Accounting (旧)", description: "旧版RADIUS计费协议", security: "medium", category: "registered", linux: true, windows: true, unix: true },
+            { port: 1701, protocol: "UDP", service: "L2TP", description: "第二层隧道协议", security: "high", category: "registered", linux: true, windows: true, unix: true },
+            { port: 1723, protocol: "TCP", service: "PPTP", description: "点对点隧道协议", security: "medium", category: "registered", linux: true, windows: true, unix: true },
+            { port: 500, protocol: "UDP", service: "ISAKMP", description: "Internet安全关联和密钥管理协议", security: "high", category: "registered", linux: true, windows: true, unix: true },
+            { port: 4500, protocol: "UDP", service: "IPsec NAT-T", description: "IPsec NAT穿越", security: "high", category: "registered", linux: true, windows: true, unix: true },
+            { port: 5060, protocol: "Both", service: "SIP", description: "会话发起协议", security: "medium", category: "registered", linux: true, windows: true, unix: true },
+            { port: 5061, protocol: "TCP", service: "SIPS", description: "安全会话发起协议", security: "high", category: "registered", linux: true, windows: true, unix: true },
+            
+            // 数据报传递协议 (DDP) 端口 (AppleTalk)
+            { port: 768, protocol: "UDP", service: "DDP", description: "数据报传递协议 (AppleTalk)", security: "low", category: "ddp", linux: true, windows: false, unix: true },
+            { port: 201, protocol: "UDP", service: "AppleTalk RTMP", description: "AppleTalk路由表维护协议", security: "low", category: "ddp", linux: true, windows: false, unix: true },
+            { port: 202, protocol: "UDP", service: "AppleTalk Name Binding", description: "AppleTalk名称绑定协议", security: "low", category: "ddp", linux: true, windows: false, unix: true },
+            { port: 203, protocol: "UDP", service: "AppleTalk Echo", description: "AppleTalk回显协议", security: "low", category: "ddp", linux: true, windows: false, unix: true },
+            { port: 204, protocol: "UDP", service: "AppleTalk Zone Info", description: "AppleTalk区域信息协议", security: "low", category: "ddp", linux: true, windows: false, unix: true },
+            
+            // Kerberos (工程 Athena/MIT) 端口
+            { port: 88, protocol: "TCP", service: "Kerberos", description: "Kerberos认证系统", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 88, protocol: "UDP", service: "Kerberos", description: "Kerberos认证系统", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 464, protocol: "TCP", service: "Kerberos kpasswd", description: "Kerberos密码更改服务", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 464, protocol: "UDP", service: "Kerberos kpasswd", description: "Kerberos密码更改服务", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 749, protocol: "TCP", service: "Kerberos Admin", description: "Kerberos管理服务", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 750, protocol: "TCP", service: "Kerberos-IV", description: "Kerberos版本4", security: "medium", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 751, protocol: "Both", service: "Kerberos Master", description: "Kerberos主控服务", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 754, protocol: "TCP", service: "Kerberos pwserver", description: "Kerberos密码服务器", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            { port: 760, protocol: "TCP", service: "Kerberos krbupdate", description: "Kerberos注册服务", security: "high", category: "kerberos", linux: true, windows: true, unix: true },
+            
+            // 未注册端口 (动态/私有端口)
+            { port: 49152, protocol: "TCP", service: "Dynamic/Private", description: "动态/私有端口范围的起始", security: "medium", category: "unregistered", linux: true, windows: true, unix: true },
+            { port: 50000, protocol: "TCP", service: "Dynamic/Private", description: "常见动态端口分配", security: "medium", category: "unregistered", linux: true, windows: true, unix: true },
+            { port: 53589, protocol: "UDP", service: "Dynamic/Private", description: "临时客户端端口示例", security: "medium", category: "unregistered", linux: true, windows: true, unix: true },
+            { port: 55000, protocol: "TCP", service: "VNC Alternate", description: "VNC远程桌面的备用端口", security: "low", category: "unregistered", linux: true, windows: true, unix: true },
+            { port: 60000, protocol: "UDP", service: "Dynamic/Private", description: "高端临时端口", security: "medium", category: "unregistered", linux: true, windows: true, unix: true },
+            { port: 65535, protocol: "TCP", service: "Dynamic/Private", description: "动态/私有端口范围的结束", security: "medium", category: "unregistered", linux: true, windows: true, unix: true },
+        ];
+
+        // 分类信息
+        const categories = {
+            common: { 
+                name: "常用服务端口", 
+                icon: "fas fa-star",
+                description: "最常用的网络服务端口"
+            },
+            web: { 
+                name: "Web服务端口", 
+                icon: "fas fa-globe",
+                description: "HTTP/HTTPS及相关Web服务"
+            },
+            database: { 
+                name: "数据库端口", 
+                icon: "fas fa-database",
+                description: "各类数据库管理系统端口"
+            },
+            remote: { 
+                name: "远程访问端口", 
+                icon: "fas fa-desktop",
+                description: "远程登录和控制协议"
+            },
+            file: { 
+                name: "文件共享端口", 
+                icon: "fas fa-folder-open",
+                description: "文件共享和传输协议"
+            },
+            mail: { 
+                name: "邮件服务端口", 
+                icon: "fas fa-envelope",
+                description: "电子邮件相关协议"
+            },
+            unix: { 
+                name: "UNIX特有端口", 
+                icon: "fab fa-ubuntu",
+                description: "UNIX/Linux系统特有的服务和协议"
+            },
+            registered: { 
+                name: "注册端口", 
+                icon: "fas fa-registered",
+                description: "由IANA正式注册的端口 (1024-49151)"
+            },
+            ddp: { 
+                name: "DDP端口", 
+                icon: "fas fa-broadcast-tower",
+                description: "数据报传递协议 (AppleTalk相关)"
+            },
+            kerberos: { 
+                name: "Kerberos端口", 
+                icon: "fas fa-user-shield",
+                description: "Kerberos网络认证协议相关端口"
+            },
+            unregistered: { 
+                name: "未注册端口", 
+                icon: "fas fa-unlink",
+                description: "动态/私有端口 (49152-65535)"
+            }
+        };
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPorts(portsData);
+            setupEventListeners();
+        });
+
+        // 渲染端口表格
+        function renderPorts(ports) {
+            const container = document.getElementById('portsContainer');
+            container.innerHTML = '';
+            
+            // 按分类分组
+            const groupedPorts = {};
+            ports.forEach(port => {
+                if (!groupedPorts[port.category]) {
+                    groupedPorts[port.category] = [];
+                }
+                groupedPorts[port.category].push(port);
+            });
+            
+            // 为每个分类创建表格
+            Object.keys(categories).forEach(categoryId => {
+                if (!groupedPorts[categoryId] || groupedPorts[categoryId].length === 0) return;
+                
+                const category = categories[categoryId];
+                const portsInCategory = groupedPorts[categoryId];
+                
+                const categoryElement = document.createElement('div');
+                categoryElement.className = 'port-category';
+                categoryElement.innerHTML = `
+                    <div class="category-header ${categoryId}">
+                        <div>
+                            <div class="category-title">
+                                <div class="category-icon">
+                                    <i class="${category.icon}"></i>
+                                </div>
+                                ${category.name}
+                            </div>
+                            <div class="category-description">${category.description}</div>
+                        </div>
+                        <div class="port-count">${portsInCategory.length} 个端口</div>
+                    </div>
+                    <table class="ports-table active">
+                        <thead>
+                            <tr>
+                                <th>端口</th>
+                                <th>协议</th>
+                                <th>服务名称</th>
+                                <th>操作系统</th>
+                                <th>描述</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${portsInCategory.map(port => `
+                                <tr class="security-${port.security}">
+                                    <td class="port-number">${port.port}</td>
+                                    <td class="protocol ${port.protocol.toLowerCase()}">${port.protocol}</td>
+                                    <td class="service-name">${port.service}</td>
+                                    <td class="os-icons">
+                                        ${port.linux ? '<div class="os-icon linux" title="Linux"><i class="fab fa-linux"></i></div>' : ''}
+                                        ${port.windows ? '<div class="os-icon windows" title="Windows"><i class="fab fa-windows"></i></div>' : ''}
+                                        ${port.unix && !port.linux ? '<div class="os-icon unix-os" title="UNIX"><i class="fas fa-terminal"></i></div>' : ''}
+                                    </td>
+                                    <td class="description">${port.description}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                // 添加点击展开/收起功能
+                const header = categoryElement.querySelector('.category-header');
+                const table = categoryElement.querySelector('.ports-table');
+                header.addEventListener('click', () => {
+                    table.classList.toggle('active');
+                });
+                
+                container.appendChild(categoryElement);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 搜索功能
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterPorts();
+            });
+            
+            // 筛选按钮
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // 给当前点击的按钮添加active类
+                    this.classList.add('active');
+                    filterPorts();
+                });
+            });
+        }
+
+        // 筛选端口
+        function filterPorts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            const filteredPorts = portsData.filter(port => {
+                // 根据搜索词筛选
+                const matchesSearch = searchTerm === '' || 
+                    port.port.toString().includes(searchTerm) ||
+                    port.service.toLowerCase().includes(searchTerm) ||
+                    port.description.toLowerCase().includes(searchTerm);
+                
+                // 根据分类筛选
+                let matchesFilter = true;
+                if (activeFilter !== 'all') {
+                    matchesFilter = port.category === activeFilter;
+                }
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderPorts(filteredPorts);
+        }
+    </script>
+</body>
+</html>

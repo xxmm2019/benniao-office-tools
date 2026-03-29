@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全屏时钟 - 全屏预览 - 笨鸟办公工具集箱</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-bntime/">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            transition: background 0.8s ease;
+        }
+
+        /* 时钟显示 */
+        .clock {
+            text-align: center;
+            color: white;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            padding: 20px;
+        }
+
+        .time {
+            font-size: 20vw;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        .date {
+            font-size: 4vw;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .weekday {
+            font-size: 3vw;
+            opacity: 0.8;
+        }
+
+        /* 控制面板 */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            opacity: 0.2;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        .controls:hover {
+            opacity: 1;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 主题选择器 */
+        .themes {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0.2;
+            transition: opacity 0.3s;
+            z-index: 100;
+        }
+
+        .themes:hover {
+            opacity: 1;
+        }
+
+        .theme {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .theme:hover {
+            transform: scale(1.1);
+        }
+
+        .theme.active {
+            border-width: 4px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .theme.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme.green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .theme.orange { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .theme.purple { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .theme.dark { background: linear-gradient(135deg, #2c3e50, #000000); }
+        .theme.sunset { background: linear-gradient(135deg, #ff6b6b, #feca57); }
+        .theme.ocean { background: linear-gradient(135deg, #209cff, #68e0cf); }
+
+        /* 设置面板 */
+        .settings-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .settings-panel h3 {
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .color-picker-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+        }
+
+        .color-input {
+            flex: 1;
+        }
+
+        .color-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .color-item {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: 1px solid white;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .color-item.remove {
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .color-item.remove:hover {
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-group button {
+            flex: 1;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .time { font-size: 18vw; }
+            .date { font-size: 6vw; }
+            .weekday { font-size: 5vw; }
+            button { padding: 10px 16px; font-size: 14px; }
+            .theme { width: 35px; height: 35px; }
+            .settings-panel {
+                left: 10px;
+                right: 10px;
+                max-width: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body id="clockBody">
+    <!-- 设置面板 -->
+    <div class="settings-panel" id="settingsPanel">
+        <h3>时钟设置</h3>
+        
+        <div class="settings-group">
+            <label>时间格式</label>
+            <select id="timeFormat">
+                <option value="24">24小时制</option>
+                <option value="12">12小时制 (带AM/PM)</option>
+                <option value="12-no-am">12小时制 (无AM/PM)</option>
+            </select>
+        </div>
+        
+        <div class="settings-group">
+            <label>秒显示</label>
+            <select id="secondsDisplay">
+                <option value="show">显示秒</option>
+                <option value="hide">隐藏秒</option>
+            </select>
+        </div>
+        
+        <div class="settings-group">
+            <label>日期格式</label>
+            <select id="dateFormat">
+                <option value="zh-full">中文完整 (2026年1月1日 星期一)</option>
+                <option value="zh-short">中文简洁 (2026-01-01 周一)</option>
+                <option value="en-full">英文完整 (January 1, 2026 Monday)</option>
+            </select>
+        </div>
+        
+        <div class="settings-group">
+            <label>自动换色间隔 (分钟)</label>
+            <input type="number" id="colorInterval" min="1" max="60" value="5">
+            <div class="btn-group">
+                <button onclick="toggleAutoColor()" id="autoColorBtn">启用自动换色</button>
+            </div>
+        </div>
+        
+        <div class="settings-group">
+            <label>自定义背景颜色</label>
+            <div class="color-picker-container">
+                <input type="color" id="colorPicker" class="color-picker" value="#667eea">
+                <input type="text" id="customColor" class="color-input" placeholder="#667eea 或 linear-gradient(135deg, #667eea, #764ba2)" value="">
+            </div>
+            <button onclick="addCustomColor()" style="margin-bottom: 15px;">添加颜色到列表</button>
+            
+            <label>自定义颜色列表 (点击颜色应用，点击×删除)</label>
+            <div class="color-list" id="colorList">
+                <!-- 动态添加颜色项 -->
+            </div>
+        </div>
+        
+        <div class="btn-group">
+            <button onclick="saveSettings()">保存设置</button>
+            <button onclick="closeSettings()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 主题选择器 -->
+    <div class="themes">
+        <div class="theme blue active" onclick="applyTheme('blue')" title="蓝紫渐变"></div>
+        <div class="theme green" onclick="applyTheme('green')" title="青绿渐变"></div>
+        <div class="theme orange" onclick="applyTheme('orange')" title="粉红渐变"></div>
+        <div class="theme purple" onclick="applyTheme('purple')" title="天蓝渐变"></div>
+        <div class="theme dark" onclick="applyTheme('dark')" title="深色模式"></div>
+        <div class="theme sunset" onclick="applyTheme('sunset')" title="日落渐变"></div>
+        <div class="theme ocean" onclick="applyTheme('ocean')" title="海洋渐变"></div>
+    </div>
+
+    <!-- 时钟显示 -->
+    <div class="clock">
+        <div class="time" id="timeDisplay">00:00:00</div>
+        <div class="date" id="dateDisplay">2026年1月1日</div>
+        <div class="weekday" id="weekdayDisplay">星期一</div>
+    </div>
+
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button onclick="toggleSettings()">⚙️ 设置</button>
+        <button onclick="toggleFullscreen()" id="fullscreenBtn">全屏</button>
+        <button onclick="pauseAutoColor()" id="pauseBtn" style="display:none;">⏸️ 暂停自动换色</button>
+    </div>
+
+    <script>
+        // 配置对象
+        let config = {
+            // 时间格式: 24, 12, 12-no-am
+            timeFormat: '24',
+            // 是否显示秒
+            showSeconds: true,
+            // 日期格式: zh-full, zh-short, en-full
+            dateFormat: 'zh-full',
+            // 当前主题
+            theme: 'blue',
+            // 自动换色配置
+            autoColor: {
+                enabled: false,
+                interval: 5, // 分钟
+                colors: [],
+                currentIndex: 0
+            },
+            // 自定义颜色列表
+            customColors: []
+        };
+
+        // 星期转换
+        const weekdaysZh = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+        const weekdaysZhShort = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        const weekdaysEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const monthsEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        // 预定义主题
+        const themes = {
+            blue: 'linear-gradient(135deg, #667eea, #764ba2)',
+            green: 'linear-gradient(135deg, #11998e, #38ef7d)',
+            orange: 'linear-gradient(135deg, #f093fb, #f5576c)',
+            purple: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+            dark: 'linear-gradient(135deg, #2c3e50, #000000)',
+            sunset: 'linear-gradient(135deg, #ff6b6b, #feca57)',
+            ocean: 'linear-gradient(135deg, #209cff, #68e0cf)'
+        };
+
+        // 自动换色定时器
+        let autoColorTimer = null;
+        // 自动换色暂停状态
+        let autoColorPaused = false;
+
+        // 从本地存储加载配置
+        function loadConfig() {
+            const saved = localStorage.getItem('clockEnhancedConfig');
+            if (saved) {
+                const loadedConfig = JSON.parse(saved);
+                config = { ...config, ...loadedConfig };
+                
+                // 应用加载的配置
+                applyConfig();
+            }
+            
+            // 初始化颜色列表显示
+            updateColorListDisplay();
+            
+            // 初始化下拉菜单
+            document.getElementById('timeFormat').value = config.timeFormat;
+            document.getElementById('secondsDisplay').value = config.showSeconds ? 'show' : 'hide';
+            document.getElementById('dateFormat').value = config.dateFormat;
+            document.getElementById('colorInterval').value = config.autoColor.interval;
+            
+            // 更新自动换色按钮状态
+            updateAutoColorButton();
+        }
+
+        // 应用配置到界面
+        function applyConfig() {
+            // 应用主题
+            applyTheme(config.theme);
+            
+            // 更新主题按钮状态
+            document.querySelectorAll('.theme').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains(config.theme)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 如果启用了自动换色，启动定时器
+            if (config.autoColor.enabled && config.autoColor.colors.length > 0) {
+                startAutoColor();
+                document.getElementById('pauseBtn').style.display = 'inline-block';
+            }
+        }
+
+        // 保存配置到本地存储
+        function saveConfig() {
+            localStorage.setItem('clockEnhancedConfig', JSON.stringify(config));
+        }
+
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            let timeStr = '';
+            
+            // 根据时间格式处理小时显示
+            if (config.timeFormat === '24') {
+                timeStr = config.showSeconds 
+                    ? `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`
+                    : `${hours.toString().padStart(2, '0')}:${minutes}`;
+            } else if (config.timeFormat === '12') {
+                const period = hours >= 12 ? ' PM' : ' AM';
+                hours = hours % 12 || 12;
+                timeStr = config.showSeconds
+                    ? `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}${period}`
+                    : `${hours.toString().padStart(2, '0')}:${minutes}${period}`;
+            } else if (config.timeFormat === '12-no-am') {
+                hours = hours % 12 || 12;
+                timeStr = config.showSeconds
+                    ? `${hours.toString().padStart(2, '0')}:${minutes}:${seconds}`
+                    : `${hours.toString().padStart(2, '0')}:${minutes}`;
+            }
+            
+            document.getElementById('timeDisplay').textContent = timeStr;
+            
+            // 更新日期显示
+            updateDateDisplay(now);
+        }
+
+        // 更新日期显示
+        function updateDateDisplay(now) {
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const day = now.getDay();
+            
+            let dateStr = '';
+            let weekdayStr = '';
+            
+            if (config.dateFormat === 'zh-full') {
+                dateStr = `${year}年${month}月${date}日`;
+                weekdayStr = weekdaysZh[day];
+            } else if (config.dateFormat === 'zh-short') {
+                dateStr = `${year}-${month.toString().padStart(2, '0')}-${date.toString().padStart(2, '0')}`;
+                weekdayStr = weekdaysZhShort[day];
+            } else if (config.dateFormat === 'en-full') {
+                dateStr = `${monthsEn[month-1]} ${date}, ${year}`;
+                weekdayStr = weekdaysEn[day];
+            }
+            
+            document.getElementById('dateDisplay').textContent = dateStr;
+            document.getElementById('weekdayDisplay').textContent = weekdayStr;
+        }
+
+        // 应用主题
+        function applyTheme(theme) {
+            config.theme = theme;
+            
+            // 停止自动换色（如果正在运行）
+            if (config.autoColor.enabled) {
+                stopAutoColor();
+                document.getElementById('pauseBtn').style.display = 'none';
+            }
+            
+            // 应用主题背景
+            if (themes[theme]) {
+                document.getElementById('clockBody').style.background = themes[theme];
+            }
+            
+            // 更新主题按钮状态
+            document.querySelectorAll('.theme').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.classList.contains(theme)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            saveConfig();
+        }
+
+        // 应用自定义背景
+        function applyCustomBackground(background) {
+            // 停止自动换色（如果正在运行）
+            if (config.autoColor.enabled) {
+                stopAutoColor();
+                document.getElementById('pauseBtn').style.display = 'none';
+            }
+            
+            document.getElementById('clockBody').style.background = background;
+            config.theme = 'custom';
+            
+            // 更新主题按钮状态
+            document.querySelectorAll('.theme').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+
+        // 添加自定义颜色
+        function addCustomColor() {
+            const colorInput = document.getElementById('customColor').value.trim();
+            const colorPicker = document.getElementById('colorPicker').value;
+            
+            // 优先使用文本输入框的值，如果为空则使用颜色选择器的值
+            let colorValue = colorInput || colorPicker;
+            
+            if (colorValue) {
+                // 如果是简单的颜色值，添加渐变效果
+                if (colorValue.startsWith('#') || colorValue.startsWith('rgb') || colorValue.startsWith('hsl')) {
+                    colorValue = `linear-gradient(135deg, ${colorValue}, ${adjustColor(colorValue, -20)})`;
+                }
+                
+                // 添加到自定义颜色列表
+                if (!config.customColors.includes(colorValue)) {
+                    config.customColors.push(colorValue);
+                    updateColorListDisplay();
+                    saveConfig();
+                }
+                
+                // 清空输入框
+                document.getElementById('customColor').value = '';
+            }
+        }
+
+        // 调整颜色亮度
+        function adjustColor(color, amount) {
+            // 简化版颜色调整，实际应用中可能需要更复杂的逻辑
+            if (color.startsWith('#')) {
+                // 简单的十六进制颜色调整
+                return color;
+            }
+            return color;
+        }
+
+        // 更新颜色列表显示
+        function updateColorListDisplay() {
+            const colorList = document.getElementById('colorList');
+            colorList.innerHTML = '';
+            
+            // 显示自定义颜色
+            config.customColors.forEach((color, index) => {
+                const colorItem = document.createElement('div');
+                colorItem.className = 'color-item';
+                colorItem.style.background = color;
+                colorItem.title = '点击应用此背景';
+                colorItem.onclick = () => {
+                    applyCustomBackground(color);
+                };
+                
+                colorList.appendChild(colorItem);
+                
+                // 添加删除按钮
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'color-item remove';
+                removeBtn.innerHTML = '×';
+                removeBtn.title = '删除此颜色';
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    config.customColors.splice(index, 1);
+                    updateColorListDisplay();
+                    saveConfig();
+                };
+                
+                colorList.appendChild(removeBtn);
+            });
+            
+            // 更新自动换色的颜色列表
+            config.autoColor.colors = [...Object.values(themes), ...config.customColors];
+        }
+
+        // 切换自动换色
+        function toggleAutoColor() {
+            config.autoColor.enabled = !config.autoColor.enabled;
+            
+            if (config.autoColor.enabled) {
+                // 确保颜色列表有内容
+                if (config.autoColor.colors.length === 0) {
+                    config.autoColor.colors = [...Object.values(themes), ...config.customColors];
+                }
+                
+                startAutoColor();
+                document.getElementById('pauseBtn').style.display = 'inline-block';
+            } else {
+                stopAutoColor();
+                document.getElementById('pauseBtn').style.display = 'none';
+            }
+            
+            updateAutoColorButton();
+            saveConfig();
+        }
+
+        // 暂停/继续自动换色
+        function pauseAutoColor() {
+            autoColorPaused = !autoColorPaused;
+            document.getElementById('pauseBtn').innerHTML = autoColorPaused ? '▶️ 继续自动换色' : '⏸️ 暂停自动换色';
+        }
+
+        // 启动自动换色
+        function startAutoColor() {
+            stopAutoColor(); // 先停止现有的定时器
+            
+            const intervalMs = config.autoColor.interval * 60 * 1000; // 转换为毫秒
+            
+            // 应用第一个颜色
+            if (config.autoColor.colors.length > 0) {
+                applyNextColor();
+            }
+            
+            // 设置定时器
+            autoColorTimer = setInterval(() => {
+                if (!autoColorPaused) {
+                    applyNextColor();
+                }
+            }, intervalMs);
+        }
+
+        // 停止自动换色
+        function stopAutoColor() {
+            if (autoColorTimer) {
+                clearInterval(autoColorTimer);
+                autoColorTimer = null;
+            }
+        }
+
+        // 应用下一个颜色
+        function applyNextColor() {
+            if (config.autoColor.colors.length === 0) return;
+            
+            config.autoColor.currentIndex = (config.autoColor.currentIndex + 1) % config.autoColor.colors.length;
+            const nextColor = config.autoColor.colors[config.autoColor.currentIndex];
+            
+            document.getElementById('clockBody').style.background = nextColor;
+            config.theme = 'auto-color';
+        }
+
+        // 更新自动换色按钮文本
+        function updateAutoColorButton() {
+            document.getElementById('autoColorBtn').textContent = 
+                config.autoColor.enabled ? '禁用自动换色' : '启用自动换色';
+        }
+
+        // 切换设置面板
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 关闭设置面板
+        function closeSettings() {
+            document.getElementById('settingsPanel').style.display = 'none';
+        }
+
+        // 保存设置
+        function saveSettings() {
+            // 获取设置值
+            config.timeFormat = document.getElementById('timeFormat').value;
+            config.showSeconds = document.getElementById('secondsDisplay').value === 'show';
+            config.dateFormat = document.getElementById('dateFormat').value;
+            config.autoColor.interval = parseInt(document.getElementById('colorInterval').value) || 5;
+            
+            // 更新颜色列表
+            updateColorListDisplay();
+            
+            // 保存配置
+            saveConfig();
+            
+            // 应用配置
+            applyConfig();
+            updateTime();
+            
+            // 提示保存成功
+            alert('设置已保存！');
+        }
+
+        // 切换全屏
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                document.getElementById('fullscreenBtn').textContent = '退出全屏';
+            } else {
+                document.exitFullscreen();
+                document.getElementById('fullscreenBtn').textContent = '全屏';
+            }
+        }
+
+        // 监听全屏变化
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.getElementById('fullscreenBtn').textContent = '全屏';
+            }
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (e) => {
+            switch(e.key.toLowerCase()) {
+                case 'f':
+                    toggleFullscreen();
+                    break;
+                case 's':
+                case ' ':
+                    toggleSettings();
+                    break;
+                case 'escape':
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        closeSettings();
+                    }
+                    break;
+                case 'arrowright':
+                    if (config.autoColor.enabled && config.autoColor.colors.length > 0) {
+                        applyNextColor();
+                    }
+                    break;
+            }
+        });
+
+        // 初始化
+        loadConfig();
+        updateTime();
+        setInterval(updateTime, 200);
+    </script>
+</body>
+</html>

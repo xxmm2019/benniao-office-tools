@@ -1,0 +1,2397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线多功能计算器 - 16种专业工具</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 0;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .logo p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .calculator-list {
+            list-style: none;
+        }
+        
+        .calculator-list li {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 4px solid transparent;
+        }
+        
+        .calculator-list li:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .calculator-list li.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .calculator-list li i {
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* 主内容区样式 */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .calculator-header h2 {
+            font-size: 2.2rem;
+            color: var(--secondary-color);
+        }
+        
+        .calculator-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .calculator-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .calculator-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            color: var(--primary-color);
+        }
+        
+        .calculator-title i {
+            font-size: 1.8rem;
+        }
+        
+        .calculator-title h3 {
+            font-size: 1.8rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .input-field {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .input-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .input-field input, .input-field select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .input-field input:focus, .input-field select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a56d4;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #dee2e6;
+        }
+        
+        .result {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .result h4 {
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+        }
+        
+        .result-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            word-break: break-all;
+        }
+        
+        .result-unit {
+            font-size: 1.2rem;
+            color: #666;
+            margin-left: 5px;
+        }
+        
+        .formula {
+            background-color: #f1f8ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #555;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        /* 隐藏所有计算器，只显示当前激活的 */
+        .calculator {
+            display: none;
+        }
+        
+        .calculator.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 多行结果 */
+        .multi-result {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .result-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-item h5 {
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 1rem;
+        }
+        
+        .result-item-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .result-item-unit {
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 3px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 20px 0;
+            }
+            
+            .calculator-list {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .calculator-list li {
+                flex: 1;
+                min-width: 150px;
+                justify-content: center;
+                border-left: none;
+                border-bottom: 4px solid transparent;
+            }
+            
+            .calculator-list li.active {
+                border-left: none;
+                border-bottom: 4px solid var(--accent-color);
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .calculator-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .calculator-title h3 {
+                font-size: 1.5rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-field {
+                min-width: 100%;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .calculator-list li {
+                min-width: 120px;
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .multi-result {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 30px;
+            border-top: 1px solid #e1e5eb;
+        }
+        
+        .history {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 30px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history h4 {
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+        
+        .history-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e1e5eb;
+            font-size: 0.9rem;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .conversion-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .conversion-table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        .conversion-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .conversion-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .conversion-table tr:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-calculator"></i> 多功能计算器</h1>
+                <p>16种专业计算工具</p>
+            </div>
+            <ul class="calculator-list">
+                <li class="active" data-calc="interest"><i class="fas fa-percentage"></i> 利率计算器</li>
+                <li data-calc="subnet"><i class="fas fa-network-wired"></i> 子网掩码计算器</li>
+                <li data-calc="scientific"><i class="fas fa-square-root-alt"></i> 科学计算器</li>
+                <li data-calc="area"><i class="fas fa-ruler-combined"></i> 面积换算器</li>
+                <li data-calc="heat"><i class="fas fa-fire"></i> 热量换算器</li>
+                <li data-calc="volume"><i class="fas fa-weight"></i> 体积换算器</li>
+                <li data-calc="pressure"><i class="fas fa-tachometer-alt"></i> 压力换算器</li>
+                <li data-calc="power"><i class="fas fa-bolt"></i> 功率换算器</li>
+                <li data-calc="length"><i class="fas fa-ruler"></i> 长度换算器</li>
+                <li data-calc="temperature"><i class="fas fa-thermometer-half"></i> 温度换算器</li>
+                <li data-calc="time"><i class="far fa-clock"></i> 时间换算器</li>
+                <li data-calc="speed"><i class="fas fa-tachometer-alt"></i> 速度换算器</li>
+                <li data-calc="angle"><i class="fas fa-shapes"></i> 角度换算器</li>
+                <li data-calc="data"><i class="fas fa-database"></i> 数据大小换算器</li>
+                <li data-calc="density"><i class="fas fa-weight-hanging"></i> 密度换算器</li>
+                <li data-calc="force"><i class="fas fa-dumbbell"></i> 力换算器</li>
+            </ul>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <div class="calculator-header">
+                <div>
+                    <h2>在线多功能计算器</h2>
+                    <p>选择左侧工具开始计算</p>
+                </div>
+                <div class="calculator-type">
+                    <span id="current-calculator">利率计算器</span>
+                </div>
+            </div>
+            
+            <!-- 利率计算器 -->
+            <div id="interest" class="calculator active">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-percentage"></i>
+                        <h3>利率计算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="principal">本金 (元)</label>
+                            <input type="number" id="principal" placeholder="请输入本金金额" value="10000">
+                        </div>
+                        <div class="input-field">
+                            <label for="interest-rate">年利率 (%)</label>
+                            <input type="number" id="interest-rate" placeholder="请输入年利率" value="5" step="0.1">
+                        </div>
+                        <div class="input-field">
+                            <label for="years">年限 (年)</label>
+                            <input type="number" id="years" placeholder="请输入年限" value="5" step="0.5">
+                        </div>
+                        <div class="input-field">
+                            <label for="interest-type">计息方式</label>
+                            <select id="interest-type">
+                                <option value="simple">单利</option>
+                                <option value="compound" selected>复利</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-interest">
+                            <i class="fas fa-calculator"></i> 计算利息
+                        </button>
+                        <button class="btn btn-secondary" id="reset-interest">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>计算结果</h4>
+                        <div class="multi-result">
+                            <div class="result-item">
+                                <h5>总金额</h5>
+                                <div><span class="result-item-value" id="total-amount">0</span> <span class="result-item-unit">元</span></div>
+                            </div>
+                            <div class="result-item">
+                                <h5>利息</h5>
+                                <div><span class="result-item-value" id="interest-amount">0</span> <span class="result-item-unit">元</span></div>
+                            </div>
+                            <div class="result-item">
+                                <h5>月均收益</h5>
+                                <div><span class="result-item-value" id="monthly-earnings">0</span> <span class="result-item-unit">元/月</span></div>
+                            </div>
+                        </div>
+                        <div class="formula">
+                            <strong>计算公式：</strong> 
+                            <span id="interest-formula">单利公式：利息 = 本金 × 利率 × 时间；复利公式：本息和 = 本金 × (1 + 利率)^时间</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 子网掩码计算器 -->
+            <div id="subnet" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>子网掩码计算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="ip-address">IP 地址</label>
+                            <input type="text" id="ip-address" placeholder="例如: 192.168.1.1" value="192.168.1.1">
+                        </div>
+                        <div class="input-field">
+                            <label for="subnet-mask">子网掩码</label>
+                            <input type="text" id="subnet-mask" placeholder="例如: 255.255.255.0" value="255.255.255.0">
+                        </div>
+                        <div class="input-field">
+                            <label for="cidr">CIDR 表示法</label>
+                            <input type="text" id="cidr" placeholder="例如: /24" value="/24">
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-subnet">
+                            <i class="fas fa-calculator"></i> 计算子网
+                        </button>
+                        <button class="btn btn-secondary" id="reset-subnet">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>计算结果</h4>
+                        <div class="multi-result">
+                            <div class="result-item">
+                                <h5>网络地址</h5>
+                                <div><span class="result-item-value" id="network-address">-</span></div>
+                            </div>
+                            <div class="result-item">
+                                <h5>广播地址</h5>
+                                <div><span class="result-item-value" id="broadcast-address">-</span></div>
+                            </div>
+                            <div class="result-item">
+                                <h5>可用主机数</h5>
+                                <div><span class="result-item-value" id="host-count">-</span></div>
+                            </div>
+                            <div class="result-item">
+                                <h5>子网掩码</h5>
+                                <div><span class="result-item-value" id="subnet-mask-result">-</span></div>
+                            </div>
+                        </div>
+                        <div class="formula">
+                            <strong>IP范围：</strong> <span id="ip-range">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 科学计算器 -->
+            <div id="scientific" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-square-root-alt"></i>
+                        <h3>科学计算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="sci-expression">数学表达式</label>
+                            <input type="text" id="sci-expression" placeholder="例如: sin(45) + 2^3 * sqrt(9)" value="sin(45) + 2^3 * sqrt(9)">
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-sci">
+                            <i class="fas fa-calculator"></i> 计算表达式
+                        </button>
+                        <button class="btn btn-secondary" id="reset-sci">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>计算结果</h4>
+                        <div class="result-value" id="sci-result">0</div>
+                        <div class="formula">
+                            <strong>支持函数：</strong> sin(), cos(), tan(), sqrt(), log(), ln(), exp(), abs(), pow(x,y), π (pi), e
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 面积换算器 -->
+            <div id="area" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-ruler-combined"></i>
+                        <h3>面积换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="area-value">数值</label>
+                            <input type="number" id="area-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="area-from">从单位</label>
+                            <select id="area-from">
+                                <option value="m2">平方米 (m²)</option>
+                                <option value="km2">平方公里 (km²)</option>
+                                <option value="cm2">平方厘米 (cm²)</option>
+                                <option value="mm2">平方毫米 (mm²)</option>
+                                <option value="hectare" selected>公顷</option>
+                                <option value="acre">英亩</option>
+                                <option value="mu">亩</option>
+                                <option value="sqft">平方英尺 (ft²)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="area-to">转换为</label>
+                            <select id="area-to">
+                                <option value="m2">平方米 (m²)</option>
+                                <option value="km2">平方公里 (km²)</option>
+                                <option value="cm2">平方厘米 (cm²)</option>
+                                <option value="mm2">平方毫米 (mm²)</option>
+                                <option value="hectare">公顷</option>
+                                <option value="acre">英亩</option>
+                                <option value="mu" selected>亩</option>
+                                <option value="sqft">平方英尺 (ft²)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-area">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-area">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="area-result">0 <span class="result-unit" id="area-unit">亩</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1公顷 = 10000平方米 = 15亩，1英亩 ≈ 4046.86平方米 ≈ 6.07亩
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 热量换算器 -->
+            <div id="heat" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-fire"></i>
+                        <h3>热量换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="heat-value">数值</label>
+                            <input type="number" id="heat-value" placeholder="请输入数值" value="100">
+                        </div>
+                        <div class="input-field">
+                            <label for="heat-from">从单位</label>
+                            <select id="heat-from">
+                                <option value="joule" selected>焦耳 (J)</option>
+                                <option value="calorie">卡路里 (cal)</option>
+                                <option value="kilocalorie">千卡 (kcal)</option>
+                                <option value="btu">英热单位 (BTU)</option>
+                                <option value="kwh">千瓦时 (kWh)</option>
+                                <option value="electronvolt">电子伏特 (eV)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="heat-to">转换为</label>
+                            <select id="heat-to">
+                                <option value="joule">焦耳 (J)</option>
+                                <option value="calorie" selected>卡路里 (cal)</option>
+                                <option value="kilocalorie">千卡 (kcal)</option>
+                                <option value="btu">英热单位 (BTU)</option>
+                                <option value="kwh">千瓦时 (kWh)</option>
+                                <option value="electronvolt">电子伏特 (eV)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-heat">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-heat">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="heat-result">0 <span class="result-unit" id="heat-unit">卡路里</span></div>
+                        <table class="conversion-table">
+                            <thead>
+                                <tr>
+                                    <th>单位</th>
+                                    <th>值</th>
+                                </tr>
+                            </thead>
+                            <tbody id="heat-table">
+                                <!-- 热量换算表内容将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 体积换算器 -->
+            <div id="volume" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-weight"></i>
+                        <h3>体积换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="volume-value">数值</label>
+                            <input type="number" id="volume-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="volume-from">从单位</label>
+                            <select id="volume-from">
+                                <option value="m3" selected>立方米 (m³)</option>
+                                <option value="liter">升 (L)</option>
+                                <option value="ml">毫升 (mL)</option>
+                                <option value="cm3">立方厘米 (cm³)</option>
+                                <option value="gallon">加仑 (gal)</option>
+                                <option value="cubic-foot">立方英尺 (ft³)</option>
+                                <option value="cubic-inch">立方英寸 (in³)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="volume-to">转换为</label>
+                            <select id="volume-to">
+                                <option value="m3">立方米 (m³)</option>
+                                <option value="liter" selected>升 (L)</option>
+                                <option value="ml">毫升 (mL)</option>
+                                <option value="cm3">立方厘米 (cm³)</option>
+                                <option value="gallon">加仑 (gal)</option>
+                                <option value="cubic-foot">立方英尺 (ft³)</option>
+                                <option value="cubic-inch">立方英寸 (in³)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-volume">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-volume">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="volume-result">0 <span class="result-unit" id="volume-unit">升</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1立方米 = 1000升，1升 = 1000毫升，1加仑 ≈ 3.785升，1立方英尺 ≈ 28.317升
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 压力换算器 -->
+            <div id="pressure" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h3>压力换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="pressure-value">数值</label>
+                            <input type="number" id="pressure-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="pressure-from">从单位</label>
+                            <select id="pressure-from">
+                                <option value="pascal" selected>帕斯卡 (Pa)</option>
+                                <option value="kilopascal">千帕 (kPa)</option>
+                                <option value="bar">巴 (bar)</option>
+                                <option value="psi">磅力/平方英寸 (psi)</option>
+                                <option value="atm">标准大气压 (atm)</option>
+                                <option value="torr">托 (Torr)</option>
+                                <option value="mmhg">毫米汞柱 (mmHg)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="pressure-to">转换为</label>
+                            <select id="pressure-to">
+                                <option value="pascal">帕斯卡 (Pa)</option>
+                                <option value="kilopascal" selected>千帕 (kPa)</option>
+                                <option value="bar">巴 (bar)</option>
+                                <option value="psi">磅力/平方英寸 (psi)</option>
+                                <option value="atm">标准大气压 (atm)</option>
+                                <option value="torr">托 (Torr)</option>
+                                <option value="mmhg">毫米汞柱 (mmHg)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-pressure">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-pressure">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="pressure-result">0 <span class="result-unit" id="pressure-unit">千帕</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1标准大气压 = 101.325千帕 = 760毫米汞柱，1巴 = 100千帕，1psi ≈ 6.895千帕
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 功率换算器 -->
+            <div id="power" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-bolt"></i>
+                        <h3>功率换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="power-value">数值</label>
+                            <input type="number" id="power-value" placeholder="请输入数值" value="1000">
+                        </div>
+                        <div class="input-field">
+                            <label for="power-from">从单位</label>
+                            <select id="power-from">
+                                <option value="watt" selected>瓦特 (W)</option>
+                                <option value="kilowatt">千瓦 (kW)</option>
+                                <option value="megawatt">兆瓦 (MW)</option>
+                                <option value="horsepower">马力 (hp)</option>
+                                <option value="btu-per-hour">英热单位/时 (BTU/h)</option>
+                                <option value="calorie-per-second">卡路里/秒 (cal/s)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="power-to">转换为</label>
+                            <select id="power-to">
+                                <option value="watt">瓦特 (W)</option>
+                                <option value="kilowatt" selected>千瓦 (kW)</option>
+                                <option value="megawatt">兆瓦 (MW)</option>
+                                <option value="horsepower">马力 (hp)</option>
+                                <option value="btu-per-hour">英热单位/时 (BTU/h)</option>
+                                <option value="calorie-per-second">卡路里/秒 (cal/s)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-power">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-power">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="power-result">0 <span class="result-unit" id="power-unit">千瓦</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1马力 ≈ 735.5瓦特，1千瓦 = 1000瓦特，1英热单位/时 ≈ 0.293瓦特
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 长度换算器 -->
+            <div id="length" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-ruler"></i>
+                        <h3>长度换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="length-value">数值</label>
+                            <input type="number" id="length-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="length-from">从单位</label>
+                            <select id="length-from">
+                                <option value="meter" selected>米 (m)</option>
+                                <option value="kilometer">千米 (km)</option>
+                                <option value="centimeter">厘米 (cm)</option>
+                                <option value="millimeter">毫米 (mm)</option>
+                                <option value="inch">英寸 (in)</option>
+                                <option value="foot">英尺 (ft)</option>
+                                <option value="yard">码 (yd)</option>
+                                <option value="mile">英里 (mi)</option>
+                                <option value="nautical-mile">海里 (nmi)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="length-to">转换为</label>
+                            <select id="length-to">
+                                <option value="meter">米 (m)</option>
+                                <option value="kilometer">千米 (km)</option>
+                                <option value="centimeter">厘米 (cm)</option>
+                                <option value="millimeter" selected>毫米 (mm)</option>
+                                <option value="inch">英寸 (in)</option>
+                                <option value="foot">英尺 (ft)</option>
+                                <option value="yard">码 (yd)</option>
+                                <option value="mile">英里 (mi)</option>
+                                <option value="nautical-mile">海里 (nmi)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-length">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-length">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="length-result">0 <span class="result-unit" id="length-unit">毫米</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1米 = 100厘米 = 1000毫米，1英寸 = 2.54厘米，1英尺 = 30.48厘米，1英里 ≈ 1.609千米
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 温度换算器 -->
+            <div id="temperature" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-thermometer-half"></i>
+                        <h3>温度换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="temperature-value">数值</label>
+                            <input type="number" id="temperature-value" placeholder="请输入数值" value="20">
+                        </div>
+                        <div class="input-field">
+                            <label for="temperature-from">从单位</label>
+                            <select id="temperature-from">
+                                <option value="celsius" selected>摄氏度 (°C)</option>
+                                <option value="fahrenheit">华氏度 (°F)</option>
+                                <option value="kelvin">开尔文 (K)</option>
+                                <option value="rankine">兰氏度 (°R)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="temperature-to">转换为</label>
+                            <select id="temperature-to">
+                                <option value="celsius">摄氏度 (°C)</option>
+                                <option value="fahrenheit" selected>华氏度 (°F)</option>
+                                <option value="kelvin">开尔文 (K)</option>
+                                <option value="rankine">兰氏度 (°R)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-temperature">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-temperature">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="multi-result">
+                            <div class="result-item">
+                                <h5>摄氏度</h5>
+                                <div><span class="result-item-value" id="celsius-result">0</span> <span class="result-item-unit">°C</span></div>
+                            </div>
+                            <div class="result-item">
+                                <h5>华氏度</h5>
+                                <div><span class="result-item-value" id="fahrenheit-result">0</span> <span class="result-item-unit">°F</span></div>
+                            </div>
+                            <div class="result-item">
+                                <h5>开尔文</h5>
+                                <div><span class="result-item-value" id="kelvin-result">0</span> <span class="result-item-unit">K</span></div>
+                            </div>
+                        </div>
+                        <div class="formula">
+                            <strong>温度换算公式：</strong> 华氏度 = 摄氏度 × 9/5 + 32，开尔文 = 摄氏度 + 273.15
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 时间换算器 -->
+            <div id="time" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="far fa-clock"></i>
+                        <h3>时间换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="time-value">数值</label>
+                            <input type="number" id="time-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="time-from">从单位</label>
+                            <select id="time-from">
+                                <option value="second" selected>秒 (s)</option>
+                                <option value="minute">分钟 (min)</option>
+                                <option value="hour">小时 (h)</option>
+                                <option value="day">天 (day)</option>
+                                <option value="week">周 (week)</option>
+                                <option value="month">月 (month)</option>
+                                <option value="year">年 (year)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="time-to">转换为</label>
+                            <select id="time-to">
+                                <option value="second">秒 (s)</option>
+                                <option value="minute" selected>分钟 (min)</option>
+                                <option value="hour">小时 (h)</option>
+                                <option value="day">天 (day)</option>
+                                <option value="week">周 (week)</option>
+                                <option value="month">月 (month)</option>
+                                <option value="year">年 (year)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-time">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-time">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="time-result">0 <span class="result-unit" id="time-unit">分钟</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1分钟 = 60秒，1小时 = 60分钟，1天 = 24小时，1年 ≈ 365.25天
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 速度换算器 -->
+            <div id="speed" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h3>速度换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="speed-value">数值</label>
+                            <input type="number" id="speed-value" placeholder="请输入数值" value="100">
+                        </div>
+                        <div class="input-field">
+                            <label for="speed-from">从单位</label>
+                            <select id="speed-from">
+                                <option value="mps" selected>米/秒 (m/s)</option>
+                                <option value="kmph">千米/时 (km/h)</option>
+                                <option value="mph">英里/时 (mph)</option>
+                                <option value="knot">节 (knot)</option>
+                                <option value="ftps">英尺/秒 (ft/s)</option>
+                                <option value="mach">马赫 (Mach)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="speed-to">转换为</label>
+                            <select id="speed-to">
+                                <option value="mps">米/秒 (m/s)</option>
+                                <option value="kmph" selected>千米/时 (km/h)</option>
+                                <option value="mph">英里/时 (mph)</option>
+                                <option value="knot">节 (knot)</option>
+                                <option value="ftps">英尺/秒 (ft/s)</option>
+                                <option value="mach">马赫 (Mach)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-speed">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-speed">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="speed-result">0 <span class="result-unit" id="speed-unit">千米/时</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1米/秒 = 3.6千米/时，1英里/时 ≈ 1.609千米/时，1节 = 1.852千米/时，1马赫 ≈ 1235千米/时
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 角度换算器 -->
+            <div id="angle" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-shapes"></i>
+                        <h3>角度换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="angle-value">数值</label>
+                            <input type="number" id="angle-value" placeholder="请输入数值" value="90">
+                        </div>
+                        <div class="input-field">
+                            <label for="angle-from">从单位</label>
+                            <select id="angle-from">
+                                <option value="degree" selected>度 (°)</option>
+                                <option value="radian">弧度 (rad)</option>
+                                <option value="gradian">梯度 (grad)</option>
+                                <option value="arcminute">角分 (')</option>
+                                <option value="arcsecond">角秒 (")</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="angle-to">转换为</label>
+                            <select id="angle-to">
+                                <option value="degree">度 (°)</option>
+                                <option value="radian" selected>弧度 (rad)</option>
+                                <option value="gradian">梯度 (grad)</option>
+                                <option value="arcminute">角分 (')</option>
+                                <option value="arcsecond">角秒 (")</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-angle">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-angle">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="angle-result">0 <span class="result-unit" id="angle-unit">弧度</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 180° = π 弧度，1度 = 60角分，1角分 = 60角秒，100梯度 = 90°
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据大小换算器 -->
+            <div id="data" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-database"></i>
+                        <h3>数据大小换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="data-value">数值</label>
+                            <input type="number" id="data-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="data-from">从单位</label>
+                            <select id="data-from">
+                                <option value="byte" selected>字节 (B)</option>
+                                <option value="kilobyte">千字节 (KB)</option>
+                                <option value="megabyte">兆字节 (MB)</option>
+                                <option value="gigabyte">吉字节 (GB)</option>
+                                <option value="terabyte">太字节 (TB)</option>
+                                <option value="petabyte">拍字节 (PB)</option>
+                                <option value="bit">位 (bit)</option>
+                                <option value="kilobit">千位 (Kb)</option>
+                                <option value="megabit">兆位 (Mb)</option>
+                                <option value="gigabit">吉位 (Gb)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="data-to">转换为</label>
+                            <select id="data-to">
+                                <option value="byte">字节 (B)</option>
+                                <option value="kilobyte">千字节 (KB)</option>
+                                <option value="megabyte" selected>兆字节 (MB)</option>
+                                <option value="gigabyte">吉字节 (GB)</option>
+                                <option value="terabyte">太字节 (TB)</option>
+                                <option value="petabyte">拍字节 (PB)</option>
+                                <option value="bit">位 (bit)</option>
+                                <option value="kilobit">千位 (Kb)</option>
+                                <option value="megabit">兆位 (Mb)</option>
+                                <option value="gigabit">吉位 (Gb)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-data">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-data">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="data-result">0 <span class="result-unit" id="data-unit">MB</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1字节 = 8位，1千字节 = 1024字节，1兆字节 = 1024千字节，1吉字节 = 1024兆字节
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 密度换算器 -->
+            <div id="density" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-weight-hanging"></i>
+                        <h3>密度换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="density-value">数值</label>
+                            <input type="number" id="density-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="density-from">从单位</label>
+                            <select id="density-from">
+                                <option value="kg-m3" selected>千克/立方米 (kg/m³)</option>
+                                <option value="g-cm3">克/立方厘米 (g/cm³)</option>
+                                <option value="g-ml">克/毫升 (g/mL)</option>
+                                <option value="lb-ft3">磅/立方英尺 (lb/ft³)</option>
+                                <option value="lb-in3">磅/立方英寸 (lb/in³)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="density-to">转换为</label>
+                            <select id="density-to">
+                                <option value="kg-m3">千克/立方米 (kg/m³)</option>
+                                <option value="g-cm3" selected>克/立方厘米 (g/cm³)</option>
+                                <option value="g-ml">克/毫升 (g/mL)</option>
+                                <option value="lb-ft3">磅/立方英尺 (lb/ft³)</option>
+                                <option value="lb-in3">磅/立方英寸 (lb/in³)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-density">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-density">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="density-result">0 <span class="result-unit" id="density-unit">g/cm³</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1克/立方厘米 = 1000千克/立方米，1克/毫升 = 1克/立方厘米，水的密度 ≈ 1克/立方厘米
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 力换算器 -->
+            <div id="force" class="calculator">
+                <div class="calculator-container">
+                    <div class="calculator-title">
+                        <i class="fas fa-dumbbell"></i>
+                        <h3>力换算器</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="input-field">
+                            <label for="force-value">数值</label>
+                            <input type="number" id="force-value" placeholder="请输入数值" value="1">
+                        </div>
+                        <div class="input-field">
+                            <label for="force-from">从单位</label>
+                            <select id="force-from">
+                                <option value="newton" selected>牛顿 (N)</option>
+                                <option value="kilonewton">千牛 (kN)</option>
+                                <option value="dyne">达因 (dyn)</option>
+                                <option value="kilogram-force">千克力 (kgf)</option>
+                                <option value="pound-force">磅力 (lbf)</option>
+                                <option value="ounce-force">盎司力 (ozf)</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label for="force-to">转换为</label>
+                            <select id="force-to">
+                                <option value="newton">牛顿 (N)</option>
+                                <option value="kilonewton" selected>千牛 (kN)</option>
+                                <option value="dyne">达因 (dyn)</option>
+                                <option value="kilogram-force">千克力 (kgf)</option>
+                                <option value="pound-force">磅力 (lbf)</option>
+                                <option value="ounce-force">盎司力 (ozf)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-primary" id="calculate-force">
+                            <i class="fas fa-exchange-alt"></i> 换算
+                        </button>
+                        <button class="btn btn-secondary" id="reset-force">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="result">
+                        <h4>换算结果</h4>
+                        <div class="result-value" id="force-result">0 <span class="result-unit" id="force-unit">千牛</span></div>
+                        <div class="formula">
+                            <strong>常用换算：</strong> 1牛顿 = 100000达因，1千克力 ≈ 9.8牛顿，1磅力 ≈ 4.448牛顿
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        
+            
+            <footer>
+                 
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // 单位换算系数
+        const unitConversions = {
+            // 面积单位换算系数 (以平方米为基准)
+            area: {
+                m2: 1,
+                km2: 1e6,
+                cm2: 0.0001,
+                mm2: 1e-6,
+                hectare: 10000,
+                acre: 4046.86,
+                mu: 666.667,
+                sqft: 0.092903
+            },
+            // 热量单位换算系数 (以焦耳为基准)
+            heat: {
+                joule: 1,
+                calorie: 4.184,
+                kilocalorie: 4184,
+                btu: 1055.06,
+                kwh: 3.6e6,
+                electronvolt: 1.602e-19
+            },
+            // 体积单位换算系数 (以立方米为基准)
+            volume: {
+                m3: 1,
+                liter: 0.001,
+                ml: 1e-6,
+                cm3: 1e-6,
+                gallon: 0.00378541,
+                'cubic-foot': 0.0283168,
+                'cubic-inch': 1.63871e-5
+            },
+            // 压力单位换算系数 (以帕斯卡为基准)
+            pressure: {
+                pascal: 1,
+                kilopascal: 1000,
+                bar: 100000,
+                psi: 6894.76,
+                atm: 101325,
+                torr: 133.322,
+                mmhg: 133.322
+            },
+            // 功率单位换算系数 (以瓦特为基准)
+            power: {
+                watt: 1,
+                kilowatt: 1000,
+                megawatt: 1e6,
+                horsepower: 735.499,
+                'btu-per-hour': 0.293071,
+                'calorie-per-second': 4.184
+            },
+            // 长度单位换算系数 (以米为基准)
+            length: {
+                meter: 1,
+                kilometer: 1000,
+                centimeter: 0.01,
+                millimeter: 0.001,
+                inch: 0.0254,
+                foot: 0.3048,
+                yard: 0.9144,
+                mile: 1609.34,
+                'nautical-mile': 1852
+            },
+            // 时间单位换算系数 (以秒为基准)
+            time: {
+                second: 1,
+                minute: 60,
+                hour: 3600,
+                day: 86400,
+                week: 604800,
+                month: 2592000, // 30天
+                year: 31536000 // 365天
+            },
+            // 速度单位换算系数 (以米/秒为基准)
+            speed: {
+                mps: 1,
+                kmph: 0.277778,
+                mph: 0.44704,
+                knot: 0.514444,
+                ftps: 0.3048,
+                mach: 340.3 // 声速
+            },
+            // 角度单位换算系数 (以度为基准)
+            angle: {
+                degree: 1,
+                radian: 57.2958,
+                gradian: 0.9,
+                arcminute: 1/60,
+                arcsecond: 1/3600
+            },
+            // 数据大小单位换算系数 (以字节为基准)
+            data: {
+                byte: 1,
+                kilobyte: 1024,
+                megabyte: 1048576,
+                gigabyte: 1073741824,
+                terabyte: 1099511627776,
+                petabyte: 1125899906842624,
+                bit: 0.125,
+                kilobit: 128,
+                megabit: 131072,
+                gigabit: 134217728
+            },
+            // 密度单位换算系数 (以千克/立方米为基准)
+            density: {
+                'kg-m3': 1,
+                'g-cm3': 1000,
+                'g-ml': 1000,
+                'lb-ft3': 16.0185,
+                'lb-in3': 27679.9
+            },
+            // 力单位换算系数 (以牛顿为基准)
+            force: {
+                newton: 1,
+                kilonewton: 1000,
+                dyne: 1e-5,
+                'kilogram-force': 9.80665,
+                'pound-force': 4.44822,
+                'ounce-force': 0.278014
+            }
+        };
+
+        // 计算器切换功能
+        document.querySelectorAll('.calculator-list li').forEach(item => {
+            item.addEventListener('click', function() {
+                // 更新侧边栏活动状态
+                document.querySelectorAll('.calculator-list li').forEach(li => {
+                    li.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 更新当前计算器标题
+                const calculatorName = this.textContent.trim();
+                document.getElementById('current-calculator').textContent = calculatorName;
+                
+                // 切换显示对应的计算器
+                const calculatorId = this.getAttribute('data-calc');
+                document.querySelectorAll('.calculator').forEach(calc => {
+                    calc.classList.remove('active');
+                });
+                document.getElementById(calculatorId).classList.add('active');
+            });
+        });
+        
+        // 利率计算器功能
+        document.getElementById('calculate-interest').addEventListener('click', function() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('interest-rate').value) / 100;
+            const years = parseFloat(document.getElementById('years').value);
+            const interestType = document.getElementById('interest-type').value;
+            
+            if (isNaN(principal) || isNaN(rate) || isNaN(years)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            let totalAmount, interestAmount, formulaText;
+            
+            if (interestType === 'simple') {
+                // 单利计算
+                interestAmount = principal * rate * years;
+                totalAmount = principal + interestAmount;
+                formulaText = `单利公式：利息 = 本金 × 利率 × 时间 = ${principal} × ${rate*100}% × ${years} = ${interestAmount.toFixed(2)}元`;
+            } else {
+                // 复利计算
+                totalAmount = principal * Math.pow(1 + rate, years);
+                interestAmount = totalAmount - principal;
+                formulaText = `复利公式：本息和 = 本金 × (1 + 利率)^时间 = ${principal} × (1 + ${rate*100}%)^${years} = ${totalAmount.toFixed(2)}元`;
+            }
+            
+            const monthlyEarnings = interestAmount / (years * 12);
+            
+            document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+            document.getElementById('interest-amount').textContent = interestAmount.toFixed(2);
+            document.getElementById('monthly-earnings').textContent = monthlyEarnings.toFixed(2);
+            document.getElementById('interest-formula').textContent = formulaText;
+            
+            // 添加到历史记录
+            addToHistory(`利率计算: 本金${principal}元，年利率${(rate*100).toFixed(2)}%，${years}年${interestType==='simple'?'单利':'复利'}，本息和为${totalAmount.toFixed(2)}元`);
+        });
+        
+        document.getElementById('reset-interest').addEventListener('click', function() {
+            document.getElementById('principal').value = '10000';
+            document.getElementById('interest-rate').value = '5';
+            document.getElementById('years').value = '5';
+            document.getElementById('interest-type').value = 'compound';
+            document.getElementById('total-amount').textContent = '0';
+            document.getElementById('interest-amount').textContent = '0';
+            document.getElementById('monthly-earnings').textContent = '0';
+            document.getElementById('interest-formula').textContent = '单利公式：利息 = 本金 × 利率 × 时间；复利公式：本息和 = 本金 × (1 + 利率)^时间';
+        });
+        
+        // 子网掩码计算器功能
+        document.getElementById('calculate-subnet').addEventListener('click', function() {
+            let ipAddress = document.getElementById('ip-address').value;
+            let subnetMask = document.getElementById('subnet-mask').value;
+            let cidr = document.getElementById('cidr').value;
+            
+            // 处理CIDR表示法
+            if (cidr && cidr.startsWith('/')) {
+                const cidrValue = parseInt(cidr.substring(1));
+                if (cidrValue >= 0 && cidrValue <= 32) {
+                    // 根据CIDR计算子网掩码
+                    let mask = 0;
+                    for (let i = 0; i < cidrValue; i++) {
+                        mask |= (1 << (31 - i));
+                    }
+                    
+                    // 转换为点分十进制
+                    subnetMask = 
+                        ((mask >>> 24) & 255) + '.' +
+                        ((mask >>> 16) & 255) + '.' +
+                        ((mask >>> 8) & 255) + '.' +
+                        (mask & 255);
+                    
+                    document.getElementById('subnet-mask').value = subnetMask;
+                }
+            }
+            
+            // 简单验证IP地址格式
+            const ipPattern = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+            const ipMatch = ipAddress.match(ipPattern);
+            
+            if (!ipMatch) {
+                alert('请输入有效的IP地址格式！');
+                return;
+            }
+            
+            // 验证IP地址各部分是否在0-255范围内
+            for (let i = 1; i <= 4; i++) {
+                const part = parseInt(ipMatch[i]);
+                if (part < 0 || part > 255) {
+                    alert('IP地址各部分必须在0-255范围内！');
+                    return;
+                }
+            }
+            
+            // 验证子网掩码格式
+            const maskPattern = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+            const maskMatch = subnetMask.match(maskPattern);
+            
+            if (!maskMatch) {
+                alert('请输入有效的子网掩码格式！');
+                return;
+            }
+            
+            // 验证子网掩码有效性
+            let mask = 0;
+            for (let i = 1; i <= 4; i++) {
+                const part = parseInt(maskMatch[i]);
+                if (part < 0 || part > 255) {
+                    alert('子网掩码各部分必须在0-255范围内！');
+                    return;
+                }
+                mask = (mask << 8) | part;
+            }
+            
+            // 检查子网掩码是否连续1后连续0
+            let foundZero = false;
+            let validMask = true;
+            for (let i = 31; i >= 0; i--) {
+                const bit = (mask >> i) & 1;
+                if (foundZero && bit === 1) {
+                    validMask = false;
+                    break;
+                }
+                if (bit === 0) {
+                    foundZero = true;
+                }
+            }
+            
+            if (!validMask) {
+                alert('无效的子网掩码！子网掩码必须是连续的1后接连续的0。');
+                return;
+            }
+            
+            // 计算CIDR
+            let cidrCount = 0;
+            for (let i = 31; i >= 0; i--) {
+                if (((mask >> i) & 1) === 1) {
+                    cidrCount++;
+                } else {
+                    break;
+                }
+            }
+            
+            document.getElementById('cidr').value = `/${cidrCount}`;
+            
+            // 计算网络地址、广播地址等
+            const ipNum = 
+                (parseInt(ipMatch[1]) << 24) |
+                (parseInt(ipMatch[2]) << 16) |
+                (parseInt(ipMatch[3]) << 8) |
+                parseInt(ipMatch[4]);
+            
+            const networkAddress = ipNum & mask;
+            const broadcastAddress = networkAddress | (~mask & 0xFFFFFFFF);
+            const hostCount = Math.pow(2, 32 - cidrCount) - 2;
+            
+            // 转换为点分十进制
+            const toDotDecimal = (num) => {
+                return (
+                    ((num >>> 24) & 255) + '.' +
+                    ((num >>> 16) & 255) + '.' +
+                    ((num >>> 8) & 255) + '.' +
+                    (num & 255)
+                );
+            };
+            
+            const firstHost = hostCount > 0 ? networkAddress + 1 : networkAddress;
+            const lastHost = hostCount > 0 ? broadcastAddress - 1 : broadcastAddress;
+            
+            document.getElementById('network-address').textContent = toDotDecimal(networkAddress);
+            document.getElementById('broadcast-address').textContent = toDotDecimal(broadcastAddress);
+            document.getElementById('host-count').textContent = hostCount >= 0 ? hostCount : 0;
+            document.getElementById('subnet-mask-result').textContent = subnetMask;
+            
+            const ipRange = hostCount > 0 ? 
+                `${toDotDecimal(firstHost)} - ${toDotDecimal(lastHost)}` : 
+                '无可用主机';
+            document.getElementById('ip-range').textContent = ipRange;
+            
+            // 添加到历史记录
+            addToHistory(`子网计算: ${ipAddress}/${cidrCount} 网络地址: ${toDotDecimal(networkAddress)}, 可用主机: ${hostCount}`);
+        });
+        
+        document.getElementById('reset-subnet').addEventListener('click', function() {
+            document.getElementById('ip-address').value = '192.168.1.1';
+            document.getElementById('subnet-mask').value = '255.255.255.0';
+            document.getElementById('cidr').value = '/24';
+            
+            document.getElementById('network-address').textContent = '-';
+            document.getElementById('broadcast-address').textContent = '-';
+            document.getElementById('host-count').textContent = '-';
+            document.getElementById('subnet-mask-result').textContent = '-';
+            document.getElementById('ip-range').textContent = '-';
+        });
+        
+        // 科学计算器功能
+        document.getElementById('calculate-sci').addEventListener('click', function() {
+            const expression = document.getElementById('sci-expression').value;
+            
+            try {
+                // 安全地评估数学表达式
+                const result = evaluateMathExpression(expression);
+                document.getElementById('sci-result').textContent = result;
+                
+                // 添加到历史记录
+                addToHistory(`科学计算: ${expression} = ${result}`);
+            } catch (error) {
+                alert('表达式错误，请检查输入！');
+                console.error(error);
+            }
+        });
+        
+        document.getElementById('reset-sci').addEventListener('click', function() {
+            document.getElementById('sci-expression').value = 'sin(45) + 2^3 * sqrt(9)';
+            document.getElementById('sci-result').textContent = '0';
+        });
+        
+        // 通用换算函数
+        function convertUnit(value, fromUnit, toUnit, conversionType) {
+            const conversions = unitConversions[conversionType];
+            if (!conversions) return value;
+            
+            // 先转换为基准单位，再转换为目标单位
+            const valueInBase = value * conversions[fromUnit];
+            return valueInBase / conversions[toUnit];
+        }
+        
+        // 获取单位名称
+        function getUnitName(unitKey, conversionType) {
+            const unitNames = {
+                area: {
+                    m2: '平方米',
+                    km2: '平方公里',
+                    cm2: '平方厘米',
+                    mm2: '平方毫米',
+                    hectare: '公顷',
+                    acre: '英亩',
+                    mu: '亩',
+                    sqft: '平方英尺'
+                },
+                heat: {
+                    joule: '焦耳',
+                    calorie: '卡路里',
+                    kilocalorie: '千卡',
+                    btu: '英热单位',
+                    kwh: '千瓦时',
+                    electronvolt: '电子伏特'
+                },
+                volume: {
+                    m3: '立方米',
+                    liter: '升',
+                    ml: '毫升',
+                    cm3: '立方厘米',
+                    gallon: '加仑',
+                    'cubic-foot': '立方英尺',
+                    'cubic-inch': '立方英寸'
+                },
+                pressure: {
+                    pascal: '帕斯卡',
+                    kilopascal: '千帕',
+                    bar: '巴',
+                    psi: '磅力/平方英寸',
+                    atm: '标准大气压',
+                    torr: '托',
+                    mmhg: '毫米汞柱'
+                },
+                power: {
+                    watt: '瓦特',
+                    kilowatt: '千瓦',
+                    megawatt: '兆瓦',
+                    horsepower: '马力',
+                    'btu-per-hour': '英热单位/时',
+                    'calorie-per-second': '卡路里/秒'
+                },
+                length: {
+                    meter: '米',
+                    kilometer: '千米',
+                    centimeter: '厘米',
+                    millimeter: '毫米',
+                    inch: '英寸',
+                    foot: '英尺',
+                    yard: '码',
+                    mile: '英里',
+                    'nautical-mile': '海里'
+                },
+                time: {
+                    second: '秒',
+                    minute: '分钟',
+                    hour: '小时',
+                    day: '天',
+                    week: '周',
+                    month: '月',
+                    year: '年'
+                },
+                speed: {
+                    mps: '米/秒',
+                    kmph: '千米/时',
+                    mph: '英里/时',
+                    knot: '节',
+                    ftps: '英尺/秒',
+                    mach: '马赫'
+                },
+                angle: {
+                    degree: '度',
+                    radian: '弧度',
+                    gradian: '梯度',
+                    arcminute: '角分',
+                    arcsecond: '角秒'
+                },
+                data: {
+                    byte: '字节',
+                    kilobyte: '千字节',
+                    megabyte: '兆字节',
+                    gigabyte: '吉字节',
+                    terabyte: '太字节',
+                    petabyte: '拍字节',
+                    bit: '位',
+                    kilobit: '千位',
+                    megabit: '兆位',
+                    gigabit: '吉位'
+                },
+                density: {
+                    'kg-m3': '千克/立方米',
+                    'g-cm3': '克/立方厘米',
+                    'g-ml': '克/毫升',
+                    'lb-ft3': '磅/立方英尺',
+                    'lb-in3': '磅/立方英寸'
+                },
+                force: {
+                    newton: '牛顿',
+                    kilonewton: '千牛',
+                    dyne: '达因',
+                    'kilogram-force': '千克力',
+                    'pound-force': '磅力',
+                    'ounce-force': '盎司力'
+                }
+            };
+            
+            return unitNames[conversionType]?.[unitKey] || unitKey;
+        }
+        
+        // 面积换算器功能
+        document.getElementById('calculate-area').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('area-value').value);
+            const fromUnit = document.getElementById('area-from').value;
+            const toUnit = document.getElementById('area-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'area');
+            const unitName = getUnitName(toUnit, 'area');
+            
+            document.getElementById('area-result').textContent = result.toFixed(6);
+            document.getElementById('area-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`面积换算: ${value} ${getUnitName(fromUnit, 'area')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-area').addEventListener('click', function() {
+            document.getElementById('area-value').value = '1';
+            document.getElementById('area-from').value = 'hectare';
+            document.getElementById('area-to').value = 'mu';
+            document.getElementById('area-result').textContent = '0';
+            document.getElementById('area-unit').textContent = '亩';
+        });
+        
+        // 热量换算器功能
+        document.getElementById('calculate-heat').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('heat-value').value);
+            const fromUnit = document.getElementById('heat-from').value;
+            const toUnit = document.getElementById('heat-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'heat');
+            const unitName = getUnitName(toUnit, 'heat');
+            
+            document.getElementById('heat-result').textContent = result.toExponential(4);
+            document.getElementById('heat-unit').textContent = unitName;
+            
+            // 更新换算表
+            const heatTable = document.getElementById('heat-table');
+            heatTable.innerHTML = '';
+            
+            for (const unit in unitConversions.heat) {
+                const convertedValue = convertUnit(value, fromUnit, unit, 'heat');
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${getUnitName(unit, 'heat')}</td>
+                    <td>${convertedValue.toExponential(4)}</td>
+                `;
+                heatTable.appendChild(row);
+            }
+            
+            // 添加到历史记录
+            addToHistory(`热量换算: ${value} ${getUnitName(fromUnit, 'heat')} = ${result.toExponential(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-heat').addEventListener('click', function() {
+            document.getElementById('heat-value').value = '100';
+            document.getElementById('heat-from').value = 'joule';
+            document.getElementById('heat-to').value = 'calorie';
+            document.getElementById('heat-result').textContent = '0';
+            document.getElementById('heat-unit').textContent = '卡路里';
+            document.getElementById('heat-table').innerHTML = '';
+        });
+        
+        // 体积换算器功能
+        document.getElementById('calculate-volume').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('volume-value').value);
+            const fromUnit = document.getElementById('volume-from').value;
+            const toUnit = document.getElementById('volume-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'volume');
+            const unitName = getUnitName(toUnit, 'volume');
+            
+            document.getElementById('volume-result').textContent = result.toFixed(6);
+            document.getElementById('volume-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`体积换算: ${value} ${getUnitName(fromUnit, 'volume')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-volume').addEventListener('click', function() {
+            document.getElementById('volume-value').value = '1';
+            document.getElementById('volume-from').value = 'm3';
+            document.getElementById('volume-to').value = 'liter';
+            document.getElementById('volume-result').textContent = '0';
+            document.getElementById('volume-unit').textContent = '升';
+        });
+        
+        // 压力换算器功能
+        document.getElementById('calculate-pressure').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('pressure-value').value);
+            const fromUnit = document.getElementById('pressure-from').value;
+            const toUnit = document.getElementById('pressure-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'pressure');
+            const unitName = getUnitName(toUnit, 'pressure');
+            
+            document.getElementById('pressure-result').textContent = result.toFixed(6);
+            document.getElementById('pressure-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`压力换算: ${value} ${getUnitName(fromUnit, 'pressure')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-pressure').addEventListener('click', function() {
+            document.getElementById('pressure-value').value = '1';
+            document.getElementById('pressure-from').value = 'pascal';
+            document.getElementById('pressure-to').value = 'kilopascal';
+            document.getElementById('pressure-result').textContent = '0';
+            document.getElementById('pressure-unit').textContent = '千帕';
+        });
+        
+        // 功率换算器功能
+        document.getElementById('calculate-power').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('power-value').value);
+            const fromUnit = document.getElementById('power-from').value;
+            const toUnit = document.getElementById('power-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'power');
+            const unitName = getUnitName(toUnit, 'power');
+            
+            document.getElementById('power-result').textContent = result.toFixed(6);
+            document.getElementById('power-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`功率换算: ${value} ${getUnitName(fromUnit, 'power')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-power').addEventListener('click', function() {
+            document.getElementById('power-value').value = '1000';
+            document.getElementById('power-from').value = 'watt';
+            document.getElementById('power-to').value = 'kilowatt';
+            document.getElementById('power-result').textContent = '0';
+            document.getElementById('power-unit').textContent = '千瓦';
+        });
+        
+        // 长度换算器功能
+        document.getElementById('calculate-length').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('length-value').value);
+            const fromUnit = document.getElementById('length-from').value;
+            const toUnit = document.getElementById('length-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'length');
+            const unitName = getUnitName(toUnit, 'length');
+            
+            document.getElementById('length-result').textContent = result.toFixed(6);
+            document.getElementById('length-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`长度换算: ${value} ${getUnitName(fromUnit, 'length')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-length').addEventListener('click', function() {
+            document.getElementById('length-value').value = '1';
+            document.getElementById('length-from').value = 'meter';
+            document.getElementById('length-to').value = 'millimeter';
+            document.getElementById('length-result').textContent = '0';
+            document.getElementById('length-unit').textContent = '毫米';
+        });
+        
+        // 温度换算器功能
+        document.getElementById('calculate-temperature').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('temperature-value').value);
+            const fromUnit = document.getElementById('temperature-from').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            // 温度换算需要特殊处理
+            let celsius, fahrenheit, kelvin;
+            
+            switch (fromUnit) {
+                case 'celsius':
+                    celsius = value;
+                    fahrenheit = (value * 9/5) + 32;
+                    kelvin = value + 273.15;
+                    break;
+                case 'fahrenheit':
+                    celsius = (value - 32) * 5/9;
+                    fahrenheit = value;
+                    kelvin = (value - 32) * 5/9 + 273.15;
+                    break;
+                case 'kelvin':
+                    celsius = value - 273.15;
+                    fahrenheit = (value - 273.15) * 9/5 + 32;
+                    kelvin = value;
+                    break;
+                case 'rankine':
+                    celsius = (value - 491.67) * 5/9;
+                    fahrenheit = value - 459.67;
+                    kelvin = value * 5/9;
+                    break;
+            }
+            
+            document.getElementById('celsius-result').textContent = celsius.toFixed(2);
+            document.getElementById('fahrenheit-result').textContent = fahrenheit.toFixed(2);
+            document.getElementById('kelvin-result').textContent = kelvin.toFixed(2);
+            
+            // 添加到历史记录
+            addToHistory(`温度换算: ${value}°${fromUnit.charAt(0).toUpperCase()} = ${celsius.toFixed(2)}°C = ${fahrenheit.toFixed(2)}°F = ${kelvin.toFixed(2)}K`);
+        });
+        
+        document.getElementById('reset-temperature').addEventListener('click', function() {
+            document.getElementById('temperature-value').value = '20';
+            document.getElementById('temperature-from').value = 'celsius';
+            document.getElementById('temperature-to').value = 'fahrenheit';
+            document.getElementById('celsius-result').textContent = '0';
+            document.getElementById('fahrenheit-result').textContent = '0';
+            document.getElementById('kelvin-result').textContent = '0';
+        });
+        
+        // 时间换算器功能
+        document.getElementById('calculate-time').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('time-value').value);
+            const fromUnit = document.getElementById('time-from').value;
+            const toUnit = document.getElementById('time-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'time');
+            const unitName = getUnitName(toUnit, 'time');
+            
+            document.getElementById('time-result').textContent = result.toFixed(6);
+            document.getElementById('time-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`时间换算: ${value} ${getUnitName(fromUnit, 'time')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-time').addEventListener('click', function() {
+            document.getElementById('time-value').value = '1';
+            document.getElementById('time-from').value = 'second';
+            document.getElementById('time-to').value = 'minute';
+            document.getElementById('time-result').textContent = '0';
+            document.getElementById('time-unit').textContent = '分钟';
+        });
+        
+        // 速度换算器功能
+        document.getElementById('calculate-speed').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('speed-value').value);
+            const fromUnit = document.getElementById('speed-from').value;
+            const toUnit = document.getElementById('speed-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'speed');
+            const unitName = getUnitName(toUnit, 'speed');
+            
+            document.getElementById('speed-result').textContent = result.toFixed(6);
+            document.getElementById('speed-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`速度换算: ${value} ${getUnitName(fromUnit, 'speed')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-speed').addEventListener('click', function() {
+            document.getElementById('speed-value').value = '100';
+            document.getElementById('speed-from').value = 'mps';
+            document.getElementById('speed-to').value = 'kmph';
+            document.getElementById('speed-result').textContent = '0';
+            document.getElementById('speed-unit').textContent = '千米/时';
+        });
+        
+        // 角度换算器功能
+        document.getElementById('calculate-angle').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('angle-value').value);
+            const fromUnit = document.getElementById('angle-from').value;
+            const toUnit = document.getElementById('angle-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'angle');
+            const unitName = getUnitName(toUnit, 'angle');
+            
+            document.getElementById('angle-result').textContent = result.toFixed(6);
+            document.getElementById('angle-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`角度换算: ${value} ${getUnitName(fromUnit, 'angle')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-angle').addEventListener('click', function() {
+            document.getElementById('angle-value').value = '90';
+            document.getElementById('angle-from').value = 'degree';
+            document.getElementById('angle-to').value = 'radian';
+            document.getElementById('angle-result').textContent = '0';
+            document.getElementById('angle-unit').textContent = '弧度';
+        });
+        
+        // 数据大小换算器功能
+        document.getElementById('calculate-data').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('data-value').value);
+            const fromUnit = document.getElementById('data-from').value;
+            const toUnit = document.getElementById('data-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'data');
+            const unitName = getUnitName(toUnit, 'data');
+            
+            document.getElementById('data-result').textContent = result.toFixed(6);
+            document.getElementById('data-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`数据大小换算: ${value} ${getUnitName(fromUnit, 'data')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-data').addEventListener('click', function() {
+            document.getElementById('data-value').value = '1';
+            document.getElementById('data-from').value = 'byte';
+            document.getElementById('data-to').value = 'megabyte';
+            document.getElementById('data-result').textContent = '0';
+            document.getElementById('data-unit').textContent = 'MB';
+        });
+        
+        // 密度换算器功能
+        document.getElementById('calculate-density').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('density-value').value);
+            const fromUnit = document.getElementById('density-from').value;
+            const toUnit = document.getElementById('density-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'density');
+            const unitName = getUnitName(toUnit, 'density');
+            
+            document.getElementById('density-result').textContent = result.toFixed(6);
+            document.getElementById('density-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`密度换算: ${value} ${getUnitName(fromUnit, 'density')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-density').addEventListener('click', function() {
+            document.getElementById('density-value').value = '1';
+            document.getElementById('density-from').value = 'kg-m3';
+            document.getElementById('density-to').value = 'g-cm3';
+            document.getElementById('density-result').textContent = '0';
+            document.getElementById('density-unit').textContent = 'g/cm³';
+        });
+        
+        // 力换算器功能
+        document.getElementById('calculate-force').addEventListener('click', function() {
+            const value = parseFloat(document.getElementById('force-value').value);
+            const fromUnit = document.getElementById('force-from').value;
+            const toUnit = document.getElementById('force-to').value;
+            
+            if (isNaN(value)) {
+                alert('请输入有效的数值！');
+                return;
+            }
+            
+            const result = convertUnit(value, fromUnit, toUnit, 'force');
+            const unitName = getUnitName(toUnit, 'force');
+            
+            document.getElementById('force-result').textContent = result.toFixed(6);
+            document.getElementById('force-unit').textContent = unitName;
+            
+            // 添加到历史记录
+            addToHistory(`力换算: ${value} ${getUnitName(fromUnit, 'force')} = ${result.toFixed(4)} ${unitName}`);
+        });
+        
+        document.getElementById('reset-force').addEventListener('click', function() {
+            document.getElementById('force-value').value = '1';
+            document.getElementById('force-from').value = 'newton';
+            document.getElementById('force-to').value = 'kilonewton';
+            document.getElementById('force-result').textContent = '0';
+            document.getElementById('force-unit').textContent = '千牛';
+        });
+        
+        // 辅助函数：安全评估数学表达式
+        function evaluateMathExpression(expr) {
+            // 替换数学函数和运算符
+            expr = expr.replace(/sin\(/g, 'Math.sin(');
+            expr = expr.replace(/cos\(/g, 'Math.cos(');
+            expr = expr.replace(/tan\(/g, 'Math.tan(');
+            expr = expr.replace(/sqrt\(/g, 'Math.sqrt(');
+            expr = expr.replace(/log\(/g, 'Math.log10(');
+            expr = expr.replace(/ln\(/g, 'Math.log(');
+            expr = expr.replace(/exp\(/g, 'Math.exp(');
+            expr = expr.replace(/abs\(/g, 'Math.abs(');
+            expr = expr.replace(/\^/g, '**');
+            expr = expr.replace(/π/g, 'Math.PI');
+            expr = expr.replace(/pi/g, 'Math.PI');
+            expr = expr.replace(/PI/g, 'Math.PI');
+            expr = expr.replace(/e/g, 'Math.E');
+            
+            // 角度转换为弧度（假设输入为角度）
+            expr = expr.replace(/sin\(([^)]+)\)/g, (match, p1) => {
+                return `Math.sin(${p1} * Math.PI / 180)`;
+            });
+            expr = expr.replace(/cos\(([^)]+)\)/g, (match, p1) => {
+                return `Math.cos(${p1} * Math.PI / 180)`;
+            });
+            expr = expr.replace(/tan\(([^)]+)\)/g, (match, p1) => {
+                return `Math.tan(${p1} * Math.PI / 180)`;
+            });
+            
+            // 使用Function构造函数安全地评估表达式
+            try {
+                return new Function('return ' + expr)();
+            } catch (error) {
+                throw new Error('表达式计算错误');
+            }
+        }
+        
+        // 添加历史记录
+        function addToHistory(record) {
+            const historyList = document.getElementById('history-list');
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = record;
+            
+            // 将新记录添加到顶部
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            // 限制历史记录数量
+            if (historyList.children.length > 10) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+        
+        // 初始化：为每个计算器添加基本事件
+        document.querySelectorAll('.calculator').forEach(calc => {
+            const calcId = calc.id;
+            
+            // 为每个计算器添加计算和重置按钮的事件监听
+            const calcBtn = document.getElementById(`calculate-${calcId}`);
+            const resetBtn = document.getElementById(`reset-${calcId}`);
+            
+            if (calcBtn && !calcBtn.hasAttribute('data-initialized')) {
+                calcBtn.setAttribute('data-initialized', 'true');
+            }
+            
+            if (resetBtn && !resetBtn.hasAttribute('data-initialized')) {
+                resetBtn.setAttribute('data-initialized', 'true');
+            }
+        });
+        
+        // 初始化示例数据
+        document.getElementById('calculate-interest').click();
+        document.getElementById('calculate-area').click();
+        document.getElementById('calculate-heat').click();
+        
+        // 初始化温度计算器
+        document.getElementById('calculate-temperature').click();
+    </script>
+</body>
+</html>

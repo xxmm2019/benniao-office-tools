@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界时间 - 全球国家时间分类展示 笨鸟办公工具集箱</title> 
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5372697601462596"
+     crossorigin="anonymous"></script>
+    <link rel="canonical" href="https://www.benniaooffice.com/tools/benniao-time-comparison/">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .date-display {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .timezone-title {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+        
+        .main-clock {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #2980b9;
+            margin: 15px 0;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .time-comparison {
+            font-size: 1rem;
+            color: #5a6c7d;
+            background-color: #f0f7ff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            border: 1px solid #cce5ff;
+        }
+        
+        .continent-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 25px 0;
+        }
+        
+        .continent-btn {
+            padding: 10px 20px;
+            background-color: white;
+            border: 2px solid #e1e5eb;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #5a6c7d;
+            transition: all 0.3s ease;
+        }
+        
+        .continent-btn:hover {
+            border-color: #3498db;
+            color: #3498db;
+            transform: translateY(-2px);
+        }
+        
+        .continent-btn.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .countries-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .country-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .country-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .country-card.selected {
+            border: 2px solid #3498db;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .country-card.selected::before {
+            content: "当前查看";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background-color: #3498db;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .country-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .country-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .country-flag {
+            font-size: 1.5rem;
+        }
+        
+        .country-time {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2980b9;
+            margin: 5px 0;
+        }
+        
+        .country-date {
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        
+        .time-difference {
+            font-size: 0.9rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 10px;
+            align-self: flex-start;
+        }
+        
+        .time-slow {
+            background-color: #f8f9fa;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+        
+        .time-fast {
+            background-color: #f8f9fa;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+        
+        .time-same {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+            border: 1px solid #7f8c8d;
+        }
+        
+        .continent-section {
+            margin-bottom: 40px;
+        }
+        
+        .continent-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e1e5eb;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .continent-icon {
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            color: #2c3e50;
+            border-bottom: 2px solid #e1e5eb;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e1e5eb;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+        
+        tr.selected-country td {
+            background-color: #e8f4fc;
+            border-left: 4px solid #3498db;
+        }
+        
+        .country-flag-cell {
+            font-size: 1.2rem;
+            padding-right: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5eb;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto 30px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e1e5eb;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .continent-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #5a6c7d;
+            font-size: 0.9rem;
+        }
+        
+        .current-timezone-info {
+            display: inline-block;
+            margin-left: 15px;
+            padding: 4px 10px;
+            background-color: #e8f4fc;
+            color: #2980b9;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .countries-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .main-clock {
+                font-size: 2.8rem;
+            }
+            
+            .continent-selector {
+                gap: 8px;
+            }
+            
+            .continent-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .current-timezone-info {
+                display: block;
+                margin: 10px 0 0 0;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .countries-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-clock {
+                font-size: 2.2rem;
+            }
+            
+            body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="date-display" id="currentDate">2026年01月10日 星期六 晚上</div>
+        <div class="timezone-title">
+            上海时区 (UTC+8)
+            <span class="current-timezone-info" id="currentCountryInfo">🇨🇳 中国 - 北京</span>
+        </div>
+        <div class="main-clock" id="mainClock">18:11:26</div>
+        <div class="time-comparison" id="timeComparison"></div>
+    </header>
+    
+    <div class="search-container">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索国家或地区...">
+    </div>
+    
+    <div class="continent-selector" id="continentSelector">
+        <button class="continent-btn active" data-continent="all">全部国家</button>
+        <button class="continent-btn" data-continent="asia">亚洲</button>
+        <button class="continent-btn" data-continent="europe">欧洲</button>
+        <button class="continent-btn" data-continent="north-america">北美洲</button>
+        <button class="continent-btn" data-continent="south-america">南美洲</button>
+        <button class="continent-btn" data-continent="africa">非洲</button>
+        <button class="continent-btn" data-continent="oceania">大洋洲</button>
+        <button class="continent-btn" data-continent="others">其他地区</button>
+    </div>
+    
+    <div id="continentsContainer">
+        <!-- 各大洲国家卡片将由JavaScript动态生成 -->
+    </div>
+    
+    <div class="table-container">
+        <h2>全球国家时间对照表 (按大洲排序)</h2>
+        <table id="timeTable">
+            <thead>
+                <tr>
+                    <th>国家/地区</th>
+                    <th>所属大洲</th>
+                    <th>首都/主要城市</th>
+                    <th>当前时间</th>
+                    <th>时差 (与当前时区)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- 表格数据将由JavaScript动态生成 -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="footer">
+        <p>世界时间对照表 | 数据更新时间: <span id="updateTime"></span></p>
+        <p>所有时间均为24小时制，点击任意国家可查看该时区时间</p>
+    </div>
+
+    <script>
+        // 大洲图标映射
+        const continentIcons = {
+            'asia': '🌏',
+            'europe': '🌍',
+            'north-america': '🌎',
+            'south-america': '🌎',
+            'africa': '🌍',
+            'oceania': '🌏',
+            'others': '🗺️'
+        };
+        
+        // 大洲中文名称映射
+        const continentNames = {
+            'asia': '亚洲',
+            'europe': '欧洲',
+            'north-america': '北美洲',
+            'south-america': '南美洲',
+            'africa': '非洲',
+            'oceania': '大洋洲',
+            'others': '其他地区'
+        };
+        
+        // 主要国家数据 - 包含时间偏移量（以小时为单位，相对于UTC）
+        const countries = [
+            // 亚洲
+            { name: "中国", capital: "北京", offset: 8, continent: "asia", flag: "🇨🇳" },
+            { name: "日本", capital: "东京", offset: 9, continent: "asia", flag: "🇯🇵" },
+            { name: "韩国", capital: "首尔", offset: 9, continent: "asia", flag: "🇰🇷" },
+            { name: "印度", capital: "新德里", offset: 5.5, continent: "asia", flag: "🇮🇳" },
+            { name: "泰国", capital: "曼谷", offset: 7, continent: "asia", flag: "🇹🇭" },
+            { name: "新加坡", capital: "新加坡", offset: 8, continent: "asia", flag: "🇸🇬" },
+            { name: "马来西亚", capital: "吉隆坡", offset: 8, continent: "asia", flag: "🇲🇾" },
+            { name: "越南", capital: "河内", offset: 7, continent: "asia", flag: "🇻🇳" },
+            { name: "印度尼西亚", capital: "雅加达", offset: 7, continent: "asia", flag: "🇮🇩" },
+            { name: "菲律宾", capital: "马尼拉", offset: 8, continent: "asia", flag: "🇵🇭" },
+            { name: "沙特阿拉伯", capital: "利雅得", offset: 3, continent: "asia", flag: "🇸🇦" },
+            { name: "阿联酋", capital: "阿布扎比", offset: 4, continent: "asia", flag: "🇦🇪" },
+            { name: "土耳其", capital: "安卡拉", offset: 3, continent: "asia", flag: "🇹🇷" },
+            { name: "以色列", capital: "耶路撒冷", offset: 2, continent: "asia", flag: "🇮🇱" },
+            { name: "伊朗", capital: "德黑兰", offset: 3.5, continent: "asia", flag: "🇮🇷" },
+            { name: "巴基斯坦", capital: "伊斯兰堡", offset: 5, continent: "asia", flag: "🇵🇰" },
+            { name: "孟加拉国", capital: "达卡", offset: 6, continent: "asia", flag: "🇧🇩" },
+            { name: "斯里兰卡", capital: "科伦坡", offset: 5.5, continent: "asia", flag: "🇱🇰" },
+            
+            // 欧洲
+            { name: "英国", capital: "伦敦", offset: 0, continent: "europe", flag: "🇬🇧" },
+            { name: "法国", capital: "巴黎", offset: 1, continent: "europe", flag: "🇫🇷" },
+            { name: "德国", capital: "柏林", offset: 1, continent: "europe", flag: "🇩🇪" },
+            { name: "意大利", capital: "罗马", offset: 1, continent: "europe", flag: "🇮🇹" },
+            { name: "西班牙", capital: "马德里", offset: 1, continent: "europe", flag: "🇪🇸" },
+            { name: "俄罗斯", capital: "莫斯科", offset: 3, continent: "europe", flag: "🇷🇺" },
+            { name: "荷兰", capital: "阿姆斯特丹", offset: 1, continent: "europe", flag: "🇳🇱" },
+            { name: "比利时", capital: "布鲁塞尔", offset: 1, continent: "europe", flag: "🇧🇪" },
+            { name: "瑞士", capital: "伯尔尼", offset: 1, continent: "europe", flag: "🇨🇭" },
+            { name: "瑞典", capital: "斯德哥尔摩", offset: 1, continent: "europe", flag: "🇸🇪" },
+            { name: "挪威", capital: "奥斯陆", offset: 1, continent: "europe", flag: "🇳🇴" },
+            { name: "芬兰", capital: "赫尔辛基", offset: 2, continent: "europe", flag: "🇫🇮" },
+            { name: "丹麦", capital: "哥本哈根", offset: 1, continent: "europe", flag: "🇩🇰" },
+            { name: "波兰", capital: "华沙", offset: 1, continent: "europe", flag: "🇵🇱" },
+            { name: "奥地利", capital: "维也纳", offset: 1, continent: "europe", flag: "🇦🇹" },
+            { name: "葡萄牙", capital: "里斯本", offset: 0, continent: "europe", flag: "🇵🇹" },
+            { name: "希腊", capital: "雅典", offset: 2, continent: "europe", flag: "🇬🇷" },
+            { name: "捷克", capital: "布拉格", offset: 1, continent: "europe", flag: "🇨🇿" },
+            
+            // 北美洲
+            { name: "美国", capital: "华盛顿", offset: -5, continent: "north-america", flag: "🇺🇸" },
+            { name: "加拿大", capital: "渥太华", offset: -5, continent: "north-america", flag: "🇨🇦" },
+            { name: "墨西哥", capital: "墨西哥城", offset: -6, continent: "north-america", flag: "🇲🇽" },
+            { name: "古巴", capital: "哈瓦那", offset: -5, continent: "north-america", flag: "🇨🇺" },
+            { name: "牙买加", capital: "金斯敦", offset: -5, continent: "north-america", flag: "🇯🇲" },
+            { name: "巴哈马", capital: "拿骚", offset: -5, continent: "north-america", flag: "🇧🇸" },
+            { name: "哥斯达黎加", capital: "圣何塞", offset: -6, continent: "north-america", flag: "🇨🇷" },
+            { name: "巴拿马", capital: "巴拿马城", offset: -5, continent: "north-america", flag: "🇵🇦" },
+            { name: "危地马拉", capital: "危地马拉城", offset: -6, continent: "north-america", flag: "🇬🇹" },
+            { name: "洪都拉斯", capital: "特古西加尔巴", offset: -6, continent: "north-america", flag: "🇭🇳" },
+            { name: "尼加拉瓜", capital: "马那瓜", offset: -6, continent: "north-america", flag: "🇳🇮" },
+            { name: "萨尔瓦多", capital: "圣萨尔瓦多", offset: -6, continent: "north-america", flag: "🇸🇻" },
+            
+            // 南美洲
+            { name: "巴西", capital: "巴西利亚", offset: -3, continent: "south-america", flag: "🇧🇷" },
+            { name: "阿根廷", capital: "布宜诺斯艾利斯", offset: -3, continent: "south-america", flag: "🇦🇷" },
+            { name: "智利", capital: "圣地亚哥", offset: -4, continent: "south-america", flag: "🇨🇱" },
+            { name: "秘鲁", capital: "利马", offset: -5, continent: "south-america", flag: "🇵🇪" },
+            { name: "哥伦比亚", capital: "波哥大", offset: -5, continent: "south-america", flag: "🇨🇴" },
+            { name: "委内瑞拉", capital: "加拉加斯", offset: -4, continent: "south-america", flag: "🇻🇪" },
+            { name: "厄瓜多尔", capital: "基多", offset: -5, continent: "south-america", flag: "🇪🇨" },
+            { name: "玻利维亚", capital: "拉巴斯", offset: -4, continent: "south-america", flag: "🇧🇴" },
+            { name: "乌拉圭", capital: "蒙得维的亚", offset: -3, continent: "south-america", flag: "🇺🇾" },
+            { name: "巴拉圭", capital: "亚松森", offset: -4, continent: "south-america", flag: "🇵🇾" },
+            
+            // 非洲
+            { name: "埃及", capital: "开罗", offset: 2, continent: "africa", flag: "🇪🇬" },
+            { name: "南非", capital: "开普敦", offset: 2, continent: "africa", flag: "🇿🇦" },
+            { name: "尼日利亚", capital: "阿布贾", offset: 1, continent: "africa", flag: "🇳🇬" },
+            { name: "肯尼亚", capital: "内罗毕", offset: 3, continent: "africa", flag: "🇰🇪" },
+            { name: "埃塞俄比亚", capital: "亚的斯亚贝巴", offset: 3, continent: "africa", flag: "🇪🇹" },
+            { name: "加纳", capital: "阿克拉", offset: 0, continent: "africa", flag: "🇬🇭" },
+            { name: "坦桑尼亚", capital: "达累斯萨拉姆", offset: 3, continent: "africa", flag: "🇹🇿" },
+            { name: "摩洛哥", capital: "拉巴特", offset: 0, continent: "africa", flag: "🇲🇦" },
+            { name: "阿尔及利亚", capital: "阿尔及尔", offset: 1, continent: "africa", flag: "🇩🇿" },
+            { name: "乌干达", capital: "坎帕拉", offset: 3, continent: "africa", flag: "🇺🇬" },
+            { name: "安哥拉", capital: "罗安达", offset: 1, continent: "africa", flag: "🇦🇴" },
+            { name: "莫桑比克", capital: "马普托", offset: 2, continent: "africa", flag: "🇲🇿" },
+            { name: "赞比亚", capital: "卢萨卡", offset: 2, continent: "africa", flag: "🇿🇲" },
+            { name: "塞内加尔", capital: "达喀尔", offset: 0, continent: "africa", flag: "🇸🇳" },
+            
+            // 大洋洲
+            { name: "澳大利亚", capital: "堪培拉", offset: 10, continent: "oceania", flag: "🇦🇺" },
+            { name: "新西兰", capital: "惠灵顿", offset: 12, continent: "oceania", flag: "🇳🇿" },
+            { name: "斐济", capital: "苏瓦", offset: 12, continent: "oceania", flag: "🇫🇯" },
+            { name: "巴布亚新几内亚", capital: "莫尔兹比港", offset: 10, continent: "oceania", flag: "🇵🇬" },
+            { name: "萨摩亚", capital: "阿皮亚", offset: 13, continent: "oceania", flag: "🇼🇸" },
+            { name: "汤加", capital: "努库阿洛法", offset: 13, continent: "oceania", flag: "🇹🇴" },
+            { name: "瓦努阿图", capital: "维拉港", offset: 11, continent: "oceania", flag: "🇻🇺" },
+            { name: "所罗门群岛", capital: "霍尼亚拉", offset: 11, continent: "oceania", flag: "🇸🇧" },
+            { name: "密克罗尼西亚", capital: "帕利基尔", offset: 10, continent: "oceania", flag: "🇫🇲" },
+            
+            // 其他地区
+            { name: "格陵兰", capital: "努克", offset: -3, continent: "others", flag: "🇬🇱" },
+            { name: "冰岛", capital: "雷克雅未克", offset: 0, continent: "others", flag: "🇮🇸" },
+            { name: "马达加斯加", capital: "塔那那利佛", offset: 3, continent: "others", flag: "🇲🇬" },
+            { name: "毛里求斯", capital: "路易港", offset: 4, continent: "others", flag: "🇲🇺" },
+            { name: "塞舌尔", capital: "维多利亚", offset: 4, continent: "others", flag: "🇸🇨" }
+        ];
+        
+        // 中文星期几
+        const weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+        
+        // 时间部分名称（用于将24小时制转换为12小时制的时间段）
+        const timeParts = {
+            0: "凌晨", 1: "凌晨", 2: "凌晨", 3: "凌晨", 4: "凌晨", 5: "凌晨",
+            6: "早上", 7: "早上", 8: "早上", 9: "早上", 10: "上午", 11: "上午",
+            12: "中午", 13: "下午", 14: "下午", 15: "下午", 16: "下午", 17: "下午",
+            18: "晚上", 19: "晚上", 20: "晚上", 21: "晚上", 22: "晚上", 23: "晚上"
+        };
+        
+        // 当前选中的大洲
+        let selectedContinent = 'all';
+        let searchQuery = '';
+        
+        // 当前选中的国家
+        let selectedCountry = {
+            name: "中国",
+            capital: "北京",
+            offset: 8,
+            continent: "asia",
+            flag: "🇨🇳"
+        };
+        
+        // 中国作为对比基准
+        const chinaCountry = {
+            name: "中国",
+            capital: "北京",
+            offset: 8,
+            flag: "🇨🇳"
+        };
+        
+        // 存储所有国家卡片和表格行的引用，用于更新选中状态
+        let countryCardElements = [];
+        let tableRowElements = [];
+        
+        // 格式化数字，确保两位数显示
+        function formatNumber(num) {
+            return num < 10 ? '0' + num : num;
+        }
+        
+        // 根据时区偏移量计算城市时间
+        function getCityTime(offset) {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            return new Date(utc + (offset * 3600000));
+        }
+        
+        // 格式化日期显示
+        function formatDate(date, includeTimePart = false) {
+            const year = date.getFullYear();
+            const month = formatNumber(date.getMonth() + 1);
+            const day = formatNumber(date.getDate());
+            const weekday = weekdays[date.getDay()];
+            const hour = date.getHours();
+            const timePart = timeParts[hour];
+            
+            if (includeTimePart) {
+                return `${year}年${month}月${day}日 ${weekday} ${timePart}`;
+            } else {
+                return `${year}年${month}月${day}日 ${weekday}`;
+            }
+        }
+        
+        // 格式化时间显示
+        function formatTime(date, includeSeconds = true) {
+            const hour = formatNumber(date.getHours());
+            const minute = formatNumber(date.getMinutes());
+            const second = formatNumber(date.getSeconds());
+            
+            if (includeSeconds) {
+                return `${hour}:${minute}:${second}`;
+            } else {
+                return `${hour}:${minute}`;
+            }
+        }
+        
+        // 获取时间段（早上、下午、晚上）
+        function getTimePart(date) {
+            const hour = date.getHours();
+            return timeParts[hour];
+        }
+        
+        // 计算与当前选中国家的时差
+        function getTimeDifference(offset) {
+            const selectedOffset = selectedCountry.offset;
+            const difference = offset - selectedOffset;
+            
+            if (difference === 0) {
+                return { text: "相同", class: "time-same" };
+            } else if (difference > 0) {
+                return { text: `快${difference}小时`, class: "time-fast" };
+            } else {
+                return { text: `慢${Math.abs(difference)}小时`, class: "time-slow" };
+            }
+        }
+        
+        // 计算与中国的时差
+        function getTimeDifferenceWithChina(offset) {
+            const chinaOffset = chinaCountry.offset;
+            const difference = offset - chinaOffset;
+            
+            if (difference === 0) {
+                return { text: "与中国时间相同", class: "time-same" };
+            } else if (difference > 0) {
+                return { text: `比中国快${difference}小时`, class: "time-fast" };
+            } else {
+                return { text: `比中国慢${Math.abs(difference)}小时`, class: "time-slow" };
+            }
+        }
+        
+        // 更新主显示区域为指定国家的时间
+        function updateMainDisplay(country) {
+            selectedCountry = country;
+            
+            // 更新当前国家信息（包含国旗）
+            document.getElementById('currentCountryInfo').innerHTML = `${country.flag} ${country.name} - ${country.capital}`;
+            
+            // 更新时区标题
+            const utcOffset = country.offset >= 0 ? `UTC+${country.offset}` : `UTC${country.offset}`;
+            document.querySelector('.timezone-title').innerHTML = 
+                `${country.capital}时区 (${utcOffset}) <span class="current-timezone-info" id="currentCountryInfo">${country.flag} ${country.name} - ${country.capital}</span>`;
+            
+            // 更新主时钟和日期
+            const countryTime = getCityTime(country.offset);
+            document.getElementById('mainClock').textContent = formatTime(countryTime);
+            document.getElementById('currentDate').textContent = formatDate(countryTime, true);
+            
+            // 更新与中国的时差对比
+            const timeDiffWithChina = getTimeDifferenceWithChina(country.offset);
+            const comparisonElement = document.getElementById('timeComparison');
+            comparisonElement.textContent = timeDiffWithChina.text;
+            comparisonElement.className = `time-comparison ${timeDiffWithChina.class}`;
+            
+            // 更新所有卡片的时差信息和选中状态
+            updateAllTimeDifferences();
+        }
+        
+        // 过滤国家数据
+        function filterCountries() {
+            let filtered = countries;
+            
+            // 按大洲筛选
+            if (selectedContinent !== 'all') {
+                filtered = filtered.filter(country => country.continent === selectedContinent);
+            }
+            
+            // 按搜索词筛选
+            if (searchQuery.trim() !== '') {
+                const query = searchQuery.toLowerCase().trim();
+                filtered = filtered.filter(country => 
+                    country.name.toLowerCase().includes(query) || 
+                    country.capital.toLowerCase().includes(query)
+                );
+            }
+            
+            return filtered;
+        }
+        
+        // 生成国家卡片
+        function generateCountryCards() {
+            const container = document.getElementById('continentsContainer');
+            container.innerHTML = '';
+            
+            const filteredCountries = filterCountries();
+            
+            if (filteredCountries.length === 0) {
+                container.innerHTML = '<div class="no-results">未找到匹配的国家或地区</div>';
+                return;
+            }
+            
+            // 按大洲分组
+            const countriesByContinent = {};
+            filteredCountries.forEach(country => {
+                if (!countriesByContinent[country.continent]) {
+                    countriesByContinent[country.continent] = [];
+                }
+                countriesByContinent[country.continent].push(country);
+            });
+            
+            // 清空卡片引用数组
+            countryCardElements = [];
+            
+            // 生成各大洲的卡片
+            for (const continent in countriesByContinent) {
+                const continentCountries = countriesByContinent[continent];
+                const continentSection = document.createElement('div');
+                continentSection.className = 'continent-section';
+                
+                const continentTitle = document.createElement('div');
+                continentTitle.className = 'continent-title';
+                continentTitle.innerHTML = `
+                    <span class="continent-icon">${continentIcons[continent]}</span>
+                    ${continentNames[continent]}
+                    <span style="font-size: 0.9rem; color: #7f8c8d; margin-left: 10px;">
+                        ${continentCountries.length}个国家/地区
+                    </span>
+                `;
+                
+                continentSection.appendChild(continentTitle);
+                
+                const countriesContainer = document.createElement('div');
+                countriesContainer.className = 'countries-container';
+                
+                continentCountries.forEach(country => {
+                    const countryTime = getCityTime(country.offset);
+                    const timePart = getTimePart(countryTime);
+                    const timeDiff = getTimeDifference(country.offset);
+                    
+                    const countryCard = document.createElement('div');
+                    countryCard.className = `country-card ${country.name === selectedCountry.name ? 'selected' : ''}`;
+                    countryCard.dataset.country = country.name;
+                    
+                    countryCard.innerHTML = `
+                        <div class="country-header">
+                            <div class="country-name">
+                                <span class="country-flag">${country.flag}</span>
+                                ${country.name}
+                            </div>
+                        </div>
+                        <div class="country-date">首都/主要城市: ${country.capital}</div>
+                        <div class="country-time">${formatTime(countryTime, false)}</div>
+                        <div class="country-date">${formatDate(countryTime)} ${timePart}</div>
+                        <div class="time-difference ${timeDiff.class}">${timeDiff.text}</div>
+                    `;
+                    
+                    // 添加点击事件
+                    countryCard.addEventListener('click', () => {
+                        updateMainDisplay(country);
+                    });
+                    
+                    countriesContainer.appendChild(countryCard);
+                    countryCardElements.push({
+                        element: countryCard,
+                        country: country
+                    });
+                });
+                
+                continentSection.appendChild(countriesContainer);
+                container.appendChild(continentSection);
+            }
+        }
+        
+        // 生成完整国家表格
+        function generateCountryTable() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            // 按大洲名称排序
+            const sortedCountries = [...countries].sort((a, b) => {
+                const continentOrder = ['asia', 'europe', 'north-america', 'south-america', 'africa', 'oceania', 'others'];
+                return continentOrder.indexOf(a.continent) - continentOrder.indexOf(b.continent);
+            });
+            
+            // 清空表格行引用数组
+            tableRowElements = [];
+            
+            sortedCountries.forEach(country => {
+                const countryTime = getCityTime(country.offset);
+                const timePart = getTimePart(countryTime);
+                const timeDiff = getTimeDifference(country.offset);
+                
+                const row = document.createElement('tr');
+                row.className = country.name === selectedCountry.name ? 'selected-country' : '';
+                row.dataset.country = country.name;
+                
+                row.innerHTML = `
+                    <td><span class="country-flag-cell">${country.flag}</span> ${country.name}</td>
+                    <td>${continentNames[country.continent]}</td>
+                    <td>${country.capital}</td>
+                    <td>${formatDate(countryTime)} ${formatTime(countryTime)} ${timePart}</td>
+                    <td><span class="time-difference ${timeDiff.class}">${timeDiff.text}</span></td>
+                `;
+                
+                // 添加点击事件
+                row.addEventListener('click', () => {
+                    updateMainDisplay(country);
+                });
+                
+                tableBody.appendChild(row);
+                tableRowElements.push({
+                    element: row,
+                    country: country
+                });
+            });
+        }
+        
+        // 更新所有时间差异信息
+        function updateAllTimeDifferences() {
+            // 更新卡片的时间差异
+            countryCardElements.forEach(item => {
+                const timeDiff = getTimeDifference(item.country.offset);
+                const timeDiffElement = item.element.querySelector('.time-difference');
+                timeDiffElement.className = `time-difference ${timeDiff.class}`;
+                timeDiffElement.textContent = timeDiff.text;
+                
+                // 更新选中状态
+                if (item.country.name === selectedCountry.name) {
+                    item.element.classList.add('selected');
+                } else {
+                    item.element.classList.remove('selected');
+                }
+            });
+            
+            // 更新表格的时间差异和选中状态
+            tableRowElements.forEach(item => {
+                const timeDiff = getTimeDifference(item.country.offset);
+                const timeDiffElement = item.element.querySelector('.time-difference');
+                timeDiffElement.className = `time-difference ${timeDiff.class}`;
+                timeDiffElement.textContent = timeDiff.text;
+                
+                // 更新选中状态
+                if (item.country.name === selectedCountry.name) {
+                    item.element.classList.add('selected-country');
+                } else {
+                    item.element.classList.remove('selected-country');
+                }
+            });
+            
+            // 更新表格标题中的时差说明
+            document.querySelector('#timeTable thead th:nth-child(5)').textContent = `时差 (与${selectedCountry.capital})`;
+            
+            // 更新与中国的时差对比
+            const timeDiffWithChina = getTimeDifferenceWithChina(selectedCountry.offset);
+            const comparisonElement = document.getElementById('timeComparison');
+            comparisonElement.textContent = timeDiffWithChina.text;
+            comparisonElement.className = `time-comparison ${timeDiffWithChina.class}`;
+        }
+        
+        // 更新主时钟和日期显示
+        function updateClock() {
+            const selectedCountryTime = getCityTime(selectedCountry.offset);
+            
+            // 更新主时钟
+            document.getElementById('mainClock').textContent = formatTime(selectedCountryTime);
+            
+            // 更新日期显示
+            document.getElementById('currentDate').textContent = formatDate(selectedCountryTime, true);
+            
+            // 更新所有国家的时间信息
+            updateAllCountryTimes();
+            
+            // 更新页脚时间
+            const now = new Date();
+            document.getElementById('updateTime').textContent = 
+                `${formatDate(now)} ${formatTime(now)}`;
+        }
+        
+        // 更新所有国家的时间信息
+        function updateAllCountryTimes() {
+            // 更新卡片时间
+            countryCardElements.forEach(item => {
+                const countryTime = getCityTime(item.country.offset);
+                const timePart = getTimePart(countryTime);
+                
+                const timeElement = item.element.querySelector('.country-time');
+                const dateElement = item.element.querySelector('.country-date:nth-child(4)');
+                
+                timeElement.textContent = formatTime(countryTime, false);
+                dateElement.textContent = `${formatDate(countryTime)} ${timePart}`;
+            });
+            
+            // 更新表格时间
+            tableRowElements.forEach(item => {
+                const countryTime = getCityTime(item.country.offset);
+                const timePart = getTimePart(countryTime);
+                
+                const timeCell = item.element.querySelector('td:nth-child(4)');
+                timeCell.textContent = `${formatDate(countryTime)} ${formatTime(countryTime)} ${timePart}`;
+            });
+        }
+        
+        // 初始化大洲选择器
+        function initContinentSelector() {
+            const continentBtns = document.querySelectorAll('.continent-btn');
+            continentBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    continentBtns.forEach(b => b.classList.remove('active'));
+                    // 给当前点击的按钮添加active类
+                    this.classList.add('active');
+                    // 更新选中的大洲
+                    selectedContinent = this.getAttribute('data-continent');
+                    // 重新生成卡片
+                    generateCountryCards();
+                });
+            });
+        }
+        
+        // 初始化搜索功能
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                searchQuery = this.value;
+                generateCountryCards();
+            });
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化交互功能
+            initContinentSelector();
+            initSearch();
+            
+            // 初始生成卡片和表格
+            generateCountryCards();
+            generateCountryTable();
+            
+            // 初始更新
+            updateClock();
+            
+            // 设置与中国的时差对比初始值
+            const timeDiffWithChina = getTimeDifferenceWithChina(selectedCountry.offset);
+            const comparisonElement = document.getElementById('timeComparison');
+            comparisonElement.textContent = timeDiffWithChina.text;
+            comparisonElement.className = `time-comparison ${timeDiffWithChina.class}`;
+            
+            // 每秒更新一次时钟
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+</html>
